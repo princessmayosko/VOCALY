@@ -5,74 +5,112 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>İSTİKLAL MARŞI - Vocaly</title>
 <style>
+:root{
+  --text:#111827;
+  --blue:#2563eb;
+  --blue-soft:rgba(37,99,235,0.14);
+  --green:#16a34a;
+  --red:#dc2626;
+  --amber:#f59e0b;
+  --shadow:0 10px 28px rgba(0,0,0,0.08);
+}
+
+*{ box-sizing:border-box; }
+
 body{
   font-family: Arial, sans-serif;
-  padding:40px;
-  background:#f5f5f5;
+  padding:32px 20px 40px;
+  background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);
   text-align:center;
-  color:#111;
+  color:var(--text);
   margin:0;
 }
 
 h1{
-  font-size:36px;
-  margin:20px 0 24px 0;
+  font-size:38px;
+  margin:18px 0 22px;
+  letter-spacing:0.5px;
 }
 
 #vocaly{
-  position:absolute;
-  top:20px;
+  position:fixed;
+  top:18px;
   right:20px;
   font-size:22px;
-  color:gold;
+  color:goldenrod;
   font-weight:bold;
+  z-index:50;
+  text-shadow:0 1px 0 rgba(255,255,255,0.8);
 }
 
 #audio-wrap{
-  margin-bottom:28px;
+  background:rgba(255,255,255,0.82);
+  border:1px solid rgba(229,231,235,0.9);
+  box-shadow:var(--shadow);
+  border-radius:22px;
+  padding:18px 18px 14px;
+  margin:0 auto 22px;
+  max-width:960px;
+}
+
+audio{
+  width:min(100%, 680px);
 }
 
 #lyrics{
-  font-size:22px;
-  line-height:2;
+  font-size:24px;
+  line-height:2.1;
   text-align:left;
   display:inline-block;
-  max-width:900px;
+  width:min(100%, 980px);
+  max-width:980px;
   user-select:none;
   -webkit-user-select:none;
   touch-action:pan-y;
+  background:rgba(255,255,255,0.82);
+  border:1px solid rgba(229,231,235,0.9);
+  box-shadow:var(--shadow);
+  border-radius:24px;
+  padding:22px 20px;
 }
 
-.kita{
-  margin-bottom:28px;
-}
+.kita{ margin-bottom:26px; }
+.kita:last-child{ margin-bottom:0; }
 
 .satir{
   white-space:nowrap;
   display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:6px;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:8px;
+  padding:4px 0;
+  border-radius:12px;
 }
 
 .satir-text{
   display:inline-block;
+  flex:1;
 }
 
 .satir-play{
-  width:30px;
-  height:30px;
+  width:34px;
+  height:34px;
   border:none;
-  border-radius:50%;
+  border-radius:999px;
   cursor:pointer;
-  background:#e5e7eb;
-  color:#111;
+  background:#eef2f7;
+  color:#111827;
   font-size:14px;
+  font-weight:bold;
   flex:0 0 auto;
+  margin-top:5px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  transition:transform 0.15s ease, background 0.15s ease;
 }
 
 .satir-play:hover{
-  background:#d1d5db;
+  background:#dbe3ee;
+  transform:scale(1.05);
 }
 
 .hece{
@@ -80,37 +118,39 @@ h1{
   cursor:pointer;
   transition:transform 0.15s ease, color 0.15s ease, background 0.15s ease, outline 0.15s ease;
   transform-origin:center bottom;
-  border-radius:6px;
+  border-radius:8px;
+  padding:0 1px;
 }
 
 .hece:hover{
-  transform:scale(1.18);
-  color:blue;
+  transform:scale(1.16);
+  color:var(--blue);
 }
 
 .hece.active{
-  transform:scale(1.18);
-  color:blue;
+  transform:scale(1.16);
+  color:var(--blue);
 }
 
 .hece.selected{
-  background:rgba(37,99,235,0.15);
+  background:var(--blue-soft);
   color:#0a58ca;
 }
 
 .hece.target-hece{
-  outline:2px solid #f59e0b;
-  border-radius:6px;
+  outline:2px solid var(--amber);
+  outline-offset:1px;
+  border-radius:8px;
 }
 
 .hece.tune-correct{
-  color:#16a34a !important;
-  transform:scale(1.22) !important;
+  color:var(--green) !important;
+  transform:scale(1.20) !important;
   font-weight:bold;
 }
 
 .hece.tune-wrong{
-  color:#dc2626 !important;
+  color:var(--red) !important;
 }
 
 .satir.active-satir .hece{
@@ -118,13 +158,13 @@ h1{
 }
 
 #status{
-  margin-top:10px;
+  margin-top:12px;
   font-size:14px;
-  color:#555;
+  color:#4b5563;
 }
 
 .controls{
-  margin-top:10px;
+  margin-top:14px;
   display:flex;
   gap:10px;
   justify-content:center;
@@ -132,62 +172,58 @@ h1{
   flex-wrap:wrap;
 }
 
-#stopBtn{
-  border:none;
-  background:#dc2626;
-  color:white;
-  padding:8px 14px;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:14px;
-}
-
-#stopBtn:hover{
-  background:#b91c1c;
-}
-
+#stopBtn,
 #tunerBtn{
   border:none;
-  background:#059669;
   color:white;
-  padding:8px 14px;
-  border-radius:8px;
+  padding:10px 16px;
+  border-radius:12px;
   cursor:pointer;
   font-size:14px;
+  font-weight:bold;
+  transition:transform 0.15s ease, background 0.15s ease;
+  box-shadow:0 6px 16px rgba(0,0,0,0.12);
 }
 
-#tunerBtn:hover{
-  background:#047857;
-}
+#stopBtn{ background:#dc2626; }
+#stopBtn:hover{ background:#b91c1c; transform:translateY(-1px); }
+
+#tunerBtn{ background:#059669; }
+#tunerBtn:hover{ background:#047857; transform:translateY(-1px); }
 
 .tip{
   margin-top:8px;
   font-size:13px;
-  color:#666;
+  color:#6b7280;
 }
 
 /* TUNER */
 #noteCompassWrap{
   position:fixed;
   left:18px;
-  top:110px;
-  width:250px;
+  top:100px;
+  width:280px;
   z-index:20;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:10px;
+  gap:12px;
 }
 
 #tunerSwitchRow{
   display:flex;
   align-items:center;
-  gap:8px;
-  background:rgba(255,255,255,0.9);
-  padding:8px 12px;
-  border-radius:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
-  backdrop-filter: blur(6px);
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  background:rgba(255,255,255,0.88);
+  padding:10px 14px;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(229,231,235,0.9);
+  font-weight:bold;
+  color:#374151;
 }
 
 .switch{
@@ -222,6 +258,7 @@ h1{
   border-radius:50%;
   background:white;
   transition:0.2s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.15);
 }
 
 .switch input:checked + .slider{
@@ -234,20 +271,20 @@ h1{
 
 #noteCompass{
   position:relative;
-  width:220px;
-  height:220px;
+  width:250px;
+  height:250px;
   border-radius:50%;
-  border:6px solid rgba(255,255,255,0.92);
-  box-shadow:0 12px 28px rgba(0,0,0,0.18);
+  border:7px solid rgba(255,255,255,0.95);
+  box-shadow:0 16px 30px rgba(0,0,0,0.16);
   overflow:hidden;
 }
 
 #noteCompass::after{
   content:"";
   position:absolute;
-  inset:52px;
+  inset:62px;
   border-radius:50%;
-  background:rgba(255,255,255,0.96);
+  background:rgba(255,255,255,0.98);
   z-index:2;
 }
 
@@ -261,7 +298,7 @@ h1{
   top:50%;
   transform:translate(-50%,-50%);
   z-index:6;
-  box-shadow:0 0 0 4px rgba(255,255,255,0.9);
+  box-shadow:0 0 0 4px rgba(255,255,255,0.92);
 }
 
 #detectedPointer{
@@ -269,13 +306,13 @@ h1{
   left:50%;
   top:50%;
   width:4px;
-  height:82px;
+  height:92px;
   background:#2563eb;
   transform-origin:50% calc(100% - 6px);
   transform:translate(-50%, -100%) rotate(0deg);
   z-index:5;
   border-radius:999px;
-  box-shadow:0 0 10px rgba(37,99,235,0.55);
+  box-shadow:0 0 10px rgba(37,99,235,0.45);
   opacity:0.25;
 }
 
@@ -301,61 +338,56 @@ h1{
   position:absolute;
   left:50%;
   top:50%;
-  width:88px;
+  width:68px;
+  height:38px;
   text-align:center;
-  font-size:11px;
-  font-weight:bold;
   pointer-events:none;
 }
 
 .note-label .inner{
   display:inline-block;
   transform:translate(-50%, -50%);
-  background:rgba(255,255,255,0.82);
-  padding:2px 6px;
-  border-radius:10px;
   color:#7f1d1d;
+  font-weight:700;
+  font-size:12px;
+  line-height:1.02;
+  letter-spacing:-0.1px;
+  background:none !important;
+  padding:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
 }
 
-.note-label.target .inner{
-  background:rgba(220,252,231,0.98);
-  color:#166534;
-}
-
-.note-label.detected .inner{
-  background:rgba(219,234,254,0.98);
-  color:#1d4ed8;
-}
-
-.note-label.target.detected .inner{
-  background:rgba(187,247,208,0.98);
-  color:#065f46;
-}
+.note-label.target .inner{ color:#166534; }
+.note-label.detected .inner{ color:#1d4ed8; }
+.note-label.target.detected .inner{ color:#065f46; }
 
 #tunerInfo{
-  width:250px;
-  min-height:46px;
+  width:100%;
+  min-height:52px;
   background:rgba(255,255,255,0.9);
-  padding:10px 12px;
-  border-radius:14px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  padding:12px 14px;
+  border-radius:16px;
+  box-shadow:var(--shadow);
   font-size:13px;
   color:#374151;
   text-align:center;
-  backdrop-filter: blur(6px);
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(229,231,235,0.9);
+  line-height:1.45;
 }
 
 @media (max-width: 1100px){
   #noteCompassWrap{
     position:static;
     margin:0 auto 18px auto;
+    width:100%;
+    max-width:320px;
   }
 }
 
 @media (max-width: 768px){
-  body{
-    padding:24px 14px;
-  }
+  body{ padding:20px 12px 32px; }
 
   h1{
     font-size:28px;
@@ -363,21 +395,53 @@ h1{
   }
 
   #vocaly{
-    top:14px;
+    top:12px;
     right:14px;
     font-size:18px;
   }
 
   #lyrics{
-    font-size:18px;
-    line-height:2;
+    font-size:19px;
+    line-height:2.05;
     max-width:100%;
+    width:100%;
     overflow-x:auto;
     display:block;
+    padding:18px 14px;
   }
 
   .satir{
     min-width:max-content;
+    gap:10px;
+  }
+
+  .satir-play{
+    width:32px;
+    height:32px;
+    margin-top:3px;
+  }
+
+  #noteCompass{
+    width:220px;
+    height:220px;
+  }
+
+  #noteCompass::after{
+    inset:54px;
+  }
+
+  #detectedPointer{
+    height:80px;
+  }
+
+  .note-label{
+    width:62px;
+    height:34px;
+  }
+
+  .note-label .inner{
+    font-size:10px;
+    line-height:0.96;
   }
 }
 </style>
@@ -495,13 +559,8 @@ const noteCompassEl = document.getElementById("noteCompass");
 const detectedPointerEl = document.getElementById("detectedPointer");
 
 let heceCounter = 0;
-let audioContext = null;
-let audioBuffer = null;
-let currentSource = null;
-let currentGain = null;
 let stopTimeout = null;
-let audioReadyPromise = null;
-const currentAudioUrl = "temiz_kayit.mp3";
+let activeTimeUpdateHandler = null;
 
 let pressTimer = null;
 let pointerDown = false;
@@ -519,7 +578,11 @@ let tunerAnimation = null;
 let currentTargetNotes = [];
 let currentSelectionIds = [];
 let detectedPitchClass = null;
-let selectionLockedCorrect = false;
+let latchedPitchClass = null;
+
+let playbackRangeIds = [];
+let activePlaybackHeceId = null;
+let correctHeceIds = new Set();
 
 function normalizePc(pc){ return ((pc % 12) + 12) % 12; }
 function noteNameToPitchClass(name){ return NOTE_ALIASES[String(name).toLowerCase().trim()]; }
@@ -545,7 +608,14 @@ function buildCompassLabels() {
 
     const inner = document.createElement("span");
     inner.className = "inner";
-    inner.textContent = label;
+
+    if (label.includes("/")) {
+      const parts = label.split("/");
+      inner.innerHTML = parts.map(p => `<div>${p}</div>`).join("");
+    } else {
+      inner.textContent = label;
+    }
+
     div.appendChild(inner);
     noteLabelsEl.appendChild(div);
   });
@@ -557,11 +627,13 @@ function updateCompassVisual() {
     .filter(v => v !== undefined)
     .map(normalizePc);
 
+  const shownPitchClass = detectedPitchClass !== null ? detectedPitchClass : latchedPitchClass;
+
   const segmentColors = [];
   for (let i = 0; i < 12; i++) {
     let color = tunerRunning ? "#7f1d1d" : "#6b7280";
     if (targetPcs.includes(i)) color = "#16a34a";
-    if (detectedPitchClass !== null && normalizePc(detectedPitchClass) === i) {
+    if (shownPitchClass !== null && normalizePc(shownPitchClass) === i) {
       color = targetPcs.includes(i) ? "#10b981" : "#2563eb";
     }
     segmentColors.push(color);
@@ -580,14 +652,14 @@ function updateCompassVisual() {
     const pc = Number(el.dataset.pc);
     el.classList.remove("target", "detected");
     if (targetPcs.includes(pc)) el.classList.add("target");
-    if (detectedPitchClass !== null && normalizePc(detectedPitchClass) === pc) el.classList.add("detected");
+    if (shownPitchClass !== null && normalizePc(shownPitchClass) === pc) el.classList.add("detected");
   });
 
-  if (detectedPitchClass === null) {
+  if (shownPitchClass === null) {
     detectedPointerEl.style.opacity = "0.25";
   } else {
     detectedPointerEl.style.opacity = "1";
-    detectedPointerEl.style.transform = `translate(-50%, -100%) rotate(${normalizePc(detectedPitchClass) * 30}deg)`;
+    detectedPointerEl.style.transform = `translate(-50%, -100%) rotate(${normalizePc(shownPitchClass) * 30}deg)`;
   }
 }
 
@@ -600,31 +672,36 @@ function clearCurrentTargetState() {
   currentTargetNotes = [];
   currentSelectionIds = [];
   detectedPitchClass = null;
-  selectionLockedCorrect = false;
+  latchedPitchClass = null;
+  activePlaybackHeceId = null;
+  playbackRangeIds = [];
+  correctHeceIds.clear();
   document.querySelectorAll(".hece.target-hece").forEach(el => el.classList.remove("target-hece"));
   clearSelectionSuccessVisualOnly();
   updateCompassVisual();
 }
 
-function setSelectionSuccess(ids) {
-  ids.forEach(id => {
-    const el = document.querySelector(`.hece[data-id="${id}"]`);
-    if (el) {
-      el.classList.remove("tune-wrong");
-      el.classList.add("tune-correct");
-    }
+function clearWrongMarksExceptCorrect() {
+  document.querySelectorAll(".hece.tune-wrong").forEach(el => {
+    const id = Number(el.dataset.id);
+    if (!correctHeceIds.has(id)) el.classList.remove("tune-wrong");
   });
 }
 
-function setSelectionWrong(ids) {
-  if (selectionLockedCorrect) return;
-  ids.forEach(id => {
-    const el = document.querySelector(`.hece[data-id="${id}"]`);
-    if (el) {
-      el.classList.remove("tune-correct");
-      el.classList.add("tune-wrong");
-    }
-  });
+function setHeceCorrect(id) {
+  const el = document.querySelector(`.hece[data-id="${id}"]`);
+  if (!el) return;
+  el.classList.remove("tune-wrong");
+  el.classList.add("tune-correct");
+  correctHeceIds.add(id);
+}
+
+function setHeceWrong(id) {
+  if (correctHeceIds.has(id)) return;
+  const el = document.querySelector(`.hece[data-id="${id}"]`);
+  if (!el) return;
+  el.classList.remove("tune-correct");
+  el.classList.add("tune-wrong");
 }
 
 function markTargetSelection(ids) {
@@ -636,7 +713,6 @@ function markTargetSelection(ids) {
 }
 
 function setCurrentTarget(ids, notes) {
-  clearCurrentTargetState();
   currentSelectionIds = [...ids];
   currentTargetNotes = [...new Set(notes)];
   markTargetSelection(ids);
@@ -647,6 +723,40 @@ function setCurrentTarget(ids, notes) {
       ? `Hedef: ${currentTargetNotes.join(" / ")} | Ses bekleniyor...`
       : "Bu seçim için hedef nota atanmadı.";
   }
+}
+
+function setActivePlaybackHece(id) {
+  activePlaybackHeceId = id;
+  setCurrentTarget([id], heceNotes[id] || []);
+  clearWrongMarksExceptCorrect();
+
+  if (tunerRunning) {
+    const hedefler = (heceNotes[id] || []).join(" / ");
+    tunerInfo.textContent = hedefler
+      ? `Hedef hece: ${hedefler} | Ses bekleniyor...`
+      : "Bu hece için hedef nota atanmadı.";
+  }
+}
+
+function getActiveHeceIdAtTime(currentTime) {
+  if (!playbackRangeIds.length) return null;
+
+  for (const id of playbackRangeIds) {
+    const timing = heceTimings[id];
+    if (!timing) continue;
+    const start = Number(timing[0]);
+    const end = Number(timing[1]);
+    if (currentTime >= start && currentTime < end) return id;
+  }
+
+  for (let i = playbackRangeIds.length - 1; i >= 0; i--) {
+    const id = playbackRangeIds[i];
+    const timing = heceTimings[id];
+    if (!timing) continue;
+    if (currentTime >= Number(timing[0])) return id;
+  }
+
+  return playbackRangeIds[0] ?? null;
 }
 
 function temizleAktifHeceler() {
@@ -728,17 +838,12 @@ function durdurAktifSes() {
     stopTimeout = null;
   }
 
-  if (currentSource) {
-    try { currentSource.stop(); } catch (e) {}
-    try { currentSource.disconnect(); } catch (e) {}
-    currentSource = null;
+  if (activeTimeUpdateHandler) {
+    audio.removeEventListener("timeupdate", activeTimeUpdateHandler);
+    activeTimeUpdateHandler = null;
   }
 
-  if (currentGain) {
-    try { currentGain.disconnect(); } catch (e) {}
-    currentGain = null;
-  }
-
+  try { audio.pause(); } catch (e) {}
   temizleAktifHeceler();
 }
 
@@ -766,91 +871,66 @@ function secimTemizle() {
   document.querySelectorAll(".hece.selected").forEach(el => el.classList.remove("selected"));
 }
 
-async function arrayBufferFromUrl(url) {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Ses dosyası yüklenemedi: " + url);
-  return await response.arrayBuffer();
-}
-
 async function sesiHazirla() {
-  if (audioBuffer) return;
-  if (audioReadyPromise) {
-    await audioReadyPromise;
-    return;
-  }
-
-  audioReadyPromise = (async () => {
-    statusEl.textContent = "Ses hazırlanıyor...";
-
-    if (!audioContext) {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-
-    if (audioContext.state === "suspended") {
-      await audioContext.resume();
-    }
-
-    const arrayBuffer = await arrayBufferFromUrl(currentAudioUrl);
-    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    statusEl.textContent = "Hazır.";
-  })();
-
-  try {
-    await audioReadyPromise;
-  } finally {
-    audioReadyPromise = null;
-  }
+  return true;
 }
 
-async function aralikCal(start, end, label, highlightEls = []) {
+async function aralikCal(start, end, label, highlightEls = [], rangeIds = []) {
   const duration = end - start;
   if (duration <= 0) return;
 
   try {
-    herSeyiSifirla();
-    await sesiHazirla();
-
-    if (audioContext.state === "suspended") await audioContext.resume();
+    durdurAktifSes();
 
     highlightEls.forEach(item => {
       if (item?.el && item?.className) item.el.classList.add(item.className);
     });
 
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
+    playbackRangeIds = [...rangeIds];
+    activePlaybackHeceId = null;
+    correctHeceIds.clear();
+    document.querySelectorAll(".hece.tune-correct").forEach(el => el.classList.remove("tune-correct"));
+    document.querySelectorAll(".hece.tune-wrong").forEach(el => el.classList.remove("tune-wrong"));
 
-    const gainNode = audioContext.createGain();
-    source.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    if (rangeIds.length === 1) {
+      setActivePlaybackHece(rangeIds[0]);
+    } else if (rangeIds.length > 1) {
+      const firstActive = getActiveHeceIdAtTime(start);
+      if (firstActive !== null) setActivePlaybackHece(firstActive);
+    }
 
-    currentSource = source;
-    currentGain = gainNode;
+    audio.currentTime = start;
+    await audio.play();
 
-    const now = audioContext.currentTime;
-    const fadeIn = 0.005;
-    const fadeOut = 0.012;
+    activeTimeUpdateHandler = () => {
+      const current = audio.currentTime;
 
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(1, now + fadeIn);
+      if (playbackRangeIds.length > 1) {
+        const currentHeceId = getActiveHeceIdAtTime(current);
+        if (currentHeceId !== null && currentHeceId !== activePlaybackHeceId) {
+          setActivePlaybackHece(currentHeceId);
+        }
+      }
 
-    const safeFadeOutStart = Math.max(now + fadeIn, now + duration - fadeOut);
-    gainNode.gain.setValueAtTime(1, safeFadeOutStart);
-    gainNode.gain.linearRampToValueAtTime(0, now + duration);
+      if (audio.currentTime >= end) {
+        durdurAktifSes();
+        try { audio.currentTime = 0; } catch (e) {}
+        statusEl.textContent = "Durduruldu. Baştan bekliyor.";
+      }
+    };
 
-    source.start(0, start, duration);
+    audio.addEventListener("timeupdate", activeTimeUpdateHandler);
 
     stopTimeout = setTimeout(() => {
-      herSeyiSifirla();
-    }, duration * 1000 + 20);
-
-    source.onended = () => {
-      if (currentSource === source) herSeyiSifirla();
-    };
+      durdurAktifSes();
+      try { audio.currentTime = 0; } catch (e) {}
+      statusEl.textContent = "Durduruldu. Baştan bekliyor.";
+    }, duration * 1000 + 80);
 
     statusEl.textContent = `${label} çalınıyor (${start.toFixed(2)} - ${end.toFixed(2)})`;
   } catch (err) {
     console.error(err);
-    statusEl.textContent = "Ses hazırlanırken bir hata oluştu.";
+    statusEl.textContent = "Ses çalınamadı.";
   }
 }
 
@@ -858,12 +938,13 @@ async function heceCal(span, currentId) {
   const aralik = guvenliAralikHesapla(currentId);
   if (!aralik) return;
 
-  setCurrentTarget([currentId], heceNotes[currentId] || []);
+  correctHeceIds.clear();
+  setActivePlaybackHece(currentId);
 
   await aralikCal(aralik[0], aralik[1], `Hece: ${span.textContent}`, [
     { el: span, className: "active" },
     { el: span, className: "target-hece" }
-  ]);
+  ], [currentId]);
 }
 
 async function seciliAralikCal(firstId, lastId) {
@@ -873,9 +954,6 @@ async function seciliAralikCal(firstId, lastId) {
   const minId = Math.min(firstId, lastId);
   const maxId = Math.max(firstId, lastId);
   const ids = collectIdsForRange(minId, maxId);
-  const notes = collectNotesForRange(minId, maxId);
-
-  setCurrentTarget(ids, notes);
 
   const highlightEls = [];
   ids.forEach(id => {
@@ -883,7 +961,7 @@ async function seciliAralikCal(firstId, lastId) {
     if (el) highlightEls.push({ el, className: "selected" });
   });
 
-  await aralikCal(aralik[0], aralik[1], "Seçili bölüm", highlightEls);
+  await aralikCal(aralik[0], aralik[1], "Seçili bölüm", highlightEls, ids);
 }
 
 async function satirCal(satirDiv, firstId, lastId) {
@@ -891,13 +969,10 @@ async function satirCal(satirDiv, firstId, lastId) {
   if (!aralik) return;
 
   const ids = collectIdsForRange(firstId, lastId);
-  const notes = collectNotesForRange(firstId, lastId);
-
-  setCurrentTarget(ids, notes);
 
   await aralikCal(aralik[0], aralik[1], "Satır", [
     { el: satirDiv, className: "active-satir" }
-  ]);
+  ], ids);
 }
 
 function basiliSecimBaslat(startId) {
@@ -944,14 +1019,9 @@ function centsAgainstTarget(freq, targetName) {
   return (midi - nearestMidi) * 100;
 }
 
-function applyCorrectStateIfNeeded() {
-  if (!currentSelectionIds.length) return;
-  setSelectionSuccess(currentSelectionIds);
-  selectionLockedCorrect = true;
-}
-
 function hedeftenSapmaUygula(freq) {
   if (!tunerRunning || !currentTargetNotes.length) return;
+  if (activePlaybackHeceId === null && currentSelectionIds.length !== 1) return;
 
   let bestCents = null;
   let bestTarget = null;
@@ -966,18 +1036,29 @@ function hedeftenSapmaUygula(freq) {
   }
 
   detectedPitchClass = normalizePc(Math.round(freqToMidi(freq)));
-  updateCompassVisual();
 
-  if (bestCents === null) return;
+  if (bestCents === null) {
+    updateCompassVisual();
+    return;
+  }
 
+  const activeId = currentSelectionIds[0];
   const centsText = bestCents >= 0 ? `+${bestCents.toFixed(1)}` : bestCents.toFixed(1);
-  tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTarget} | Sapma: ${centsText} cent`;
 
   if (Math.abs(bestCents) <= 15) {
-    applyCorrectStateIfNeeded();
-  } else if (!selectionLockedCorrect) {
-    setSelectionWrong(currentSelectionIds);
+    latchedPitchClass = detectedPitchClass;
+    if (activeId !== undefined) setHeceCorrect(activeId);
+    tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTarget} | Doğru`;
+  } else {
+    if (activeId !== undefined && !correctHeceIds.has(activeId)) {
+      setHeceWrong(activeId);
+      tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTarget} | Sapma: ${centsText} cent`;
+    } else {
+      tunerInfo.textContent = `Son doğru: ${pitchClassToDisplay(latchedPitchClass ?? detectedPitchClass)} | Hedef: ${bestTarget}`;
+    }
   }
+
+  updateCompassVisual();
 }
 
 function autoCorrelate(buffer, sampleRate) {
@@ -1059,17 +1140,14 @@ function tunerLoop() {
   } else {
     detectedPitchClass = null;
     updateCompassVisual();
+
     if (currentTargetNotes.length) {
       tunerInfo.textContent = `Hedef: ${currentTargetNotes.join(" / ")} | Ses bekleniyor...`;
     } else {
       tunerInfo.textContent = tunerRunning ? "Tuner açık. Hedef hece/kelime seç." : "Tuner kapalı.";
     }
-    if (!selectionLockedCorrect) {
-      currentSelectionIds.forEach(id => {
-        const el = document.querySelector(`.hece[data-id="${id}"]`);
-        if (el) el.classList.remove("tune-wrong");
-      });
-    }
+
+    clearWrongMarksExceptCorrect();
   }
 
   tunerAnimation = requestAnimationFrame(tunerLoop);
@@ -1126,6 +1204,7 @@ function tunerKapat() {
   }
 
   detectedPitchClass = null;
+  latchedPitchClass = null;
   tunerBtn.textContent = "TUNER AÇ";
   tunerSwitch.checked = false;
   tunerInfo.textContent = "Tuner kapalı.";
@@ -1274,16 +1353,8 @@ tunerSwitch.addEventListener("change", async () => {
   }
 });
 
-audio.addEventListener("play", async () => {
-  try {
-    await sesiHazirla();
-  } catch (e) {
-    console.error(e);
-    statusEl.textContent = "Ses hazırlanırken bir hata oluştu.";
-  }
-});
-
 audio.addEventListener("pause", () => {
+  if (!stopTimeout && !activeTimeUpdateHandler) return;
   durdurAktifSes();
 });
 </script>
