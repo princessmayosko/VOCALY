@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ölçme / Karaoke Modu - Vocaly</title>
+<style>
+:root{
+  --text:#111827;
+  --blue:#2563eb;
+  --blue-soft:rgba(37,99,235,0.14);
+  --green:#16a34a;
+  --green-soft:rgba(22,163,74,0.12);
+  --red:#dc2626;
+  --amber:#f59e0b;
+  --shadow:0 10px 28px rgba(0,0,0,0.08);
+  --panel:rgba(255,255,255,0.86);
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);
+  color:var(--text);
+  text-align:center;
+  padding:18px 18px 32px;
+}
+
+h1{
+  font-size:32px;
+  margin:10px 0 14px;
+  letter-spacing:.4px;
+}
+
+/* TOP BAR */
+#topBar{
+  max-width:980px;
+  margin:0 auto 12px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.top-btn{
+  border:none;
+  background:#475569;
+  color:#fff;
+  padding:10px 15px;
+  border-radius:14px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:700;
+  box-shadow:var(--shadow);
+  transition:transform .15s ease, background .15s ease;
+}
+
+.top-btn:hover{
+  transform:translateY(-1px);
+  background:#334155;
+}
+
+/* GLOBAL TUNER */
+#globalTop{
+  max-width:980px;
+  margin:0 auto 14px;
+}
+
+#tunerCard{
+  position:relative;
+  background:var(--panel);
+  border:1px solid rgba(229,231,235,0.95);
+  box-shadow:var(--shadow);
+  border-radius:20px;
+  padding:12px 14px 12px;
+  backdrop-filter:blur(6px);
+}
+
+#tunerTopBar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+
+#targetMini{
+  min-height:22px;
+  font-size:16px;
+  font-weight:700;
+  color:#1f2937;
+  letter-spacing:0.1px;
+  text-align:left;
+}
+
+#targetMini .dot{
+  opacity:0.45;
+  margin:0 6px;
+}
+
+#miniPlayerArea{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:0 0 auto;
+}
+
+#miniAudio{
+  width:190px;
+  height:32px;
+}
+
+#tunerBtn{
+  border:none;
+  background:#059669;
+  color:white;
+  padding:8px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:700;
+  box-shadow:0 6px 16px rgba(0,0,0,0.12);
+  transition:transform 0.15s ease, background 0.15s ease;
+}
+
+#tunerBtn:hover{
+  background:#047857;
+  transform:translateY(-1px);
+}
+
+#tunerSwitchRow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:700;
+  color:#374151;
+  flex:0 0 auto;
+}
+
+.switch{
+  position:relative;
+  width:50px;
+  height:28px;
+  display:inline-block;
+}
+
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#cbd5e1;
+  border-radius:999px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  left:3px;
+  top:3px;
+  border-radius:50%;
+  background:white;
+  transition:0.2s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.15);
+}
+
+.switch input:checked + .slider{
+  background:#10b981;
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(22px);
+}
+
+#tunerRulerWrap{
+  position:relative;
+  padding:2px 2px 0;
+}
+
+#tunerScaleTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:11px;
+  color:#6b7280;
+  margin-bottom:4px;
+  padding:0 2px;
+}
+
+#tunerScaleTop .mid{
+  color:#374151;
+  font-weight:700;
+}
+
+#tunerRuler{
+  position:relative;
+  height:44px;
+  border-radius:14px;
+  background:linear-gradient(180deg,rgba(248,250,252,1) 0%, rgba(241,245,249,1) 100%);
+  overflow:hidden;
+}
+
+#targetZone{
+  position: absolute;
+  left:50%;
+  top:8px;
+  width:58px;
+  height:28px;
+  transform:translateX(-50%);
+  border-radius:10px;
+  background:var(--green-soft);
+  border:1px solid rgba(22,163,74,0.22);
+  z-index:1;
+}
+
+#centerMark{
+  position:absolute;
+  left:50%;
+  top:6px;
+  transform:translateX(-50%);
+  width:2px;
+  height:32px;
+  background:var(--green);
+  border-radius:999px;
+  z-index:2;
+}
+
+#plusText{
+  position:absolute;
+  left:50%;
+  top:10px;
+  transform:translateX(-50%);
+  font-size:13px;
+  font-weight:700;
+  color:#166534;
+  z-index:3;
+}
+
+#tickLayer{
+  position:absolute;
+  inset:0;
+  z-index:1;
+}
+
+.tuner-tick{
+  position:absolute;
+  bottom:8px;
+  width:2px;
+  background:#9ca3af;
+  border-radius:999px;
+  transform:translateX(-50%);
+  opacity:0.75;
+}
+
+.tuner-tick.major{ height:18px; }
+.tuner-tick.minor{ height:10px; }
+
+#pitchDot{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#94a3b8;
+  transform:translate(-50%, -50%);
+  z-index:4;
+  box-shadow:none;
+  transition:left 0.10s linear, background 0.10s linear, box-shadow 0.10s linear;
+}
+
+#pitchDot.correct{
+  background:var(--green);
+  box-shadow:0 0 0 6px rgba(22,163,74,0.16), 0 0 12px rgba(22,163,74,0.35);
+}
+
+#pitchDot.wrong{
+  background:var(--red);
+}
+
+#pitchDot.waiting{
+  background:#94a3b8;
+}
+
+#tunerInfo{
+  min-height:18px;
+  margin-top:6px;
+  font-size:12px;
+  color:#4b5563;
+  line-height:1.3;
+}
+
+#tunerFlash{
+  position:absolute;
+  right:14px;
+  bottom:10px;
+  font-size:13px;
+  font-weight:700;
+  color:var(--green);
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity 0.18s ease, transform 0.18s ease;
+  pointer-events:none;
+}
+
+#tunerFlash.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* AUDIO */
+#audioWrap{
+  background:rgba(255,255,255,0.86);
+  border:1px solid rgba(229,231,235,0.9);
+  box-shadow:var(--shadow);
+  border-radius:22px;
+  padding:14px 16px 12px;
+  margin:0 auto 16px;
+  max-width:960px;
+}
+
+.controls{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.ctrl-btn{
+  border:none;
+  color:white;
+  padding:10px 15px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:bold;
+  transition:transform .15s ease, background .15s ease;
+  box-shadow:0 6px 16px rgba(0,0,0,0.12);
+}
+
+#playAllBtn{ background:#2563eb; }
+#playAllBtn:hover{ background:#1d4ed8; transform:translateY(-1px); }
+
+#stopBtn{ background:#dc2626; }
+#stopBtn:hover{ background:#b91c1c; transform:translateY(-1px); }
+
+#status{
+  margin-top:10px;
+  font-size:13px;
+  color:#4b5563;
+}
+
+.tip{
+  margin-top:6px;
+  font-size:12px;
+  color:#6b7280;
+}
+
+/* LYRICS */
+#lyrics{
+  font-size:28px;
+  line-height:2.0;
+  text-align:left;
+  display:inline-block;
+  width:min(100%, 1040px);
+  max-width:1040px;
+  background:rgba(255,255,255,0.86);
+  border:1px solid rgba(229,231,235,0.9);
+  box-shadow:var(--shadow);
+  border-radius:24px;
+  padding:20px 18px;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+.kita{ margin-bottom:22px; }
+.kita:last-child{ margin-bottom:0; }
+
+.satir{
+  display:block;
+  margin-bottom:8px;
+  padding:3px 0;
+}
+
+.hece{
+  display:inline-block;
+  border-radius:10px;
+  padding:0 2px;
+  transition:transform .15s ease, color .15s ease, background .15s ease, outline .15s ease;
+  transform-origin:center bottom;
+}
+
+.hece.active{
+  color:var(--blue);
+  transform:scale(1.14);
+  background:var(--blue-soft);
+}
+
+.hece.target-hece{
+  outline:2px solid var(--amber);
+  outline-offset:1px;
+}
+
+.hece.tune-correct{
+  color:var(--green) !important;
+  font-weight:bold;
+  transform:scale(1.18) !important;
+}
+
+.hece.tune-wrong{
+  color:var(--red) !important;
+}
+
+@media (max-width:768px){
+  body{ padding:16px 10px 28px; }
+
+  h1{
+    font-size:26px;
+    margin-top:6px;
+  }
+
+  #tunerTopBar{
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+  }
+
+  #miniPlayerArea{
+    justify-content:space-between;
+    width:100%;
+  }
+
+  #targetMini{
+    text-align:center;
+    font-size:15px;
+  }
+
+  #miniAudio{
+    width:150px;
+    height:30px;
+  }
+
+  #lyrics{
+    width:100%;
+    max-width:100%;
+    display:block;
+    font-size:21px;
+    line-height:1.95;
+    padding:16px 12px;
+    overflow-x:auto;
+  }
+
+  .satir{
+    min-width:max-content;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="topBar">
+  <button class="top-btn" onclick="goBackPage()">Geri Dön</button>
+</div>
+
+<div id="globalTop">
+  <div id="tunerCard">
+    <div id="tunerTopBar">
+      <div id="targetMini">Hedef seçilmedi</div>
+
+      <div id="miniPlayerArea">
+        <audio id="song" controls preload="auto" src="temiz_kayit.mp3">
+          Tarayıcınız audio etiketini desteklemiyor.
+        </audio>
+
+        <button id="tunerBtn">TUNER AÇ</button>
+
+        <div id="tunerSwitchRow">
+          <span>Tuner</span>
+          <label class="switch">
+            <input type="checkbox" id="tunerSwitch">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div id="tunerRulerWrap">
+      <div id="tunerScaleTop">
+        <span>PES</span>
+        <span class="mid">+</span>
+        <span>TİZ</span>
+      </div>
+
+      <div id="tunerRuler">
+        <div id="targetZone"></div>
+        <div id="centerMark"></div>
+        <div id="plusText">+</div>
+        <div id="tickLayer"></div>
+        <div id="pitchDot" class="waiting"></div>
+      </div>
+    </div>
+
+    <div id="tunerInfo">Tuner kapalı.</div>
+    <div id="tunerFlash">✓ DOĞRU</div>
+  </div>
+</div>
+
+<h1>Ölçme / Karaoke Modu</h1>
+
+<div id="audioWrap">
+  <div class="controls">
+    <button class="ctrl-btn" id="playAllBtn">KARAOKE BAŞLAT</button>
+    <button class="ctrl-btn" id="stopBtn">STOP</button>
+  </div>
+
+  <div id="status">Karaoke başlatıldığında heceler sırayla ilerler.</div>
+  <div class="tip">Aktif hece sarı çerçeveli görünür. Doğru perde yakalanırsa yeşil, yanlışsa kırmızı olur.</div>
+</div>
+
+<div id="lyrics"></div>
+
+<script>
+const lyricsData = [
+  [
+    [["Kork","ma,"], ["sön","mez"], ["bu"], ["şa","fak","lar","da"], ["yü","zen"], ["al"], ["san","cak;"]],
+    [["Sön","me","den"], ["yur","du","mun"], ["üs","tün","de"], ["tü","ten"], ["en"], ["son"], ["o","cak."]],
+    [["O"], ["be","nim"], ["mil","le","ti","min"], ["yıl","dı","zı","dır,"], ["par","la","ya","cak;"]],
+    [["O"], ["be","nim","dir,"], ["o"], ["be","nim"], ["mil","le","ti","min","dir"], ["an","cak."]]
+  ],
+  [
+    [["Çat","ma,"], ["kur","ban"], ["o","la","yım"], ["çeh","re","ni"], ["ey"], ["naz","lı"], ["hi","lâl!"]],
+    [["Kah","ra","man"], ["ır","kı","ma"], ["bir"], ["gül…"], ["ne"], ["bu"], ["şid","det"], ["bu"], ["ce","lâl?"]],
+    [["Sa","na"], ["ol","maz"], ["dö","kü","len"], ["kan","la","rı","mız"], ["son","ra"], ["he","lâl,"]],
+    [["Hak","kı","dır,"], ["Hakk’a"], ["ta","pan,"], ["mil","le","ti","min"], ["is","tik","lâl."]]
+  ]
+];
+
+const heceTimings = {
+  0:[0.28,1.3], 1:[1.11,1.62], 2:[1.70,2.58], 3:[2.58,3.18], 4:[3.12,3.5],
+  5:[3.6,3.8], 6:[3.9,5.60], 7:[5.80,6.40], 8:[6.50,6.88], 9:[7.10,7.7],
+  10:[7.75,8.50], 11:[8.47,8.85], 12:[8.85,9.20], 13:[9.21,10.70],
+  14:[10.85,11.35], 15:[11.36,11.50], 16:[11.50,11.85], 17:[11.80,12.30],
+  18:[12.35,13.58], 19:[13.55,13.80], 20:[13.85,14.20], 21:[14.20,14.50],
+  22:[14.45,14.77], 23:[14.92,15.25], 24:[15.20,15.60], 25:[15.56,15.83],
+  26:[15.84,16.25], 27:[16.15,16.45], 28:[16.45,16.92], 29:[22.41,22.77],
+  30:[22.77,23.13], 31:[23.13,23.52], 32:[23.52,23.92], 33:[23.92,24.31],
+  34:[24.31,24.71], 35:[24.71,25.15], 36:[25.15,25.55], 37:[25.55,25.95],
+  38:[28.64,29.03], 39:[29.03,29.43], 40:[29.43,29.82], 41:[29.82,30.99],
+  42:[30.99,32.16], 43:[32.16,33.03], 44:[33.03,33.9], 45:[33.9,34.53],
+  46:[34.53,35.16], 47:[35.16,35.93], 48:[35.93,36.71], 49:[36.71,37.48],
+  50:[37.48,38.25], 51:[38.25,39.03], 52:[39.03,39.8], 53:[46.23,46.48],
+  54:[46.48,46.74], 55:[46.74,46.99], 56:[46.99,47.23], 57:[50.08,50.36],
+  58:[50.36,50.65], 59:[50.65,50.93], 60:[50.93,51.22], 61:[53.84,54.16],
+  62:[54.16,54.47], 63:[54.47,54.78], 64:[54.78,55.1], 65:[55.1,55.64],
+  66:[55.64,56.18], 67:[56.18,56.42], 68:[56.42,56.66], 69:[56.66,56.99],
+  70:[56.99,57.31], 71:[57.31,57.64], 72:[59.85,60.19], 73:[60.19,60.52],
+  74:[60.52,60.86], 75:[60.86,61.19], 76:[61.19,61.94], 77:[61.94,62.7],
+  78:[62.7,63.45], 79:[66.07,66.29], 80:[66.29,66.51], 81:[66.51,66.73],
+  82:[66.73,66.86], 83:[66.86,67.0], 84:[67.0,67.13], 85:[67.13,67.3],
+  86:[67.3,67.47], 87:[67.47,67.64], 88:[67.64,67.81], 89:[67.81,68.03],
+  90:[68.03,68.25], 91:[68.25,68.4], 92:[68.4,68.54], 93:[68.54,68.69]
+};
+
+const heceNotes = {
+  0:["si"], 1:["mi"], 2:["fa"], 3:["sol"], 4:["re#"],
+  5:["fa"], 6:["mi"], 7:["mi"], 8:["la"], 9:["si"],
+  10:["do","si"], 11:["sol#"], 12:["si"], 13:["la"],
+  14:["si"], 15:["la#"], 16:["si"], 17:["fa"], 18:["fa"],
+  19:["la"], 20:["sol#"], 21:["re"], 22:["mi"], 23:["fa"],
+  24:["sol"], 25:["la"], 26:["si"], 27:["do"], 28:["re"]
+};
+
+const NOTE_ALIASES = {
+  "do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,
+  "fa#":6,"solb":6,"sol":7,"sol#":8,"lab":8,"la":9,"la#":10,"sib":10,"si":11
+};
+
+const NOTE_TR = {
+  0:"Do",1:"Do#/Reb",2:"Re",3:"Re#/Mib",4:"Mi",5:"Fa",
+  6:"Fa#/Solb",7:"Sol",8:"Sol#/Lab",9:"La",10:"La#/Sib",11:"Si"
+};
+
+const container = document.getElementById("lyrics");
+const audio = document.getElementById("song");
+const playAllBtn = document.getElementById("playAllBtn");
+const stopBtn = document.getElementById("stopBtn");
+const tunerBtn = document.getElementById("tunerBtn");
+const tunerSwitch = document.getElementById("tunerSwitch");
+const statusEl = document.getElementById("status");
+const tunerInfo = document.getElementById("tunerInfo");
+const targetMiniEl = document.getElementById("targetMini");
+const pitchDotEl = document.getElementById("pitchDot");
+const tunerFlashEl = document.getElementById("tunerFlash");
+const tickLayer = document.getElementById("tickLayer");
+
+let heceCounter = 0;
+let allHeceIds = [];
+let currentTargetNotes = [];
+let currentSelectionIds = [];
+let detectedPitchClass = null;
+let latchedPitchClass = null;
+let lastBestCents = null;
+let correctHeceIds = new Set();
+
+let micStream = null;
+let micContext = null;
+let analyser = null;
+let micSource = null;
+let tunerRunning = false;
+let tunerAnimation = null;
+
+let karaokeRunning = false;
+let karaokeStopTimeout = null;
+let currentActiveHeceId = null;
+
+function normalizePc(pc){ return ((pc % 12) + 12) % 12; }
+function noteNameToPitchClass(name){ return NOTE_ALIASES[String(name).toLowerCase().trim()]; }
+function pitchClassToDisplay(pc){ return NOTE_TR[normalizePc(pc)]; }
+
+function createTicks(){
+  tickLayer.innerHTML = "";
+  const tickPercents = [10,20,30,40,50,60,70,80,90];
+  tickPercents.forEach((left, idx) => {
+    const tick = document.createElement("div");
+    tick.className = "tuner-tick " + (idx % 2 === 0 ? "major" : "minor");
+    tick.style.left = left + "%";
+    tickLayer.appendChild(tick);
+  });
+}
+
+function setTargetMini(text){
+  targetMiniEl.innerHTML = text || "Hedef seçilmedi";
+}
+
+function showTunerFlash(){
+  tunerFlashEl.classList.add("show");
+  clearTimeout(showTunerFlash._t);
+  showTunerFlash._t = setTimeout(() => tunerFlashEl.classList.remove("show"), 650);
+}
+
+function setPitchDotState(mode){
+  pitchDotEl.classList.remove("correct","wrong","waiting");
+  pitchDotEl.classList.add(mode);
+}
+
+function updatePitchDotByCents(cents){
+  if (cents === null || Number.isNaN(cents)) {
+    pitchDotEl.style.left = "50%";
+    setPitchDotState("waiting");
+    return;
+  }
+
+  const clamped = Math.max(-50, Math.min(50, cents));
+  const percent = 50 + (clamped / 50) * 40;
+  pitchDotEl.style.left = `${percent}%`;
+
+  if (Math.abs(cents) <= 10) setPitchDotState("correct");
+  else setPitchDotState("wrong");
+}
+
+function goBackPage(){
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = "./index.html";
+  }
+}
+
+function clearAllHeceStates(){
+  document.querySelectorAll(".hece").forEach(el => {
+    el.classList.remove("active","target-hece","tune-correct","tune-wrong");
+  });
+}
+
+function clearCurrentTargetState(){
+  currentTargetNotes = [];
+  currentSelectionIds = [];
+  detectedPitchClass = null;
+  latchedPitchClass = null;
+  lastBestCents = null;
+  currentActiveHeceId = null;
+  correctHeceIds.clear();
+  clearAllHeceStates();
+  setTargetMini("Hedef seçilmedi");
+  updatePitchDotByCents(null);
+}
+
+function setHeceCorrect(id) {
+  const el = document.querySelector(`.hece[data-id="${id}"]`);
+  if (!el) return;
+  el.classList.remove("tune-wrong");
+  el.classList.add("tune-correct");
+  correctHeceIds.add(id);
+}
+
+function setHeceWrong(id) {
+  if (correctHeceIds.has(id)) return;
+  const el = document.querySelector(`.hece[data-id="${id}"]`);
+  if (!el) return;
+  el.classList.remove("tune-correct");
+  el.classList.add("tune-wrong");
+}
+
+function markOnlyActiveHece(id){
+  document.querySelectorAll(".hece.active").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".hece.target-hece").forEach(el => el.classList.remove("target-hece"));
+
+  const el = document.querySelector(`.hece[data-id="${id}"]`);
+  if (!el) return;
+
+  el.classList.add("active","target-hece");
+
+  const rect = el.getBoundingClientRect();
+  if (rect.top < 80 || rect.bottom > window.innerHeight - 40) {
+    el.scrollIntoView({ behavior:"smooth", block:"center", inline:"nearest" });
+  }
+}
+
+function setActiveKaraokeHece(id){
+  currentActiveHeceId = id;
+  currentSelectionIds = [id];
+  currentTargetNotes = heceNotes[id] || [];
+  detectedPitchClass = null;
+  lastBestCents = null;
+  markOnlyActiveHece(id);
+  updatePitchDotByCents(null);
+
+  const heceEl = document.querySelector(`.hece[data-id="${id}"]`);
+  const heceText = heceEl ? heceEl.textContent.trim() : "Hece";
+  const hedefText = currentTargetNotes.length
+    ? currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")
+    : "-";
+
+  setTargetMini(`${heceText}<span class="dot">•</span>${hedefText}`);
+
+  if (tunerRunning) {
+    tunerInfo.textContent = `Hedef: ${hedefText} | Ses bekleniyor...`;
+  }
+}
+
+function getActiveHeceIdAtTime(currentTime) {
+  for (const id of allHeceIds) {
+    const timing = heceTimings[id];
+    if (!timing) continue;
+    const start = Number(timing[0]);
+    const end = Number(timing[1]);
+    if (currentTime >= start && currentTime < end) return id;
+  }
+
+  for (let i = allHeceIds.length - 1; i >= 0; i--) {
+    const id = allHeceIds[i];
+    const timing = heceTimings[id];
+    if (!timing) continue;
+    if (currentTime >= Number(timing[0])) return id;
+  }
+
+  return null;
+}
+
+function durdurAktifSes() {
+  if (karaokeStopTimeout) {
+    clearTimeout(karaokeStopTimeout);
+    karaokeStopTimeout = null;
+  }
+  try { audio.pause(); } catch(e) {}
+  karaokeRunning = false;
+}
+
+function basaDonBeklet() {
+  try { audio.pause(); } catch(e) {}
+  try { audio.currentTime = 0; } catch(e) {}
+  statusEl.textContent = "Durduruldu. Baştan bekliyor.";
+}
+
+function freqToMidi(freq) {
+  return 69 + 12 * Math.log2(freq / 440);
+}
+
+function centsAgainstTarget(freq, targetName) {
+  const midi = freqToMidi(freq);
+  const pc = noteNameToPitchClass(targetName);
+  if (pc === undefined) return null;
+  const nearestMidi = pc + 12 * Math.round((midi - pc) / 12);
+  return (midi - nearestMidi) * 100;
+}
+
+function hedeftenSapmaUygula(freq) {
+  if (!tunerRunning || !currentTargetNotes.length) return;
+  if (currentSelectionIds.length !== 1) return;
+
+  let bestCents = null;
+  let bestTarget = null;
+
+  for (const target of currentTargetNotes) {
+    const cents = centsAgainstTarget(freq, target);
+    if (cents === null) continue;
+    if (bestCents === null || Math.abs(cents) < Math.abs(bestCents)) {
+      bestCents = cents;
+      bestTarget = target;
+    }
+  }
+
+  detectedPitchClass = normalizePc(Math.round(freqToMidi(freq)));
+
+  if (bestCents === null) {
+    updatePitchDotByCents(null);
+    return;
+  }
+
+  lastBestCents = bestCents;
+  updatePitchDotByCents(bestCents);
+
+  const activeId = currentSelectionIds[0];
+  const centsText = bestCents >= 0 ? `+${bestCents.toFixed(1)}` : bestCents.toFixed(1);
+  const bestTargetDisplay = pitchClassToDisplay(noteNameToPitchClass(bestTarget));
+
+  if (Math.abs(bestCents) <= 10) {
+    latchedPitchClass = detectedPitchClass;
+    setHeceCorrect(activeId);
+    tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTargetDisplay} | Doğru`;
+    showTunerFlash();
+  } else {
+    if (!correctHeceIds.has(activeId)) {
+      setHeceWrong(activeId);
+      tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTargetDisplay} | Sapma: ${centsText} cent`;
+    } else {
+      tunerInfo.textContent = `Son doğru: ${pitchClassToDisplay(latchedPitchClass ?? detectedPitchClass)} | Hedef: ${bestTargetDisplay}`;
+    }
+  }
+}
+
+function autoCorrelate(buffer, sampleRate) {
+  let SIZE = buffer.length;
+  let rms = 0;
+
+  for (let i = 0; i < SIZE; i++) {
+    const val = buffer[i];
+    rms += val * val;
+  }
+
+  rms = Math.sqrt(rms / SIZE);
+  if (rms < 0.01) return -1;
+
+  let r1 = 0;
+  let r2 = SIZE - 1;
+  const threshold = 0.2;
+
+  for (let i = 0; i < SIZE / 2; i++) {
+    if (Math.abs(buffer[i]) < threshold) {
+      r1 = i;
+      break;
+    }
+  }
+
+  for (let i = 1; i < SIZE / 2; i++) {
+    if (Math.abs(buffer[SIZE - i]) < threshold) {
+      r2 = SIZE - i;
+      break;
+    }
+  }
+
+  buffer = buffer.slice(r1, r2);
+  SIZE = buffer.length;
+
+  const c = new Array(SIZE).fill(0);
+  for (let i = 0; i < SIZE; i++) {
+    for (let j = 0; j < SIZE - i; j++) {
+      c[i] += buffer[j] * buffer[j + i];
+    }
+  }
+
+  let d = 0;
+  while (d + 1 < c.length && c[d] > c[d + 1]) d++;
+
+  let maxval = -1;
+  let maxpos = -1;
+  for (let i = d; i < SIZE; i++) {
+    if (c[i] > maxval) {
+      maxval = c[i];
+      maxpos = i;
+    }
+  }
+
+  if (maxpos <= 0) return -1;
+
+  let T0 = maxpos;
+  const x1 = c[T0 - 1] || 0;
+  const x2 = c[T0] || 0;
+  const x3 = c[T0 + 1] || 0;
+
+  const a = (x1 + x3 - 2 * x2) / 2;
+  const b = (x3 - x1) / 2;
+  if (a) T0 = T0 - b / (2 * a);
+
+  return sampleRate / T0;
+}
+
+function tunerLoop() {
+  if (!tunerRunning || !analyser) return;
+
+  const buffer = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buffer);
+
+  const freq = autoCorrelate(buffer, micContext.sampleRate);
+
+  if (freq !== -1 && freq > 50 && freq < 1200) {
+    hedeftenSapmaUygula(freq);
+  } else {
+    detectedPitchClass = null;
+    updatePitchDotByCents(null);
+
+    if (currentTargetNotes.length) {
+      const hedefText = currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ");
+      tunerInfo.textContent = `Hedef: ${hedefText} | Ses bekleniyor...`;
+    } else {
+      tunerInfo.textContent = tunerRunning ? "Tuner açık. Karaoke başlat." : "Tuner kapalı.";
+    }
+  }
+
+  tunerAnimation = requestAnimationFrame(tunerLoop);
+}
+
+async function tunerAc() {
+  if (tunerRunning) return;
+
+  micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  micContext = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = micContext.createAnalyser();
+  analyser.fftSize = 2048;
+
+  micSource = micContext.createMediaStreamSource(micStream);
+  micSource.connect(analyser);
+
+  tunerRunning = true;
+  tunerBtn.textContent = "TUNER KAPAT";
+  tunerSwitch.checked = true;
+
+  if (currentTargetNotes.length) {
+    const hedefText = currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ");
+    tunerInfo.textContent = `Hedef: ${hedefText} | Ses bekleniyor...`;
+  } else {
+    tunerInfo.textContent = "Tuner açık. Karaoke başlat.";
+  }
+
+  tunerLoop();
+}
+
+function tunerKapat() {
+  tunerRunning = false;
+
+  if (tunerAnimation) {
+    cancelAnimationFrame(tunerAnimation);
+    tunerAnimation = null;
+  }
+
+  if (micSource) {
+    try { micSource.disconnect(); } catch(e) {}
+    micSource = null;
+  }
+
+  if (analyser) {
+    try { analyser.disconnect(); } catch(e) {}
+    analyser = null;
+  }
+
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+  }
+
+  if (micContext) {
+    try { micContext.close(); } catch(e) {}
+    micContext = null;
+  }
+
+  detectedPitchClass = null;
+  latchedPitchClass = null;
+  lastBestCents = null;
+  tunerBtn.textContent = "TUNER AÇ";
+  tunerSwitch.checked = false;
+  tunerInfo.textContent = "Tuner kapalı.";
+  updatePitchDotByCents(null);
+}
+
+async function karaokeBaslat(){
+  try{
+    durdurAktifSes();
+    clearCurrentTargetState();
+
+    const start = Number(heceTimings[0][0]);
+    const lastId = Math.max(...Object.keys(heceTimings).map(Number));
+    const end = Number(heceTimings[lastId][1]);
+
+    if (Number.isNaN(start) || Number.isNaN(end) || end <= start) {
+      statusEl.textContent = "Timing aralığı geçersiz.";
+      return;
+    }
+
+    audio.pause();
+    audio.currentTime = 0;
+
+    const playNow = async () => {
+      try{
+        audio.currentTime = start;
+        await audio.play();
+        karaokeRunning = true;
+        statusEl.textContent = "Karaoke ölçme başladı.";
+
+        karaokeStopTimeout = setTimeout(() => {
+          karaokeDurdur();
+        }, ((end - start) * 1000) + 200);
+
+      } catch(err){
+        console.error("play hatası:", err);
+        statusEl.textContent = "Karaoke başlatılamadı. Audio play başarısız oldu.";
+      }
+    };
+
+    if (audio.readyState >= 1) {
+      await playNow();
+    } else {
+      audio.load();
+      audio.onloadedmetadata = async () => {
+        audio.onloadedmetadata = null;
+        await playNow();
+      };
+    }
+
+  } catch(err){
+    console.error("karaokeBaslat hatası:", err);
+    statusEl.textContent = "Karaoke başlatılamadı.";
+  }
+}
+
+function karaokeDurdur(){
+  durdurAktifSes();
+  basaDonBeklet();
+  clearCurrentTargetState();
+  tunerInfo.textContent = tunerRunning ? "Tuner açık. Karaoke başlat." : "Tuner kapalı.";
+}
+
+audio.addEventListener("timeupdate", () => {
+  if (!karaokeRunning) return;
+
+  const currentId = getActiveHeceIdAtTime(audio.currentTime);
+  if (currentId === null) return;
+
+  if (currentId !== currentActiveHeceId) {
+    setActiveKaraokeHece(currentId);
+  }
+});
+
+audio.addEventListener("ended", () => {
+  karaokeDurdur();
+});
+
+audio.addEventListener("error", () => {
+  statusEl.textContent = "MP3 yüklenemedi. temiz_kayit.mp3 aynı klasörde mi kontrol et.";
+});
+
+createTicks();
+updatePitchDotByCents(null);
+
+lyricsData.forEach((kitaData) => {
+  const kitaDiv = document.createElement("div");
+  kitaDiv.className = "kita";
+
+  kitaData.forEach((satirData) => {
+    const satirDiv = document.createElement("div");
+    satirDiv.className = "satir";
+
+    satirData.forEach((word, wordIndex) => {
+      word.forEach((hece) => {
+        const span = document.createElement("span");
+        span.className = "hece";
+        span.textContent = hece;
+        span.dataset.id = heceCounter;
+        satirDiv.appendChild(span);
+        allHeceIds.push(heceCounter);
+        heceCounter++;
+      });
+
+      if (wordIndex < satirData.length - 1) {
+        satirDiv.appendChild(document.createTextNode(" "));
+      }
+    });
+
+    kitaDiv.appendChild(satirDiv);
+  });
+
+  container.appendChild(kitaDiv);
+});
+
+playAllBtn.addEventListener("click", async () => {
+  await karaokeBaslat();
+});
+
+stopBtn.addEventListener("click", () => {
+  karaokeDurdur();
+});
+
+tunerBtn.addEventListener("click", async () => {
+  try {
+    if (tunerRunning) tunerKapat();
+    else await tunerAc();
+  } catch (err) {
+    console.error(err);
+    tunerInfo.textContent = "Mikrofon açılamadı.";
+    tunerSwitch.checked = false;
+  }
+});
+
+tunerSwitch.addEventListener("change", async () => {
+  try {
+    if (tunerSwitch.checked) await tunerAc();
+    else tunerKapat();
+  } catch (err) {
+    console.error(err);
+    tunerInfo.textContent = "Mikrofon açılamadı.";
+    tunerSwitch.checked = false;
+  }
+});
+</script>
+
+</body>
+</html>
