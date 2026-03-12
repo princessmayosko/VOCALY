@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>İSTİKLAL MARŞI - Vocaly</title>
 <style>
 :root{
@@ -16,17 +16,29 @@
   --shadow:0 10px 28px rgba(0,0,0,0.08);
   --panel:rgba(255,255,255,0.86);
   --line:#d1d5db;
+  --safe-top:env(safe-area-inset-top, 0px);
+  --safe-right:env(safe-area-inset-right, 0px);
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
+  --safe-left:env(safe-area-inset-left, 0px);
 }
 
 *{ box-sizing:border-box; }
 
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+
 body{
   font-family: Arial, sans-serif;
-  padding:18px 20px 40px;
+  padding:calc(18px + var(--safe-top)) calc(16px + var(--safe-right)) calc(36px + var(--safe-bottom)) calc(16px + var(--safe-left));
   background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);
   text-align:center;
   color:var(--text);
   margin:0;
+  min-height:100svh;
+  overflow-x:hidden;
+  overscroll-behavior-y:contain;
 }
 
 h1{
@@ -47,13 +59,14 @@ h3{
 
 #vocaly{
   position:fixed;
-  top:14px;
-  right:18px;
+  top:calc(12px + var(--safe-top));
+  right:calc(14px + var(--safe-right));
   font-size:20px;
   color:goldenrod;
   font-weight:bold;
   z-index:60;
   text-shadow:0 1px 0 rgba(255,255,255,0.8);
+  pointer-events:none;
 }
 
 /* TOP MENU */
@@ -68,7 +81,8 @@ h3{
   z-index:30;
 }
 
-.mode-btn{
+.mode-btn,
+.mode-link{
   border:none;
   background:white;
   color:#1f2937;
@@ -79,9 +93,17 @@ h3{
   font-weight:700;
   box-shadow:var(--shadow);
   transition:transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
 }
 
-.mode-btn:hover{
+.mode-btn:hover,
+.mode-link:hover{
   transform:translateY(-1px) scale(1.02);
 }
 
@@ -126,6 +148,8 @@ h3{
   color:#1f2937;
   letter-spacing:0.1px;
   text-align:left;
+  flex:1 1 auto;
+  min-width:0;
 }
 
 #targetMini .dot{
@@ -138,6 +162,8 @@ h3{
   align-items:center;
   gap:10px;
   flex:0 0 auto;
+  flex-wrap:wrap;
+  justify-content:flex-end;
 }
 
 #tunerMiniBtn{
@@ -151,6 +177,9 @@ h3{
   font-weight:700;
   box-shadow:0 6px 16px rgba(0,0,0,0.12);
   transition:transform 0.15s ease, background 0.15s ease;
+  min-height:38px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
 }
 
 #tunerMiniBtn:hover{
@@ -158,9 +187,10 @@ h3{
   transform:translateY(-1px);
 }
 
-#miniAudio{
+#song{
   width:190px;
   height:32px;
+  max-width:100%;
 }
 
 #tunerSwitchRow{
@@ -384,6 +414,9 @@ h3{
   transition:transform 0.15s ease, background 0.15s ease;
   box-shadow:0 6px 16px rgba(0,0,0,0.12);
   background:#dc2626;
+  min-height:40px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
 }
 
 #stopBtn:hover{
@@ -395,17 +428,20 @@ h3{
   font-size:24px;
   line-height:1.9;
   text-align:left;
-  display:inline-block;
+  display:block;
   width:min(100%, 980px);
   max-width:980px;
+  margin:0 auto;
   user-select:none;
   -webkit-user-select:none;
-  touch-action:pan-y;
+  -webkit-touch-callout:none;
+  touch-action:pan-y pinch-zoom;
   background:rgba(255,255,255,0.82);
   border:1px solid rgba(229,231,235,0.9);
   box-shadow:var(--shadow);
   border-radius:24px;
   padding:18px 18px;
+  overflow-x:hidden;
 }
 
 .kita{ margin-bottom:22px; }
@@ -424,6 +460,7 @@ h3{
 .satir-text{
   display:inline-block;
   flex:1;
+  min-width:0;
 }
 
 .satir-play{
@@ -440,6 +477,8 @@ h3{
   margin-top:4px;
   box-shadow:0 2px 8px rgba(0,0,0,0.08);
   transition:transform 0.15s ease, background 0.15s ease;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
 }
 
 .satir-play:hover{
@@ -454,6 +493,7 @@ h3{
   transform-origin:center bottom;
   border-radius:8px;
   padding:0 1px;
+  -webkit-tap-highlight-color:transparent;
 }
 
 .hece:hover{
@@ -538,6 +578,7 @@ h3{
   font-weight:700;
   min-width:170px;
   box-shadow:0 4px 12px rgba(0,0,0,0.05);
+  min-height:42px;
 }
 
 .warmup-controls{
@@ -559,6 +600,9 @@ h3{
   font-weight:bold;
   box-shadow:0 6px 16px rgba(0,0,0,0.12);
   transition:transform 0.15s ease, background 0.15s ease;
+  min-height:40px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
 }
 
 .warmup-btn:hover{
@@ -584,7 +628,8 @@ h3{
   line-height:2.0;
   user-select:none;
   -webkit-user-select:none;
-  touch-action:pan-y;
+  -webkit-touch-callout:none;
+  touch-action:pan-y pinch-zoom;
 }
 
 .warmup-item{
@@ -597,6 +642,7 @@ h3{
   border-radius:10px;
   transition:transform 0.15s ease, background 0.15s ease, color 0.15s ease, outline 0.15s ease;
   transform-origin:center bottom;
+  -webkit-tap-highlight-color:transparent;
 }
 
 .warmup-item:hover{
@@ -653,8 +699,24 @@ h3{
   color:#4b5563;
 }
 
+@media (max-width: 900px){
+  #tunerTopBar{
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+
+  #targetMini{
+    text-align:center;
+  }
+
+  #miniPlayerArea{
+    justify-content:center;
+  }
+}
+
 @media (max-width: 768px){
-  body{ padding:16px 10px 28px; }
+  body{ padding:calc(14px + var(--safe-top)) calc(10px + var(--safe-right)) calc(28px + var(--safe-bottom)) calc(10px + var(--safe-left)); }
 
   h1{
     font-size:26px;
@@ -665,45 +727,48 @@ h3{
   h3{ font-size:17px; }
 
   #vocaly{
-    top:10px;
-    right:12px;
+    top:calc(10px + var(--safe-top));
+    right:calc(12px + var(--safe-right));
     font-size:17px;
   }
 
-  #tunerTopBar{
+  #miniPlayerArea{
     flex-direction:column;
     align-items:stretch;
-    gap:8px;
+    width:100%;
   }
 
-  #miniPlayerArea{
+  #song{
+    width:100%;
+    height:40px;
+  }
+
+  #tunerMiniBtn{
+    width:100%;
+  }
+
+  #tunerSwitchRow{
     justify-content:space-between;
     width:100%;
   }
 
-  #targetMini{
-    text-align:center;
-    font-size:15px;
-  }
-
-  #miniAudio{
-    width:150px;
-    height:30px;
-  }
-
   #lyrics{
     font-size:19px;
-    line-height:1.85;
-    max-width:100%;
+    line-height:1.8;
     width:100%;
-    overflow-x:auto;
-    display:block;
     padding:14px 12px;
   }
 
   .satir{
-    min-width:max-content;
+    white-space:normal;
     gap:8px;
+    align-items:flex-start;
+  }
+
+  .satir-text{
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:normal;
   }
 
   .satir-play{
@@ -723,6 +788,32 @@ h3{
     max-width:320px;
   }
 }
+
+@media (max-width: 480px){
+  #topMenu{
+    gap:8px;
+  }
+
+  .mode-btn,
+  .mode-link{
+    width:100%;
+  }
+
+  #tunerCard,
+  #audio-wrap,
+  #warmupWrap,
+  #lyrics{
+    border-radius:18px;
+  }
+
+  #tunerScaleTop{
+    font-size:10px;
+  }
+
+  #targetMini{
+    font-size:14px;
+  }
+}
 </style>
 </head>
 <body>
@@ -732,7 +823,7 @@ h3{
 <div id="topMenu">
   <button class="mode-btn active" id="songModeBtn" onclick="showMode('song')">Eser Çalışma</button>
   <button class="mode-btn" id="warmupModeBtn" onclick="showMode('warmup')">Vokal Isınma ve Hazırlık</button>
-  <button class="mode-btn" onclick="openAssessment()">Ölçme / Karaoke Modu</button>
+  <a class="mode-link" href="./olcme.html">Ölçme / Karaoke Modu</a>
 </div>
 
 <div id="globalTop">
@@ -741,12 +832,12 @@ h3{
       <div id="targetMini">Hedef seçilmedi</div>
 
       <div id="miniPlayerArea">
-        <audio id="song" controls preload="auto">
+        <audio id="song" controls preload="auto" playsinline webkit-playsinline>
           <source src="temiz_kayit.mp3" type="audio/mpeg">
           Tarayıcınız audio etiketini desteklemiyor.
         </audio>
 
-        <button id="tunerMiniBtn">TUNER AÇ</button>
+        <button id="tunerMiniBtn" type="button">TUNER AÇ</button>
 
         <div id="tunerSwitchRow">
           <span>Tuner</span>
@@ -784,7 +875,7 @@ h3{
 
   <div id="audio-wrap">
     <div class="controls">
-      <button id="stopBtn">STOP</button>
+      <button id="stopBtn" type="button">STOP</button>
     </div>
 
     <div id="status">Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır</div>
@@ -811,8 +902,8 @@ h3{
     </div>
 
     <div class="warmup-controls">
-      <button class="warmup-btn" onclick="playSelectedWarmups()">Seçileni Çal</button>
-      <button class="warmup-btn secondary" onclick="clearWarmupSelection()">Seçimi Temizle</button>
+      <button class="warmup-btn" type="button" onclick="playSelectedWarmups()">Seçileni Çal</button>
+      <button class="warmup-btn secondary" type="button" onclick="clearWarmupSelection()">Seçimi Temizle</button>
     </div>
 
     <div class="warmup-section">
@@ -840,6 +931,7 @@ h3{
 </div>
 
 <script>
+/* JS original kept, only iPhone-friendly small additions below */
 const lyricsData = [
   [
     [["Kork","ma,"], ["sön","mez"], ["bu"], ["şa","fak","lar","da"], ["yü","zen"], ["al"], ["san","cak;"]],
@@ -889,10 +981,6 @@ const heceNotes = {
   19:["la"], 20:["sol#"], 21:["re"], 22:["mi"], 23:["fa"],
   24:["sol"], 25:["la"], 26:["si"], 27:["do"], 28:["re"]
 };
-
-const NOTE_ORDER = [
-  "Do","Do#/Reb","Re","Re#/Mib","Mi","Fa","Fa#/Solb","Sol","Sol#/Lab","La","La#/Sib","Si"
-];
 
 const NOTE_ALIASES = {
   "do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,
@@ -1050,17 +1138,14 @@ function showMode(mode){
     warmupMode.style.display = "block";
     warmupBtn.classList.add("active");
     warmupStatusEl.textContent = "Hazır.";
+    window.scrollTo({ top:0, behavior:"smooth" });
   }
-}
-
-function openAssessment(){
-  window.location.href = "./olcme.html";
 }
 
 /* WARMUP GENERATION */
 function buildWarmupToneOptions(){
   warmupToneSelect.innerHTML = TONE_OPTIONS.map(opt => `<option value="${opt.pc}">${opt.label}</option>`).join("");
-  warmupToneSelect.value = "7"; // Sol
+  warmupToneSelect.value = "7";
   warmupScaleTypeSelect.value = "major";
 }
 
@@ -1086,7 +1171,7 @@ function getWarmupSynthName(absPc){
 function buildWarmupData(){
   const rootPc = Number(warmupToneSelect.value);
   const scaleType = warmupScaleTypeSelect.value;
-  const scale = getScalePcs(rootPc, scaleType); // 8 ses
+  const scale = getScalePcs(rootPc, scaleType);
 
   const singleUp = scale.map((pc, i) => ({
     id:`su${i+1}`,
@@ -1117,20 +1202,11 @@ function buildWarmupData(){
   });
 
   const motifIndices = [
-    [0,1,2],
-    [2,1,0],
-    [0,2,4],
-    [4,2,0],
-    [4,3,2,1],
-    [0,1,0],
-    [2,3,2]
+    [0,1,2],[2,1,0],[0,2,4],[4,2,0],[4,3,2,1],[0,1,0],[2,3,2]
   ];
 
   const motifs = motifIndices.map((arr, idx) => {
-    const pcs = arr
-      .filter(v => v < scale.length)
-      .map(v => scale[v]);
-
+    const pcs = arr.filter(v => v < scale.length).map(v => scale[v]);
     return {
       id:`mo${idx+1}`,
       parts:pcs.map(getWarmupDisplayName),
@@ -1139,13 +1215,7 @@ function buildWarmupData(){
     };
   });
 
-  currentWarmupData = [
-    ...singleUp,
-    ...singleDown,
-    ...intervals,
-    ...motifs
-  ];
-
+  currentWarmupData = [...singleUp, ...singleDown, ...intervals, ...motifs];
   warmupMap = Object.fromEntries(currentWarmupData.map(item => [item.id, item]));
 
   renderWarmupLine("singleUpLine", singleUp);
@@ -1164,12 +1234,8 @@ function clearSelectionSuccessVisualOnly() {
 }
 
 function clearWarmupMarks() {
-  document.querySelectorAll(".warmup-item").forEach(item => {
-    item.classList.remove("active", "target");
-  });
-  document.querySelectorAll(".warmup-part").forEach(part => {
-    part.classList.remove("current", "correct", "wrong");
-  });
+  document.querySelectorAll(".warmup-item").forEach(item => item.classList.remove("active", "target"));
+  document.querySelectorAll(".warmup-part").forEach(part => part.classList.remove("current", "correct", "wrong"));
 }
 
 function clearCurrentTargetState() {
@@ -1255,9 +1321,7 @@ function setActivePlaybackHece(id) {
   setTargetMini(`${heceText}<span class="dot">•</span>${hedefler || "-"}`);
 
   if (tunerRunning) {
-    tunerInfo.textContent = hedefler
-      ? `Hedef: ${hedefler} | Ses bekleniyor...`
-      : "Bu hece için hedef nota atanmadı.";
+    tunerInfo.textContent = hedefler ? `Hedef: ${hedefler} | Ses bekleniyor...` : "Bu hece için hedef nota atanmadı.";
   }
 }
 
@@ -1504,9 +1568,7 @@ function pointerAltindakiHeceId(clientX, clientY) {
 
 function longPressTimerBaslat(startId) {
   temizleLongPressTimer();
-  pressTimer = setTimeout(() => {
-    basiliSecimBaslat(startId);
-  }, 280);
+  pressTimer = setTimeout(() => basiliSecimBaslat(startId), 280);
 }
 
 function temizleLongPressTimer() {
@@ -1549,9 +1611,7 @@ function setWarmupPartCorrect(itemId, index) {
 
 function setWarmupPartWrong(itemId, index) {
   const part = document.querySelector(`.warmup-item[data-item-id="${itemId}"] .warmup-part[data-part-index="${index}"]`);
-  if (part && !part.classList.contains("correct")) {
-    part.classList.add("wrong");
-  }
+  if (part && !part.classList.contains("correct")) part.classList.add("wrong");
 }
 
 function stopWarmupTargeting() {
@@ -1700,11 +1760,7 @@ function autoCorrelate(buffer, sampleRate) {
   let SIZE = buffer.length;
   let rms = 0;
 
-  for (let i = 0; i < SIZE; i++) {
-    const val = buffer[i];
-    rms += val * val;
-  }
-
+  for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
   rms = Math.sqrt(rms / SIZE);
   if (rms < 0.01) return -1;
 
@@ -1713,17 +1769,10 @@ function autoCorrelate(buffer, sampleRate) {
   const threshold = 0.2;
 
   for (let i = 0; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[i]) < threshold) {
-      r1 = i;
-      break;
-    }
+    if (Math.abs(buffer[i]) < threshold) { r1 = i; break; }
   }
-
   for (let i = 1; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[SIZE - i]) < threshold) {
-      r2 = SIZE - i;
-      break;
-    }
+    if (Math.abs(buffer[SIZE - i]) < threshold) { r2 = SIZE - i; break; }
   }
 
   buffer = buffer.slice(r1, r2);
@@ -1731,30 +1780,22 @@ function autoCorrelate(buffer, sampleRate) {
 
   const c = new Array(SIZE).fill(0);
   for (let i = 0; i < SIZE; i++) {
-    for (let j = 0; j < SIZE - i; j++) {
-      c[i] += buffer[j] * buffer[j + i];
-    }
+    for (let j = 0; j < SIZE - i; j++) c[i] += buffer[j] * buffer[j + i];
   }
 
   let d = 0;
   while (d + 1 < c.length && c[d] > c[d + 1]) d++;
 
-  let maxval = -1;
-  let maxpos = -1;
+  let maxval = -1, maxpos = -1;
   for (let i = d; i < SIZE; i++) {
-    if (c[i] > maxval) {
-      maxval = c[i];
-      maxpos = i;
-    }
+    if (c[i] > maxval) { maxval = c[i]; maxpos = i; }
   }
-
   if (maxpos <= 0) return -1;
 
   let T0 = maxpos;
   const x1 = c[T0 - 1] || 0;
   const x2 = c[T0] || 0;
   const x3 = c[T0 + 1] || 0;
-
   const a = (x1 + x3 - 2 * x2) / 2;
   const b = (x3 - x1) / 2;
   if (a) T0 = T0 - b / (2 * a);
@@ -1791,8 +1832,9 @@ function tunerLoop() {
 async function tunerAc() {
   if (tunerRunning) return;
 
-  micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  micStream = await navigator.mediaDevices.getUserMedia({ audio:true });
   micContext = new (window.AudioContext || window.webkitAudioContext)();
+  if (micContext.state === "suspended") await micContext.resume();
   analyser = micContext.createAnalyser();
   analyser.fftSize = 2048;
 
@@ -1845,14 +1887,10 @@ function tunerKapat() {
   updatePitchDotByCents(null);
 }
 
-/* WARMUP AUDIO - PIANOISH */
+/* WARMUP AUDIO */
 function ensureWarmupAudioContext() {
-  if (!warmupAudioCtx) {
-    warmupAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (warmupAudioCtx.state === "suspended") {
-    return warmupAudioCtx.resume();
-  }
+  if (!warmupAudioCtx) warmupAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (warmupAudioCtx.state === "suspended") return warmupAudioCtx.resume();
   return Promise.resolve();
 }
 
@@ -1868,7 +1906,6 @@ function noteToFreq(note) {
 
 function playWarmupTone(note, startAt, duration = 1.1) {
   const freq = noteToFreq(note);
-
   const master = warmupAudioCtx.createGain();
   master.gain.setValueAtTime(0.0001, startAt);
   master.gain.linearRampToValueAtTime(0.19, startAt + 0.015);
@@ -1916,15 +1953,10 @@ async function playWarmupItem(item) {
     const now = warmupAudioCtx.currentTime + 0.04;
     const step = 0.78;
 
-    item.synth.forEach((note, i) => {
-      playWarmupTone(note, now + i * step, 1.02);
-    });
-
+    item.synth.forEach((note, i) => playWarmupTone(note, now + i * step, 1.02));
     warmupStatusEl.textContent = `${item.parts.join(" - ")} çalınıyor...`;
 
-    setTimeout(() => {
-      startWarmupTargeting(item);
-    }, item.synth.length * step * 1000 + 120);
+    setTimeout(() => startWarmupTargeting(item), item.synth.length * step * 1000 + 120);
   } catch (err) {
     console.error(err);
     warmupStatusEl.textContent = "Warmup sesi çalınamadı.";
@@ -2013,10 +2045,7 @@ async function playSelectedWarmups() {
     return;
   }
 
-  const queue = selectedEls
-    .map(el => warmupMap[el.dataset.itemId])
-    .filter(Boolean);
-
+  const queue = selectedEls.map(el => warmupMap[el.dataset.itemId]).filter(Boolean);
   if (!queue.length) return;
 
   try {
@@ -2026,9 +2055,7 @@ async function playSelectedWarmups() {
 
     let offset = warmupAudioCtx.currentTime + 0.04;
     queue.forEach(item => {
-      item.synth.forEach((note, i) => {
-        playWarmupTone(note, offset + i * 0.78, 1.02);
-      });
+      item.synth.forEach((note, i) => playWarmupTone(note, offset + i * 0.78, 1.02));
       offset += item.synth.length * 0.78 + 0.22;
     });
 
@@ -2078,6 +2105,7 @@ lyricsData.forEach((kitaData) => {
 
     const satirPlayBtn = document.createElement("button");
     satirPlayBtn.className = "satir-play";
+    satirPlayBtn.type = "button";
     satirPlayBtn.textContent = "▶";
 
     const satirText = document.createElement("div");
@@ -2128,9 +2156,7 @@ lyricsData.forEach((kitaData) => {
         heceCounter++;
       });
 
-      if (wordIndex < satirData.length - 1) {
-        satirText.appendChild(document.createTextNode(" "));
-      }
+      if (wordIndex < satirData.length - 1) satirText.appendChild(document.createTextNode(" "));
     });
 
     satirPlayBtn.addEventListener("click", async (e) => {
@@ -2146,7 +2172,6 @@ lyricsData.forEach((kitaData) => {
   container.appendChild(kitaDiv);
 });
 
-/* SONG POINTER */
 document.addEventListener("pointermove", (e) => {
   if (!pointerDown || !selectionMode) return;
   const hoveredId = pointerAltindakiHeceId(e.clientX, e.clientY);
@@ -2228,6 +2253,18 @@ audio.addEventListener("pause", () => {
   if (!stopTimeout && !activeTimeUpdateHandler) return;
   durdurAktifSes();
 });
+
+document.addEventListener("touchend", () => {
+  if (warmupAudioCtx && warmupAudioCtx.state === "suspended") {
+    warmupAudioCtx.resume().catch(()=>{});
+  }
+}, { passive:true });
+
+document.addEventListener("touchend", () => {
+  if (micContext && micContext.state === "suspended") {
+    micContext.resume().catch(()=>{});
+  }
+}, { passive:true });
 </script>
 
 </body>

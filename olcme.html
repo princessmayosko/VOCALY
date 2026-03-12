@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Vocaly Karaoke + Tuner</title>
 <style>
 :root{
@@ -14,14 +14,24 @@
   --border:#d1d5db;
   --shadow:0 10px 28px rgba(0,0,0,0.08);
   --blue:#2563eb;
+  --safe-top:env(safe-area-inset-top, 0px);
+  --safe-right:env(safe-area-inset-right, 0px);
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
+  --safe-left:env(safe-area-inset-left, 0px);
 }
 *{box-sizing:border-box}
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
 body{
   margin:0;
   font-family:Arial,sans-serif;
   background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);
   color:var(--text);
-  padding:24px;
+  padding:calc(20px + var(--safe-top)) calc(14px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(14px + var(--safe-left));
+  min-height:100svh;
+  overflow-x:hidden;
 }
 .wrap{max-width:980px;margin:0 auto}
 .card{
@@ -50,10 +60,19 @@ button{
   cursor:pointer;
   font-size:14px;
   font-weight:700;
+  min-height:42px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
 }
 button.stop{background:#dc2626}
 button.reset{background:#475569}
-audio{width:100%;max-width:560px;display:block;margin:10px auto 0}
+audio{
+  width:100%;
+  max-width:560px;
+  display:block;
+  margin:10px auto 0;
+  height:40px;
+}
 .status{text-align:center;font-size:14px;color:var(--muted);font-weight:700;margin-top:10px}
 .layout{display:grid;grid-template-columns:160px 1fr;gap:16px;align-items:start}
 .intro{
@@ -62,16 +81,16 @@ audio{width:100%;max-width:560px;display:block;margin:10px auto 0}
 }
 .introFill{position:absolute;left:0;top:0;bottom:0;width:0%;background:#22c55e;opacity:.22}
 .introText{position:relative;z-index:2}
-.lyrics{display:flex;flex-direction:column;gap:10px}
+.lyrics{display:flex;flex-direction:column;gap:10px;min-width:0}
 .line{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start}
-.hece{padding:10px 14px;border-radius:10px;background:#fff;border:1px solid #ddd;font-weight:bold}
+.hece{padding:10px 14px;border-radius:10px;background:#fff;border:1px solid #ddd;font-weight:bold;word-break:break-word}
 .hece.active{background:#dbeafe;border-color:#2563eb}
 .hece.correct{background:#dcfce7;border-color:#16a34a}
 .hece.wrong{background:#fee2e2;border-color:#dc2626}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.box{border:1px solid var(--border);border-radius:14px;padding:12px;background:#fafafa}
+.box{border:1px solid var(--border);border-radius:14px;padding:12px;background:#fafafa;min-width:0}
 .label{font-size:12px;color:var(--muted);margin-bottom:6px}
-.value{font-size:24px;font-weight:800}
+.value{font-size:24px;font-weight:800;word-break:break-word}
 #tunerScaleTop{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280;margin-bottom:6px}
 #tunerScaleTop .mid{color:#374151;font-weight:700}
 #tunerRuler{position:relative;height:52px;border-radius:16px;background:linear-gradient(180deg,#fff 0%, #f3f4f6 100%);overflow:hidden;border:1px solid var(--border)}
@@ -95,6 +114,7 @@ audio{width:100%;max-width:560px;display:block;margin:10px auto 0}
   border:1px solid var(--border);
   border-radius:12px;
   padding:8px 10px;
+  min-height:42px;
 }
 .select-wrap label{
   font-size:13px;
@@ -108,6 +128,7 @@ audio{width:100%;max-width:560px;display:block;margin:10px auto 0}
   font-weight:700;
   color:#111827;
   outline:none;
+  min-width:72px;
 }
 .tuner-options{
   display:flex;
@@ -121,6 +142,12 @@ audio{width:100%;max-width:560px;display:block;margin:10px auto 0}
   .row{grid-template-columns:1fr}
   .controls{align-items:stretch}
   .select-wrap{width:100%;justify-content:space-between}
+  .controls > *{width:100%}
+  button{width:100%}
+  h1{font-size:24px}
+  .card{padding:14px}
+  .hece{padding:9px 12px}
+  .value{font-size:20px}
 }
 </style>
 </head>
@@ -129,9 +156,9 @@ audio{width:100%;max-width:560px;display:block;margin:10px auto 0}
   <div class="card">
     <h1>Vocaly Karaoke Ölçme</h1>
     <div class="controls">
-      <button onclick="startKaraoke()">Başlat</button>
-      <button class="stop" onclick="stopKaraoke()">Durdur</button>
-      <button class="reset" onclick="resetKaraoke()">Sıfırla</button>
+      <button type="button" onclick="startKaraoke()">Başlat</button>
+      <button type="button" class="stop" onclick="stopKaraoke()">Durdur</button>
+      <button type="button" class="reset" onclick="resetKaraoke()">Sıfırla</button>
 
       <div class="select-wrap">
         <label for="speedSelect">Hız</label>
@@ -144,9 +171,7 @@ audio{width:100%;max-width:560px;display:block;margin:10px auto 0}
       </div>
     </div>
 
-    <audio id="song">
-      <source src="sozsuz.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="song" playsinline webkit-playsinline preload="auto" src="sozsuz.mp3"></audio>
     <div class="status" id="statusText">Hazır</div>
   </div>
 
@@ -244,13 +269,7 @@ const heceler = [
   { text:"cak", note:"si", start:18.25, end:18.67, line:2 }
 ];
 
-// İstenen grup blokları
-const FIXED_GROUPS = [
-  [5,6],          // şa fak
-  [17,18],        // yur du
-  [19,20,21,22],  // mun üs tün de
-  [23,24,25,26]   // tü ten en son
-];
+const FIXED_GROUPS = [[5,6],[17,18],[19,20,21,22],[23,24,25,26]];
 
 let micStream = null;
 let micContext = null;
@@ -328,7 +347,6 @@ function centsAgainstTarget(freq, targetName) {
 function autoCorrelate(buffer, sampleRate) {
   let SIZE = buffer.length;
   let rms = 0;
-
   for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
   rms = Math.sqrt(rms / SIZE);
   if (rms < 0.01) return -1;
@@ -379,13 +397,10 @@ function setTarget(notes) {
 function getSingleEvalEnd(index) {
   const h = heceler[index];
   const next = heceler[index + 1];
-
-  // sön için özel geniş pencere
   if (index === 2) {
     if (!next) return h.end + 0.55;
     return Math.min(h.end + 0.55, next.start - 0.005);
   }
-
   let extra = 0.28;
   if (!next) return h.end + extra;
   return Math.min(h.end + extra, next.start - 0.01);
@@ -450,10 +465,7 @@ function updateTunerFromFrequency(freq) {
       if (group && !groupPassed.has(group.id)) {
         const firstIdx = group.first;
         goodFramesPerHece[firstIdx] = (goodFramesPerHece[firstIdx] || 0) + 1;
-
-        if (goodFramesPerHece[firstIdx] >= 1) {
-          markGroupCorrect(group);
-        }
+        if (goodFramesPerHece[firstIdx] >= 1) markGroupCorrect(group);
       } else {
         goodFramesPerHece[current] = (goodFramesPerHece[current] || 0) + 1;
         const el = document.getElementById("hece" + current);
@@ -502,6 +514,7 @@ async function tunerAc() {
     });
 
     micContext = new (window.AudioContext || window.webkitAudioContext)();
+    if (micContext.state === "suspended") await micContext.resume();
     analyser = micContext.createAnalyser();
     analyser.fftSize = 4096;
     analyser.smoothingTimeConstant = 0.85;
@@ -541,6 +554,7 @@ function activate(i){
   const el = document.getElementById("hece" + i);
   if (el && !el.classList.contains("wrong") && !el.classList.contains("correct")) {
     el.classList.add("active");
+    el.scrollIntoView({ behavior:"smooth", block:"center", inline:"nearest" });
   }
 
   activeHece.textContent = heceler[i]?.text || "-";
@@ -551,9 +565,7 @@ function activate(i){
     setTarget([heceler[i]?.note || "la"]);
   }
 
-  if (goodFramesPerHece[i] === undefined) {
-    goodFramesPerHece[i] = 0;
-  }
+  if (goodFramesPerHece[i] === undefined) goodFramesPerHece[i] = 0;
 }
 
 function evaluateSingle(i){
@@ -601,10 +613,7 @@ function evaluateGroup(group){
     }
   });
 
-  if (passed) {
-    score += 10 * group.members.length;
-  }
-
+  if (passed) score += 10 * group.members.length;
   resultText.textContent = "Toplam Puan: " + score;
 }
 
@@ -698,14 +707,10 @@ function update(){
   for (let i = 0; i < heceler.length; i++) {
     const group = groupByIndex[i];
     if (group) {
-      if (t > group.evalEnd) {
-        evaluateGroup(group);
-      }
+      if (t > group.evalEnd) evaluateGroup(group);
     } else {
       const evalEnd = getSingleEvalEnd(i);
-      if (t > evalEnd) {
-        evaluateSingle(i);
-      }
+      if (t > evalEnd) evaluateSingle(i);
     }
   }
 
@@ -720,16 +725,12 @@ function update(){
 
 speedSelect.addEventListener("change", () => {
   audio.playbackRate = Number(speedSelect.value);
-  if (started) {
-    statusText.textContent = `Çalıyor (${audio.playbackRate.toFixed(2)}x)`;
-  }
+  if (started) statusText.textContent = `Çalıyor (${audio.playbackRate.toFixed(2)}x)`;
 });
 
 toleranceSelect.addEventListener("change", () => {
   toleranceCent = Number(toleranceSelect.value);
-  if (tunerRunning) {
-    tunerInfo.textContent = `Tolerans güncellendi: ±${toleranceCent} cent`;
-  }
+  if (tunerRunning) tunerInfo.textContent = `Tolerans güncellendi: ±${toleranceCent} cent`;
 });
 
 buildFixedGroups();
@@ -737,6 +738,12 @@ createTicks();
 renderLyrics();
 audio.playbackRate = Number(speedSelect.value);
 toleranceCent = Number(toleranceSelect.value);
+
+document.addEventListener("touchend", async () => {
+  if (micContext && micContext.state === "suspended") {
+    try { await micContext.resume(); } catch(e) {}
+  }
+}, { passive:true });
 </script>
 </body>
 </html>
