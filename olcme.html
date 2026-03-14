@@ -17,7 +17,6 @@
   --muted:#6b7280;
   --border:#d1d5db;
   --shadow:0 14px 36px rgba(0,0,0,0.10);
-  --blue:#2563eb;
   --card:#ffffffee;
 }
 *{box-sizing:border-box}
@@ -357,6 +356,84 @@ audio{
   position:relative;
   z-index:1;
 }
+
+/* SONUÇ PENCERESİ */
+.result-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(17,24,39,0.34);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+  backdrop-filter:blur(4px);
+}
+.result-overlay.hidden{
+  display:none;
+}
+.result-modal{
+  width:min(92vw, 430px);
+  background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98));
+  border:1px solid rgba(255,255,255,0.95);
+  box-shadow:0 20px 50px rgba(0,0,0,0.18);
+  border-radius:24px;
+  padding:22px 18px 18px;
+  text-align:center;
+  transform:translateY(-40px) scale(0.96);
+  opacity:0;
+  animation:resultDropIn .45s ease forwards;
+}
+@keyframes resultDropIn{
+  0%{
+    opacity:0;
+    transform:translateY(-55px) scale(0.94);
+  }
+  60%{
+    opacity:1;
+    transform:translateY(6px) scale(1.01);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+.result-badge{
+  font-size:52px;
+  line-height:1;
+  margin-bottom:10px;
+}
+.result-title{
+  font-size:28px;
+  font-weight:800;
+  color:#111827;
+  margin-bottom:8px;
+}
+.result-message{
+  font-size:16px;
+  font-weight:700;
+  color:#374151;
+  margin-bottom:10px;
+  line-height:1.45;
+}
+.result-score{
+  font-size:18px;
+  font-weight:800;
+  color:#1f2937;
+  margin-bottom:16px;
+}
+.result-close{
+  border:none;
+  background:linear-gradient(135deg, #6d28d9, #1f8a70);
+  color:#fff;
+  padding:11px 18px;
+  border-radius:14px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:800;
+  box-shadow:0 8px 18px rgba(0,0,0,0.14);
+}
+
 @media (max-width:720px){
   .layout{grid-template-columns:1fr}
   .row{grid-template-columns:1fr}
@@ -448,8 +525,19 @@ audio{
   </div>
 </div>
 
+<div id="resultOverlay" class="result-overlay hidden">
+  <div id="resultModal" class="result-modal">
+    <div id="resultBadge" class="result-badge">🌟</div>
+    <div id="resultTitle" class="result-title">Harika!</div>
+    <div id="resultMessage" class="result-message">Tonu çok iyi yakaladın.</div>
+    <div id="resultScore" class="result-score">Toplam Puan: 0</div>
+    <button class="result-close" onclick="closeResultOverlay()">Tamam</button>
+  </div>
+</div>
+
 <script>
 const INTRO_DURATION = 4.20;
+const SONG_END_TIME = 18.97;
 
 /* AFFEDİCİ PENCERELER */
 const SINGLE_EARLY_GRACE = 0.45;
@@ -809,11 +897,64 @@ function addScoreOnce(unit){
 }
 
 function getFeedback(score){
-  if(score >= 260) return "🌟 Mükemmel! Tonu çok iyi yakaladın.";
-  if(score >= 200) return "👏 Çok iyi! Birkaç küçük sapma dışında harika.";
-  if(score >= 140) return "👍 İyi! Bir kez daha denersen daha da iyi olacak.";
-  if(score >= 80) return "🙂 Güzel başlangıç. Bir kez daha deneyelim.";
-  return "🎵 Isınma turu gibi düşün. Tekrar deneyelim!";
+  if(score >= 260){
+    return {
+      badge:"🏆",
+      title:"Mükemmel!",
+      message:"Tonu çok iyi yakaladın. Harika bir performans oldu."
+    };
+  }
+  if(score >= 200){
+    return {
+      badge:"🌟",
+      title:"Çok iyi!",
+      message:"Birkaç küçük sapma dışında oldukça başarılı söyledin."
+    };
+  }
+  if(score >= 140){
+    return {
+      badge:"👏",
+      title:"Güzel iş!",
+      message:"Gayet iyi gidiyorsun. Bir tekrar daha yaparsan daha da oturur."
+    };
+  }
+  if(score >= 80){
+    return {
+      badge:"🙂",
+      title:"İyi başlangıç!",
+      message:"Temel oturuyor. Bir kez daha denersen çok daha iyi olacak."
+    };
+  }
+  return {
+    badge:"🎵",
+    title:"Devam et!",
+    message:"Bu bir ısınma turu gibi. Tekrar denediğinde daha iyi olacak."
+  };
+}
+
+function showResultOverlay(){
+  const data = getFeedback(score);
+
+  document.getElementById("resultBadge").textContent = data.badge;
+  document.getElementById("resultTitle").textContent = data.title;
+  document.getElementById("resultMessage").textContent = data.message;
+  document.getElementById("resultScore").textContent = "Toplam Puan: " + score;
+
+  const overlay = document.getElementById("resultOverlay");
+  const modal = document.getElementById("resultModal");
+
+  overlay.classList.remove("hidden");
+
+  if(modal){
+    modal.style.animation = "none";
+    void modal.offsetWidth;
+    modal.style.animation = "resultDropIn .45s ease forwards";
+  }
+}
+
+function closeResultOverlay(){
+  const overlay = document.getElementById("resultOverlay");
+  if(overlay) overlay.classList.add("hidden");
 }
 
 function updateTunerDisplay(freq, unit){
@@ -994,15 +1135,31 @@ function finalizeRemainingUnits(){
     }
   });
   refreshScore();
-  feedbackText.textContent = getFeedback(score);
+
+  if (feedbackText) {
+    const data = getFeedback(score);
+    feedbackText.textContent = `${data.badge} ${data.message}`;
+  }
 }
 
 function updateEngine(){
   if (!started) return;
 
   const t = audio.currentTime;
-  updateIntro(t);
 
+  if (t >= SONG_END_TIME) {
+    audio.pause();
+    audio.currentTime = SONG_END_TIME;
+    finalizeRemainingUnits();
+    statusText.textContent = "Tamamlandı";
+    clearActiveClasses();
+    currentUnitIndex = -1;
+    started = false;
+    showResultOverlay();
+    return;
+  }
+
+  updateIntro(t);
   processPitchForAllRelevantUnits(currentDetectedFreq, t);
   evaluateExpiredUnits(t);
 
@@ -1026,6 +1183,7 @@ function updateEngine(){
     clearActiveClasses();
     currentUnitIndex = -1;
     started = false;
+    showResultOverlay();
   }
 }
 
@@ -1039,6 +1197,7 @@ async function startKaraoke(){
   if (updateRaf) cancelAnimationFrame(updateRaf);
 
   score = 0;
+  closeResultOverlay();
   refreshScore();
   feedbackText.textContent = "";
   currentUnitIndex = -1;
@@ -1079,6 +1238,7 @@ function stopKaraoke(){
 
 function resetKaraoke(){
   stopKaraoke();
+  closeResultOverlay();
   audio.currentTime = 0;
   audio.playbackRate = Number(speedSelect.value);
 
