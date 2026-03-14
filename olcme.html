@@ -1,48 +1,100 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Vocaly Karaoke + Tuner</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vocaly Karaoke Ölçme</title>
 <style>
 :root{
-  --green:#16a34a;
-  --green-soft:rgba(22,163,74,0.12);
+  --green:#1f8a70;
+  --green-soft:rgba(31,138,112,0.14);
+  --green-dark:#145c4a;
+  --purple:#6d28d9;
+  --purple-soft:rgba(109,40,217,0.14);
+  --purple-dark:#4c1d95;
   --red:#dc2626;
   --text:#111827;
   --muted:#6b7280;
   --border:#d1d5db;
-  --shadow:0 10px 28px rgba(0,0,0,0.08);
+  --shadow:0 14px 36px rgba(0,0,0,0.10);
   --blue:#2563eb;
-  --safe-top:env(safe-area-inset-top, 0px);
-  --safe-right:env(safe-area-inset-right, 0px);
-  --safe-bottom:env(safe-area-inset-bottom, 0px);
-  --safe-left:env(safe-area-inset-left, 0px);
+  --card:#ffffffee;
 }
 *{box-sizing:border-box}
-html{
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
 body{
   margin:0;
   font-family:Arial,sans-serif;
-  background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);
   color:var(--text);
-  padding:calc(20px + var(--safe-top)) calc(14px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(14px + var(--safe-left));
-  min-height:100svh;
+  padding:24px;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, rgba(109,40,217,0.18) 0, rgba(109,40,217,0.08) 18%, transparent 38%),
+    radial-gradient(circle at bottom right, rgba(31,138,112,0.20) 0, rgba(31,138,112,0.08) 20%, transparent 40%),
+    linear-gradient(135deg, #f8fafc 0%, #f5f3ff 32%, #ecfeff 68%, #f8fafc 100%);
+  position:relative;
   overflow-x:hidden;
 }
-.wrap{max-width:980px;margin:0 auto}
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  pointer-events:none;
+  inset:auto;
+  border-radius:32px;
+  border:2px solid rgba(109,40,217,0.10);
+  width:320px;
+  height:320px;
+  z-index:0;
+  transform:rotate(12deg);
+}
+body::before{
+  top:34px;
+  right:-90px;
+  background:linear-gradient(135deg, rgba(109,40,217,0.06), rgba(31,138,112,0.04));
+}
+body::after{
+  left:-100px;
+  bottom:36px;
+  width:360px;
+  height:360px;
+  border-color:rgba(31,138,112,0.12);
+  transform:rotate(-10deg);
+  background:linear-gradient(135deg, rgba(31,138,112,0.05), rgba(109,40,217,0.03));
+}
+.wrap{
+  max-width:980px;
+  margin:0 auto;
+  position:relative;
+  z-index:1;
+}
 .card{
-  background:rgba(255,255,255,0.95);
-  border:1px solid rgba(229,231,235,0.95);
+  background:var(--card);
+  border:1px solid rgba(255,255,255,0.9);
   box-shadow:var(--shadow);
-  border-radius:20px;
+  border-radius:22px;
   padding:18px;
   margin-bottom:18px;
+  backdrop-filter:blur(8px);
+  position:relative;
+  overflow:hidden;
 }
-h1{margin:0 0 14px;font-size:28px;text-align:center}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(120deg, rgba(109,40,217,0.06), transparent 30%),
+    linear-gradient(300deg, rgba(31,138,112,0.06), transparent 32%);
+  pointer-events:none;
+}
+h1{
+  margin:0 0 14px;
+  font-size:28px;
+  text-align:center;
+  color:#1f2937;
+  position:relative;
+  z-index:1;
+}
 .controls{
   display:flex;
   gap:10px;
@@ -50,71 +102,238 @@ h1{margin:0 0 14px;font-size:28px;text-align:center}
   justify-content:center;
   align-items:center;
   margin-bottom:14px;
+  position:relative;
+  z-index:1;
 }
 button{
   border:none;
-  background:#059669;
+  background:linear-gradient(135deg, var(--green), var(--green-dark));
   color:#fff;
   padding:10px 14px;
   border-radius:12px;
   cursor:pointer;
   font-size:14px;
   font-weight:700;
-  min-height:42px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
+  box-shadow:0 8px 18px rgba(31,138,112,0.18);
 }
-button.stop{background:#dc2626}
-button.reset{background:#475569}
+button.stop{
+  background:linear-gradient(135deg, #dc2626, #991b1b);
+  box-shadow:0 8px 18px rgba(220,38,38,0.18);
+}
+button.reset{
+  background:linear-gradient(135deg, var(--purple), var(--purple-dark));
+  box-shadow:0 8px 18px rgba(109,40,217,0.18);
+}
 audio{
   width:100%;
   max-width:560px;
   display:block;
   margin:10px auto 0;
-  height:40px;
+  position:relative;
+  z-index:1;
 }
-.status{text-align:center;font-size:14px;color:var(--muted);font-weight:700;margin-top:10px}
-.layout{display:grid;grid-template-columns:160px 1fr;gap:16px;align-items:start}
+.status{
+  text-align:center;
+  font-size:14px;
+  color:var(--muted);
+  font-weight:700;
+  margin-top:10px;
+  position:relative;
+  z-index:1;
+}
+.layout{
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:16px;
+  align-items:start;
+  position:relative;
+  z-index:1;
+}
 .intro{
-  position:relative;padding:12px 14px;border-radius:14px;background:#fff;border:2px solid var(--green);font-weight:800;
-  min-height:56px;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  position:relative;
+  padding:12px 14px;
+  border-radius:16px;
+  background:#fff;
+  border:2px solid var(--green);
+  font-weight:800;
+  min-height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(31,138,112,0.08);
 }
-.introFill{position:absolute;left:0;top:0;bottom:0;width:0%;background:#22c55e;opacity:.22}
+.introFill{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0%;
+  background:linear-gradient(90deg, var(--purple), var(--green));
+  opacity:.20;
+}
 .introText{position:relative;z-index:2}
-.lyrics{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lyrics{display:flex;flex-direction:column;gap:10px}
 .line{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start}
-.hece{padding:10px 14px;border-radius:10px;background:#fff;border:1px solid #ddd;font-weight:bold;word-break:break-word}
-.hece.active{background:#dbeafe;border-color:#2563eb}
-.hece.correct{background:#dcfce7;border-color:#16a34a}
-.hece.wrong{background:#fee2e2;border-color:#dc2626}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.box{border:1px solid var(--border);border-radius:14px;padding:12px;background:#fafafa;min-width:0}
-.label{font-size:12px;color:var(--muted);margin-bottom:6px}
-.value{font-size:24px;font-weight:800;word-break:break-word}
-#tunerScaleTop{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280;margin-bottom:6px}
-#tunerScaleTop .mid{color:#374151;font-weight:700}
-#tunerRuler{position:relative;height:52px;border-radius:16px;background:linear-gradient(180deg,#fff 0%, #f3f4f6 100%);overflow:hidden;border:1px solid var(--border)}
-#targetZone{position:absolute;left:50%;top:10px;width:64px;height:30px;transform:translateX(-50%);border-radius:10px;background:var(--green-soft);border:1px solid rgba(22,163,74,0.22);z-index:1}
-#centerMark{position:absolute;left:50%;top:6px;transform:translateX(-50%);width:2px;height:38px;background:var(--green);border-radius:999px;z-index:2}
+.hece{
+  padding:10px 14px;
+  border-radius:12px;
+  background:#fff;
+  border:1px solid #ddd;
+  font-weight:bold;
+  transition:background .12s linear,border-color .12s linear,transform .12s linear,box-shadow .12s linear;
+  box-shadow:0 4px 10px rgba(0,0,0,0.03);
+}
+.hece.active{
+  background:#ede9fe;
+  border-color:var(--purple);
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(109,40,217,0.12);
+}
+.hece.correct{
+  background:#dff7ef;
+  border-color:var(--green);
+}
+.hece.wrong{
+  background:#fee2e2;
+  border-color:#dc2626;
+}
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:14px;
+  position:relative;
+  z-index:1;
+}
+.box{
+  border:1px solid rgba(17,24,39,0.07);
+  border-radius:16px;
+  padding:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95));
+}
+.label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.value{
+  font-size:24px;
+  font-weight:800;
+}
+#tunerScaleTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:12px;
+  color:#6b7280;
+  margin-bottom:6px;
+  position:relative;
+  z-index:1;
+}
+#tunerScaleTop .mid{
+  color:#374151;
+  font-weight:700;
+}
+#tunerRuler{
+  position:relative;
+  height:52px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#fff 0%, #f3f4f6 100%);
+  overflow:hidden;
+  border:1px solid var(--border);
+  z-index:1;
+}
+#targetZone{
+  position:absolute;
+  left:50%;
+  top:10px;
+  width:64px;
+  height:30px;
+  transform:translateX(-50%);
+  border-radius:10px;
+  background:linear-gradient(90deg, rgba(109,40,217,0.12), rgba(31,138,112,0.16));
+  border:1px solid rgba(31,138,112,0.22);
+  z-index:1;
+}
+#centerMark{
+  position:absolute;
+  left:50%;
+  top:6px;
+  transform:translateX(-50%);
+  width:2px;
+  height:38px;
+  background:var(--green);
+  border-radius:999px;
+  z-index:2;
+}
 #tickLayer{position:absolute;inset:0;z-index:1}
-.tuner-tick{position:absolute;bottom:8px;width:2px;background:#9ca3af;border-radius:999px;transform:translateX(-50%);opacity:.75}
-.tuner-tick.major{height:18px}.tuner-tick.minor{height:10px}
-#pitchDot{position:absolute;left:50%;top:50%;width:14px;height:14px;border-radius:50%;background:#94a3b8;transform:translate(-50%,-50%);z-index:4;transition:left .10s linear, background .10s linear, box-shadow .10s linear}
-#pitchDot.correct{background:var(--green);box-shadow:0 0 0 6px rgba(22,163,74,0.16), 0 0 12px rgba(22,163,74,0.35)}
+.tuner-tick{
+  position:absolute;
+  bottom:8px;
+  width:2px;
+  background:#9ca3af;
+  border-radius:999px;
+  transform:translateX(-50%);
+  opacity:.75;
+}
+.tuner-tick.major{height:18px}
+.tuner-tick.minor{height:10px}
+#pitchDot{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#94a3b8;
+  transform:translate(-50%,-50%);
+  z-index:4;
+  transition:left .08s linear, background .08s linear, box-shadow .08s linear;
+}
+#pitchDot.correct{
+  background:var(--green);
+  box-shadow:0 0 0 6px rgba(31,138,112,0.16), 0 0 12px rgba(31,138,112,0.35);
+}
 #pitchDot.wrong{background:var(--red)}
 #pitchDot.waiting{background:#94a3b8}
-#tunerInfo{min-height:20px;margin-top:10px;font-size:13px;color:#4b5563}
-.result{margin-top:18px;font-size:22px;font-weight:bold;text-align:center}
-.small{text-align:center;color:var(--muted);font-size:13px;margin-top:10px}
+#tunerInfo{
+  min-height:20px;
+  margin-top:10px;
+  font-size:13px;
+  color:#4b5563;
+  position:relative;
+  z-index:1;
+}
+.result{
+  margin-top:18px;
+  font-size:22px;
+  font-weight:bold;
+  text-align:center;
+  position:relative;
+  z-index:1;
+}
+.small{
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  margin-top:10px;
+  position:relative;
+  z-index:1;
+}
+#feedbackText{
+  font-size:15px;
+  font-weight:700;
+  color:#374151;
+}
 .select-wrap{
   display:flex;
   align-items:center;
   gap:8px;
   background:#fff;
-  border:1px solid var(--border);
+  border:1px solid rgba(17,24,39,0.08);
   border-radius:12px;
   padding:8px 10px;
-  min-height:42px;
 }
 .select-wrap label{
   font-size:13px;
@@ -128,7 +347,6 @@ audio{
   font-weight:700;
   color:#111827;
   outline:none;
-  min-width:72px;
 }
 .tuner-options{
   display:flex;
@@ -136,18 +354,14 @@ audio{
   gap:10px;
   flex-wrap:wrap;
   margin-bottom:12px;
+  position:relative;
+  z-index:1;
 }
 @media (max-width:720px){
   .layout{grid-template-columns:1fr}
   .row{grid-template-columns:1fr}
   .controls{align-items:stretch}
   .select-wrap{width:100%;justify-content:space-between}
-  .controls > *{width:100%}
-  button{width:100%}
-  h1{font-size:24px}
-  .card{padding:14px}
-  .hece{padding:9px 12px}
-  .value{font-size:20px}
 }
 </style>
 </head>
@@ -156,14 +370,14 @@ audio{
   <div class="card">
     <h1>Vocaly Karaoke Ölçme</h1>
     <div class="controls">
-      <button type="button" onclick="startKaraoke()">Başlat</button>
-      <button type="button" class="stop" onclick="stopKaraoke()">Durdur</button>
-      <button type="button" class="reset" onclick="resetKaraoke()">Sıfırla</button>
+      <button onclick="startKaraoke()">Başlat</button>
+      <button class="stop" onclick="stopKaraoke()">Durdur</button>
+      <button class="reset" onclick="resetKaraoke()">Sıfırla</button>
 
       <div class="select-wrap">
         <label for="speedSelect">Hız</label>
         <select id="speedSelect">
-          <option value="1">1x</option>
+          <option value="1" selected>1x</option>
           <option value="0.75">0.75x</option>
           <option value="0.5">0.50x</option>
           <option value="0.25">0.25x</option>
@@ -171,7 +385,9 @@ audio{
       </div>
     </div>
 
-    <audio id="song" playsinline webkit-playsinline preload="auto" src="sozsuz.mp3"></audio>
+    <audio id="song">
+      <source src="sozsuz.mp3" type="audio/mpeg">
+    </audio>
     <div class="status" id="statusText">Hazır</div>
   </div>
 
@@ -190,17 +406,24 @@ audio{
 
   <div class="card">
     <div class="row">
-      <div class="box"><div class="label">Aktif Hece</div><div class="value" id="activeHece">-</div></div>
-      <div class="box"><div class="label">Hedef Nota</div><div class="value" id="targetNote">-</div></div>
+      <div class="box">
+        <div class="label">Aktif Hedef</div>
+        <div class="value" id="activeHece">-</div>
+      </div>
+      <div class="box">
+        <div class="label">Hedef Nota</div>
+        <div class="value" id="targetNote">-</div>
+      </div>
     </div>
 
     <div class="tuner-options">
       <div class="select-wrap">
         <label for="toleranceSelect">Tolerans</label>
         <select id="toleranceSelect">
-          <option value="10">±10 cent</option>
           <option value="20">±20 cent</option>
           <option value="25">±25 cent</option>
+          <option value="30" selected>±30 cent</option>
+          <option value="35">±35 cent</option>
         </select>
       </div>
     </div>
@@ -220,17 +443,32 @@ audio{
 
     <div id="tunerInfo">Tuner kapalı.</div>
     <div class="result" id="resultText">Toplam Puan: 0</div>
-    <div class="small">Belirlenen kısa grup bloklarında ilk ses bazlı doğrulama vardır. "sön" için özel esnetme uygulanır.</div>
+    <div id="feedbackText" class="small"></div>
+    <div class="small">Öbekler: sön-mez / şa-fak / sön-me-den / yur-du / üs-tün / tü-ten-en / son-o-cak</div>
   </div>
 </div>
 
 <script>
 const INTRO_DURATION = 4.20;
 
+/* AFFEDİCİ PENCERELER */
+const SINGLE_EARLY_GRACE = 0.45;
+const SINGLE_LATE_GRACE  = 1.80;
+
+const PHRASE_EARLY_GRACE = 1.00;
+const PHRASE_LATE_GRACE  = 2.10;
+
+const SINGLE_MIN_GOOD_FRAMES = 1;
+const PHRASE_MIN_GOOD_FRAMES = 1;
+
+const MIN_DETECTABLE_FREQ = 60;
+const MAX_DETECTABLE_FREQ = 1200;
+
 const NOTE_ALIASES = {
   "do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,
   "fa#":6,"solb":6,"sol":7,"sol#":8,"lab":8,"la":9,"la#":10,"sib":10,"si":11
 };
+
 const PC_TO_TR = {
   0:"Do",1:"Do#/Reb",2:"Re",3:"Re#/Mib",4:"Mi",5:"Fa",
   6:"Fa#/Solb",7:"Sol",8:"Sol#/Lab",9:"La",10:"La#/Sib",11:"Si"
@@ -239,10 +477,10 @@ const PC_TO_TR = {
 const heceler = [
   { text:"Kork", note:"si", start:4.21, end:4.61, line:1 },
   { text:"ma", note:"mi", start:4.68, end:5.23, line:1 },
-  { text:"sön", note:"fa", start:5.25, end:5.82, line:1 },
+  { text:"sön", note:"fa", start:5.30, end:5.82, line:1 },
   { text:"mez", note:"sol", start:5.84, end:6.45, line:1 },
   { text:"bu", note:"re#", start:6.43, end:6.91, line:1 },
-  { text:"şa", note:"fa", start:6.91, end:7.10, line:1 },
+  { text:"şa", note:"fa", start:6.96, end:7.10, line:1 },
   { text:"fak", note:"mi", start:7.11, end:8.75, line:1 },
   { text:"lar", note:"mi", start:8.74, end:9.30, line:1 },
   { text:"da", note:"la", start:9.30, end:9.95, line:1 },
@@ -269,7 +507,15 @@ const heceler = [
   { text:"cak", note:"si", start:18.25, end:18.67, line:2 }
 ];
 
-const FIXED_GROUPS = [[5,6],[17,18],[19,20,21,22],[23,24,25,26]];
+const PHRASE_GROUPS = [
+  { members:[2,3] },
+  { members:[5,6] },
+  { members:[14,15,16] },
+  { members:[17,18] },
+  { members:[20,21] },
+  { members:[23,24,25] },
+  { members:[26,27,28] }
+];
 
 let micStream = null;
 let micContext = null;
@@ -277,17 +523,17 @@ let analyser = null;
 let micSource = null;
 let tunerAnimation = null;
 let tunerRunning = false;
-let currentTargetNotes = ["la"];
+
 let started = false;
-let current = -1;
 let score = 0;
-let evaluatedSingles = new Set();
-let evaluatedGroups = new Set();
-let toleranceCent = 10;
-let goodFramesPerHece = {};
-let fixedGroups = [];
-let groupByIndex = {};
-let groupPassed = new Set();
+let toleranceCent = 30;
+let currentUnitIndex = -1;
+let currentDetectedFreq = null;
+let detectedHistory = [];
+let updateRaf = null;
+
+const units = [];
+const heceToUnitIndex = {};
 
 const audio = document.getElementById("song");
 const introFill = document.getElementById("introFill");
@@ -297,16 +543,29 @@ const statusText = document.getElementById("statusText");
 const activeHece = document.getElementById("activeHece");
 const targetNoteEl = document.getElementById("targetNote");
 const resultText = document.getElementById("resultText");
+const feedbackText = document.getElementById("feedbackText");
 const tunerInfo = document.getElementById("tunerInfo");
 const pitchDotEl = document.getElementById("pitchDot");
 const tickLayer = document.getElementById("tickLayer");
 const speedSelect = document.getElementById("speedSelect");
 const toleranceSelect = document.getElementById("toleranceSelect");
 
-function normalizePc(pc){ return ((pc % 12) + 12) % 12; }
-function noteNameToPitchClass(name){ return NOTE_ALIASES[String(name).toLowerCase().trim()]; }
-function pitchClassToDisplay(pc){ return PC_TO_TR[normalizePc(pc)]; }
-function setPitchDotState(mode){ pitchDotEl.classList.remove("correct","wrong","waiting"); pitchDotEl.classList.add(mode); }
+function normalizePc(pc){
+  return ((pc % 12) + 12) % 12;
+}
+
+function noteNameToPitchClass(name){
+  return NOTE_ALIASES[String(name).toLowerCase().trim()];
+}
+
+function pitchClassToDisplay(pc){
+  return PC_TO_TR[normalizePc(pc)];
+}
+
+function setPitchDotState(mode){
+  pitchDotEl.classList.remove("correct","wrong","waiting");
+  pitchDotEl.classList.add(mode);
+}
 
 function createTicks(){
   tickLayer.innerHTML = "";
@@ -319,24 +578,26 @@ function createTicks(){
   });
 }
 
-function updatePitchDotByCents(cents) {
+function updatePitchDotByCents(cents){
   if (cents === null || Number.isNaN(cents)) {
     pitchDotEl.style.left = "50%";
     setPitchDotState("waiting");
     return;
   }
+
   const clamped = Math.max(-50, Math.min(50, cents));
   const percent = 50 + (clamped / 50) * 40;
   pitchDotEl.style.left = `${percent}%`;
+
   if (Math.abs(cents) <= toleranceCent) setPitchDotState("correct");
   else setPitchDotState("wrong");
 }
 
-function freqToMidi(freq) {
+function freqToMidi(freq){
   return 69 + 12 * Math.log2(freq / 440);
 }
 
-function centsAgainstTarget(freq, targetName) {
+function centsAgainstTarget(freq, targetName){
   const midi = freqToMidi(freq);
   const pc = noteNameToPitchClass(targetName);
   if (pc === undefined) return null;
@@ -344,12 +605,39 @@ function centsAgainstTarget(freq, targetName) {
   return (midi - nearestMidi) * 100;
 }
 
-function autoCorrelate(buffer, sampleRate) {
+function bestMatchAgainstTargets(freq, targets){
+  let best = null;
+  for (const target of targets) {
+    const cents = centsAgainstTarget(freq, target);
+    if (cents === null) continue;
+    if (!best || Math.abs(cents) < Math.abs(best.cents)) {
+      best = { target, cents };
+    }
+  }
+  return best;
+}
+
+function getMedian(arr){
+  if (!arr.length) return null;
+  const s = [...arr].sort((a,b)=>a-b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+function smoothDetectedFreq(freq){
+  if (!freq) return null;
+  detectedHistory.push(freq);
+  if (detectedHistory.length > 2) detectedHistory.shift();
+  return getMedian(detectedHistory);
+}
+
+function autoCorrelate(buffer, sampleRate){
   let SIZE = buffer.length;
   let rms = 0;
+
   for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
   rms = Math.sqrt(rms / SIZE);
-  if (rms < 0.01) return -1;
+  if (rms < 0.006) return -1;
 
   let r1 = 0, r2 = SIZE - 1;
   const threshold = 0.2;
@@ -374,8 +662,12 @@ function autoCorrelate(buffer, sampleRate) {
 
   let maxval = -1, maxpos = -1;
   for (let i = d; i < SIZE; i++) {
-    if (c[i] > maxval) { maxval = c[i]; maxpos = i; }
+    if (c[i] > maxval) {
+      maxval = c[i];
+      maxpos = i;
+    }
   }
+
   if (maxpos <= 0) return -1;
 
   let T0 = maxpos;
@@ -389,148 +681,70 @@ function autoCorrelate(buffer, sampleRate) {
   return sampleRate / T0;
 }
 
-function setTarget(notes) {
-  currentTargetNotes = notes;
-  targetNoteEl.textContent = notes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ");
-}
+function buildUnits(){
+  units.length = 0;
+  for (const k in heceToUnitIndex) delete heceToUnitIndex[k];
 
-function getSingleEvalEnd(index) {
-  const h = heceler[index];
-  const next = heceler[index + 1];
-  if (index === 2) {
-    if (!next) return h.end + 0.55;
-    return Math.min(h.end + 0.55, next.start - 0.005);
-  }
-  let extra = 0.28;
-  if (!next) return h.end + extra;
-  return Math.min(h.end + extra, next.start - 0.01);
-}
+  const phraseAllIndexSet = new Set(PHRASE_GROUPS.flatMap(g => g.members));
 
-function buildFixedGroups() {
-  fixedGroups = [];
-  groupByIndex = {};
+  PHRASE_GROUPS.forEach((group, idx) => {
+    const firstIndex = group.members[0];
+    const firstHece = heceler[firstIndex];
+    const lastIndex = group.members[group.members.length - 1];
+    const lastHece = heceler[lastIndex];
 
-  FIXED_GROUPS.forEach((members, id) => {
-    const first = members[0];
-    const last = members[members.length - 1];
-    const next = heceler[last + 1];
-    let evalEnd = heceler[last].end + 0.55;
-    if (next) evalEnd = Math.min(evalEnd, next.start - 0.01);
+    const unit = {
+      type: "phrase",
+      id: "phrase_" + idx,
+      members: group.members,
+      label: group.members.map(i => heceler[i].text).join("-"),
+      targetNotes: [...new Set(group.members.map(i => heceler[i].note))],
+      listenStart: firstHece.start - PHRASE_EARLY_GRACE,
+      listenEnd: lastHece.end + PHRASE_LATE_GRACE,
+      activeStart: firstHece.start - PHRASE_EARLY_GRACE,
+      activeEnd: lastHece.end + PHRASE_LATE_GRACE,
+      minGoodFrames: PHRASE_MIN_GOOD_FRAMES,
+      goodFrames: 0,
+      evaluated: false,
+      passed: false,
+      scored: false,
+      scoreValue: group.members.length * 10
+    };
 
-    const group = { id, members, first, evalEnd };
-    fixedGroups.push(group);
-    members.forEach(idx => groupByIndex[idx] = group);
+    const unitIndex = units.push(unit) - 1;
+    group.members.forEach(i => { heceToUnitIndex[i] = unitIndex; });
   });
-}
 
-function markGroupCorrect(group) {
-  groupPassed.add(group.id);
-  group.members.forEach(idx => {
-    const el = document.getElementById("hece" + idx);
-    if (!el) return;
-    el.classList.remove("wrong", "active");
-    el.classList.add("correct");
+  heceler.forEach((h, i) => {
+    if (phraseAllIndexSet.has(i)) return;
+
+    const next = heceler[i + 1];
+    let listenEnd = h.end + SINGLE_LATE_GRACE;
+    if (next) listenEnd = Math.min(listenEnd, next.start + 0.60);
+
+    const unit = {
+      type: "single",
+      id: "single_" + i,
+      members: [i],
+      label: h.text,
+      targetNotes: [h.note],
+      listenStart: h.start - SINGLE_EARLY_GRACE,
+      listenEnd,
+      activeStart: h.start - SINGLE_EARLY_GRACE,
+      activeEnd: listenEnd,
+      minGoodFrames: SINGLE_MIN_GOOD_FRAMES,
+      goodFrames: 0,
+      evaluated: false,
+      passed: false,
+      scored: false,
+      scoreValue: 10
+    };
+
+    const unitIndex = units.push(unit) - 1;
+    heceToUnitIndex[i] = unitIndex;
   });
-}
 
-function updateTunerFromFrequency(freq) {
-  let bestCents = null;
-  let bestTarget = null;
-
-  for (const target of currentTargetNotes) {
-    const cents = centsAgainstTarget(freq, target);
-    if (cents === null) continue;
-    if (bestCents === null || Math.abs(cents) < Math.abs(bestCents)) {
-      bestCents = cents;
-      bestTarget = target;
-    }
-  }
-
-  if (bestCents === null) {
-    updatePitchDotByCents(null);
-    tunerInfo.textContent = "Geçerli hedef nota yok.";
-    return;
-  }
-
-  const detectedPitchClass = normalizePc(Math.round(freqToMidi(freq)));
-  const centsText = bestCents >= 0 ? `+${bestCents.toFixed(1)}` : bestCents.toFixed(1);
-  const isOk = Math.abs(bestCents) <= toleranceCent;
-
-  updatePitchDotByCents(bestCents);
-
-  if (isOk) {
-    if (current >= 0) {
-      const group = groupByIndex[current];
-
-      if (group && !groupPassed.has(group.id)) {
-        const firstIdx = group.first;
-        goodFramesPerHece[firstIdx] = (goodFramesPerHece[firstIdx] || 0) + 1;
-        if (goodFramesPerHece[firstIdx] >= 1) markGroupCorrect(group);
-      } else {
-        goodFramesPerHece[current] = (goodFramesPerHece[current] || 0) + 1;
-        const el = document.getElementById("hece" + current);
-        if (el) {
-          el.classList.remove("wrong");
-          el.classList.add("correct");
-        }
-      }
-    }
-
-    tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${pitchClassToDisplay(noteNameToPitchClass(bestTarget))} | Doğru`;
-  } else {
-    tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${pitchClassToDisplay(noteNameToPitchClass(bestTarget))} | Sapma: ${centsText} cent`;
-  }
-}
-
-function tunerLoop() {
-  if (!tunerRunning || !analyser) return;
-
-  const buffer = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(buffer);
-  const freq = autoCorrelate(buffer, micContext.sampleRate);
-
-  if (freq !== -1 && freq > 50 && freq < 1200) {
-    updateTunerFromFrequency(freq);
-  } else {
-    updatePitchDotByCents(null);
-    tunerInfo.textContent = tunerRunning
-      ? `Hedef: ${currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")} | Ses bekleniyor...`
-      : "Tuner kapalı.";
-  }
-
-  tunerAnimation = requestAnimationFrame(tunerLoop);
-}
-
-async function tunerAc() {
-  if (tunerRunning) return true;
-
-  try {
-    micStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: false,
-        noiseSuppression: false,
-        autoGainControl: false
-      }
-    });
-
-    micContext = new (window.AudioContext || window.webkitAudioContext)();
-    if (micContext.state === "suspended") await micContext.resume();
-    analyser = micContext.createAnalyser();
-    analyser.fftSize = 4096;
-    analyser.smoothingTimeConstant = 0.85;
-
-    micSource = micContext.createMediaStreamSource(micStream);
-    micSource.connect(analyser);
-
-    tunerRunning = true;
-    tunerInfo.textContent = `Hedef: ${currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")} | Ses bekleniyor...`;
-    tunerLoop();
-    return true;
-  } catch (err) {
-    console.error(err);
-    tunerInfo.textContent = "Mikrofon açılamadı.";
-    return false;
-  }
+  units.sort((a, b) => a.listenStart - b.listenStart);
 }
 
 function renderLyrics(){
@@ -547,83 +761,272 @@ function renderLyrics(){
   });
 }
 
-function activate(i){
+function clearActiveClasses(){
   document.querySelectorAll(".hece").forEach(el => el.classList.remove("active"));
-
-  const group = groupByIndex[i];
-  const el = document.getElementById("hece" + i);
-  if (el && !el.classList.contains("wrong") && !el.classList.contains("correct")) {
-    el.classList.add("active");
-    el.scrollIntoView({ behavior:"smooth", block:"center", inline:"nearest" });
-  }
-
-  activeHece.textContent = heceler[i]?.text || "-";
-
-  if (group && !groupPassed.has(group.id)) {
-    setTarget([heceler[group.first].note]);
-  } else {
-    setTarget([heceler[i]?.note || "la"]);
-  }
-
-  if (goodFramesPerHece[i] === undefined) goodFramesPerHece[i] = 0;
 }
 
-function evaluateSingle(i){
-  if (evaluatedSingles.has(i)) return;
-  if (groupByIndex[i]) return;
+function activateUnit(unit){
+  clearActiveClasses();
 
-  evaluatedSingles.add(i);
-
-  const el = document.getElementById("hece" + i);
-  if (!el) return;
-
-  el.classList.remove("active");
-
-  const goodCount = goodFramesPerHece[i] || 0;
-  const passed = goodCount >= 1;
-
-  if (passed) {
-    el.classList.remove("wrong");
-    el.classList.add("correct");
-    score += 10;
-  } else {
-    el.classList.remove("correct");
-    el.classList.add("wrong");
+  if (!unit) {
+    activeHece.textContent = "-";
+    targetNoteEl.textContent = "-";
+    return;
   }
 
-  resultText.textContent = "Toplam Puan: " + score;
-}
-
-function evaluateGroup(group){
-  if (evaluatedGroups.has(group.id)) return;
-  evaluatedGroups.add(group.id);
-
-  const passed = groupPassed.has(group.id) || (goodFramesPerHece[group.first] || 0) >= 1;
-
-  group.members.forEach(idx => {
-    const el = document.getElementById("hece" + idx);
+  unit.members.forEach(i => {
+    const el = document.getElementById("hece" + i);
     if (!el) return;
-    el.classList.remove("active");
-    if (passed) {
-      el.classList.remove("wrong");
-      el.classList.add("correct");
-    } else {
-      el.classList.remove("correct");
-      el.classList.add("wrong");
+    if (!el.classList.contains("correct") && !el.classList.contains("wrong")) {
+      el.classList.add("active");
     }
   });
 
-  if (passed) score += 10 * group.members.length;
+  activeHece.textContent = unit.label;
+  targetNoteEl.textContent = unit.targetNotes
+    .map(n => pitchClassToDisplay(noteNameToPitchClass(n)))
+    .join(" / ");
+}
+
+function markUnit(unit, passed){
+  unit.members.forEach(i => {
+    const el = document.getElementById("hece" + i);
+    if (!el) return;
+    el.classList.remove("active","correct","wrong");
+    el.classList.add(passed ? "correct" : "wrong");
+  });
+}
+
+function refreshScore(){
   resultText.textContent = "Toplam Puan: " + score;
 }
 
-function getActiveHeceIndex(t){
-  let active = -1;
-  for (let i = 0; i < heceler.length; i++) {
-    if (t >= heceler[i].start) active = i;
-    else break;
+function addScoreOnce(unit){
+  if (unit.scored) return;
+  score += unit.scoreValue;
+  unit.scored = true;
+  refreshScore();
+}
+
+function getFeedback(score){
+  if(score >= 260) return "🌟 Mükemmel! Tonu çok iyi yakaladın.";
+  if(score >= 200) return "👏 Çok iyi! Birkaç küçük sapma dışında harika.";
+  if(score >= 140) return "👍 İyi! Bir kez daha denersen daha da iyi olacak.";
+  if(score >= 80) return "🙂 Güzel başlangıç. Bir kez daha deneyelim.";
+  return "🎵 Isınma turu gibi düşün. Tekrar deneyelim!";
+}
+
+function updateTunerDisplay(freq, unit){
+  if (freq === null || !unit) {
+    updatePitchDotByCents(null);
+    tunerInfo.textContent = tunerRunning ? "Ses bekleniyor..." : "Tuner kapalı.";
+    return;
   }
-  return active;
+
+  const best = bestMatchAgainstTargets(freq, unit.targetNotes);
+  if (!best) {
+    updatePitchDotByCents(null);
+    tunerInfo.textContent = "Hedef nota yok.";
+    return;
+  }
+
+  const detectedPitchClass = normalizePc(Math.round(freqToMidi(freq)));
+  const cents = best.cents;
+  const centsText = cents >= 0 ? `+${cents.toFixed(1)}` : cents.toFixed(1);
+  const isOk = Math.abs(cents) <= toleranceCent;
+
+  updatePitchDotByCents(cents);
+
+  if (isOk) {
+    tunerInfo.textContent =
+      `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedefler: ${unit.targetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")} | Doğru`;
+  } else {
+    tunerInfo.textContent =
+      `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedefler: ${unit.targetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")} | Sapma: ${centsText} cent`;
+  }
+}
+
+function tunerLoop(){
+  if (!tunerRunning || !analyser) return;
+
+  const buffer = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buffer);
+  const rawFreq = autoCorrelate(buffer, micContext.sampleRate);
+
+  if (rawFreq !== -1 && rawFreq > MIN_DETECTABLE_FREQ && rawFreq < MAX_DETECTABLE_FREQ) {
+    currentDetectedFreq = smoothDetectedFreq(rawFreq);
+  } else {
+    currentDetectedFreq = null;
+    detectedHistory = [];
+  }
+
+  const unit = currentUnitIndex >= 0 ? units[currentUnitIndex] : null;
+  updateTunerDisplay(currentDetectedFreq, unit);
+
+  tunerAnimation = requestAnimationFrame(tunerLoop);
+}
+
+async function tunerAc(){
+  if (tunerRunning) return true;
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+      }
+    });
+
+    micContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = micContext.createAnalyser();
+    analyser.fftSize = 4096;
+    analyser.smoothingTimeConstant = 0.35;
+
+    micSource = micContext.createMediaStreamSource(micStream);
+    micSource.connect(analyser);
+
+    tunerRunning = true;
+    tunerInfo.textContent = "Ses bekleniyor...";
+    tunerLoop();
+    return true;
+  } catch (err) {
+    console.error(err);
+    tunerInfo.textContent = "Mikrofon açılamadı.";
+    return false;
+  }
+}
+
+function resetUnitsState(){
+  units.forEach(unit => {
+    unit.goodFrames = 0;
+    unit.evaluated = false;
+    unit.passed = false;
+    unit.scored = false;
+  });
+}
+
+function getActiveCandidates(t){
+  return units
+    .map((u, i) => ({ unit:u, index:i }))
+    .filter(({unit}) => !unit.evaluated && t >= unit.activeStart && t <= unit.activeEnd);
+}
+
+function chooseDisplayUnitIndex(t){
+  const active = getActiveCandidates(t);
+  if (!active.length) {
+    for (let i = 0; i < units.length; i++) {
+      const u = units[i];
+      if (!u.evaluated && t <= u.activeEnd) return i;
+    }
+    return -1;
+  }
+
+  active.sort((a, b) => {
+    const da = Math.abs(t - ((a.unit.activeStart + a.unit.activeEnd) / 2));
+    const db = Math.abs(t - ((b.unit.activeStart + b.unit.activeEnd) / 2));
+    if (da !== db) return da - db;
+    return a.unit.activeStart - b.unit.activeStart;
+  });
+
+  return active[0].index;
+}
+
+function processPitchForAllRelevantUnits(freq, t){
+  if (!freq) return;
+
+  for (const unit of units) {
+    if (unit.evaluated) continue;
+    if (t < unit.listenStart || t > unit.listenEnd) continue;
+
+    const best = bestMatchAgainstTargets(freq, unit.targetNotes);
+    if (!best) continue;
+
+    if (Math.abs(best.cents) <= toleranceCent) {
+      unit.goodFrames += 1;
+
+      if (unit.type === "phrase" && unit.goodFrames >= unit.minGoodFrames) {
+        unit.passed = true;
+        unit.evaluated = true;
+        markUnit(unit, true);
+        addScoreOnce(unit);
+      }
+
+      if (unit.type === "single" && unit.goodFrames >= unit.minGoodFrames) {
+        unit.passed = true;
+      }
+    }
+  }
+}
+
+function evaluateExpiredUnits(t){
+  units.forEach(unit => {
+    if (unit.evaluated) return;
+
+    if (t > unit.listenEnd) {
+      unit.evaluated = true;
+
+      if (unit.passed) {
+        markUnit(unit, true);
+        addScoreOnce(unit);
+      } else {
+        markUnit(unit, false);
+      }
+    }
+  });
+}
+
+function updateIntro(t){
+  if (t < INTRO_DURATION) introFill.style.width = ((t / INTRO_DURATION) * 100) + "%";
+  else introFill.style.width = "100%";
+}
+
+function finalizeRemainingUnits(){
+  units.forEach(unit => {
+    if (!unit.evaluated) {
+      unit.evaluated = true;
+      if (unit.passed) {
+        markUnit(unit, true);
+        addScoreOnce(unit);
+      } else {
+        markUnit(unit, false);
+      }
+    }
+  });
+  refreshScore();
+  feedbackText.textContent = getFeedback(score);
+}
+
+function updateEngine(){
+  if (!started) return;
+
+  const t = audio.currentTime;
+  updateIntro(t);
+
+  processPitchForAllRelevantUnits(currentDetectedFreq, t);
+  evaluateExpiredUnits(t);
+
+  currentUnitIndex = chooseDisplayUnitIndex(t);
+
+  if (currentUnitIndex >= 0) {
+    const unit = units[currentUnitIndex];
+    if (!unit.evaluated) activateUnit(unit);
+    else activateUnit(null);
+  } else {
+    clearActiveClasses();
+    activeHece.textContent = "-";
+    targetNoteEl.textContent = "-";
+  }
+
+  if (!audio.paused && !audio.ended && started) {
+    updateRaf = requestAnimationFrame(updateEngine);
+  } else if (audio.ended) {
+    finalizeRemainingUnits();
+    statusText.textContent = "Tamamlandı";
+    clearActiveClasses();
+    currentUnitIndex = -1;
+    started = false;
+  }
 }
 
 async function startKaraoke(){
@@ -633,15 +1036,20 @@ async function startKaraoke(){
     return;
   }
 
-  score = 0;
-  current = -1;
-  evaluatedSingles = new Set();
-  evaluatedGroups = new Set();
-  goodFramesPerHece = {};
-  groupPassed = new Set();
+  if (updateRaf) cancelAnimationFrame(updateRaf);
 
-  resultText.textContent = "Toplam Puan: 0";
-  document.querySelectorAll(".hece").forEach(el => el.className = "hece");
+  score = 0;
+  refreshScore();
+  feedbackText.textContent = "";
+  currentUnitIndex = -1;
+  currentDetectedFreq = null;
+  detectedHistory = [];
+  resetUnitsState();
+
+  document.querySelectorAll(".hece").forEach(el => {
+    el.classList.remove("active","correct","wrong");
+  });
+
   introFill.style.width = "0%";
   activeHece.textContent = "-";
   targetNoteEl.textContent = "-";
@@ -655,15 +1063,17 @@ async function startKaraoke(){
     await audio.play();
   } catch(e) {
     statusText.textContent = "Müzik başlatılamadı";
+    started = false;
     return;
   }
 
-  requestAnimationFrame(update);
+  updateRaf = requestAnimationFrame(updateEngine);
 }
 
 function stopKaraoke(){
   started = false;
   audio.pause();
+  if (updateRaf) cancelAnimationFrame(updateRaf);
   statusText.textContent = "Durduruldu";
 }
 
@@ -673,54 +1083,23 @@ function resetKaraoke(){
   audio.playbackRate = Number(speedSelect.value);
 
   score = 0;
-  current = -1;
-  evaluatedSingles = new Set();
-  evaluatedGroups = new Set();
-  goodFramesPerHece = {};
-  groupPassed = new Set();
+  refreshScore();
+  feedbackText.textContent = "";
+  currentUnitIndex = -1;
+  currentDetectedFreq = null;
+  detectedHistory = [];
+  resetUnitsState();
 
   introFill.style.width = "0%";
   activeHece.textContent = "-";
-  resultText.textContent = "Toplam Puan: 0";
   targetNoteEl.textContent = "-";
-  document.querySelectorAll(".hece").forEach(el => el.className = "hece");
+  document.querySelectorAll(".hece").forEach(el => {
+    el.classList.remove("active","correct","wrong");
+  });
 
   updatePitchDotByCents(null);
   tunerInfo.textContent = tunerRunning ? "Ses bekleniyor..." : "Tuner kapalı.";
   statusText.textContent = "Hazır";
-}
-
-function update(){
-  if (!started) return;
-
-  const t = audio.currentTime;
-
-  if (t < INTRO_DURATION) introFill.style.width = ((t / INTRO_DURATION) * 100) + "%";
-  else introFill.style.width = "100%";
-
-  const activeIdx = getActiveHeceIndex(t);
-  if (activeIdx !== current && activeIdx >= 0) {
-    current = activeIdx;
-    activate(activeIdx);
-  }
-
-  for (let i = 0; i < heceler.length; i++) {
-    const group = groupByIndex[i];
-    if (group) {
-      if (t > group.evalEnd) evaluateGroup(group);
-    } else {
-      const evalEnd = getSingleEvalEnd(i);
-      if (t > evalEnd) evaluateSingle(i);
-    }
-  }
-
-  if (!audio.paused && !audio.ended) {
-    requestAnimationFrame(update);
-  } else if (audio.ended) {
-    fixedGroups.forEach(group => evaluateGroup(group));
-    for (let i = 0; i < heceler.length; i++) evaluateSingle(i);
-    statusText.textContent = "Tamamlandı";
-  }
 }
 
 speedSelect.addEventListener("change", () => {
@@ -730,20 +1109,13 @@ speedSelect.addEventListener("change", () => {
 
 toleranceSelect.addEventListener("change", () => {
   toleranceCent = Number(toleranceSelect.value);
-  if (tunerRunning) tunerInfo.textContent = `Tolerans güncellendi: ±${toleranceCent} cent`;
 });
 
-buildFixedGroups();
+buildUnits();
 createTicks();
 renderLyrics();
 audio.playbackRate = Number(speedSelect.value);
 toleranceCent = Number(toleranceSelect.value);
-
-document.addEventListener("touchend", async () => {
-  if (micContext && micContext.state === "suspended") {
-    try { await micContext.resume(); } catch(e) {}
-  }
-}, { passive:true });
 </script>
 </body>
 </html>
