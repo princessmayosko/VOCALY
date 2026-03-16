@@ -1,133 +1,269 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Vocaly Editor</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Vocaly - Editör</title>
 <style>
+:root{
+  --bg:#f8fafc;
+  --card:#fff;
+  --text:#111827;
+  --muted:#6b7280;
+  --blue:#2563eb;
+  --green:#16a34a;
+  --red:#dc2626;
+  --border:#e5e7eb;
+  --shadow:0 10px 30px rgba(0,0,0,.08);
+  --safe-top:env(safe-area-inset-top, 0px);
+  --safe-right:env(safe-area-inset-right, 0px);
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
+  --safe-left:env(safe-area-inset-left, 0px);
+}
+*{box-sizing:border-box}
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
 body{
-font-family:Arial;
-background:#f5f7fb;
-padding:20px;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(180deg,#f8fafc,#eef2f7);
+  color:var(--text);
+  min-height:100svh;
 }
-
-#waveform{
-margin-top:20px;
-height:200px;
-border:1px solid #ddd;
-border-radius:10px;
-background:white;
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:calc(16px + var(--safe-top)) calc(14px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(14px + var(--safe-left));
 }
-
-input{
-padding:8px;
-margin:5px;
+.card{
+  background:var(--card);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:20px;
+  margin-bottom:18px;
 }
-
-button{
-padding:8px 12px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
+h1,h2{margin:0 0 12px}
+p{margin:0 0 12px}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
 }
-
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:0;
+}
+label{
+  font-size:14px;
+  font-weight:700;
+}
+input, textarea, select{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  font-size:16px;
+  appearance:none;
+  -webkit-appearance:none;
+}
 textarea{
-width:100%;
-height:200px;
-margin-top:20px;
-font-family:monospace;
+  min-height:120px;
+  resize:vertical;
+}
+.row{
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr 1fr auto;
+  gap:10px;
+  align-items:end;
+  margin-bottom:10px;
+}
+.syllable-row{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  background:#fafafa;
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+button{
+  border:none;
+  border-radius:12px;
+  padding:12px 16px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  min-height:44px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.primary{background:var(--blue); color:#fff;}
+.green{background:var(--green); color:#fff;}
+.red{background:var(--red); color:#fff;}
+.gray{background:#e5e7eb; color:#111827;}
+.preview{
+  background:#0f172a;
+  color:#e5e7eb;
+  border-radius:14px;
+  padding:16px;
+  overflow:auto;
+  font-family:Consolas, monospace;
+  white-space:pre-wrap;
+  word-break:break-word;
+  max-height:50svh;
+}
+.small{
+  color:var(--muted);
+  font-size:13px;
+}
+@media (max-width:900px){
+  .grid{ grid-template-columns:1fr; }
+  .row{ grid-template-columns:1fr; }
+}
+@media (max-width:540px){
+  .container{ padding-left:10px; padding-right:10px; }
+  .card{ padding:14px; border-radius:16px; }
+  .actions > button{ width:100%; }
 }
 </style>
-
 </head>
-
 <body>
+<div class="container">
 
-<h2>Vocaly Waveform Editor</h2>
+  <div class="card">
+    <h1>Vocaly Editör</h1>
+    <p>Bu editör; hece, zaman ve nota verisini tek JSON yapısında toplar.</p>
+  </div>
 
-<input type="file" id="audioFile">
+  <div class="card">
+    <h2>Genel Bilgiler</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="title">Eser Başlığı</label>
+        <input id="title" type="text" placeholder="Örn: İstiklal Marşı">
+      </div>
+      <div class="field">
+        <label for="audio">MP3 Yolu</label>
+        <input id="audio" type="text" placeholder="Örn: temiz_kayit.mp3">
+      </div>
+    </div>
+  </div>
 
-<div id="waveform"></div>
+  <div class="card">
+    <h2>Hece Girişleri</h2>
+    <p class="small">Her hece için metin, başlangıç, bitiş ve hedef nota gir.</p>
+    <div id="rowsContainer"></div>
 
-<br>
+    <div class="actions" style="margin-top:12px;">
+      <button class="primary" type="button" onclick="addRow()">Yeni Hece Ekle</button>
+      <button class="green" type="button" onclick="generateJSON()">JSON Üret</button>
+      <button class="gray" type="button" onclick="loadSample()">Örnek Veri Yükle</button>
+    </div>
+  </div>
 
-Start <input id="start">
-End <input id="end">
-Hece <input id="hece">
-Nota <input id="nota">
+  <div class="card">
+    <h2>JSON Çıktısı</h2>
+    <div id="jsonPreview" class="preview">{}</div>
+  </div>
 
-<button onclick="ekle()">Kaydet</button>
-
-<h3>Karaoke Kod</h3>
-
-<textarea id="output"></textarea>
-
-<script src="https://unpkg.com/wavesurfer.js@6"></script>
-<script src="https://unpkg.com/wavesurfer.js@6/dist/plugin/wavesurfer.regions.min.js"></script>
+</div>
 
 <script>
+const rowsContainer = document.getElementById("rowsContainer");
+const jsonPreview = document.getElementById("jsonPreview");
 
-let ws
-let data=[]
-let aktif=null
+function addRow(data = { text:"", start:"", end:"", note:"" }) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "syllable-row";
 
-function init(){
+  wrapper.innerHTML = `
+    <div class="row">
+      <div class="field">
+        <label>Hece</label>
+        <input type="text" class="syllable-text" placeholder="Örn: Kor" value="${data.text}">
+      </div>
 
-ws=WaveSurfer.create({
-container:"#waveform",
-waveColor:"#bbb",
-progressColor:"#2563eb",
-height:200,
-plugins:[WaveSurfer.regions.create({})]
-})
+      <div class="field">
+        <label>Başlangıç</label>
+        <input type="number" step="0.01" class="syllable-start" placeholder="0.50" value="${data.start}">
+      </div>
 
-ws.enableDragSelection({
-color:"rgba(37,99,235,0.3)"
-})
+      <div class="field">
+        <label>Bitiş</label>
+        <input type="number" step="0.01" class="syllable-end" placeholder="0.90" value="${data.end}">
+      </div>
 
-ws.on("region-created",r=>{
+      <div class="field">
+        <label>Nota</label>
+        <input type="text" class="syllable-note" placeholder="G4" value="${data.note}">
+      </div>
 
-if(aktif && aktif!==r){
-aktif.remove()
+      <button class="red" type="button" onclick="removeRow(this)">Sil</button>
+    </div>
+  `;
+
+  rowsContainer.appendChild(wrapper);
 }
 
-aktif=r
-
-start.value=r.start.toFixed(2)
-end.value=r.end.toFixed(2)
-
-})
-
+function removeRow(button) {
+  button.closest(".syllable-row").remove();
 }
 
-init()
+function generateJSON() {
+  const title = document.getElementById("title").value.trim();
+  const audio = document.getElementById("audio").value.trim();
 
-audioFile.onchange=e=>{
-let file=e.target.files[0]
-if(!file)return
+  const texts = document.querySelectorAll(".syllable-text");
+  const starts = document.querySelectorAll(".syllable-start");
+  const ends = document.querySelectorAll(".syllable-end");
+  const notes = document.querySelectorAll(".syllable-note");
 
-let url=URL.createObjectURL(file)
-ws.load(url)
+  const syllables = [];
+
+  for (let i = 0; i < texts.length; i++) {
+    const text = texts[i].value.trim();
+    const start = parseFloat(starts[i].value);
+    const end = parseFloat(ends[i].value);
+    const note = notes[i].value.trim();
+
+    if (!text) continue;
+
+    syllables.push({
+      text,
+      start: isNaN(start) ? 0 : start,
+      end: isNaN(end) ? 0 : end,
+      note
+    });
+  }
+
+  const output = { title, audio, syllables };
+  jsonPreview.textContent = JSON.stringify(output, null, 2);
 }
 
-function ekle(){
+function loadSample() {
+  document.getElementById("title").value = "İstiklal Marşı";
+  document.getElementById("audio").value = "temiz_kayit.mp3";
+  rowsContainer.innerHTML = "";
 
-let obj={
-text:hece.value,
-note:nota.value,
-start:parseFloat(start.value),
-end:parseFloat(end.value)
+  [
+    { text:"Kor", start:"0.50", end:"0.90", note:"G4" },
+    { text:"kma", start:"0.91", end:"1.30", note:"A4" },
+    { text:"sön", start:"1.31", end:"1.70", note:"B4" },
+    { text:"mez", start:"1.71", end:"2.10", note:"A4" }
+  ].forEach(addRow);
+
+  generateJSON();
 }
 
-data.push(obj)
-
-output.value="const heceler = "+JSON.stringify(data,null,2)
-
-}
-
+addRow();
+addRow();
+addRow();
 </script>
-
 </body>
 </html>
