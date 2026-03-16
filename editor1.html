@@ -13,8 +13,9 @@
   --green:#16a34a;
   --green-soft:rgba(22,163,74,0.12);
   --red:#dc2626;
-  --red-soft:rgba(220,38,38,0.10);
+  --red-soft:rgba(220,38,38,0.12);
   --amber:#f59e0b;
+  --amber-soft:rgba(245,158,11,0.16);
   --shadow:0 10px 28px rgba(0,0,0,0.08);
   --panel:rgba(255,255,255,0.95);
   --border:#e5e7eb;
@@ -27,7 +28,7 @@ body{
   color:var(--text);
   padding:24px;
 }
-.wrap{max-width:1150px;margin:0 auto}
+.wrap{max-width:1180px;margin:0 auto}
 .card{
   background:var(--panel);
   border:1px solid var(--border);
@@ -88,6 +89,7 @@ button{
 .btn-soft{background:#eef4ff;color:#1746a2;border:1px solid #d9e7ff}
 .btn-green{background:var(--green);color:white}
 .btn-red{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
+.btn-amber{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
 .status{
   display:flex;
   gap:10px;
@@ -105,6 +107,8 @@ button{
 }
 .pill.blue{background:var(--blue-soft);color:#1746a2;border-color:#dbeafe}
 .pill.green{background:var(--green-soft);color:#166534;border-color:#d1fae5}
+.pill.red{background:var(--red-soft);color:#991b1b;border-color:#fecaca}
+.pill.amber{background:var(--amber-soft);color:#92400e;border-color:#fde68a}
 .wavebox{
   margin-top:16px;
   border:1px solid var(--border);
@@ -155,39 +159,72 @@ button{
 .karaokeWrap{
   display:flex;
   flex-wrap:wrap;
-  gap:8px;
+  gap:10px;
   align-items:flex-start;
-  line-height:2.1;
+  line-height:2;
 }
-.karaokeHece{
-  display:inline-block;
-  padding:10px 14px;
-  border-radius:12px;
+.karaokeBox{
+  position:relative;
+  overflow:hidden;
+  min-width:78px;
+  padding:12px 14px;
+  border-radius:14px;
   background:#eef2ff;
   border:1px solid #dbeafe;
   font-weight:700;
   cursor:pointer;
-  transition:.15s ease;
   user-select:none;
+  transition:.15s ease;
 }
-.karaokeHece:hover{
-  transform:translateY(-1px);
+.karaokeBox:hover{transform:translateY(-1px)}
+.karaokeBox .fill{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0%;
+  background:rgba(37,99,235,0.18);
+  pointer-events:none;
+  transition:width .05s linear;
 }
-.karaokeHece.active{
-  background:var(--blue);
-  color:#fff;
+.karaokeBox .label{
+  position:relative;
+  z-index:1;
+}
+.karaokeBox.active{
   border-color:var(--blue);
-  box-shadow:0 0 0 4px rgba(37,99,235,0.15);
+  box-shadow:0 0 0 4px rgba(37,99,235,0.12);
 }
-.karaokeHece .note{
-  font-size:12px;
-  opacity:.8;
-  font-weight:600;
-  margin-left:6px;
+.karaokeBox.ok{
+  background:var(--green-soft);
+  border-color:#bbf7d0;
+  color:#166534;
+}
+.karaokeBox.bad{
+  background:var(--red-soft);
+  border-color:#fecaca;
+  color:#991b1b;
+}
+.karaokeBox.intro{
+  background:#fff7ed;
+  border-color:#fed7aa;
+  color:#9a3412;
 }
 .lineBreak{
   flex-basis:100%;
   height:0;
+}
+.sectionTop{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.small{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
 }
 @media (max-width:900px){
   .g4,.g3,.g2{grid-column:span 12}
@@ -202,7 +239,7 @@ button{
     <h1>Waveform Editor</h1>
     <p class="sub">
       MP3 yükle, waveform üzerinde sürükleyerek bölge seç, hece veya kelime ile hedef notayı gir.
-      Space tuşu seçili bölgeyi loop açıp kapatır. Kayıt ettikçe altta canlı karaoke kutuları oluşur.
+      Space tuşu seçili bölgeyi loop açıp kapatır. Canlı karaoke önizleme yukarıdadır ve intro dahil oynatılır.
     </p>
 
     <div class="toolbar">
@@ -241,6 +278,8 @@ button{
       <div class="pill blue" id="statusText">Hazır</div>
       <div class="pill" id="timeText">0.00 sn</div>
       <div class="pill" id="selectionText">Seçim yok</div>
+      <div class="pill" id="micText">Mikrofon kapalı</div>
+      <div class="pill" id="noteText">Nota: -</div>
     </div>
 
     <div class="wavebox">
@@ -248,7 +287,7 @@ button{
     </div>
 
     <div class="hint">
-      Bölge seçmek için dalga üstünde sürükle. Space: loop aç/kapat. Alttaki karaoke kutusuna tıklarsan o aralık çalar.
+      Bölge seçmek için dalga üstünde sürükle. Space: loop aç/kapat. Canlı karaoke kutusuna tıklarsan o aralık çalar.
     </div>
 
     <div class="toolbar">
@@ -296,17 +335,41 @@ button{
         <label>&nbsp;</label>
         <button class="btn-red" id="deleteLoadedBtn">Yüklüyü Sil</button>
       </div>
+
+      <div class="field g3">
+        <label>&nbsp;</label>
+        <button class="btn-amber" id="saveProjectBtn">Önizlemeyi Kaydet</button>
+      </div>
+
+      <div class="field g3">
+        <label>&nbsp;</label>
+        <button class="btn-soft" id="loadProjectBtn">Kayıtlıyı Yükle</button>
+      </div>
+
+      <div class="field g3">
+        <label>&nbsp;</label>
+        <button class="btn-soft" id="micBtn">Tuner / Mikrofon Aç</button>
+      </div>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="sectionTop">
+      <h2 style="margin:0;">Canlı Karaoke Önizleme</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-blue" id="previewPlayBtn">Önizlemeyi Oynat</button>
+        <button class="btn-soft" id="previewStopBtn">Durdur</button>
+      </div>
+    </div>
+    <div class="small" style="margin-top:8px;">
+      Intro kutusu dahil tüm önizleme buradan oynar. Doğru nota algılanırsa kutu yeşile, süre bitip doğru gelmezse kırmızıya döner.
+    </div>
+    <div id="karaoke" class="karaokeWrap" style="margin-top:14px;"></div>
   </div>
 
   <div class="card">
     <h2>Kayıtlı Heceler</h2>
     <div id="liste" class="list"></div>
-  </div>
-
-  <div class="card">
-    <h2>Canlı Karaoke Önizleme</h2>
-    <div id="karaoke" class="karaokeWrap"></div>
   </div>
 
 </div>
@@ -320,6 +383,15 @@ let activeRegion = null
 let heceler = []
 let loopMode = false
 let loadedIndex = -1
+
+let audioContext = null
+let analyser = null
+let micSource = null
+let micStream = null
+let pitchBuffer = null
+let micReady = false
+
+const PROJECT_KEY = "vocaly_editor_preview_save"
 
 const audioFile = document.getElementById("audioFile")
 const playBtn = document.getElementById("playBtn")
@@ -335,11 +407,160 @@ const clearRegionBtn = document.getElementById("clearRegionBtn")
 const saveBtn = document.getElementById("saveBtn")
 const updateBtn = document.getElementById("updateBtn")
 const deleteLoadedBtn = document.getElementById("deleteLoadedBtn")
+const saveProjectBtn = document.getElementById("saveProjectBtn")
+const loadProjectBtn = document.getElementById("loadProjectBtn")
+const micBtn = document.getElementById("micBtn")
+const previewPlayBtn = document.getElementById("previewPlayBtn")
+const previewStopBtn = document.getElementById("previewStopBtn")
+
 const statusText = document.getElementById("statusText")
 const timeText = document.getElementById("timeText")
 const selectionText = document.getElementById("selectionText")
+const micText = document.getElementById("micText")
+const noteText = document.getElementById("noteText")
 const liste = document.getElementById("liste")
 const karaoke = document.getElementById("karaoke")
+
+function normalizeNoteName(name){
+  return String(name || "")
+    .trim()
+    .toLowerCase()
+    .replaceAll("♯","#")
+    .replaceAll("diyez","#")
+    .replaceAll("bemol","b")
+    .replace("do#","do#")
+    .replace("re#","re#")
+    .replace("fa#","fa#")
+    .replace("sol#","sol#")
+    .replace("la#","la#")
+    .replace("sib","la#")
+    .replace("lab","sol#")
+    .replace("solb","fa#")
+    .replace("mib","re#")
+    .replace("reb","do#")
+}
+
+function noteToSemitone(name){
+  const map = {
+    "do":0,"do#":1,
+    "re":2,"re#":3,
+    "mi":4,
+    "fa":5,"fa#":6,
+    "sol":7,"sol#":8,
+    "la":9,"la#":10,
+    "si":11
+  }
+  return map[normalizeNoteName(name)]
+}
+
+function freqToMidi(freq){
+  return Math.round(69 + 12 * Math.log2(freq / 440))
+}
+
+function midiToNoteName(midi){
+  const notes = ["do","do#","re","re#","mi","fa","fa#","sol","sol#","la","la#","si"]
+  return notes[((midi % 12) + 12) % 12]
+}
+
+function autoCorrelate(buffer, sampleRate){
+  let SIZE = buffer.length
+  let rms = 0
+  for(let i = 0; i < SIZE; i++){
+    const val = buffer[i]
+    rms += val * val
+  }
+  rms = Math.sqrt(rms / SIZE)
+  if(rms < 0.01) return -1
+
+  let r1 = 0
+  let r2 = SIZE - 1
+  const threshold = 0.2
+
+  for(let i = 0; i < SIZE / 2; i++){
+    if(Math.abs(buffer[i]) < threshold){
+      r1 = i
+      break
+    }
+  }
+
+  for(let i = 1; i < SIZE / 2; i++){
+    if(Math.abs(buffer[SIZE - i]) < threshold){
+      r2 = SIZE - i
+      break
+    }
+  }
+
+  buffer = buffer.slice(r1, r2)
+  SIZE = buffer.length
+
+  const c = new Array(SIZE).fill(0)
+  for(let i = 0; i < SIZE; i++){
+    for(let j = 0; j < SIZE - i; j++){
+      c[i] = c[i] + buffer[j] * buffer[j + i]
+    }
+  }
+
+  let d = 0
+  while(c[d] > c[d + 1]) d++
+
+  let maxval = -1
+  let maxpos = -1
+  for(let i = d; i < SIZE; i++){
+    if(c[i] > maxval){
+      maxval = c[i]
+      maxpos = i
+    }
+  }
+
+  let T0 = maxpos
+  if(T0 <= 0) return -1
+
+  const x1 = c[T0 - 1] || c[T0]
+  const x2 = c[T0]
+  const x3 = c[T0 + 1] || c[T0]
+  const a = (x1 + x3 - 2 * x2) / 2
+  const b = (x3 - x1) / 2
+
+  if(a){
+    T0 = T0 - b / (2 * a)
+  }
+
+  return sampleRate / T0
+}
+
+async function setupMic(){
+  try{
+    if(micReady) return
+    micStream = await navigator.mediaDevices.getUserMedia({ audio:true })
+    audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    analyser = audioContext.createAnalyser()
+    analyser.fftSize = 2048
+    pitchBuffer = new Float32Array(analyser.fftSize)
+    micSource = audioContext.createMediaStreamSource(micStream)
+    micSource.connect(analyser)
+    micReady = true
+    micText.textContent = "Mikrofon açık"
+    micText.className = "pill green"
+  }catch(err){
+    console.error(err)
+    micText.textContent = "Mikrofon açılamadı"
+    micText.className = "pill red"
+  }
+}
+
+function getCurrentDetectedNote(){
+  if(!micReady || !analyser || !audioContext) return null
+  analyser.getFloatTimeDomainData(pitchBuffer)
+  const freq = autoCorrelate(pitchBuffer, audioContext.sampleRate)
+  if(freq === -1 || freq < 50 || freq > 1200){
+    noteText.textContent = "Nota: -"
+    return null
+  }
+  const midi = freqToMidi(freq)
+  const note = midiToNoteName(midi)
+  noteText.textContent = "Nota: " + note + " (" + freq.toFixed(1) + " Hz)"
+  return note
+}
 
 function initWave(){
   ws = WaveSurfer.create({
@@ -369,16 +590,22 @@ function initWave(){
   })
 
   ws.on("audioprocess", function(){
-    timeText.textContent = ws.getCurrentTime().toFixed(2) + " sn"
-    if(loopMode && activeRegion && ws.getCurrentTime() >= activeRegion.end){
+    const now = ws.getCurrentTime()
+    timeText.textContent = now.toFixed(2) + " sn"
+    if(loopMode && activeRegion && now >= activeRegion.end){
       ws.play(activeRegion.start)
     }
-    karaokeAktifGuncelle(ws.getCurrentTime())
+    karaokePlaybackUpdate(now)
   })
 
   ws.on("seek", function(){
-    timeText.textContent = ws.getCurrentTime().toFixed(2) + " sn"
-    karaokeAktifGuncelle(ws.getCurrentTime())
+    const now = ws.getCurrentTime()
+    timeText.textContent = now.toFixed(2) + " sn"
+    karaokePlaybackUpdate(now)
+  })
+
+  ws.on("pause", function(){
+    karaokePlaybackUpdate(ws.getCurrentTime())
   })
 
   ws.on("region-created", function(region){
@@ -415,6 +642,7 @@ function renderListe(){
       '<div class="meta">Start: ' + Number(h.start).toFixed(2) + '<br>End: ' + Number(h.end).toFixed(2) + '<br>Satır: ' + (h.line || "-") + '</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
       '<button class="btn-soft" onclick="yukleKayit(' + i + ')">Yükle</button>' +
+      '<button class="btn-amber" onclick="duzenleKayit(' + i + ')">Düzenle</button>' +
       '<button class="btn-red" onclick="silKayit(' + i + ')">Sil</button>' +
       '</div>'
     liste.appendChild(div)
@@ -429,10 +657,23 @@ function renderKaraoke(){
 
   karaoke.innerHTML = ""
 
-  const sorted = [...heceler].sort(function(a,b){ return a.start - b.start })
+  const intro = getIntroValue()
+  if(intro > 0){
+    const introBox = document.createElement("div")
+    introBox.className = "karaokeBox intro"
+    introBox.id = "karaoke-intro"
+    introBox.innerHTML = '<div class="fill"></div><div class="label">Intro ' + intro.toFixed(2) + ' sn</div>'
+    karaoke.appendChild(introBox)
+    const br = document.createElement("div")
+    br.className = "lineBreak"
+    karaoke.appendChild(br)
+  }
 
+  const sorted = getSortedHecelerWithOriginalIndex()
   let lastLine = null
-  sorted.forEach(function(h, i){
+
+  sorted.forEach(function(item, i){
+    const h = item.data
     const currentLine = h.line || 1
 
     if(lastLine !== null && currentLine !== lastLine){
@@ -442,9 +683,10 @@ function renderKaraoke(){
     }
 
     const btn = document.createElement("div")
-    btn.className = "karaokeHece"
-    btn.id = "karaoke-hece-" + i
-    btn.innerHTML = escapeHtml(h.text) + '<span class="note">' + escapeHtml(h.note || "") + '</span>'
+    btn.className = "karaokeBox"
+    btn.id = "karaoke-box-" + i
+    btn.setAttribute("data-original-index", item.index)
+    btn.innerHTML = '<div class="fill"></div><div class="label">' + escapeHtml(h.text) + '</div>'
     btn.onclick = function(){
       karaokeHeceCal(h)
     }
@@ -454,23 +696,91 @@ function renderKaraoke(){
   })
 }
 
+function getSortedHecelerWithOriginalIndex(){
+  return heceler.map(function(h, i){
+    return { data:h, index:i }
+  }).sort(function(a,b){
+    return a.data.start - b.data.start
+  })
+}
+
 function karaokeHeceCal(h){
   if(!ws) return
   loopMode = false
   ws.play(h.start, h.end)
-  karaokeAktifGuncelle(h.start + 0.001)
+  karaokePlaybackUpdate(h.start + 0.001)
 }
 
-function karaokeAktifGuncelle(time){
-  const sorted = [...heceler].sort(function(a,b){ return a.start - b.start })
-  document.querySelectorAll(".karaokeHece").forEach(function(el){
-    el.classList.remove("active")
+function resetKaraokeClasses(){
+  document.querySelectorAll(".karaokeBox").forEach(function(el){
+    el.classList.remove("active","ok","bad")
+    const fill = el.querySelector(".fill")
+    if(fill) fill.style.width = "0%"
   })
+}
 
-  sorted.forEach(function(h, i){
+function resetEvaluationFlags(){
+  heceler.forEach(function(h){
+    h.hit = false
+    h.done = false
+  })
+}
+
+function karaokePlaybackUpdate(time){
+  if(heceler.length === 0) return
+
+  const intro = getIntroValue()
+  const sorted = getSortedHecelerWithOriginalIndex()
+
+  resetKaraokeClasses()
+
+  if(intro > 0){
+    const introEl = document.getElementById("karaoke-intro")
+    if(introEl){
+      const fill = introEl.querySelector(".fill")
+      if(time <= intro){
+        introEl.classList.add("active")
+        fill.style.width = Math.max(0, Math.min(100, (time / intro) * 100)) + "%"
+      }else{
+        fill.style.width = "100%"
+      }
+    }
+  }
+
+  const currentDetected = getCurrentDetectedNote()
+
+  sorted.forEach(function(item, sortedIndex){
+    const h = item.data
+    const el = document.getElementById("karaoke-box-" + sortedIndex)
+    if(!el) return
+    const fill = el.querySelector(".fill")
+
     if(time >= h.start && time <= h.end){
-      const el = document.getElementById("karaoke-hece-" + i)
-      if(el) el.classList.add("active")
+      el.classList.add("active")
+      const ratio = ((time - h.start) / (h.end - h.start)) * 100
+      fill.style.width = Math.max(0, Math.min(100, ratio)) + "%"
+
+      if(currentDetected){
+        const detectedSemi = noteToSemitone(currentDetected)
+        const targetSemi = noteToSemitone(h.note)
+        if(detectedSemi !== undefined && targetSemi !== undefined){
+          if(detectedSemi === targetSemi){
+            h.hit = true
+          }
+        }
+      }
+    }else if(time > h.end){
+      fill.style.width = "100%"
+      if(!h.done){
+        h.done = true
+      }
+      if(h.hit){
+        el.classList.add("ok")
+      }else{
+        el.classList.add("bad")
+      }
+    }else{
+      fill.style.width = "0%"
     }
   })
 }
@@ -484,6 +794,11 @@ function escapeHtml(str){
     .replaceAll("'","&#39;")
 }
 
+function getIntroValue(){
+  const val = parseFloat(introInput.value)
+  return isNaN(val) ? 0 : Number(val.toFixed(2))
+}
+
 function ekle(){
   const text = heceInput.value.trim()
   const note = notaInput.value.trim()
@@ -493,6 +808,11 @@ function ekle(){
 
   if(!text){
     alert("Hece / kelime gir.")
+    return
+  }
+
+  if(!note){
+    alert("Hedef nota gir.")
     return
   }
 
@@ -515,8 +835,11 @@ function ekle(){
   if(loadedIndex > -1){
     heceler[loadedIndex] = obj
     loadedIndex = -1
+    saveBtn.textContent = "Kaydet"
+    statusText.textContent = "Kayıt güncellendi"
   }else{
     heceler.push(obj)
+    statusText.textContent = "Kayıt eklendi"
   }
 
   renderListe()
@@ -559,7 +882,9 @@ function yukleKayit(index){
   const h = heceler[index]
   if(!h) return
 
-  loadedIndex = index
+  loadedIndex = -1
+  saveBtn.textContent = "Kaydet"
+
   heceInput.value = h.text
   notaInput.value = h.note
   startInput.value = Number(h.start).toFixed(2)
@@ -567,16 +892,84 @@ function yukleKayit(index){
   satirInput.value = h.line || ""
 
   bolgeyiGuncelle()
+  statusText.textContent = "Kayıt yüklendi"
+}
+
+function duzenleKayit(index){
+  const h = heceler[index]
+  if(!h) return
+
+  loadedIndex = index
+  saveBtn.textContent = "Düzenlemeyi Kaydet"
+
+  heceInput.value = h.text
+  notaInput.value = h.note
+  startInput.value = Number(h.start).toFixed(2)
+  endInput.value = Number(h.end).toFixed(2)
+  satirInput.value = h.line || ""
+
+  bolgeyiGuncelle()
+  statusText.textContent = "Düzenleme modu açık"
 }
 
 function silKayit(index){
   heceler.splice(index,1)
-  if(loadedIndex === index) loadedIndex = -1
+  if(loadedIndex === index) {
+    loadedIndex = -1
+    saveBtn.textContent = "Kaydet"
+  }
   renderListe()
   renderKaraoke()
+  statusText.textContent = "Kayıt silindi"
+}
+
+function saveProject(){
+  const payload = {
+    intro:getIntroValue(),
+    heceler:heceler
+  }
+  localStorage.setItem(PROJECT_KEY, JSON.stringify(payload))
+  statusText.textContent = "Önizleme kaydedildi"
+}
+
+function loadProject(){
+  const raw = localStorage.getItem(PROJECT_KEY)
+  if(!raw){
+    alert("Kayıtlı önizleme bulunamadı.")
+    return
+  }
+
+  try{
+    const parsed = JSON.parse(raw)
+    introInput.value = Number(parsed.intro || 0).toFixed(2)
+    heceler = Array.isArray(parsed.heceler) ? parsed.heceler : []
+    loadedIndex = -1
+    saveBtn.textContent = "Kaydet"
+    renderListe()
+    renderKaraoke()
+    statusText.textContent = "Kayıtlı önizleme yüklendi"
+  }catch(err){
+    console.error(err)
+    alert("Kayıtlı veri okunamadı.")
+  }
+}
+
+function playPreviewAll(){
+  if(!ws) return
+  resetEvaluationFlags()
+  ws.stop()
+  ws.play(0)
+  statusText.textContent = "Önizleme oynuyor"
+}
+
+function stopPreviewAll(){
+  if(!ws) return
+  ws.pause()
+  statusText.textContent = "Önizleme durdu"
 }
 
 window.yukleKayit = yukleKayit
+window.duzenleKayit = duzenleKayit
 window.silKayit = silKayit
 
 initWave()
@@ -603,9 +996,14 @@ rateSelect.addEventListener("change", function(){
   if(ws) ws.setPlaybackRate(Number(rateSelect.value))
 })
 
+introInput.addEventListener("input", function(){
+  renderKaraoke()
+})
+
 clearRegionBtn.addEventListener("click", function(){
   loopMode = false
   loadedIndex = -1
+  saveBtn.textContent = "Kaydet"
   if(activeRegion){
     activeRegion.remove()
     activeRegion = null
@@ -620,15 +1018,23 @@ updateBtn.addEventListener("click", bolgeyiGuncelle)
 
 deleteLoadedBtn.addEventListener("click", function(){
   if(loadedIndex === -1){
-    alert("Önce listeden bir kayıt yükle.")
+    alert("Önce Düzenle ile bir kayıt seç.")
     return
   }
   heceler.splice(loadedIndex, 1)
   loadedIndex = -1
+  saveBtn.textContent = "Kaydet"
   renderListe()
   renderKaraoke()
   formTemizle()
+  statusText.textContent = "Yüklü kayıt silindi"
 })
+
+saveProjectBtn.addEventListener("click", saveProject)
+loadProjectBtn.addEventListener("click", loadProject)
+micBtn.addEventListener("click", setupMic)
+previewPlayBtn.addEventListener("click", playPreviewAll)
+previewStopBtn.addEventListener("click", stopPreviewAll)
 
 document.addEventListener("keydown", function(e){
   const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : ""
