@@ -1,269 +1,739 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Vocaly - Editör</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocaly Waveform Editor</title>
+
 <style>
 :root{
-  --bg:#f8fafc;
-  --card:#fff;
   --text:#111827;
   --muted:#6b7280;
+  --bg1:#f8fbff;
+  --bg2:#f3f4f6;
   --blue:#2563eb;
+  --blueSoft:rgba(37,99,235,0.12);
   --green:#16a34a;
+  --greenSoft:rgba(22,163,74,0.12);
   --red:#dc2626;
+  --redSoft:rgba(220,38,38,0.10);
+  --amber:#f59e0b;
+  --amberSoft:rgba(245,158,11,0.16);
   --border:#e5e7eb;
-  --shadow:0 10px 30px rgba(0,0,0,.08);
-  --safe-top:env(safe-area-inset-top, 0px);
-  --safe-right:env(safe-area-inset-right, 0px);
-  --safe-bottom:env(safe-area-inset-bottom, 0px);
-  --safe-left:env(safe-area-inset-left, 0px);
+  --card:#ffffff;
+  --shadow:0 12px 30px rgba(0,0,0,0.08);
 }
+
 *{box-sizing:border-box}
-html{
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
+
 body{
   margin:0;
-  font-family:Arial,sans-serif;
-  background:linear-gradient(180deg,#f8fafc,#eef2f7);
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
   color:var(--text);
-  min-height:100svh;
+  padding:20px;
 }
-.container{
-  max-width:1100px;
-  margin:0 auto;
-  padding:calc(16px + var(--safe-top)) calc(14px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(14px + var(--safe-left));
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
 }
+
 .card{
   background:var(--card);
-  border-radius:18px;
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:22px;
+  margin-bottom:20px;
   box-shadow:var(--shadow);
-  padding:20px;
-  margin-bottom:18px;
 }
-h1,h2{margin:0 0 12px}
-p{margin:0 0 12px}
-.grid{
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
+.back{
+  text-decoration:none;
+  color:#1746a2;
+  background:#eef4ff;
+  border:1px solid #d9e7ff;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:700;
+}
+
+h1{
+  margin:0 0 8px;
+  font-size:30px;
+}
+
+.sub{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:14px;
+}
+
+.toolbar{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
+  grid-template-columns:repeat(12,1fr);
+  gap:12px;
+  margin-top:18px;
+  align-items:end;
 }
+
 .field{
   display:flex;
   flex-direction:column;
   gap:6px;
-  min-width:0;
 }
-label{
-  font-size:14px;
+
+.field label{
+  font-size:13px;
   font-weight:700;
+  color:#374151;
 }
-input, textarea, select{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  font-size:16px;
-  appearance:none;
-  -webkit-appearance:none;
-}
+
+.field input,
+.field select,
 textarea{
-  min-height:120px;
-  resize:vertical;
+  width:100%;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  padding:11px 12px;
+  font-size:14px;
+  background:#fff;
 }
-.row{
-  display:grid;
-  grid-template-columns:1.2fr 1fr 1fr 1fr auto;
-  gap:10px;
-  align-items:end;
-  margin-bottom:10px;
+
+.field input:focus,
+.field select:focus,
+textarea:focus{
+  outline:none;
+  border-color:#93c5fd;
+  box-shadow:0 0 0 4px rgba(59,130,246,0.12);
 }
-.syllable-row{
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px;
-  background:#fafafa;
-}
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
+
+.grid-12{grid-column:span 12}
+.grid-6{grid-column:span 6}
+.grid-4{grid-column:span 4}
+.grid-3{grid-column:span 3}
+.grid-2{grid-column:span 2}
+
 button{
   border:none;
   border-radius:12px;
-  padding:12px 16px;
-  font-size:15px;
-  font-weight:700;
+  padding:11px 14px;
   cursor:pointer;
+  font-weight:700;
   min-height:44px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
 }
-.primary{background:var(--blue); color:#fff;}
-.green{background:var(--green); color:#fff;}
-.red{background:var(--red); color:#fff;}
-.gray{background:#e5e7eb; color:#111827;}
-.preview{
-  background:#0f172a;
-  color:#e5e7eb;
+
+.btn-blue{
+  background:var(--blue);
+  color:white;
+}
+
+.btn-soft{
+  background:#eef4ff;
+  color:#1746a2;
+  border:1px solid #d9e7ff;
+}
+
+.btn-green{
+  background:var(--green);
+  color:white;
+}
+
+.btn-red{
+  background:#fff1f2;
+  color:#b42318;
+  border:1px solid #fecdd3;
+}
+
+.status{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.pill{
+  padding:9px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  border:1px solid #e5e7eb;
+  background:#f8fafc;
+  color:#334155;
+}
+
+.pill.blue{
+  background:var(--blueSoft);
+  color:#1746a2;
+  border-color:#dbeafe;
+}
+
+.pill.green{
+  background:var(--greenSoft);
+  color:#166534;
+  border-color:#d1fae5;
+}
+
+.pill.amber{
+  background:var(--amberSoft);
+  color:#92400e;
+  border-color:#fde68a;
+}
+
+.waveWrap{
+  margin-top:18px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+  overflow-x:auto;
+  padding:10px;
+}
+
+.waveInner{
+  min-width:1800px;
+}
+
+#waveform{
+  height:260px;
+  background:#fff;
   border-radius:14px;
-  padding:16px;
-  overflow:auto;
-  font-family:Consolas, monospace;
-  white-space:pre-wrap;
-  word-break:break-word;
-  max-height:50svh;
 }
-.small{
+
+.timebar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:10px;
   color:var(--muted);
   font-size:13px;
+  font-weight:700;
 }
-@media (max-width:900px){
-  .grid{ grid-template-columns:1fr; }
-  .row{ grid-template-columns:1fr; }
+
+.list{
+  display:grid;
+  gap:10px;
+  margin-top:16px;
 }
-@media (max-width:540px){
-  .container{ padding-left:10px; padding-right:10px; }
-  .card{ padding:14px; border-radius:16px; }
-  .actions > button{ width:100%; }
+
+.item{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  background:#fff;
+  display:grid;
+  grid-template-columns:1.3fr 1fr 1fr auto;
+  gap:10px;
+  align-items:center;
+}
+
+.item strong{
+  font-size:15px;
+}
+
+.meta{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.empty{
+  padding:18px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed #cbd5e1;
+  border-radius:14px;
+  background:#fafcff;
+}
+
+textarea{
+  min-height:240px;
+  resize:vertical;
+  font-family:Consolas, monospace;
+  line-height:1.5;
+}
+
+.small{
+  margin-top:8px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+@media(max-width:900px){
+  .grid-6,.grid-4,.grid-3,.grid-2{grid-column:span 12}
+  .item{grid-template-columns:1fr}
+  .waveInner{min-width:1400px}
+  #waveform{height:220px}
 }
 </style>
 </head>
 <body>
-<div class="container">
+
+<div class="wrap">
 
   <div class="card">
-    <h1>Vocaly Editör</h1>
-    <p>Bu editör; hece, zaman ve nota verisini tek JSON yapısında toplar.</p>
-  </div>
+    <div class="topbar">
+      <a class="back" href="panel.html">← Panele dön</a>
+    </div>
 
-  <div class="card">
-    <h2>Genel Bilgiler</h2>
-    <div class="grid">
-      <div class="field">
-        <label for="title">Eser Başlığı</label>
-        <input id="title" type="text" placeholder="Örn: İstiklal Marşı">
+    <h1>Waveform Editör</h1>
+    <p class="sub">
+      MP3 yükle, dalga üzerinde sürükleyerek bölge seç, küsüratlı saniyeleri otomatik al, hece veya kelime ve hedef notayı gir.
+    </p>
+
+    <div class="toolbar">
+      <div class="field grid-4">
+        <label for="audioFile">MP3 yükle</label>
+        <input type="file" id="audioFile" accept="audio/*">
       </div>
-      <div class="field">
-        <label for="audio">MP3 Yolu</label>
-        <input id="audio" type="text" placeholder="Örn: temiz_kayit.mp3">
+
+      <div class="field grid-2">
+        <label for="zoomSlider">Zoom</label>
+        <input type="range" id="zoomSlider" min="20" max="300" step="1" value="90">
       </div>
+
+      <div class="field grid-2">
+        <label for="rateSelect">Hız</label>
+        <select id="rateSelect">
+          <option value="1">1.00x</option>
+          <option value="0.75">0.75x</option>
+          <option value="0.5">0.50x</option>
+          <option value="1.25">1.25x</option>
+        </select>
+      </div>
+
+      <div class="field grid-2">
+        <label>&nbsp;</label>
+        <button class="btn-blue" id="playPauseBtn">▶ Play / Pause</button>
+      </div>
+
+      <div class="field grid-2">
+        <label>&nbsp;</label>
+        <button class="btn-soft" id="clearRegionBtn">Seçimi Temizle</button>
+      </div>
+    </div>
+
+    <div class="status">
+      <div class="pill blue" id="audioStatus">Henüz ses yüklenmedi</div>
+      <div class="pill" id="selectionStatus">Seçim yok</div>
+      <div class="pill amber" id="zoomLabel">90 px/sn</div>
+      <div class="pill" id="currentTimeLabel">Anlık süre: 0.00 sn</div>
+    </div>
+
+    <div class="waveWrap">
+      <div class="waveInner">
+        <div id="waveform"></div>
+      </div>
+    </div>
+
+    <div class="timebar">
+      <div id="durationLabel">Toplam süre: 0.00 sn</div>
+      <div>Sürükleyerek bölge seçebilirsin</div>
+    </div>
+
+    <div class="toolbar">
+      <div class="field grid-2">
+        <label for="start">Start</label>
+        <input id="start" type="number" step="0.01" placeholder="0.00">
+      </div>
+
+      <div class="field grid-2">
+        <label for="end">End</label>
+        <input id="end" type="number" step="0.01" placeholder="0.00">
+      </div>
+
+      <div class="field grid-3">
+        <label for="hece">Hece / Kelime</label>
+        <input id="hece" placeholder="Örn: Kork">
+      </div>
+
+      <div class="field grid-3">
+        <label for="nota">Hedef Nota</label>
+        <input id="nota" placeholder="Örn: si">
+      </div>
+
+      <div class="field grid-2">
+        <label for="satir">Satır No</label>
+        <input id="satir" type="number" step="1" min="1" placeholder="1">
+      </div>
+
+      <div class="field grid-3">
+        <label>&nbsp;</label>
+        <button class="btn-green" id="saveBtn">Kaydet</button>
+      </div>
+
+      <div class="field grid-3">
+        <label>&nbsp;</label>
+        <button class="btn-soft" id="updateBtn">Bölgeyi Güncelle</button>
+      </div>
+
+      <div class="field grid-3">
+        <label>&nbsp;</label>
+        <button class="btn-blue" id="exportBtn">JS Çıktısı Oluştur</button>
+      </div>
+
+      <div class="field grid-3">
+        <label>&nbsp;</label>
+        <button class="btn-red" id="clearAllBtn">Tümünü Sil</button>
+      </div>
+    </div>
+
+    <div class="small">
+      İpucu: Start ve end kutularına küsüratlı saniye elle de girebilirsin. “Bölgeyi Güncelle” ile waveform seçimi buna göre yenilenir.
     </div>
   </div>
 
   <div class="card">
-    <h2>Hece Girişleri</h2>
-    <p class="small">Her hece için metin, başlangıç, bitiş ve hedef nota gir.</p>
-    <div id="rowsContainer"></div>
-
-    <div class="actions" style="margin-top:12px;">
-      <button class="primary" type="button" onclick="addRow()">Yeni Hece Ekle</button>
-      <button class="green" type="button" onclick="generateJSON()">JSON Üret</button>
-      <button class="gray" type="button" onclick="loadSample()">Örnek Veri Yükle</button>
+    <div class="topbar">
+      <h2 style="margin:0;font-size:22px;">Kayıtlı Heceler</h2>
+      <button class="btn-soft" id="copyBtn">Çıktıyı Kopyala</button>
     </div>
+
+    <div id="liste" class="list"></div>
   </div>
 
   <div class="card">
-    <h2>JSON Çıktısı</h2>
-    <div id="jsonPreview" class="preview">{}</div>
+    <h2 style="margin:0 0 12px;font-size:22px;">Karaoke Çıktısı</h2>
+    <textarea id="output"></textarea>
   </div>
 
 </div>
 
+<script src="https://unpkg.com/wavesurfer.js@6"></script>
+<script src="https://unpkg.com/wavesurfer.js@6/dist/plugin/wavesurfer.regions.min.js"></script>
+
 <script>
-const rowsContainer = document.getElementById("rowsContainer");
-const jsonPreview = document.getElementById("jsonPreview");
+let ws = null
+let heceler = []
+let aktifRegion = null
 
-function addRow(data = { text:"", start:"", end:"", note:"" }) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "syllable-row";
+const audioFile = document.getElementById("audioFile")
+const zoomSlider = document.getElementById("zoomSlider")
+const zoomLabel = document.getElementById("zoomLabel")
+const rateSelect = document.getElementById("rateSelect")
+const playPauseBtn = document.getElementById("playPauseBtn")
+const clearRegionBtn = document.getElementById("clearRegionBtn")
 
-  wrapper.innerHTML = `
-    <div class="row">
-      <div class="field">
-        <label>Hece</label>
-        <input type="text" class="syllable-text" placeholder="Örn: Kor" value="${data.text}">
-      </div>
+const audioStatus = document.getElementById("audioStatus")
+const selectionStatus = document.getElementById("selectionStatus")
+const currentTimeLabel = document.getElementById("currentTimeLabel")
+const durationLabel = document.getElementById("durationLabel")
 
-      <div class="field">
-        <label>Başlangıç</label>
-        <input type="number" step="0.01" class="syllable-start" placeholder="0.50" value="${data.start}">
-      </div>
+const startInput = document.getElementById("start")
+const endInput = document.getElementById("end")
+const heceInput = document.getElementById("hece")
+const notaInput = document.getElementById("nota")
+const satirInput = document.getElementById("satir")
 
-      <div class="field">
-        <label>Bitiş</label>
-        <input type="number" step="0.01" class="syllable-end" placeholder="0.90" value="${data.end}">
-      </div>
+const saveBtn = document.getElementById("saveBtn")
+const updateBtn = document.getElementById("updateBtn")
+const exportBtn = document.getElementById("exportBtn")
+const clearAllBtn = document.getElementById("clearAllBtn")
+const copyBtn = document.getElementById("copyBtn")
 
-      <div class="field">
-        <label>Nota</label>
-        <input type="text" class="syllable-note" placeholder="G4" value="${data.note}">
-      </div>
+const liste = document.getElementById("liste")
+const output = document.getElementById("output")
 
-      <button class="red" type="button" onclick="removeRow(this)">Sil</button>
-    </div>
-  `;
+function initWave(){
+  ws = WaveSurfer.create({
+    container:"#waveform",
+    waveColor:"#cbd5e1",
+    progressColor:"#2563eb",
+    cursorColor:"#111827",
+    height:220,
+    barWidth:2,
+    barGap:1,
+    responsive:true,
+    normalize:true,
+    backend:"WebAudio",
+    plugins:[
+      WaveSurfer.regions.create({})
+    ]
+  })
 
-  rowsContainer.appendChild(wrapper);
+  ws.enableDragSelection({
+    color:"rgba(37,99,235,0.25)"
+  })
+
+  ws.on("region-created", region => {
+    if(aktifRegion && aktifRegion !== region){
+      aktifRegion.remove()
+    }
+
+    aktifRegion = region
+    startInput.value = Number(region.start).toFixed(2)
+    endInput.value = Number(region.end).toFixed(2)
+    selectionStatus.textContent = "Seçim: " + Number(region.start).toFixed(2) + " - " + Number(region.end).toFixed(2)
+    selectionStatus.className = "pill blue"
+  })
+
+  ws.on("region-update-end", region => {
+    aktifRegion = region
+    startInput.value = Number(region.start).toFixed(2)
+    endInput.value = Number(region.end).toFixed(2)
+    selectionStatus.textContent = "Seçim: " + Number(region.start).toFixed(2) + " - " + Number(region.end).toFixed(2)
+    selectionStatus.className = "pill blue"
+  })
+
+  ws.on("ready", () => {
+    audioStatus.textContent = "Ses yüklendi"
+    audioStatus.className = "pill green"
+    durationLabel.textContent = "Toplam süre: " + ws.getDuration().toFixed(2) + " sn"
+    ws.setPlaybackRate(Number(rateSelect.value))
+    ws.zoom(Number(zoomSlider.value))
+  })
+
+  ws.on("audioprocess", () => {
+    currentTimeLabel.textContent = "Anlık süre: " + ws.getCurrentTime().toFixed(2) + " sn"
+  })
+
+  ws.on("seek", () => {
+    currentTimeLabel.textContent = "Anlık süre: " + ws.getCurrentTime().toFixed(2) + " sn"
+  })
+
+  ws.on("error", err => {
+    console.error(err)
+    audioStatus.textContent = "Ses yüklenemedi"
+    audioStatus.className = "pill"
+  })
 }
 
-function removeRow(button) {
-  button.closest(".syllable-row").remove();
-}
-
-function generateJSON() {
-  const title = document.getElementById("title").value.trim();
-  const audio = document.getElementById("audio").value.trim();
-
-  const texts = document.querySelectorAll(".syllable-text");
-  const starts = document.querySelectorAll(".syllable-start");
-  const ends = document.querySelectorAll(".syllable-end");
-  const notes = document.querySelectorAll(".syllable-note");
-
-  const syllables = [];
-
-  for (let i = 0; i < texts.length; i++) {
-    const text = texts[i].value.trim();
-    const start = parseFloat(starts[i].value);
-    const end = parseFloat(ends[i].value);
-    const note = notes[i].value.trim();
-
-    if (!text) continue;
-
-    syllables.push({
-      text,
-      start: isNaN(start) ? 0 : start,
-      end: isNaN(end) ? 0 : end,
-      note
-    });
+function renderListe(){
+  if(heceler.length === 0){
+    liste.innerHTML = '<div class="empty">Henüz kayıt eklenmedi.</div>'
+    return
   }
 
-  const output = { title, audio, syllables };
-  jsonPreview.textContent = JSON.stringify(output, null, 2);
+  liste.innerHTML = ""
+
+  heceler.forEach((h, i) => {
+    const div = document.createElement("div")
+    div.className = "item"
+    div.innerHTML = `
+      <div>
+        <strong>${escapeHtml(h.text)}</strong>
+        <div class="meta">Hedef nota: ${escapeHtml(h.note)}</div>
+      </div>
+      <div class="meta">
+        <strong>Start:</strong> ${Number(h.start).toFixed(2)}<br>
+        <strong>End:</strong> ${Number(h.end).toFixed(2)}
+      </div>
+      <div class="meta">
+        <strong>Satır:</strong> ${h.line ? h.line : "-"}
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-soft" onclick="yukleKayit(${i})">Yükle</button>
+        <button class="btn-red" onclick="silKayit(${i})">Sil</button>
+      </div>
+    `
+    liste.appendChild(div)
+  })
 }
 
-function loadSample() {
-  document.getElementById("title").value = "İstiklal Marşı";
-  document.getElementById("audio").value = "temiz_kayit.mp3";
-  rowsContainer.innerHTML = "";
-
-  [
-    { text:"Kor", start:"0.50", end:"0.90", note:"G4" },
-    { text:"kma", start:"0.91", end:"1.30", note:"A4" },
-    { text:"sön", start:"1.31", end:"1.70", note:"B4" },
-    { text:"mez", start:"1.71", end:"2.10", note:"A4" }
-  ].forEach(addRow);
-
-  generateJSON();
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;")
 }
 
-addRow();
-addRow();
-addRow();
+function ciktiUret(){
+  heceler.sort((a,b) => a.start - b.start)
+
+  const satirlar = heceler.map(h => {
+    let linePart = h.line ? `, line:${h.line}` : ""
+    return `  { text:"${String(h.text).replaceAll('"','\\"')}", note:"${String(h.note).replaceAll('"','\\"')}", start:${Number(h.start).toFixed(2)}, end:${Number(h.end).toFixed(2)}${linePart} }`
+  })
+
+  output.value = "const heceler = [\n" + satirlar.join(",\n") + "\n];"
+}
+
+function ekle(){
+  const text = heceInput.value.trim()
+  const note = notaInput.value.trim()
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+  const line = satirInput.value.trim()
+
+  if(!text){
+    alert("Hece / kelime gir.")
+    return
+  }
+
+  if(isNaN(start) || isNaN(end) || end <= start){
+    alert("Geçerli bir start-end aralığı gir.")
+    return
+  }
+
+  const obje = {
+    text:text,
+    note:note,
+    start:Number(start.toFixed(2)),
+    end:Number(end.toFixed(2))
+  }
+
+  if(line){
+    obje.line = Number(line)
+  }
+
+  heceler.push(obje)
+  renderListe()
+  ciktiUret()
+
+  heceInput.value = ""
+  notaInput.value = ""
+  satirInput.value = ""
+}
+
+function yukleKayit(index){
+  const h = heceler[index]
+  if(!h) return
+
+  heceInput.value = h.text
+  notaInput.value = h.note
+  startInput.value = Number(h.start).toFixed(2)
+  endInput.value = Number(h.end).toFixed(2)
+  satirInput.value = h.line ? h.line : ""
+
+  if(aktifRegion){
+    aktifRegion.remove()
+    aktifRegion = null
+  }
+
+  aktifRegion = ws.addRegion({
+    start:h.start,
+    end:h.end,
+    color:"rgba(37,99,235,0.25)"
+  })
+
+  selectionStatus.textContent = "Seçim: " + Number(h.start).toFixed(2) + " - " + Number(h.end).toFixed(2)
+  selectionStatus.className = "pill blue"
+}
+
+function silKayit(index){
+  heceler.splice(index,1)
+  renderListe()
+  ciktiUret()
+}
+
+function bolgeyiGuncelle(){
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+
+  if(isNaN(start) || isNaN(end) || end <= start){
+    alert("Geçerli bir start-end aralığı gir.")
+    return
+  }
+
+  if(aktifRegion){
+    aktifRegion.remove()
+    aktifRegion = null
+  }
+
+  aktifRegion = ws.addRegion({
+    start:start,
+    end:end,
+    color:"rgba(37,99,235,0.25)"
+  })
+
+  selectionStatus.textContent = "Seçim: " + start.toFixed(2) + " - " + end.toFixed(2)
+  selectionStatus.className = "pill blue"
+}
+
+audioFile.addEventListener("change", e => {
+  const file = e.target.files[0]
+  if(!file) return
+
+  const url = URL.createObjectURL(file)
+
+  if(ws){
+    ws.destroy()
+    ws = null
+  }
+
+  aktifRegion = null
+  audioStatus.textContent = "Yükleniyor: " + file.name
+  audioStatus.className = "pill blue"
+  selectionStatus.textContent = "Seçim yok"
+  selectionStatus.className = "pill"
+  currentTimeLabel.textContent = "Anlık süre: 0.00 sn"
+  durationLabel.textContent = "Toplam süre: 0.00 sn"
+
+  initWave()
+  ws.load(url)
+})
+
+zoomSlider.addEventListener("input", () => {
+  zoomLabel.textContent = zoomSlider.value + " px/sn"
+  if(ws){
+    ws.zoom(Number(zoomSlider.value))
+  }
+})
+
+rateSelect.addEventListener("change", () => {
+  if(ws){
+    ws.setPlaybackRate(Number(rateSelect.value))
+  }
+})
+
+playPauseBtn.addEventListener("click", () => {
+  if(ws){
+    ws.playPause()
+  }
+})
+
+clearRegionBtn.addEventListener("click", () => {
+  if(aktifRegion){
+    aktifRegion.remove()
+    aktifRegion = null
+  }
+  startInput.value = ""
+  endInput.value = ""
+  selectionStatus.textContent = "Seçim yok"
+  selectionStatus.className = "pill"
+})
+
+saveBtn.addEventListener("click", ekle)
+updateBtn.addEventListener("click", bolgeyiGuncelle)
+exportBtn.addEventListener("click", ciktiUret)
+
+clearAllBtn.addEventListener("click", () => {
+  if(!confirm("Tüm kayıtlar silinsin mi?")) return
+  heceler = []
+  renderListe()
+  ciktiUret()
+})
+
+copyBtn.addEventListener("click", async () => {
+  try{
+    await navigator.clipboard.writeText(output.value)
+    copyBtn.textContent = "Kopyalandı"
+    setTimeout(() => {
+      copyBtn.textContent = "Çıktıyı Kopyala"
+    }, 1200)
+  }catch(err){
+    alert("Kopyalama başarısız oldu.")
+  }
+})
+
+renderListe()
+ciktiUret()
 </script>
+
 </body>
 </html>
