@@ -13,6 +13,7 @@
   --green:#16a34a;
   --green-soft:rgba(22,163,74,0.12);
   --red:#dc2626;
+  --red-soft:rgba(220,38,38,0.10);
   --amber:#f59e0b;
   --shadow:0 10px 28px rgba(0,0,0,0.08);
   --panel:rgba(255,255,255,0.95);
@@ -59,11 +60,10 @@ h1,h2{margin-top:0}
   font-weight:700;
   color:#374151;
 }
-.g12{grid-column:span 12}
 .g4{grid-column:span 4}
 .g3{grid-column:span 3}
 .g2{grid-column:span 2}
-input, select, textarea{
+input, select{
   width:100%;
   padding:10px 12px;
   border-radius:10px;
@@ -71,7 +71,7 @@ input, select, textarea{
   font-size:14px;
   background:#fff;
 }
-input:focus, select:focus, textarea:focus{
+input:focus, select:focus{
   outline:none;
   border-color:#93c5fd;
   box-shadow:0 0 0 4px rgba(59,130,246,0.12);
@@ -87,7 +87,7 @@ button{
 .btn-blue{background:var(--blue);color:white}
 .btn-soft{background:#eef4ff;color:#1746a2;border:1px solid #d9e7ff}
 .btn-green{background:var(--green);color:white}
-.btn-red{background:#fff1f2;color:#b42318;border:1px solid #fecdd3;}
+.btn-red{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
 .status{
   display:flex;
   gap:10px;
@@ -152,11 +152,42 @@ button{
   color:var(--muted);
   background:#fafcff;
 }
-textarea{
-  min-height:260px;
-  font-family:Consolas, monospace;
-  line-height:1.5;
-  resize:vertical;
+.karaokeWrap{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:flex-start;
+  line-height:2.1;
+}
+.karaokeHece{
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:12px;
+  background:#eef2ff;
+  border:1px solid #dbeafe;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s ease;
+  user-select:none;
+}
+.karaokeHece:hover{
+  transform:translateY(-1px);
+}
+.karaokeHece.active{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue);
+  box-shadow:0 0 0 4px rgba(37,99,235,0.15);
+}
+.karaokeHece .note{
+  font-size:12px;
+  opacity:.8;
+  font-weight:600;
+  margin-left:6px;
+}
+.lineBreak{
+  flex-basis:100%;
+  height:0;
 }
 @media (max-width:900px){
   .g4,.g3,.g2{grid-column:span 12}
@@ -171,7 +202,7 @@ textarea{
     <h1>Waveform Editor</h1>
     <p class="sub">
       MP3 yükle, waveform üzerinde sürükleyerek bölge seç, hece veya kelime ile hedef notayı gir.
-      Space tuşu seçili bölgeyi loop açıp kapatır. Intro süresi de ayrıca girilir ve üretilen ölçme sayfasına eklenir.
+      Space tuşu seçili bölgeyi loop açıp kapatır. Kayıt ettikçe altta canlı karaoke kutuları oluşur.
     </p>
 
     <div class="toolbar">
@@ -217,7 +248,7 @@ textarea{
     </div>
 
     <div class="hint">
-      Bölge seçmek için dalga üstünde sürükle. Space: loop aç/kapat.
+      Bölge seçmek için dalga üstünde sürükle. Space: loop aç/kapat. Alttaki karaoke kutusuna tıklarsan o aralık çalar.
     </div>
 
     <div class="toolbar">
@@ -263,12 +294,7 @@ textarea{
 
       <div class="field g3">
         <label>&nbsp;</label>
-        <button class="btn-blue" id="exportBtn">JS Çıktısı</button>
-      </div>
-
-      <div class="field g3">
-        <label>&nbsp;</label>
-        <button class="btn-red" id="generateBtn">Ölçme Sayfası Oluştur</button>
+        <button class="btn-red" id="deleteLoadedBtn">Yüklüyü Sil</button>
       </div>
     </div>
   </div>
@@ -279,8 +305,8 @@ textarea{
   </div>
 
   <div class="card">
-    <h2>Veri</h2>
-    <textarea id="output"></textarea>
+    <h2>Canlı Karaoke Önizleme</h2>
+    <div id="karaoke" class="karaokeWrap"></div>
   </div>
 
 </div>
@@ -293,6 +319,7 @@ let ws = null
 let activeRegion = null
 let heceler = []
 let loopMode = false
+let loadedIndex = -1
 
 const audioFile = document.getElementById("audioFile")
 const playBtn = document.getElementById("playBtn")
@@ -307,13 +334,12 @@ const satirInput = document.getElementById("satir")
 const clearRegionBtn = document.getElementById("clearRegionBtn")
 const saveBtn = document.getElementById("saveBtn")
 const updateBtn = document.getElementById("updateBtn")
-const exportBtn = document.getElementById("exportBtn")
-const generateBtn = document.getElementById("generateBtn")
+const deleteLoadedBtn = document.getElementById("deleteLoadedBtn")
 const statusText = document.getElementById("statusText")
 const timeText = document.getElementById("timeText")
 const selectionText = document.getElementById("selectionText")
 const liste = document.getElementById("liste")
-const output = document.getElementById("output")
+const karaoke = document.getElementById("karaoke")
 
 function initWave(){
   ws = WaveSurfer.create({
@@ -347,10 +373,12 @@ function initWave(){
     if(loopMode && activeRegion && ws.getCurrentTime() >= activeRegion.end){
       ws.play(activeRegion.start)
     }
+    karaokeAktifGuncelle(ws.getCurrentTime())
   })
 
   ws.on("seek", function(){
     timeText.textContent = ws.getCurrentTime().toFixed(2) + " sn"
+    karaokeAktifGuncelle(ws.getCurrentTime())
   })
 
   ws.on("region-created", function(region){
@@ -393,6 +421,60 @@ function renderListe(){
   })
 }
 
+function renderKaraoke(){
+  if(heceler.length === 0){
+    karaoke.innerHTML = '<div class="empty" style="width:100%;">Henüz karaoke kutusu oluşmadı.</div>'
+    return
+  }
+
+  karaoke.innerHTML = ""
+
+  const sorted = [...heceler].sort(function(a,b){ return a.start - b.start })
+
+  let lastLine = null
+  sorted.forEach(function(h, i){
+    const currentLine = h.line || 1
+
+    if(lastLine !== null && currentLine !== lastLine){
+      const br = document.createElement("div")
+      br.className = "lineBreak"
+      karaoke.appendChild(br)
+    }
+
+    const btn = document.createElement("div")
+    btn.className = "karaokeHece"
+    btn.id = "karaoke-hece-" + i
+    btn.innerHTML = escapeHtml(h.text) + '<span class="note">' + escapeHtml(h.note || "") + '</span>'
+    btn.onclick = function(){
+      karaokeHeceCal(h)
+    }
+    karaoke.appendChild(btn)
+
+    lastLine = currentLine
+  })
+}
+
+function karaokeHeceCal(h){
+  if(!ws) return
+  loopMode = false
+  ws.play(h.start, h.end)
+  karaokeAktifGuncelle(h.start + 0.001)
+}
+
+function karaokeAktifGuncelle(time){
+  const sorted = [...heceler].sort(function(a,b){ return a.start - b.start })
+  document.querySelectorAll(".karaokeHece").forEach(function(el){
+    el.classList.remove("active")
+  })
+
+  sorted.forEach(function(h, i){
+    if(time >= h.start && time <= h.end){
+      const el = document.getElementById("karaoke-hece-" + i)
+      if(el) el.classList.add("active")
+    }
+  })
+}
+
 function escapeHtml(str){
   return String(str)
     .replaceAll("&","&amp;")
@@ -400,25 +482,6 @@ function escapeHtml(str){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#39;")
-}
-
-function getIntroValue(){
-  const intro = parseFloat(introInput.value)
-  return isNaN(intro) ? 0 : Number(intro.toFixed(2))
-}
-
-function ciktiUret(){
-  heceler.sort(function(a,b){ return a.start - b.start })
-
-  const introValue = getIntroValue()
-  const satirlar = heceler.map(function(h){
-    const satirParcasi = h.line ? ', line:' + h.line : ''
-    return '  { text:"' + String(h.text).replaceAll('"','\\"') + '", note:"' + String(h.note).replaceAll('"','\\"') + '", start:' + Number(h.start).toFixed(2) + ', end:' + Number(h.end).toFixed(2) + satirParcasi + ' }'
-  })
-
-  output.value =
-    "const introDuration = " + introValue.toFixed(2) + ";\n\n" +
-    "const heceler = [\n" + satirlar.join(",\n") + "\n];"
 }
 
 function ekle(){
@@ -449,10 +512,19 @@ function ekle(){
     obj.line = Number(line)
   }
 
-  heceler.push(obj)
-  renderListe()
-  ciktiUret()
+  if(loadedIndex > -1){
+    heceler[loadedIndex] = obj
+    loadedIndex = -1
+  }else{
+    heceler.push(obj)
+  }
 
+  renderListe()
+  renderKaraoke()
+  formTemizle()
+}
+
+function formTemizle(){
   heceInput.value = ""
   notaInput.value = ""
   satirInput.value = ""
@@ -487,6 +559,7 @@ function yukleKayit(index){
   const h = heceler[index]
   if(!h) return
 
+  loadedIndex = index
   heceInput.value = h.text
   notaInput.value = h.note
   startInput.value = Number(h.start).toFixed(2)
@@ -498,22 +571,9 @@ function yukleKayit(index){
 
 function silKayit(index){
   heceler.splice(index,1)
+  if(loadedIndex === index) loadedIndex = -1
   renderListe()
-  ciktiUret()
-}
-
-function olcmeSayfasiUret(){
-  const dataText = JSON.stringify(heceler, null, 2)
-  const introText = getIntroValue().toFixed(2)
-
-  const html =
-'<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>VOCALY Ölçme</title><style>body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);padding:24px;color:#111827}.wrap{max-width:1000px;margin:0 auto}.card{background:rgba(255,255,255,0.95);border-radius:18px;padding:20px;box-shadow:0 10px 28px rgba(0,0,0,0.08)}pre{white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px}.hece{display:inline-block;margin:4px;padding:8px 12px;border-radius:12px;background:#eef2ff;border:1px solid #dbeafe}.info{margin-bottom:14px;padding:10px 12px;border-radius:12px;background:#eff6ff;border:1px solid #dbeafe;color:#1d4ed8;font-weight:700}</style></head><body><div class="wrap"><div class="card"><h1>Karaoke Ölçme</h1><div class="info">Intro Süresi: ' + introText + ' sn</div><pre id="veri"></pre><div id="alan"></div></div></div><script>const introDuration = ' + introText + ';const heceler = ' + dataText + ';document.getElementById("veri").textContent = "const introDuration = " + introDuration + ";\\n\\nconst heceler = " + JSON.stringify(heceler, null, 2);const alan = document.getElementById("alan");heceler.forEach(function(h){const s = document.createElement("span");s.className="hece";s.textContent=h.text+" ("+h.note+")";alan.appendChild(s);});<\/script></body></html>'
-
-  const blob = new Blob([html], {type:"text/html"})
-  const a = document.createElement("a")
-  a.href = URL.createObjectURL(blob)
-  a.download = "olcme_generated.html"
-  a.click()
+  renderKaraoke()
 }
 
 window.yukleKayit = yukleKayit
@@ -521,7 +581,7 @@ window.silKayit = silKayit
 
 initWave()
 renderListe()
-ciktiUret()
+renderKaraoke()
 
 audioFile.addEventListener("change", function(e){
   const file = e.target.files[0]
@@ -543,10 +603,9 @@ rateSelect.addEventListener("change", function(){
   if(ws) ws.setPlaybackRate(Number(rateSelect.value))
 })
 
-introInput.addEventListener("input", ciktiUret)
-
 clearRegionBtn.addEventListener("click", function(){
   loopMode = false
+  loadedIndex = -1
   if(activeRegion){
     activeRegion.remove()
     activeRegion = null
@@ -558,8 +617,18 @@ clearRegionBtn.addEventListener("click", function(){
 
 saveBtn.addEventListener("click", ekle)
 updateBtn.addEventListener("click", bolgeyiGuncelle)
-exportBtn.addEventListener("click", ciktiUret)
-generateBtn.addEventListener("click", olcmeSayfasiUret)
+
+deleteLoadedBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){
+    alert("Önce listeden bir kayıt yükle.")
+    return
+  }
+  heceler.splice(loadedIndex, 1)
+  loadedIndex = -1
+  renderListe()
+  renderKaraoke()
+  formTemizle()
+})
 
 document.addEventListener("keydown", function(e){
   const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : ""
