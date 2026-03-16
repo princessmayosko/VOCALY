@@ -87,7 +87,7 @@ button{
 .btn-blue{background:var(--blue);color:white}
 .btn-soft{background:#eef4ff;color:#1746a2;border:1px solid #d9e7ff}
 .btn-green{background:var(--green);color:white}
-.btn-red{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
+.btn-red{background:#fff1f2;color:#b42318;border:1px solid #fecdd3;}
 .status{
   display:flex;
   gap:10px;
@@ -153,7 +153,7 @@ button{
   background:#fafcff;
 }
 textarea{
-  min-height:220px;
+  min-height:260px;
   font-family:Consolas, monospace;
   line-height:1.5;
   resize:vertical;
@@ -171,7 +171,7 @@ textarea{
     <h1>Waveform Editor</h1>
     <p class="sub">
       MP3 yükle, waveform üzerinde sürükleyerek bölge seç, hece veya kelime ile hedef notayı gir.
-      Space tuşu seçili bölgeyi loop açıp kapatır.
+      Space tuşu seçili bölgeyi loop açıp kapatır. Intro süresi de ayrıca girilir ve üretilen ölçme sayfasına eklenir.
     </p>
 
     <div class="toolbar">
@@ -221,6 +221,11 @@ textarea{
     </div>
 
     <div class="toolbar">
+      <div class="field g2">
+        <label for="intro">Intro Süresi</label>
+        <input id="intro" type="number" step="0.01" min="0" value="0.00" placeholder="0.00">
+      </div>
+
       <div class="field g2">
         <label for="start">Start</label>
         <input id="start" type="number" step="0.01" placeholder="0.00">
@@ -293,6 +298,7 @@ const audioFile = document.getElementById("audioFile")
 const playBtn = document.getElementById("playBtn")
 const zoom = document.getElementById("zoom")
 const rateSelect = document.getElementById("rateSelect")
+const introInput = document.getElementById("intro")
 const startInput = document.getElementById("start")
 const endInput = document.getElementById("end")
 const heceInput = document.getElementById("hece")
@@ -396,15 +402,23 @@ function escapeHtml(str){
     .replaceAll("'","&#39;")
 }
 
+function getIntroValue(){
+  const intro = parseFloat(introInput.value)
+  return isNaN(intro) ? 0 : Number(intro.toFixed(2))
+}
+
 function ciktiUret(){
   heceler.sort(function(a,b){ return a.start - b.start })
 
+  const introValue = getIntroValue()
   const satirlar = heceler.map(function(h){
     const satirParcasi = h.line ? ', line:' + h.line : ''
     return '  { text:"' + String(h.text).replaceAll('"','\\"') + '", note:"' + String(h.note).replaceAll('"','\\"') + '", start:' + Number(h.start).toFixed(2) + ', end:' + Number(h.end).toFixed(2) + satirParcasi + ' }'
   })
 
-  output.value = "const heceler = [\n" + satirlar.join(",\n") + "\n];"
+  output.value =
+    "const introDuration = " + introValue.toFixed(2) + ";\n\n" +
+    "const heceler = [\n" + satirlar.join(",\n") + "\n];"
 }
 
 function ekle(){
@@ -490,8 +504,10 @@ function silKayit(index){
 
 function olcmeSayfasiUret(){
   const dataText = JSON.stringify(heceler, null, 2)
+  const introText = getIntroValue().toFixed(2)
+
   const html =
-'<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>VOCALY Ölçme</title><style>body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);padding:24px;color:#111827}.wrap{max-width:1000px;margin:0 auto}.card{background:rgba(255,255,255,0.95);border-radius:18px;padding:20px;box-shadow:0 10px 28px rgba(0,0,0,0.08)}pre{white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px}.hece{display:inline-block;margin:4px;padding:8px 12px;border-radius:12px;background:#eef2ff;border:1px solid #dbeafe}</style></head><body><div class="wrap"><div class="card"><h1>Karaoke Ölçme</h1><pre id="veri"></pre><div id="alan"></div></div></div><script>const heceler = ' + dataText + ';document.getElementById("veri").textContent = "const heceler = " + JSON.stringify(heceler, null, 2);const alan = document.getElementById("alan");heceler.forEach(function(h){const s=document.createElement("span");s.className="hece";s.textContent=h.text+" ("+h.note+")";alan.appendChild(s);});<\/script></body></html>'
+'<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>VOCALY Ölçme</title><style>body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#f8fafc 0%, #f3f4f6 100%);padding:24px;color:#111827}.wrap{max-width:1000px;margin:0 auto}.card{background:rgba(255,255,255,0.95);border-radius:18px;padding:20px;box-shadow:0 10px 28px rgba(0,0,0,0.08)}pre{white-space:pre-wrap;word-break:break-word;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px}.hece{display:inline-block;margin:4px;padding:8px 12px;border-radius:12px;background:#eef2ff;border:1px solid #dbeafe}.info{margin-bottom:14px;padding:10px 12px;border-radius:12px;background:#eff6ff;border:1px solid #dbeafe;color:#1d4ed8;font-weight:700}</style></head><body><div class="wrap"><div class="card"><h1>Karaoke Ölçme</h1><div class="info">Intro Süresi: ' + introText + ' sn</div><pre id="veri"></pre><div id="alan"></div></div></div><script>const introDuration = ' + introText + ';const heceler = ' + dataText + ';document.getElementById("veri").textContent = "const introDuration = " + introDuration + ";\\n\\nconst heceler = " + JSON.stringify(heceler, null, 2);const alan = document.getElementById("alan");heceler.forEach(function(h){const s = document.createElement("span");s.className="hece";s.textContent=h.text+" ("+h.note+")";alan.appendChild(s);});<\/script></body></html>'
 
   const blob = new Blob([html], {type:"text/html"})
   const a = document.createElement("a")
@@ -526,6 +542,8 @@ zoom.addEventListener("input", function(){
 rateSelect.addEventListener("change", function(){
   if(ws) ws.setPlaybackRate(Number(rateSelect.value))
 })
+
+introInput.addEventListener("input", ciktiUret)
 
 clearRegionBtn.addEventListener("click", function(){
   loopMode = false
