@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Vocaly Editor</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --panel:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#dbe3ee;
+      --blue:#2563eb;
+      --blueSoft:rgba(37,99,235,.12);
+      --green:#16a34a;
+      --greenSoft:rgba(22,163,74,.12);
+      --red:#dc2626;
+      --redSoft:rgba(220,38,38,.10);
+      --amber:#f59e0b;
+      --shadow:0 12px 30px rgba(15,23,42,.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#f8fbff 0%, #f4f6fa 100%);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+    body{padding:16px}
+
+    .app{
+      max-width:1400px;
+      margin:0 auto;
+      display:grid;
+      gap:16px;
+    }
+
+    .card{
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+
+    .title{
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:.2px;
+      margin:0 0 6px;
+    }
+
+    .sub{
+      color:var(--muted);
+      margin:0;
+      line-height:1.5;
+      font-size:14px;
+    }
+
+    .toolbar{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:10px;
+      align-items:end;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .field label{
+      font-size:13px;
+      font-weight:700;
+      color:#374151;
+    }
+
+    .field input,
+    .field textarea,
+    .field select{
+      width:100%;
+      border:1px solid #d1d9e6;
+      background:#fff;
+      color:var(--text);
+      border-radius:12px;
+      padding:12px 14px;
+      font-size:14px;
+      outline:none;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus{
+      border-color:#8ab4ff;
+      box-shadow:0 0 0 4px rgba(59,130,246,.12);
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      border-radius:14px;
+      padding:12px 16px;
+      font-size:14px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.18s ease;
+      min-height:46px;
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+
+    .btn-primary{
+      background:var(--blue);
+      color:#fff;
+    }
+
+    .btn-secondary{
+      background:#eef4ff;
+      color:#1746a2;
+      border:1px solid #d9e7ff;
+    }
+
+    .btn-green{
+      background:var(--green);
+      color:#fff;
+    }
+
+    .btn-red{
+      background:#fff1f2;
+      color:#b42318;
+      border:1px solid #fecdd3;
+    }
+
+    .btn-ghost{
+      background:#f8fafc;
+      color:#334155;
+      border:1px solid #e2e8f0;
+    }
+
+    .grid-12{grid-column:span 12}
+    .grid-6{grid-column:span 6}
+    .grid-4{grid-column:span 4}
+    .grid-3{grid-column:span 3}
+    .grid-2{grid-column:span 2}
+
+    .status{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .pill{
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      color:#334155;
+    }
+
+    .pill.blue{
+      background:var(--blueSoft);
+      color:#1746a2;
+      border-color:#cfe0ff;
+    }
+
+    .pill.green{
+      background:var(--greenSoft);
+      color:#166534;
+      border-color:#cdeed6;
+    }
+
+    .pill.red{
+      background:var(--redSoft);
+      color:#991b1b;
+      border-color:#fecaca;
+    }
+
+    .wave-wrap{
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding-bottom:8px;
+      border-radius:16px;
+      border:1px solid #e5e7eb;
+      background:linear-gradient(180deg,#ffffff 0%, #f8fbff 100%);
+    }
+
+    .wave-inner{
+      min-width:1800px;
+      padding:10px;
+    }
+
+    #waveform{
+      width:100%;
+      height:260px;
+      border-radius:14px;
+      background:#fff;
+      touch-action:pan-x pan-y;
+    }
+
+    .mini-controls{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .hint{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .region-box{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .list-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+
+    .count{
+      font-size:14px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .items{
+      display:grid;
+      gap:10px;
+    }
+
+    .item{
+      border:1px solid #e5e7eb;
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    .item strong{
+      font-size:15px;
+    }
+
+    .meta{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+
+    .output{
+      width:100%;
+      min-height:260px;
+      resize:vertical;
+      font-family:Consolas, monospace;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .top-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .zoom-value{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      text-align:right;
+      margin-top:2px;
+    }
+
+    .empty{
+      padding:20px;
+      text-align:center;
+      border:1px dashed #cbd5e1;
+      border-radius:16px;
+      color:var(--muted);
+      background:#fafcff;
+    }
+
+    .footer-note{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+      line-height:1.5;
+    }
+
+    @media (max-width: 900px){
+      .grid-6,.grid-4,.grid-3,.grid-2{grid-column:span 12}
+      .item{
+        grid-template-columns:1fr;
+        align-items:start;
+      }
+      .wave-inner{
+        min-width:1400px;
+      }
+      #waveform{
+        height:220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <div class="top-row">
+        <div>
+          <h1 class="title">Vocaly Editor</h1>
+          <p class="sub">
+            MP3 yükle, dalga üzerinde sürükleyerek bölge seç, hece ve hedef notayı gir, sonra ölçme verisini otomatik üret.
+          </p>
+        </div>
+      </div>
+
+      <div class="toolbar" style="margin-top:14px;">
+        <div class="field grid-4">
+          <label for="audioFile">MP3 yükle</label>
+          <input type="file" id="audioFile" accept="audio/*" />
+        </div>
+
+        <div class="field grid-2">
+          <label for="zoomSlider">Zoom</label>
+          <input type="range" id="zoomSlider" min="20" max="300" step="1" value="90" />
+          <div class="zoom-value" id="zoomValue">90 px/sn</div>
+        </div>
+
+        <div class="field grid-2">
+          <label for="playbackRate">Hız</label>
+          <select id="playbackRate">
+            <option value="1">1.00x</option>
+            <option value="0.75">0.75x</option>
+            <option value="0.5">0.50x</option>
+            <option value="1.25">1.25x</option>
+          </select>
+        </div>
+
+        <div class="field grid-2">
+          <label>&nbsp;</label>
+          <button class="btn btn-secondary" id="playPauseBtn">▶ Oynat / Dur</button>
+        </div>
+
+        <div class="field grid-2">
+          <label>&nbsp;</label>
+          <button class="btn btn-ghost" id="clearRegionBtn">Seçimi Temizle</button>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="pill blue" id="audioStatus">Henüz ses yüklenmedi</div>
+        <div class="pill" id="selectionStatus">Seçim yok</div>
+        <div class="pill green">Sürükleyerek seçim yap</div>
+      </div>
+
+      <div class="mini-controls">
+        <div class="grid-12">
+          <div class="hint">
+            Kullanım: MP3’ü yükledikten sonra waveform üzerinde parmağınla ya da mouse ile sürükleyerek bölge seç. Seçim oluşunca start-end otomatik gelir. Sonra hece ve hedef notayı girip kaydet.
+          </div>
+        </div>
+      </div>
+
+      <div class="wave-wrap" style="margin-top:14px;">
+        <div class="wave-inner">
+          <div id="waveform"></div>
+        </div>
+      </div>
+
+      <div class="region-box">
+        <div class="field grid-2">
+          <label for="startTime">Start</label>
+          <input type="number" id="startTime" step="0.01" placeholder="0.00" />
+        </div>
+
+        <div class="field grid-2">
+          <label for="endTime">End</label>
+          <input type="number" id="endTime" step="0.01" placeholder="0.00" />
+        </div>
+
+        <div class="field grid-3">
+          <label for="syllableInput">Hece</label>
+          <input type="text" id="syllableInput" placeholder="Örn: Kork" />
+        </div>
+
+        <div class="field grid-3">
+          <label for="noteInput">Hedef nota</label>
+          <input type="text" id="noteInput" placeholder="Örn: si" />
+        </div>
+
+        <div class="field grid-2">
+          <label for="lineInput">Satır no (opsiyonel)</label>
+          <input type="number" id="lineInput" step="1" min="1" placeholder="1" />
+        </div>
+
+        <div class="field grid-12">
+          <label for="previewName">Önizleme</label>
+          <input type="text" id="previewName" readonly />
+        </div>
+
+        <div class="field grid-3">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" id="saveItemBtn">Seçimi Kaydet</button>
+        </div>
+
+        <div class="field grid-3">
+          <label>&nbsp;</label>
+          <button class="btn btn-secondary" id="updateRegionBtn">Kutudan Bölgeyi Güncelle</button>
+        </div>
+
+        <div class="field grid-3">
+          <label>&nbsp;</label>
+          <button class="btn btn-green" id="exportJsBtn">JS Çıktısı Oluştur</button>
+        </div>
+
+        <div class="field grid-3">
+          <label>&nbsp;</label>
+          <button class="btn btn-ghost" id="exportJsonBtn">JSON Çıktısı Oluştur</button>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Not: Start-end değerlerini kutulardan el ile de düzenleyebilirsin. “Kutudan Bölgeyi Güncelle” butonuna basınca waveform seçimi de buna göre değişir.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="list-header">
+        <div>
+          <h2 style="margin:0 0 4px;font-size:22px;">Kaydedilen heceler</h2>
+          <div class="count" id="itemCount">0 kayıt</div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-red" id="clearAllBtn">Tümünü Sil</button>
+          <button class="btn btn-secondary" id="copyOutputBtn">Çıktıyı Kopyala</button>
+        </div>
+      </div>
+
+      <div class="items" id="itemsContainer">
+        <div class="empty">Henüz kayıt eklenmedi.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 10px;font-size:22px;">Çıktı</h2>
+      <textarea id="outputArea" class="output" placeholder="Burada measurementData çıktısı oluşacak..."></textarea>
+    </div>
+  </div>
+
+  <script type="module">
+    import WaveSurfer from 'https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.esm.js';
+    import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.esm.js';
+
+    const audioFile = document.getElementById('audioFile');
+    const zoomSlider = document.getElementById('zoomSlider');
+    const zoomValue = document.getElementById('zoomValue');
+    const playbackRate = document.getElementById('playbackRate');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const clearRegionBtn = document.getElementById('clearRegionBtn');
+
+    const startTime = document.getElementById('startTime');
+    const endTime = document.getElementById('endTime');
+    const syllableInput = document.getElementById('syllableInput');
+    const noteInput = document.getElementById('noteInput');
+    const lineInput = document.getElementById('lineInput');
+    const previewName = document.getElementById('previewName');
+
+    const saveItemBtn = document.getElementById('saveItemBtn');
+    const updateRegionBtn = document.getElementById('updateRegionBtn');
+    const exportJsBtn = document.getElementById('exportJsBtn');
+    const exportJsonBtn = document.getElementById('exportJsonBtn');
+    const copyOutputBtn = document.getElementById('copyOutputBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+
+    const itemsContainer = document.getElementById('itemsContainer');
+    const itemCount = document.getElementById('itemCount');
+    const outputArea = document.getElementById('outputArea');
+
+    const audioStatus = document.getElementById('audioStatus');
+    const selectionStatus = document.getElementById('selectionStatus');
+
+    let wavesurfer = null;
+    let regions = null;
+    let activeRegion = null;
+    let audioUrl = null;
+    let heceler = [];
+
+    function formatTime(value){
+      const num = Number(value || 0);
+      return Number.isFinite(num) ? num.toFixed(2) : '0.00';
+    }
+
+    function refreshPreview(){
+      const text = syllableInput.value.trim();
+      const note = noteInput.value.trim();
+      const start = formatTime(startTime.value);
+      const end = formatTime(endTime.value);
+      const line = lineInput.value.trim();
+
+      previewName.value =
+        `text:"${text}", note:"${note}", start:${start}, end:${end}` +
+        (line ? `, line:${Number(line)}` : '');
+    }
+
+    function updateSelectionInfo(){
+      if(activeRegion){
+        selectionStatus.textContent = `Seçim: ${formatTime(activeRegion.start)} - ${formatTime(activeRegion.end)}`;
+        selectionStatus.className = 'pill blue';
+      }else{
+        selectionStatus.textContent = 'Seçim yok';
+        selectionStatus.className = 'pill';
+      }
+      refreshPreview();
+    }
+
+    function fillInputsFromRegion(region){
+      if(!region) return;
+      startTime.value = formatTime(region.start);
+      endTime.value = formatTime(region.end);
+      updateSelectionInfo();
+    }
+
+    function clearCurrentRegion(){
+      if(activeRegion){
+        activeRegion.remove();
+        activeRegion = null;
+      }
+      startTime.value = '';
+      endTime.value = '';
+      updateSelectionInfo();
+    }
+
+    function sortHeceler(){
+      heceler.sort((a,b) => a.start - b.start);
+    }
+
+    function renderItems(){
+      itemCount.textContent = `${heceler.length} kayıt`;
+
+      if(!heceler.length){
+        itemsContainer.innerHTML = `<div class="empty">Henüz kayıt eklenmedi.</div>`;
+        return;
+      }
+
+      itemsContainer.innerHTML = heceler.map((item, index) => {
+        return `
+          <div class="item">
+            <div>
+              <strong>${escapeHtml(item.text)}</strong>
+              <div class="meta">Hedef nota: ${escapeHtml(item.note || '-')}</div>
+            </div>
+            <div class="meta"><strong>Start:</strong> ${formatTime(item.start)}</div>
+            <div class="meta"><strong>End:</strong> ${formatTime(item.end)}</div>
+            <div class="meta"><strong>Satır:</strong> ${item.line ?? '-'}</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-ghost" onclick="window.loadItemToForm(${index})">Yükle</button>
+              <button class="btn btn-red" onclick="window.deleteItem(${index})">Sil</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function generateJsOutput(){
+      sortHeceler();
+      const lines = heceler.map(item => {
+        const base = `  { text:"${escapeForCode(item.text)}", note:"${escapeForCode(item.note)}", start:${Number(item.start).toFixed(2)}, end:${Number(item.end).toFixed(2)}`;
+        const withLine = item.line ? `${base}, line:${item.line} },` : `${base} },`;
+        return withLine;
+      });
+
+      return `const heceler = [\n${lines.join('\n')}\n];`;
+    }
+
+    function generateJsonOutput(){
+      sortHeceler();
+      return JSON.stringify(heceler, null, 2);
+    }
+
+    function refreshOutput(mode = 'js'){
+      outputArea.value = mode === 'json' ? generateJsonOutput() : generateJsOutput();
+    }
+
+    function escapeHtml(str=''){
+      return str
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
+    function escapeForCode(str=''){
+      return String(str)
+        .replaceAll('\\','\\\\')
+        .replaceAll('"','\\"');
+    }
+
+    function loadItemToForm(index){
+      const item = heceler[index];
+      if(!item) return;
+
+      syllableInput.value = item.text;
+      noteInput.value = item.note;
+      startTime.value = formatTime(item.start);
+      endTime.value = formatTime(item.end);
+      lineInput.value = item.line ?? '';
+
+      if(regions){
+        if(activeRegion) activeRegion.remove();
+        activeRegion = regions.addRegion({
+          start: item.start,
+          end: item.end,
+          color: 'rgba(37,99,235,0.20)',
+          drag: true,
+          resize: true
+        });
+        bindRegionEvents(activeRegion);
+      }
+
+      updateSelectionInfo();
+    }
+
+    function deleteItem(index){
+      heceler.splice(index, 1);
+      renderItems();
+      refreshOutput(outputArea.value.trim().startsWith('[') ? 'json' : 'js');
+    }
+
+    window.loadItemToForm = loadItemToForm;
+    window.deleteItem = deleteItem;
+
+    function bindRegionEvents(region){
+      region.on('update-end', () => {
+        activeRegion = region;
+        fillInputsFromRegion(region);
+      });
+
+      region.on('click', (e) => {
+        e.stopPropagation();
+        activeRegion = region;
+        fillInputsFromRegion(region);
+      });
+
+      region.on('remove', () => {
+        if(activeRegion === region){
+          activeRegion = null;
+          updateSelectionInfo();
+        }
+      });
+    }
+
+    function initWaveSurfer(){
+      if(wavesurfer){
+        wavesurfer.destroy();
+        wavesurfer = null;
+      }
+
+      regions = RegionsPlugin.create();
+
+      wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: '#b9c7db',
+        progressColor: '#2563eb',
+        cursorColor: '#111827',
+        cursorWidth: 2,
+        height: 240,
+        barWidth: 2,
+        barGap: 1,
+        barRadius: 2,
+        normalize: true,
+        minPxPerSec: Number(zoomSlider.value),
+        dragToSeek: true,
+        autoScroll: true,
+        hideScrollbar: false,
+        plugins: [regions]
+      });
+
+      regions.enableDragSelection({
+        color: 'rgba(37,99,235,0.20)'
+      });
+
+      wavesurfer.on('decode', () => {
+        wavesurfer.zoom(Number(zoomSlider.value));
+        audioStatus.textContent = `Ses yüklendi • Süre: ${formatTime(wavesurfer.getDuration())} sn`;
+        audioStatus.className = 'pill green';
+      });
+
+      wavesurfer.on('ready', () => {
+        wavesurfer.setPlaybackRate(Number(playbackRate.value));
+      });
+
+      regions.on('region-created', (region) => {
+        if(activeRegion && activeRegion !== region){
+          activeRegion.remove();
+        }
+        activeRegion = region;
+        bindRegionEvents(region);
+        fillInputsFromRegion(region);
+      });
+    }
+
+    audioFile.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if(!file) return;
+
+      if(audioUrl){
+        URL.revokeObjectURL(audioUrl);
+      }
+
+      audioUrl = URL.createObjectURL(file);
+
+      initWaveSurfer();
+      wavesurfer.load(audioUrl);
+
+      audioStatus.textContent = `Yükleniyor: ${file.name}`;
+      audioStatus.className = 'pill blue';
+    });
+
+    zoomSlider.addEventListener('input', () => {
+      zoomValue.textContent = `${zoomSlider.value} px/sn`;
+      if(wavesurfer){
+        wavesurfer.zoom(Number(zoomSlider.value));
+      }
+    });
+
+    playbackRate.addEventListener('change', () => {
+      if(wavesurfer){
+        wavesurfer.setPlaybackRate(Number(playbackRate.value));
+      }
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+      if(!wavesurfer) return;
+      wavesurfer.playPause();
+    });
+
+    clearRegionBtn.addEventListener('click', clearCurrentRegion);
+
+    [startTime, endTime, syllableInput, noteInput, lineInput].forEach(el => {
+      el.addEventListener('input', refreshPreview);
+    });
+
+    updateRegionBtn.addEventListener('click', () => {
+      if(!regions || !wavesurfer) return;
+
+      const s = Number(startTime.value);
+      const e = Number(endTime.value);
+
+      if(!Number.isFinite(s) || !Number.isFinite(e) || e <= s){
+        alert('Geçerli bir start-end aralığı gir.');
+        return;
+      }
+
+      if(activeRegion){
+        activeRegion.setOptions({ start:s, end:e });
+      }else{
+        activeRegion = regions.addRegion({
+          start:s,
+          end:e,
+          color:'rgba(37,99,235,0.20)',
+          drag:true,
+          resize:true
+        });
+        bindRegionEvents(activeRegion);
+      }
+
+      fillInputsFromRegion(activeRegion);
+    });
+
+    saveItemBtn.addEventListener('click', () => {
+      const text = syllableInput.value.trim();
+      const note = noteInput.value.trim();
+      const start = Number(startTime.value);
+      const end = Number(endTime.value);
+      const lineRaw = lineInput.value.trim();
+
+      if(!text){
+        alert('Hece gir.');
+        return;
+      }
+
+      if(!Number.isFinite(start) || !Number.isFinite(end) || end <= start){
+        alert('Geçerli bir start-end seç.');
+        return;
+      }
+
+      const newItem = {
+        text,
+        note,
+        start: Number(start.toFixed(2)),
+        end: Number(end.toFixed(2))
+      };
+
+      if(lineRaw){
+        newItem.line = Number(lineRaw);
+      }
+
+      heceler.push(newItem);
+      sortHeceler();
+      renderItems();
+      refreshOutput(outputArea.value.trim().startsWith('[') ? 'json' : 'js');
+
+      syllableInput.value = '';
+      noteInput.value = '';
+      lineInput.value = '';
+      refreshPreview();
+    });
+
+    exportJsBtn.addEventListener('click', () => {
+      refreshOutput('js');
+    });
+
+    exportJsonBtn.addEventListener('click', () => {
+      refreshOutput('json');
+    });
+
+    copyOutputBtn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(outputArea.value);
+        copyOutputBtn.textContent = 'Kopyalandı';
+        setTimeout(() => copyOutputBtn.textContent = 'Çıktıyı Kopyala', 1200);
+      }catch{
+        alert('Kopyalama başarısız oldu.');
+      }
+    });
+
+    clearAllBtn.addEventListener('click', () => {
+      const ok = confirm('Tüm kayıtlar silinsin mi?');
+      if(!ok) return;
+      heceler = [];
+      renderItems();
+      refreshOutput(outputArea.value.trim().startsWith('[') ? 'json' : 'js');
+    });
+
+    refreshPreview();
+    renderItems();
+    refreshOutput('js');
+  </script>
+</body>
+</html>
