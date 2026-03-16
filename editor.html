@@ -1,269 +1,270 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Vocaly - Editör</title>
-<style>
-:root{
-  --bg:#f8fafc;
-  --card:#fff;
-  --text:#111827;
-  --muted:#6b7280;
-  --blue:#2563eb;
-  --green:#16a34a;
-  --red:#dc2626;
-  --border:#e5e7eb;
-  --shadow:0 10px 30px rgba(0,0,0,.08);
-  --safe-top:env(safe-area-inset-top, 0px);
-  --safe-right:env(safe-area-inset-right, 0px);
-  --safe-bottom:env(safe-area-inset-bottom, 0px);
-  --safe-left:env(safe-area-inset-left, 0px);
-}
-*{box-sizing:border-box}
-html{
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:linear-gradient(180deg,#f8fafc,#eef2f7);
-  color:var(--text);
-  min-height:100svh;
-}
-.container{
-  max-width:1100px;
-  margin:0 auto;
-  padding:calc(16px + var(--safe-top)) calc(14px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(14px + var(--safe-left));
-}
-.card{
-  background:var(--card);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  padding:20px;
-  margin-bottom:18px;
-}
-h1,h2{margin:0 0 12px}
-p{margin:0 0 12px}
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  min-width:0;
-}
-label{
-  font-size:14px;
-  font-weight:700;
-}
-input, textarea, select{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  font-size:16px;
-  appearance:none;
-  -webkit-appearance:none;
-}
-textarea{
-  min-height:120px;
-  resize:vertical;
-}
-.row{
-  display:grid;
-  grid-template-columns:1.2fr 1fr 1fr 1fr auto;
-  gap:10px;
-  align-items:end;
-  margin-bottom:10px;
-}
-.syllable-row{
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px;
-  background:#fafafa;
-}
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-button{
-  border:none;
-  border-radius:12px;
-  padding:12px 16px;
-  font-size:15px;
-  font-weight:700;
-  cursor:pointer;
-  min-height:44px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-.primary{background:var(--blue); color:#fff;}
-.green{background:var(--green); color:#fff;}
-.red{background:var(--red); color:#fff;}
-.gray{background:#e5e7eb; color:#111827;}
-.preview{
-  background:#0f172a;
-  color:#e5e7eb;
-  border-radius:14px;
-  padding:16px;
-  overflow:auto;
-  font-family:Consolas, monospace;
-  white-space:pre-wrap;
-  word-break:break-word;
-  max-height:50svh;
-}
-.small{
-  color:var(--muted);
-  font-size:13px;
-}
-@media (max-width:900px){
-  .grid{ grid-template-columns:1fr; }
-  .row{ grid-template-columns:1fr; }
-}
-@media (max-width:540px){
-  .container{ padding-left:10px; padding-right:10px; }
-  .card{ padding:14px; border-radius:16px; }
-  .actions > button{ width:100%; }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Vocaly</title>
+  <style>
+    :root{
+      --text:#111827;
+      --muted:#6b7280;
+      --bg1:#f8fbff;
+      --bg2:#f3f4f6;
+      --card:rgba(255,255,255,0.95);
+      --border:rgba(226,232,240,0.9);
+      --blue:#2563eb;
+      --blue-soft:rgba(37,99,235,0.12);
+      --green:#16a34a;
+      --amber:#f59e0b;
+      --shadow:0 12px 30px rgba(0,0,0,0.08);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    html,body{
+      margin:0;
+      padding:0;
+      font-family:Arial,Helvetica,sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 100%);
+      min-height:100%;
+    }
+
+    body{
+      padding:20px;
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    .hero{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      margin-bottom:18px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+
+    .logo{
+      width:58px;
+      height:58px;
+      border-radius:18px;
+      background:linear-gradient(135deg,#2563eb 0%, #60a5fa 100%);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      box-shadow:0 8px 20px rgba(37,99,235,0.25);
+    }
+
+    h1{
+      margin:0;
+      font-size:34px;
+      line-height:1.1;
+      letter-spacing:.2px;
+    }
+
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.6;
+      max-width:760px;
+    }
+
+    .menu{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+      margin-top:24px;
+    }
+
+    .card-link{
+      text-decoration:none;
+      color:inherit;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:20px;
+      box-shadow:0 10px 24px rgba(15,23,42,0.06);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      display:block;
+    }
+
+    .card-link:hover{
+      transform:translateY(-3px);
+      box-shadow:0 14px 30px rgba(15,23,42,0.10);
+      border-color:#c7d7f8;
+    }
+
+    .card-top{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .icon{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:24px;
+      flex:0 0 auto;
+    }
+
+    .icon.karaoke{ background:rgba(37,99,235,0.12); }
+    .icon.measure{ background:rgba(22,163,74,0.12); }
+    .icon.editor{ background:rgba(245,158,11,0.16); }
+
+    .card-title{
+      font-size:20px;
+      font-weight:800;
+      margin:0;
+    }
+
+    .card-text{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .badge-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .badge{
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      border:1px solid transparent;
+    }
+
+    .badge.blue{
+      background:var(--blue-soft);
+      color:#1746a2;
+      border-color:#d7e5ff;
+    }
+
+    .badge.green{
+      background:rgba(22,163,74,0.12);
+      color:#166534;
+      border-color:#d6f2de;
+    }
+
+    .badge.amber{
+      background:rgba(245,158,11,0.14);
+      color:#9a6700;
+      border-color:#fde7b0;
+    }
+
+    .note{
+      margin-top:18px;
+      background:rgba(255,255,255,0.78);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px 18px;
+      color:#475569;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    @media (max-width: 860px){
+      .menu{
+        grid-template-columns:1fr;
+      }
+
+      h1{
+        font-size:28px;
+      }
+
+      .hero{
+        padding:20px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
+  <div class="wrap">
+    <section class="hero">
+      <div class="brand">
+        <div class="logo">🎵</div>
+        <div>
+          <h1>Vocaly</h1>
+          <p class="sub">
+            Şarkı heceleriyle çalışan, karaoke, ölçme ve içerik üretimini aynı çatı altında toplayan web tabanlı müzik öğrenme ortamı.
+          </p>
+        </div>
+      </div>
 
-  <div class="card">
-    <h1>Vocaly Editör</h1>
-    <p>Bu editör; hece, zaman ve nota verisini tek JSON yapısında toplar.</p>
+      <div class="menu">
+        <a class="card-link" href="index.html">
+          <div class="card-top">
+            <div class="icon karaoke">🎤</div>
+            <h2 class="card-title">Karaoke</h2>
+          </div>
+          <p class="card-text">
+            Hecelere tıklayarak ilgili sesi dinle, aktif heceleri takip et ve parçayı çalışma modunda kullan.
+          </p>
+          <div class="badge-row">
+            <span class="badge blue">Hece bazlı</span>
+            <span class="badge blue">Dinleme</span>
+          </div>
+        </a>
+
+        <a class="card-link" href="measure.html">
+          <div class="card-top">
+            <div class="icon measure">🎯</div>
+            <h2 class="card-title">Ölçme</h2>
+          </div>
+          <p class="card-text">
+            Mikrofonla öğrencinin sesini hedef notalarla karşılaştır, doğru okumaları yeşil, hatalıları kırmızı göster.
+          </p>
+          <div class="badge-row">
+            <span class="badge green">Tuner</span>
+            <span class="badge green">Değerlendirme</span>
+          </div>
+        </a>
+
+        <a class="card-link" href="editor.html">
+          <div class="card-top">
+            <div class="icon editor">🎧</div>
+            <h2 class="card-title">Editör</h2>
+          </div>
+          <p class="card-text">
+            MP3 yükle, dalga formu üzerinde sürükleyerek hece bölgeleri seç, hece ve hedef notaları gir, veriyi otomatik üret.
+          </p>
+          <div class="badge-row">
+            <span class="badge amber">Waveform</span>
+            <span class="badge amber">İçerik üretimi</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="note">
+        Not: Editör sayfasının çalışması için dosya adın <strong>editor.html</strong> olmalı. Şu an dosyan <strong>player.html</strong> ise adını değiştir ya da yukarıdaki bağlantıyı <strong>player.html</strong> yap.
+      </div>
+    </section>
   </div>
-
-  <div class="card">
-    <h2>Genel Bilgiler</h2>
-    <div class="grid">
-      <div class="field">
-        <label for="title">Eser Başlığı</label>
-        <input id="title" type="text" placeholder="Örn: İstiklal Marşı">
-      </div>
-      <div class="field">
-        <label for="audio">MP3 Yolu</label>
-        <input id="audio" type="text" placeholder="Örn: temiz_kayit.mp3">
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Hece Girişleri</h2>
-    <p class="small">Her hece için metin, başlangıç, bitiş ve hedef nota gir.</p>
-    <div id="rowsContainer"></div>
-
-    <div class="actions" style="margin-top:12px;">
-      <button class="primary" type="button" onclick="addRow()">Yeni Hece Ekle</button>
-      <button class="green" type="button" onclick="generateJSON()">JSON Üret</button>
-      <button class="gray" type="button" onclick="loadSample()">Örnek Veri Yükle</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>JSON Çıktısı</h2>
-    <div id="jsonPreview" class="preview">{}</div>
-  </div>
-
-</div>
-
-<script>
-const rowsContainer = document.getElementById("rowsContainer");
-const jsonPreview = document.getElementById("jsonPreview");
-
-function addRow(data = { text:"", start:"", end:"", note:"" }) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "syllable-row";
-
-  wrapper.innerHTML = `
-    <div class="row">
-      <div class="field">
-        <label>Hece</label>
-        <input type="text" class="syllable-text" placeholder="Örn: Kor" value="${data.text}">
-      </div>
-
-      <div class="field">
-        <label>Başlangıç</label>
-        <input type="number" step="0.01" class="syllable-start" placeholder="0.50" value="${data.start}">
-      </div>
-
-      <div class="field">
-        <label>Bitiş</label>
-        <input type="number" step="0.01" class="syllable-end" placeholder="0.90" value="${data.end}">
-      </div>
-
-      <div class="field">
-        <label>Nota</label>
-        <input type="text" class="syllable-note" placeholder="G4" value="${data.note}">
-      </div>
-
-      <button class="red" type="button" onclick="removeRow(this)">Sil</button>
-    </div>
-  `;
-
-  rowsContainer.appendChild(wrapper);
-}
-
-function removeRow(button) {
-  button.closest(".syllable-row").remove();
-}
-
-function generateJSON() {
-  const title = document.getElementById("title").value.trim();
-  const audio = document.getElementById("audio").value.trim();
-
-  const texts = document.querySelectorAll(".syllable-text");
-  const starts = document.querySelectorAll(".syllable-start");
-  const ends = document.querySelectorAll(".syllable-end");
-  const notes = document.querySelectorAll(".syllable-note");
-
-  const syllables = [];
-
-  for (let i = 0; i < texts.length; i++) {
-    const text = texts[i].value.trim();
-    const start = parseFloat(starts[i].value);
-    const end = parseFloat(ends[i].value);
-    const note = notes[i].value.trim();
-
-    if (!text) continue;
-
-    syllables.push({
-      text,
-      start: isNaN(start) ? 0 : start,
-      end: isNaN(end) ? 0 : end,
-      note
-    });
-  }
-
-  const output = { title, audio, syllables };
-  jsonPreview.textContent = JSON.stringify(output, null, 2);
-}
-
-function loadSample() {
-  document.getElementById("title").value = "İstiklal Marşı";
-  document.getElementById("audio").value = "temiz_kayit.mp3";
-  rowsContainer.innerHTML = "";
-
-  [
-    { text:"Kor", start:"0.50", end:"0.90", note:"G4" },
-    { text:"kma", start:"0.91", end:"1.30", note:"A4" },
-    { text:"sön", start:"1.31", end:"1.70", note:"B4" },
-    { text:"mez", start:"1.71", end:"2.10", note:"A4" }
-  ].forEach(addRow);
-
-  generateJSON();
-}
-
-addRow();
-addRow();
-addRow();
-</script>
 </body>
 </html>

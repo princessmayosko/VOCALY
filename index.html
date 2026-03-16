@@ -107,6 +107,95 @@ h3{
   pointer-events:none;
 }
 
+/* INTRO */
+#introWrap{
+  max-width:1040px;
+  margin:0 auto 14px;
+  position:relative;
+  z-index:1;
+}
+
+#introCard{
+  background:rgba(255,255,255,0.90);
+  border:1px solid rgba(255,255,255,0.9);
+  box-shadow:var(--shadow);
+  border-radius:24px;
+  padding:18px 18px 16px;
+  text-align:left;
+  position:relative;
+  overflow:hidden;
+}
+
+#introCard::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(120deg, rgba(109,40,217,0.05), transparent 30%),
+    linear-gradient(300deg, rgba(31,138,112,0.05), transparent 32%);
+}
+
+#introTitle{
+  font-size:22px;
+  font-weight:800;
+  margin:0 0 8px;
+  position:relative;
+  z-index:1;
+}
+
+#introText{
+  font-size:14px;
+  line-height:1.6;
+  color:#374151;
+  margin:0 0 14px;
+  position:relative;
+  z-index:1;
+}
+
+#stepCards{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:12px;
+  position:relative;
+  z-index:1;
+}
+
+.step-card{
+  background:rgba(255,255,255,0.92);
+  border:1px solid rgba(17,24,39,0.06);
+  border-radius:18px;
+  padding:14px 14px 12px;
+  box-shadow:0 8px 22px rgba(0,0,0,0.06);
+}
+
+.step-no{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  border-radius:999px;
+  background:linear-gradient(135deg, var(--purple), var(--petrol));
+  color:white;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.step-title{
+  font-size:16px;
+  font-weight:800;
+  margin-bottom:6px;
+  color:#111827;
+}
+
+.step-desc{
+  font-size:13px;
+  color:#4b5563;
+  line-height:1.5;
+}
+
 /* TOP MENU */
 #topMenu{
   display:flex;
@@ -443,6 +532,63 @@ h3{
   transform:translateY(0);
 }
 
+/* SECTION HEAD */
+.section-head{
+  max-width:980px;
+  margin:0 auto 14px;
+  background:rgba(255,255,255,0.85);
+  border:1px solid rgba(255,255,255,0.9);
+  box-shadow:var(--shadow);
+  border-radius:22px;
+  padding:16px 18px 14px;
+  text-align:left;
+  position:relative;
+  overflow:hidden;
+}
+
+.section-head::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(120deg, rgba(109,40,217,0.04), transparent 30%),
+    linear-gradient(300deg, rgba(31,138,112,0.04), transparent 32%);
+}
+
+.section-step{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  background:linear-gradient(135deg, var(--purple), var(--petrol));
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:10px;
+  position:relative;
+  z-index:1;
+}
+
+.section-title{
+  font-size:28px;
+  font-weight:800;
+  margin:0 0 8px;
+  position:relative;
+  z-index:1;
+}
+
+.section-desc{
+  font-size:14px;
+  line-height:1.6;
+  color:#4b5563;
+  position:relative;
+  z-index:1;
+}
+
 /* AUDIO + SONG */
 #audio-wrap{
   background:rgba(255,255,255,0.86);
@@ -668,6 +814,21 @@ h3{
   z-index:1;
 }
 
+.warmup-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(109,40,217,0.10);
+  color:#5b21b6;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:10px;
+  position:relative;
+  z-index:1;
+}
+
 .warmup-toolbar{
   display:flex;
   justify-content:center;
@@ -723,6 +884,32 @@ h3{
 
 .warmup-btn.secondary{
   background:linear-gradient(135deg, var(--purple), var(--purple-dark));
+}
+
+.warmup-nav{
+  display:flex;
+  justify-content:center;
+  margin-top:14px;
+  position:relative;
+  z-index:1;
+}
+
+.next-step-btn{
+  border:none;
+  background:linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color:white;
+  padding:11px 16px;
+  border-radius:14px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:800;
+  box-shadow:0 8px 18px rgba(109,40,217,0.22);
+  min-height:44px;
+  transition:transform 0.15s ease;
+}
+
+.next-step-btn:hover{
+  transform:translateY(-1px);
 }
 
 .warmup-section{
@@ -808,6 +995,12 @@ h3{
   color:#4b5563;
   position:relative;
   z-index:1;
+}
+
+@media (max-width: 1000px){
+  #stepCards{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
 }
 
 @media (max-width: 900px){
@@ -898,6 +1091,20 @@ h3{
     width:100%;
     max-width:320px;
   }
+
+  .section-title{
+    font-size:24px;
+  }
+
+  #introTitle{
+    font-size:20px;
+  }
+}
+
+@media (max-width: 640px){
+  #stepCards{
+    grid-template-columns:1fr;
+  }
 }
 
 @media (max-width: 480px){
@@ -913,7 +1120,9 @@ h3{
   #tunerCard,
   #audio-wrap,
   #warmupWrap,
-  #lyrics{
+  #lyrics,
+  #introCard,
+  .section-head{
     border-radius:18px;
   }
 
@@ -931,10 +1140,44 @@ h3{
 
 <div id="vocaly">Vocaly</div>
 
+<div id="introWrap">
+  <div id="introCard">
+    <div id="introTitle">Nasıl kullanılır?</div>
+    <div id="introText">
+      Bu çalışma 4 adımdan oluşur. Önce sesini hazırla, sonra eseri hece hece çalış, ardından kendini ölç, istersen öğretmen editöründen içerik düzenle.
+      Amaç kusursuz olmak değil; doğru sese yaklaşarak güven kazanmaktır.
+    </div>
+
+    <div id="stepCards">
+      <div class="step-card">
+        <div class="step-no">1</div>
+        <div class="step-title">Vokal Isınma ve Hazırlık</div>
+        <div class="step-desc">Çalışmaya başlamadan önce sesini hazırla. Sayfa açıldığında ton otomatik olarak Mi minör gelir.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-no">2</div>
+        <div class="step-title">Eser Çalışma</div>
+        <div class="step-desc">Hecelere tıkla, satırları dinle, seçili bölümleri tekrar et ve hedef notaya yaklaş.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-no">3</div>
+        <div class="step-title">Ölçme</div>
+        <div class="step-desc">Hazır olduğunda karaoke modunda kendini dene ve sonucu gör.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-no">4</div>
+        <div class="step-title">Öğretmen Editörü</div>
+        <div class="step-desc">Ayrı sayfada hece, zaman ve nota eşleşmelerini düzenle, yeni içerik üret.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="topMenu">
-  <button class="mode-btn active" id="songModeBtn" onclick="showMode('song')">Eser Çalışma</button>
-  <button class="mode-btn" id="warmupModeBtn" onclick="showMode('warmup')">Vokal Isınma ve Hazırlık</button>
-  <a class="mode-link" href="./olcme.html">Ölçme / Karaoke Modu</a>
+  <button class="mode-btn active" id="warmupModeBtn" onclick="showMode('warmup')">1. Vokal Isınma ve Hazırlık</button>
+  <button class="mode-btn" id="songModeBtn" onclick="showMode('song')">2. Eser Çalışma</button>
+  <a class="mode-link" href="./olcme.html">3. Ölçme / Karaoke Modu</a>
+  <a class="mode-link" href="./editor.html">4. Öğretmen Editörü</a>
 </div>
 
 <div id="globalTop">
@@ -981,25 +1224,19 @@ h3{
   </div>
 </div>
 
-<div id="songMode">
-  <h1>İSTİKLAL MARŞI</h1>
-
-  <div id="audio-wrap">
-    <div class="controls">
-      <button id="stopBtn" type="button">STOP</button>
+<div id="warmupMode">
+  <div class="section-head">
+    <div class="section-step">1. Aşama</div>
+    <div class="section-title">Vokal Isınma ve Hazırlık</div>
+    <div class="section-desc">
+      Önce sesini hazırla. Bu bölüm şimdilik otomatik olarak <strong>Mi minör</strong> ile başlar.
+      İstersen aynı sayfada tonu ve modu değiştirebilirsin.
     </div>
-
-    <div id="status">Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır</div>
-    <div class="tip">Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.</div>
   </div>
 
-  <div id="lyrics"></div>
-</div>
-
-<div id="warmupMode" style="display:none;">
-  <h1>Vokal Isınma ve Hazırlık</h1>
-
   <div id="warmupWrap">
+    <div class="warmup-badge">Başlangıç tonu: Mi Minör</div>
+
     <div class="warmup-intro">
       Tıkla = egzersizi dinle, sonra tuner hedefi o çalışmaya geçsin. Basılı tutup sürükle = çoklu seçim.
     </div>
@@ -1037,12 +1274,39 @@ h3{
       <div class="warmup-line" id="motifLine"></div>
     </div>
 
-    <div id="warmupStatus">Hazır.</div>
+    <div id="warmupStatus">Mi Minör hazır.</div>
+
+    <div class="warmup-nav">
+      <button class="next-step-btn" type="button" onclick="showMode('song')">Eser Çalışmaya Geç</button>
+    </div>
   </div>
 </div>
 
+<div id="songMode" style="display:none;">
+  <div class="section-head">
+    <div class="section-step">2. Aşama</div>
+    <div class="section-title">Eser Çalışma</div>
+    <div class="section-desc">
+      Şimdi eseri hece hece çalış. Kısa tıkla heceyi dinle, istersen seçili bölümü tekrar et,
+      tuner yardımıyla hedef sese yaklaş.
+    </div>
+  </div>
+
+  <h1>İSTİKLAL MARŞI</h1>
+
+  <div id="audio-wrap">
+    <div class="controls">
+      <button id="stopBtn" type="button">STOP</button>
+    </div>
+
+    <div id="status">Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır</div>
+    <div class="tip">Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.</div>
+  </div>
+
+  <div id="lyrics"></div>
+</div>
+
 <script>
-/* JS original kept, only iPhone-friendly small additions below */
 const lyricsData = [
   [
     [["Kork","ma,"], ["sön","mez"], ["bu"], ["şa","fak","lar","da"], ["yü","zen"], ["al"], ["san","cak;"]],
@@ -1248,7 +1512,7 @@ function showMode(mode){
     songMode.style.display = "none";
     warmupMode.style.display = "block";
     warmupBtn.classList.add("active");
-    warmupStatusEl.textContent = "Hazır.";
+    warmupStatusEl.textContent = "Mi Minör hazır.";
     window.scrollTo({ top:0, behavior:"smooth" });
   }
 }
@@ -1256,8 +1520,8 @@ function showMode(mode){
 /* WARMUP GENERATION */
 function buildWarmupToneOptions(){
   warmupToneSelect.innerHTML = TONE_OPTIONS.map(opt => `<option value="${opt.pc}">${opt.label}</option>`).join("");
-  warmupToneSelect.value = "7";
-  warmupScaleTypeSelect.value = "major";
+  warmupToneSelect.value = "4";
+  warmupScaleTypeSelect.value = "minor";
 }
 
 function getScalePcs(rootPc, type){
@@ -1334,7 +1598,7 @@ function buildWarmupData(){
   renderWarmupLine("intervalLine", intervals);
   renderWarmupLine("motifLine", motifs);
 
-  const toneLabel = TONE_OPTIONS.find(x => x.pc === rootPc)?.label || "Sol";
+  const toneLabel = TONE_OPTIONS.find(x => x.pc === rootPc)?.label || "Mi";
   warmupStatusEl.textContent = `${toneLabel} ${scaleType === "major" ? "Majör" : "Minör"} hazır.`;
 }
 
@@ -2196,6 +2460,7 @@ createTicks();
 buildWarmupToneOptions();
 buildWarmupData();
 updatePitchDotByCents(null);
+showMode("warmup");
 
 warmupToneSelect.addEventListener("change", () => {
   clearWarmupSelection();
