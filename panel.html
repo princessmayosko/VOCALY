@@ -1,205 +1,742 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vocaly</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Vocaly Kütüphane</title>
 <style>
-
 :root{
---text:#111827;
---muted:#6b7280;
---bg1:#f8fbff;
---bg2:#f3f4f6;
---card:#ffffff;
---border:#e5e7eb;
-
---blue:#2563eb;
---blueSoft:rgba(37,99,235,0.12);
-
---green:#16a34a;
---greenSoft:rgba(22,163,74,0.12);
-
---amber:#f59e0b;
---amberSoft:rgba(245,158,11,0.16);
-
---shadow:0 12px 30px rgba(0,0,0,0.08);
+  --text:#111827;
+  --muted:#6b7280;
+  --purple:#6d28d9;
+  --purple-dark:#4c1d95;
+  --purple-soft:rgba(109,40,217,0.14);
+  --green:#1f8a70;
+  --green-dark:#145c4a;
+  --green-soft:rgba(31,138,112,0.14);
+  --red:#dc2626;
+  --amber:#f59e0b;
+  --shadow:0 14px 36px rgba(0,0,0,0.10);
+  --panel:rgba(255,255,255,0.90);
+  --safe-top:env(safe-area-inset-top, 0px);
+  --safe-right:env(safe-area-inset-right, 0px);
+  --safe-bottom:env(safe-area-inset-bottom, 0px);
+  --safe-left:env(safe-area-inset-left, 0px);
 }
 
-*{
-box-sizing:border-box;
+*{box-sizing:border-box}
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  scroll-behavior:smooth;
 }
-
 body{
-margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:linear-gradient(180deg,var(--bg1),var(--bg2));
-color:var(--text);
-padding:28px;
+  margin:0;
+  min-height:100svh;
+  font-family:Arial,sans-serif;
+  color:var(--text);
+  padding:calc(18px + var(--safe-top)) calc(14px + var(--safe-right)) calc(28px + var(--safe-bottom)) calc(14px + var(--safe-left));
+  background:
+    radial-gradient(circle at top left, rgba(109,40,217,0.16) 0, rgba(109,40,217,0.08) 20%, transparent 42%),
+    radial-gradient(circle at bottom right, rgba(31,138,112,0.18) 0, rgba(31,138,112,0.07) 22%, transparent 44%),
+    linear-gradient(180deg,#f8fafc 0%, #f5f3ff 42%, #ecfeff 100%);
+  overflow-x:hidden;
+  position:relative;
+}
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  pointer-events:none;
+  border-radius:34px;
+  z-index:0;
+}
+body::before{
+  top:40px;
+  right:-90px;
+  width:320px;
+  height:320px;
+  border:2px solid rgba(109,40,217,0.12);
+  background:linear-gradient(135deg, rgba(109,40,217,0.05), rgba(31,138,112,0.03));
+  transform:rotate(12deg);
+}
+body::after{
+  left:-110px;
+  bottom:36px;
+  width:360px;
+  height:360px;
+  border:2px solid rgba(31,138,112,0.12);
+  background:linear-gradient(135deg, rgba(31,138,112,0.05), rgba(109,40,217,0.03));
+  transform:rotate(-10deg);
 }
 
 .wrap{
-max-width:1000px;
-margin:auto;
-}
-
-.header{
-background:var(--card);
-border:1px solid var(--border);
-border-radius:24px;
-padding:28px;
-box-shadow:var(--shadow);
-margin-bottom:20px;
-}
-
-h1{
-margin:0;
-font-size:34px;
-}
-
-.sub{
-margin-top:8px;
-color:var(--muted);
-font-size:15px;
-line-height:1.6;
-}
-
-.menu{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:18px;
-margin-top:24px;
+  max-width:1160px;
+  margin:0 auto;
+  position:relative;
+  z-index:1;
 }
 
 .card{
-background:#fff;
-border:1px solid var(--border);
-border-radius:20px;
-padding:22px;
-text-decoration:none;
-color:inherit;
-box-shadow:0 10px 24px rgba(0,0,0,0.05);
-transition:all .18s ease;
-display:block;
+  background:var(--panel);
+  border:1px solid rgba(255,255,255,0.92);
+  box-shadow:var(--shadow);
+  border-radius:24px;
+  padding:18px;
+  backdrop-filter:blur(8px);
+  position:relative;
+  overflow:hidden;
+  margin-bottom:18px;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(120deg, rgba(109,40,217,0.06), transparent 30%),
+    linear-gradient(300deg, rgba(31,138,112,0.06), transparent 32%);
 }
 
-.card:hover{
-transform:translateY(-3px);
-box-shadow:0 16px 32px rgba(0,0,0,0.08);
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:14px;
+  position:relative;
+  z-index:1;
+}
+.logo{
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  background:linear-gradient(180deg,#fde047 0%, #facc15 100%);
+  box-shadow:0 10px 22px rgba(250,204,21,0.28);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+}
+.logo:before{
+  content:"";
+  width:24px;
+  height:24px;
+  border-radius:999px 999px 999px 3px;
+  background:#fff8db;
+  transform:rotate(-35deg);
+  display:block;
+}
+.brandTitle{
+  font-size:32px;
+  font-weight:800;
+  color:#4c1d95;
+}
+.brandSub{
+  margin-top:4px;
+  color:#4b5563;
+  font-size:14px;
+  line-height:1.5;
 }
 
-.icon{
-width:50px;
-height:50px;
-border-radius:16px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:24px;
-margin-bottom:12px;
+.heroTitle{
+  font-size:28px;
+  font-weight:800;
+  margin-bottom:8px;
+  position:relative;
+  z-index:1;
+}
+.heroText{
+  font-size:14px;
+  line-height:1.7;
+  color:#4b5563;
+  position:relative;
+  z-index:1;
 }
 
-.icon.karaoke{
-background:var(--blueSoft);
+.quickGrid{
+  margin-top:16px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  position:relative;
+  z-index:1;
+}
+.quickBox{
+  background:rgba(255,255,255,0.96);
+  border:1px solid rgba(17,24,39,0.07);
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 8px 22px rgba(0,0,0,0.06);
+}
+.quickIcon{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  margin-bottom:12px;
+}
+.quickIcon.library{background:var(--purple-soft)}
+.quickIcon.editor{background:var(--green-soft)}
+.quickTitle{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+.quickText{
+  font-size:14px;
+  color:#4b5563;
+  line-height:1.6;
+  margin-bottom:14px;
 }
 
-.icon.olcme{
-background:var(--greenSoft);
+button, a.btn{
+  border:none;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  border-radius:14px;
+  padding:11px 16px;
+  font-size:14px;
+  font-weight:800;
+  min-height:44px;
+  transition:transform .15s ease, opacity .15s ease;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+button:hover, a.btn:hover{
+  transform:translateY(-1px);
+}
+.btn-primary{
+  background:linear-gradient(135deg, var(--green), var(--green-dark));
+  color:#fff;
+  box-shadow:0 8px 18px rgba(31,138,112,0.18);
+}
+.btn-secondary{
+  background:linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color:#fff;
+  box-shadow:0 8px 18px rgba(109,40,217,0.18);
+}
+.btn-soft{
+  background:#fff;
+  color:#1f2937;
+  border:1px solid rgba(17,24,39,0.08);
 }
 
-.icon.editor{
-background:var(--amberSoft);
+.sectionHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+  position:relative;
+  z-index:1;
+}
+.sectionTitle{
+  font-size:24px;
+  font-weight:800;
+}
+.sectionDesc{
+  font-size:14px;
+  color:#4b5563;
+  line-height:1.6;
+  margin-top:4px;
 }
 
-.title{
-font-size:20px;
-font-weight:700;
-margin-bottom:6px;
+.carouselTools{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex:0 0 auto;
+}
+.circleBtn{
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  padding:0;
+  background:#fff;
+  color:#111827;
+  border:1px solid rgba(17,24,39,0.08);
+  box-shadow:0 6px 14px rgba(0,0,0,0.08);
+  font-size:20px;
+  font-weight:800;
 }
 
-.text{
-font-size:14px;
-color:var(--muted);
-line-height:1.6;
+.carouselWrap{
+  position:relative;
+  z-index:1;
+}
+.carousel{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  padding:4px 2px 8px;
+  scrollbar-width:none;
+}
+.carousel::-webkit-scrollbar{
+  display:none;
 }
 
-.footer{
-margin-top:18px;
-font-size:13px;
-color:var(--muted);
+.songCard{
+  min-width:255px;
+  max-width:255px;
+  background:rgba(255,255,255,0.96);
+  border:1px solid rgba(17,24,39,0.07);
+  border-radius:22px;
+  box-shadow:0 8px 22px rgba(0,0,0,0.06);
+  overflow:hidden;
+  flex:0 0 auto;
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.songCard:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 28px rgba(0,0,0,0.10);
+}
+.songCard.active{
+  border-color:rgba(109,40,217,0.38);
+  box-shadow:0 0 0 4px rgba(109,40,217,0.10), 0 14px 28px rgba(0,0,0,0.10);
 }
 
-@media(max-width:850px){
-.menu{
-grid-template-columns:1fr;
+.cover{
+  height:156px;
+  background:
+    linear-gradient(135deg, rgba(109,40,217,0.10), rgba(31,138,112,0.10)),
+    linear-gradient(180deg,#f8fafc,#eef2ff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
 }
+.cover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.coverFallback{
+  font-size:48px;
 }
 
+.songBody{
+  padding:16px;
+}
+.songTitle{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.songSub{
+  font-size:13px;
+  color:#6b7280;
+  margin-bottom:10px;
+  min-height:18px;
+}
+.meta{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  background:#f8fafc;
+  border:1px solid rgba(17,24,39,0.06);
+  color:#374151;
+}
+.pill.purple{
+  background:var(--purple-soft);
+  color:#5b21b6;
+}
+.pill.green{
+  background:var(--green-soft);
+  color:#166534;
+}
+
+.songBtnRow{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+.emptyState{
+  padding:18px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.84);
+  border:1px dashed rgba(17,24,39,0.14);
+  color:#6b7280;
+  font-size:14px;
+  position:relative;
+  z-index:1;
+}
+
+.bottomInfo{
+  margin-top:14px;
+  font-size:12px;
+  color:#6b7280;
+  line-height:1.6;
+  position:relative;
+  z-index:1;
+}
+
+.drawerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(17,24,39,0.34);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:9999;
+  padding:12px;
+  backdrop-filter:blur(4px);
+}
+.drawerOverlay.show{
+  display:flex;
+}
+.drawer{
+  width:min(100%, 740px);
+  background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98));
+  border:1px solid rgba(255,255,255,0.95);
+  box-shadow:0 20px 50px rgba(0,0,0,0.18);
+  border-radius:26px 26px 18px 18px;
+  padding:18px;
+  transform:translateY(30px);
+  animation:drawerUp .28s ease forwards;
+}
+@keyframes drawerUp{
+  from{opacity:0; transform:translateY(30px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+.drawerTop{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:12px;
+}
+.drawerCover{
+  width:96px;
+  height:96px;
+  border-radius:18px;
+  overflow:hidden;
+  flex:0 0 auto;
+  background:linear-gradient(135deg, rgba(109,40,217,0.10), rgba(31,138,112,0.10));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+}
+.drawerCover img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.drawerTitle{
+  font-size:24px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.drawerSub{
+  font-size:14px;
+  color:#4b5563;
+  line-height:1.6;
+}
+.drawerMeta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.drawerActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:16px;
+}
+
+.hidden{
+  display:none !important;
+}
+
+@media (max-width:860px){
+  .quickGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:760px){
+  .brandTitle{
+    font-size:28px;
+  }
+  .heroTitle{
+    font-size:24px;
+  }
+  .sectionHead{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .carouselTools{
+    width:100%;
+    justify-content:flex-end;
+  }
+  .songCard{
+    min-width:220px;
+    max-width:220px;
+  }
+  .drawerTop{
+    flex-direction:column;
+  }
+  .drawerActions{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:480px){
+  body{
+    padding:calc(14px + var(--safe-top)) calc(10px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(10px + var(--safe-left));
+  }
+  .card{
+    border-radius:18px;
+    padding:14px;
+  }
+  .songCard{
+    min-width:200px;
+    max-width:200px;
+  }
+}
 </style>
 </head>
-
 <body>
-
 <div class="wrap">
 
-<div class="header">
-<h1>Vocaly</h1>
-<p class="sub">
-Hecelere dayalı karaoke, ölçme ve içerik üretme araçlarını bir araya getiren
-web tabanlı müzik öğrenme ortamı.
-</p>
-</div>
+  <div class="card">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>
+        <div class="brandTitle">VOCALY</div>
+        <div class="brandSub">Kütüphane, eser çalışma, ölçme ve editör yapısını tek sistemde toplar.</div>
+      </div>
+    </div>
 
-<div class="menu">
+    <div class="heroTitle">Ana Panel</div>
+    <div class="heroText">
+      Önce kütüphaneden eseri seç, sonra çalışma ya da ölçme moduna geç. Öğretmen tarafında editörden yeni içerikler üretip zamanla kütüphaneyi büyütebilirsin.
+    </div>
 
-<a class="card" href="index.html">
+    <div class="quickGrid">
+      <div class="quickBox">
+        <div class="quickIcon library">🎼</div>
+        <div class="quickTitle">Kütüphane</div>
+        <div class="quickText">Aşağıdaki eser kartlarını sağa sola kaydır, bir eseri seç ve çalışma ya da ölçme moduna geç.</div>
+        <button class="btn-primary" type="button" onclick="document.getElementById('librarySection').scrollIntoView({behavior:'smooth'})">Kütüphaneye Git</button>
+      </div>
 
-<div class="icon karaoke">🎤</div>
+      <div class="quickBox">
+        <div class="quickIcon editor">🎧</div>
+        <div class="quickTitle">Editör</div>
+        <div class="quickText">Waveform üstünde zamanlama yap, segmentleri düzenle, JSON üret ve içeriği geliştir.</div>
+        <a class="btn-secondary" href="editor1.html">Editörü Aç</a>
+      </div>
+    </div>
+  </div>
 
-<div class="title">Karaoke</div>
+  <div id="librarySection" class="card">
+    <div class="sectionHead">
+      <div>
+        <div class="sectionTitle">Kütüphane</div>
+        <div class="sectionDesc">Kartları oklarla ya da parmakla kaydır. Şarkıyı seçince alttan seçenek paneli açılır.</div>
+      </div>
 
-<div class="text">
-Hecelere tıklayarak ilgili sesi dinle ve parçayı çalışma modunda takip et.
-</div>
+      <div class="carouselTools">
+        <button id="prevBtn" class="circleBtn" type="button" aria-label="Sola kaydır">‹</button>
+        <button id="nextBtn" class="circleBtn" type="button" aria-label="Sağa kaydır">›</button>
+      </div>
+    </div>
 
-</a>
+    <div id="emptyState" class="emptyState hidden">Henüz kütüphanede eser yok.</div>
+    <div id="songCarousel" class="carousel"></div>
 
-
-<a class="card" href="olcme.html">
-
-<div class="icon olcme">🎯</div>
-
-<div class="title">Ölçme</div>
-
-<div class="text">
-Mikrofon ile öğrencinin söylediği notaları hedef notalarla karşılaştır.
-Doğru heceler yeşil, yanlış olanlar kırmızı yanar.
-</div>
-
-</a>
-
-
-<a class="card" href="editor1.html">
-
-<div class="icon editor">🎧</div>
-
-<div class="title">Waveform İçerik Üretme</div>
-
-<div class="text">
-MP3 yükle, dalga formu üzerinde sürükleyerek hece bölgeleri seç
-ve karaoke veri setini otomatik oluştur.
-</div>
-
-</a>
-
-</div>
-
-<div class="footer">
-Not: Bu sayfa sadece navigasyon panelidir. Karaoke, ölçme ve editör sayfalarının içindeki ayarlar değiştirilmez.
-</div>
+    <div class="bottomInfo">
+      Admin notu: Yeni şarkı eklemek için sadece en alttaki <strong>SONGS</strong> dizisine yeni bir obje eklemen yeterli. Şimdilik en kolay sistem bu.
+    </div>
+  </div>
 
 </div>
 
+<div id="drawerOverlay" class="drawerOverlay">
+  <div class="drawer">
+    <div class="drawerTop">
+      <div id="drawerCover" class="drawerCover">🎵</div>
+
+      <div>
+        <div id="drawerTitle" class="drawerTitle">Eser</div>
+        <div id="drawerSub" class="drawerSub">Açıklama</div>
+        <div id="drawerMeta" class="drawerMeta"></div>
+      </div>
+    </div>
+
+    <div class="drawerActions">
+      <a id="practiceLink" class="btn-primary" href="index.html">Eser Çalışma</a>
+      <a id="assessmentLink" class="btn-secondary" href="olcme.html">Eser Ölçme</a>
+      <a class="btn-soft" href="editor1.html">Editöre Git</a>
+      <button class="btn-soft" type="button" onclick="closeDrawer()">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/*
+  ADMIN İÇİN EN KOLAY YER BURASI:
+  Yeni eser eklemek için aşağıya yeni obje ekle.
+  cover alanı boş olabilir.
+*/
+const SONGS = [
+  {
+    id: "kus-sesleri",
+    title: "Kuş Sesleri",
+    subtitle: "Başlangıç düzeyi eser",
+    difficulty: "Kolay",
+    tone: "Mi Minör",
+    cover: "cover.jpg",
+    practicePage: "index.html",
+    assessmentPage: "olcme.html"
+  }
+];
+
+const carousel = document.getElementById("songCarousel");
+const emptyState = document.getElementById("emptyState");
+const drawerOverlay = document.getElementById("drawerOverlay");
+const drawerCover = document.getElementById("drawerCover");
+const drawerTitle = document.getElementById("drawerTitle");
+const drawerSub = document.getElementById("drawerSub");
+const drawerMeta = document.getElementById("drawerMeta");
+const practiceLink = document.getElementById("practiceLink");
+const assessmentLink = document.getElementById("assessmentLink");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+let selectedSongId = null;
+
+function createPill(text, cls = "") {
+  const span = document.createElement("span");
+  span.className = "pill " + cls;
+  span.textContent = text;
+  return span;
+}
+
+function setSelectedCard(songId) {
+  selectedSongId = songId;
+  document.querySelectorAll(".songCard").forEach(card => {
+    card.classList.toggle("active", card.dataset.songId === songId);
+  });
+}
+
+function buildSongCard(song) {
+  const card = document.createElement("div");
+  card.className = "songCard";
+  card.dataset.songId = song.id;
+
+  const coverHtml = song.cover
+    ? `<img src="${song.cover}" alt="${song.title}" onerror="this.parentNode.innerHTML='<div class=&quot;coverFallback&quot;>🎵</div>';">`
+    : `<div class="coverFallback">🎵</div>`;
+
+  card.innerHTML = `
+    <div class="cover">${coverHtml}</div>
+    <div class="songBody">
+      <div class="songTitle">${song.title || "Adsız Eser"}</div>
+      <div class="songSub">${song.subtitle || ""}</div>
+      <div class="meta">
+        <span class="pill purple">${song.tone || "-"}</span>
+        <span class="pill green">${song.difficulty || "-"}</span>
+      </div>
+      <div class="songBtnRow">
+        <button class="btn-primary" type="button">Seç</button>
+      </div>
+    </div>
+  `;
+
+  const open = () => {
+    setSelectedCard(song.id);
+    openDrawer(song);
+  };
+
+  card.querySelector("button").addEventListener("click", open);
+  card.addEventListener("dblclick", open);
+
+  return card;
+}
+
+function openDrawer(song) {
+  drawerTitle.textContent = song.title || "Eser";
+  drawerSub.textContent = song.subtitle || "Bu eser için çalışma ya da ölçme modunu seçebilirsin.";
+
+  drawerMeta.innerHTML = "";
+  drawerMeta.appendChild(createPill(song.tone || "-", "purple"));
+  drawerMeta.appendChild(createPill(song.difficulty || "-", "green"));
+
+  if (song.cover) {
+    drawerCover.innerHTML = `<img src="${song.cover}" alt="${song.title}" onerror="this.parentNode.innerHTML='🎵';">`;
+  } else {
+    drawerCover.textContent = "🎵";
+  }
+
+  /*
+    ŞİMDİLİK DOĞRUDAN SAYFALARA GİDİYOR.
+    Sonra istersen ?song=kus-sesleri mantığına geçiririz.
+  */
+  practiceLink.href = song.practicePage || "index.html";
+  assessmentLink.href = song.assessmentPage || "olcme.html";
+
+  drawerOverlay.classList.add("show");
+}
+
+function closeDrawer() {
+  drawerOverlay.classList.remove("show");
+}
+
+function renderSongs() {
+  carousel.innerHTML = "";
+
+  if (!SONGS.length) {
+    emptyState.classList.remove("hidden");
+    return;
+  }
+
+  emptyState.classList.add("hidden");
+
+  SONGS.forEach(song => {
+    carousel.appendChild(buildSongCard(song));
+  });
+}
+
+prevBtn.addEventListener("click", () => {
+  carousel.scrollBy({ left: -280, behavior: "smooth" });
+});
+
+nextBtn.addEventListener("click", () => {
+  carousel.scrollBy({ left: 280, behavior: "smooth" });
+});
+
+drawerOverlay.addEventListener("click", (e) => {
+  if (e.target === drawerOverlay) closeDrawer();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeDrawer();
+});
+
+renderSongs();
+</script>
 </body>
 </html>
