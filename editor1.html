@@ -1,43 +1,35 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>VOCALY Editor v20.2</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VOCALY Editor v20.3</title>
 <script src="https://unpkg.com/wavesurfer.js@6"></script>
 <style>
 :root{
   --text:#0f172a;
   --muted:#64748b;
-
   --purple:#6d28d9;
   --purple-dark:#4c1d95;
   --purple-soft:rgba(109,40,217,0.14);
-
   --aqua:#67e8f9;
   --aqua-dark:#0891b2;
   --aqua-soft:rgba(103,232,249,0.18);
-
   --yellow:#facc15;
   --yellow-dark:#ca8a04;
   --yellow-soft:rgba(250,204,21,0.16);
-
   --green:#16a34a;
   --green-soft:rgba(22,163,74,0.12);
-
   --red:#dc2626;
   --red-soft:rgba(220,38,38,0.12);
-
   --amber:#f59e0b;
   --amber-soft:rgba(245,158,11,0.16);
-
+  --blue:#2563eb;
   --shadow:0 14px 32px rgba(25,25,50,0.10);
   --panel:rgba(255,255,255,0.90);
   --border:rgba(255,255,255,0.55);
 }
-
 *{box-sizing:border-box}
-
 html,body{
   margin:0;
   padding:0;
@@ -48,10 +40,46 @@ html,body{
     radial-gradient(circle at top right, rgba(109,40,217,0.20), transparent 35%),
     linear-gradient(180deg,#eef8ff 0%, #f3f0ff 55%, #eef6ff 100%);
 }
-
 body{padding:22px}
-
 .wrap{max-width:1320px;margin:0 auto}
+
+.pageBrand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin:0 0 18px 4px;
+}
+.pageLogo{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#fde047 0%, #facc15 100%);
+  box-shadow:0 10px 22px rgba(250,204,21,0.28);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+}
+.pageLogo:before{
+  content:"";
+  width:22px;
+  height:22px;
+  border-radius:999px 999px 999px 3px;
+  background:#fff8db;
+  transform:rotate(-35deg);
+  display:block;
+}
+.pageBrandTitle{
+  font-size:30px;
+  font-weight:800;
+  letter-spacing:.5px;
+  color:#4c1d95;
+}
+.pageBrandSub{
+  margin-top:4px;
+  font-size:14px;
+  color:#64748b;
+}
 
 .card{
   background:var(--panel);
@@ -62,58 +90,13 @@ body{padding:22px}
   box-shadow:var(--shadow);
   backdrop-filter:blur(10px);
 }
-
-.hero{
+.sectionTop{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:16px;
+  gap:12px;
   flex-wrap:wrap;
 }
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.logo{
-  width:58px;
-  height:58px;
-  border-radius:18px;
-  background:linear-gradient(180deg,#fde047 0%, #facc15 100%);
-  box-shadow:0 10px 22px rgba(250,204,21,0.30);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-}
-.logo:before{
-  content:"";
-  width:24px;
-  height:24px;
-  border-radius:999px 999px 999px 3px;
-  background:#fff8db;
-  transform:rotate(-35deg);
-  display:block;
-}
-.brandText h1{
-  margin:0;
-  font-size:30px;
-  letter-spacing:.4px;
-}
-.brandText p{
-  margin:4px 0 0;
-  color:var(--muted);
-  font-size:14px;
-}
-
-.topNav{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
 h2,h3{margin:0 0 10px}
 .sub{
   margin:0;
@@ -121,7 +104,6 @@ h2,h3{margin:0 0 10px}
   font-size:14px;
   line-height:1.55;
 }
-
 .toolbar{
   display:grid;
   grid-template-columns:repeat(12,1fr);
@@ -165,20 +147,17 @@ input:focus,select:focus,textarea:focus{
   box-shadow:0 0 0 4px rgba(109,40,217,0.10);
 }
 
-button,.navBtn{
+button{
   padding:10px 14px;
   border-radius:14px;
   border:none;
   cursor:pointer;
   font-weight:700;
   min-height:42px;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
 }
-.btn-purple,.navBtn-primary{background:var(--purple);color:#fff}
-.btn-purple:hover,.navBtn-primary:hover{background:var(--purple-dark)}
+button:disabled{opacity:.6;cursor:not-allowed}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-purple:hover{background:var(--purple-dark)}
 .btn-aqua{background:#e6fbff;color:#0f5f72;border:1px solid #c7f3fb}
 .btn-aqua:hover{background:#d9f8ff}
 .btn-soft{background:#eef4ff;color:#1746a2;border:1px solid #d9e7ff}
@@ -219,11 +198,19 @@ button,.navBtn{
   position:relative;
   z-index:1;
   width:100%;
-  height:300px;
+  height:320px;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  cursor:grab;
 }
-#waveform ::-webkit-scrollbar{height:10px}
+#waveform:active{cursor:grabbing}
+#waveform ::-webkit-scrollbar{height:12px}
 #waveform ::-webkit-scrollbar-track{background:#eef2f7;border-radius:999px}
 #waveform ::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:999px}
+#waveform > wave{
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+}
 
 #overlayViewport{
   position:absolute;
@@ -287,6 +274,7 @@ button,.navBtn{
   color:#312e81;
   min-width:34px;
   overflow:hidden;
+  touch-action:none;
 }
 .strip-block.intro{
   background:#fff8d8;
@@ -434,25 +422,17 @@ button,.navBtn{
 <body>
 <div class="wrap">
 
-  <div class="card">
-    <div class="hero">
-      <div class="brand">
-        <div class="logo"></div>
-        <div class="brandText">
-          <h1>VOCALY</h1>
-          <p>Editör + eser çalışma aynı sayfada. Ölçme modu ayrı.</p>
-        </div>
-      </div>
-
-      <div class="topNav">
-        <a class="navBtn navBtn-primary" href="olcme.html">Ölçme Sayfasına Git</a>
-      </div>
+  <div class="pageBrand">
+    <div class="pageLogo"></div>
+    <div>
+      <div class="pageBrandTitle">VOCALY</div>
+      <div class="pageBrandSub">Editör + eser çalışma aynı sayfada</div>
     </div>
   </div>
 
   <div class="card">
     <h2>Waveform & Kontroller</h2>
-    <p class="sub">Önce timing ve ses üzerinde çalış, sonra ortadaki karaoke önizlemede sonucu test et.</p>
+    <p class="sub">Waveform şeridi tekrar sağa sola kaydırılabilir. Sol/sağ ok tuşları da çalışır. Bir segment seçiliyse ok tuşları segmentler arasında gezer.</p>
 
     <div class="toolbar">
       <div class="field g3">
@@ -560,7 +540,7 @@ button,.navBtn{
     </div>
 
     <div class="hint">
-      Kasma azaltıldı: sürekli çalışan döngü kaldırıldı, zoom sınırı düşürüldü, seçim sırasında tüm karaoke yeniden çizilmek yerine sadece seçim sınıfları güncelleniyor.
+      Ok tuşları: segment seçili değilse cursor ilerler/geriler. Segment seçiliyse komşu segmentlere geçer. Escape ile segment seçiminden çıkılır.
     </div>
   </div>
 
@@ -568,16 +548,14 @@ button,.navBtn{
     <div class="sectionTop">
       <div>
         <h2>Canlı Karaoke Önizleme</h2>
-        <p class="sub">Basılı tutup sürükleyerek seçim yap. Seçilen kelimeleri sırayla çal. Buradan ölçme sayfasına geçebilirsin.</p>
+        <p class="sub">Tek tıkla tek kutu çalar. Basılı tutup sürükleyerek seçilen kutular bırakınca grup halinde sırayla çalar.</p>
       </div>
       <div class="karaokeTop">
         <button class="btn-purple" id="previewPlayBtn">Önizlemeyi Oynat</button>
         <button class="btn-soft" id="previewStopBtn">Durdur</button>
         <button class="btn-aqua" id="micBtn">Tuner / Mikrofon Aç</button>
-        <button class="btn-soft" id="playSelectedBtn">Seçilileri Çal</button>
         <button class="btn-soft" id="clearSelectionBtn">Seçimi Temizle</button>
         <button class="btn-amber" id="playLineBtn">Seçili Satırı Çal</button>
-        <a class="navBtn navBtn-primary" href="olcme.html">Ölçme Moduna Geç</a>
       </div>
     </div>
     <div id="karaoke" class="karaokeWrap"></div>
@@ -733,8 +711,9 @@ let isSequencePlaying = false
 let sequenceStopRequested = false
 let karaokeSelectionState = null
 let lastScrolledActiveId = null
+let waveformDragState = null
 
-const PROJECT_AUTOSAVE_KEY = "vocaly_editor_v20_2_autosave"
+const PROJECT_AUTOSAVE_KEY = "vocaly_editor_v20_3_autosave"
 
 const NOTE_NAMES = ["do","do#","re","re#","mi","fa","fa#","sol","sol#","la","la#","si"]
 const SCALE_MAP = {
@@ -790,7 +769,6 @@ const previewSelectedBtn = document.getElementById("previewSelectedBtn")
 const previewPlayBtn = document.getElementById("previewPlayBtn")
 const previewStopBtn = document.getElementById("previewStopBtn")
 const micBtn = document.getElementById("micBtn")
-const playSelectedBtn = document.getElementById("playSelectedBtn")
 const clearSelectionBtn = document.getElementById("clearSelectionBtn")
 const playLineBtn = document.getElementById("playLineBtn")
 const statusText = document.getElementById("statusText")
@@ -806,6 +784,7 @@ const ruler = document.getElementById("ruler")
 const segmentStrip = document.getElementById("segmentStrip")
 const stripCursor = document.getElementById("stripCursor")
 const karaoke = document.getElementById("karaoke")
+const waveformEl = document.getElementById("waveform")
 
 function escapeHtml(str){
   return String(str)
@@ -1049,6 +1028,72 @@ function scheduleOverlaySync(){
     syncOverlayPosition()
   })
 }
+function moveWaveCursorBy(delta){
+  if(!hasAudioLoaded()) return
+  const now = ws.getCurrentTime()
+  const target = clamp(now + delta, 0, ws.getDuration())
+  seekToTime(target)
+  scrollToTime(target)
+}
+function selectAdjacentSegment(direction){
+  const ordered = heceler
+    .map((seg, idx) => ({ seg, idx }))
+    .filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null)
+    .sort((a,b) => a.seg.start - b.seg.start)
+
+  if(!ordered.length) return
+
+  if(loadedIndex === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+
+  const pos = ordered.findIndex(x => x.idx === loadedIndex)
+  if(pos === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+
+  const nextPos = clamp(pos + direction, 0, ordered.length - 1)
+  const nextItem = ordered[nextPos]
+  seekToSegment(nextItem.idx, false)
+  selectedSegmentIndexes = [nextItem.idx]
+  refreshKaraokeSelectionClasses()
+}
+
+function bindWaveformDrag(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+
+  wrapper.addEventListener("pointerdown", (e) => {
+    if(e.target.closest(".handle") || e.target.closest(".strip-block")) return
+    waveformDragState = {
+      startX: e.clientX,
+      startScroll: wrapper.scrollLeft,
+      moved:false
+    }
+    try{ wrapper.setPointerCapture(e.pointerId) }catch(err){}
+  })
+
+  wrapper.addEventListener("pointermove", (e) => {
+    if(!waveformDragState) return
+    const dx = e.clientX - waveformDragState.startX
+    if(Math.abs(dx) > 2) waveformDragState.moved = true
+    wrapper.scrollLeft = waveformDragState.startScroll - dx
+    scheduleOverlaySync()
+  })
+
+  const end = () => { waveformDragState = null }
+  wrapper.addEventListener("pointerup", end)
+  wrapper.addEventListener("pointercancel", end)
+  wrapper.addEventListener("lostpointercapture", end)
+}
 
 async function setupMic(){
   try{
@@ -1089,6 +1134,7 @@ function bindWrapperEvents(){
   const wrapper = getWaveWrapper()
   if(!wrapper) return
   wrapper.addEventListener("scroll", scheduleOverlaySync, { passive:true })
+  bindWaveformDrag()
   wrapperBound = true
 }
 function initWave(){
@@ -1097,7 +1143,7 @@ function initWave(){
     waveColor:"#cbd5e1",
     progressColor:"#2563eb",
     cursorColor:"#111827",
-    height:300,
+    height:320,
     normalize:true,
     responsive:true,
     scrollParent:true,
@@ -1721,7 +1767,6 @@ function analyzeSegmentPitchSequence(index){
 
     const t = i / sampleRate
     const progress = clamp((t - seg.start) / Math.max(0.001, segDur), 0, 1)
-
     const centralWeight = getCentralWeight(progress)
     const edgePenalty = (progress < 0.15 || progress > 0.85) ? 0.30 : 1
     const totalWeight = energy * centralWeight * edgePenalty
@@ -1749,9 +1794,7 @@ function analyzeSegmentPitchSequence(index){
     weighted[run.note] = (weighted[run.note] || 0) + run.weight * 0.65 + run.count * 0.12
   })
 
-  const ranked = Object.entries(weighted)
-    .sort((a,b) => b[1] - a[1])
-    .map(x => x[0])
+  const ranked = Object.entries(weighted).sort((a,b) => b[1] - a[1]).map(x => x[0])
 
   if(shortSegment){
     const bestRun = runs.sort((a,b)=> (b.weight + b.count*0.4) - (a.weight + a.count*0.4))[0]
@@ -1760,9 +1803,7 @@ function analyzeSegmentPitchSequence(index){
   }
 
   let seq = compressNoteSequence(
-    runs
-      .filter(run => run.count >= 2 || run.weight >= 0.03)
-      .map(run => run.note)
+    runs.filter(run => run.count >= 2 || run.weight >= 0.03).map(run => run.note)
   )
 
   if(!seq.length) seq = [ranked[0]]
@@ -1882,9 +1923,7 @@ function renderKaraoke(){
 
     btn.onclick = () => {
       if(karaokeSelectionState && karaokeSelectionState.moved) return
-      selectedSegmentIndexes = [item.idx]
-      refreshKaraokeSelectionClasses()
-      seekToSegment(item.idx, true)
+      playSingleKaraokeSegment(item.idx)
     }
 
     karaoke.appendChild(btn)
@@ -1924,31 +1963,57 @@ function getSegmentIndexFromElement(el){
   if(!box.dataset.realIndex) return null
   return Number(box.dataset.realIndex)
 }
+function playSingleKaraokeSegment(index){
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null || !hasAudioLoaded()) return
+  selectedSegmentIndexes = [index]
+  refreshKaraokeSelectionClasses()
+  seekToSegment(index, true)
+}
 function startKaraokeTouchSelection(e){
   const idx = getSegmentIndexFromElement(e.target)
   if(idx === null) return
+
   karaokeSelectionState = {
     pointerId:e.pointerId,
     moved:false,
+    startIndex:idx,
     indexes:new Set([idx])
   }
+
   selectedSegmentIndexes = [idx]
   refreshKaraokeSelectionClasses()
+
   try{ karaoke.setPointerCapture(e.pointerId) }catch(err){}
 }
 function moveKaraokeTouchSelection(e){
   if(!karaokeSelectionState) return
-  karaokeSelectionState.moved = true
   const el = document.elementFromPoint(e.clientX, e.clientY)
   const idx = getSegmentIndexFromElement(el)
   if(idx === null) return
+
+  if(idx !== karaokeSelectionState.startIndex){
+    karaokeSelectionState.moved = true
+  }
+
   karaokeSelectionState.indexes.add(idx)
   selectedSegmentIndexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
   scheduleKaraokeSelectionUpdate()
 }
 function endKaraokeTouchSelection(){
   if(!karaokeSelectionState) return
+
+  const moved = karaokeSelectionState.moved
+  const indexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
   karaokeSelectionState = null
+
+  if(!indexes.length) return
+
+  if(moved && indexes.length > 1){
+    playSegmentsSequentially(indexes)
+  }else{
+    playSingleKaraokeSegment(indexes[0])
+  }
 }
 async function playSegmentsSequentially(indexes){
   if(!hasAudioLoaded() || !indexes.length) return
@@ -1968,27 +2033,22 @@ async function playSegmentsSequentially(indexes){
     ws.play(item.seg.start, item.seg.end)
 
     await new Promise(resolve => {
-      const ms = Math.max(30, (item.seg.end - item.seg.start) * 1000 + 40)
+      const ms = Math.max(40, ((item.seg.end - item.seg.start) * 1000) + 50)
       setTimeout(resolve, ms)
     })
   }
 
   isSequencePlaying = false
 }
-function playSelectedSegments(){
-  if(!selectedSegmentIndexes.length){
-    alert("Önce basılı tutup sürükleyerek seçim yap.")
-    return
-  }
-  playSegmentsSequentially(selectedSegmentIndexes)
-}
 function playSelectedLine(){
   if(!selectedSegmentIndexes.length){
     alert("Önce bir kelime seç.")
     return
   }
+
   const first = heceler[selectedSegmentIndexes[0]]
   if(!first) return
+
   selectWholeLine(first.line)
   playSegmentsSequentially(selectedSegmentIndexes)
 }
@@ -2089,7 +2149,7 @@ function resetEvaluationFlags(){
 
 function buildProjectPayload(){
   return {
-    version: 20.2,
+    version: 20.3,
     title: titleInput.value.trim(),
     intro: getIntroValue(),
     difficulty: difficultySelect.value,
@@ -2271,7 +2331,7 @@ splitWordsBtn.addEventListener("click", function(){
 })
 
 autoTimingBtn.addEventListener("click", function(){
-  alert("Bu sürümde sadece performans ve yerleşim düzeni hafifletildi. İstersen sonraki adımda timing algoritmasını ayrıca güçlendirelim.")
+  alert("Bu sürümde asıl odak: kaydırılabilir waveform, ok tuşları ve karaoke tıklama/seçim davranışı. Timing algoritmasını bir sonraki adımda güçlendirebiliriz.")
 })
 
 saveProjectBtn.addEventListener("click", saveProject)
@@ -2467,8 +2527,6 @@ previewStopBtn.addEventListener("click", function(){
   statusText.className = "pill amber"
 })
 micBtn.addEventListener("click", setupMic)
-
-playSelectedBtn.addEventListener("click", playSelectedSegments)
 clearSelectionBtn.addEventListener("click", clearSelection)
 playLineBtn.addEventListener("click", playSelectedLine)
 
@@ -2480,6 +2538,35 @@ document.addEventListener("keydown", function(e){
   if(e.code === "Space"){
     e.preventDefault()
     if(hasAudioLoaded()) ws.playPause()
+    return
+  }
+
+  if(e.code === "Escape"){
+    loadedIndex = -1
+    selectedSegmentIndexes = []
+    refreshKaraokeSelectionClasses()
+    updateActiveSegmentLabel(-1)
+    return
+  }
+
+  if(e.code === "ArrowRight"){
+    e.preventDefault()
+    if(loadedIndex !== -1){
+      selectAdjacentSegment(1)
+    }else{
+      moveWaveCursorBy(0.20)
+    }
+    return
+  }
+
+  if(e.code === "ArrowLeft"){
+    e.preventDefault()
+    if(loadedIndex !== -1){
+      selectAdjacentSegment(-1)
+    }else{
+      moveWaveCursorBy(-0.20)
+    }
+    return
   }
 })
 
