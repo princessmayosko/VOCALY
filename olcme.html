@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Vocaly Karaoke Ölçme</title>
+<title>Vocaly Ölçme</title>
 <style>
 :root{
   --green:#1f8a70;
@@ -93,6 +93,35 @@ h1{
   color:#1f2937;
   position:relative;
   z-index:1;
+}
+.topnav{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+  position:relative;
+  z-index:1;
+}
+.topnav a{
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:9px 14px;
+  border-radius:12px;
+  background:#fff;
+  color:#1f2937;
+  border:1px solid rgba(17,24,39,0.08);
+  font-size:13px;
+  font-weight:800;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+.topnav a.primary{
+  background:linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color:#fff;
+  border:none;
 }
 .controls{
   display:flex;
@@ -439,13 +468,22 @@ audio{
   .row{grid-template-columns:1fr}
   .controls{align-items:stretch}
   .select-wrap{width:100%;justify-content:space-between}
+  .topnav a{width:100%}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
+
   <div class="card">
-    <h1>Vocaly Karaoke Ölçme</h1>
+    <div class="topnav">
+      <a href="./panel.html">Kütüphane</a>
+      <a class="primary" id="practicePageLink" href="./index.html">Eser Çalışma</a>
+      <a href="./editor1.html">Editör</a>
+    </div>
+
+    <h1 id="assessmentTitle">Vocaly Karaoke Ölçme</h1>
+
     <div class="controls">
       <button onclick="startKaraoke()">Başlat</button>
       <button class="stop" onclick="stopKaraoke()">Durdur</button>
@@ -462,9 +500,7 @@ audio{
       </div>
     </div>
 
-    <audio id="song">
-      <source src="sozsuz.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="song"></audio>
     <div class="status" id="statusText">Hazır</div>
   </div>
 
@@ -521,7 +557,7 @@ audio{
     <div id="tunerInfo">Tuner kapalı.</div>
     <div class="result" id="resultText">Toplam Puan: 0</div>
     <div id="feedbackText" class="small"></div>
-    <div class="small">Öbekler: sön-mez / şa-fak / sön-me-den / yur-du / üs-tün / tü-ten-en / son-o-cak</div>
+    <div class="small" id="groupInfo">Öbekler yüklenecek.</div>
   </div>
 </div>
 
@@ -536,8 +572,96 @@ audio{
 </div>
 
 <script>
-const INTRO_DURATION = 4.20;
-const SONG_END_TIME = 18.97;
+/* =========================
+   E S E R  K Ü T Ü P H A N E S İ
+   Yeni eser eklemek için buraya yeni obje ekle.
+========================= */
+const SONG_LIBRARY = {
+  "kus-sesleri": {
+    id: "kus-sesleri",
+    title: "Kuş Sesleri",
+    practiceLink: "index.html?song=kus-sesleri",
+    assessmentAudio: "assessment.mp3",
+    assessment: {
+      introDuration: 2.50,
+      songEndTime: 4.20,
+      heceler: [
+        { text:"Kuş", "note":"mi",  "start":0.30, "end":0.70, "line":1 },
+        { text:"ses", "note":"fa#", "start":0.70, "end":1.05, "line":1 },
+        { text:"le",  "note":"sol", "start":1.05, "end":1.35, "line":1 },
+        { text:"ri",  "note":"la",  "start":1.35, "end":1.70, "line":1 },
+
+        { text:"Bak", "note":"sol", "start":1.75, "end":2.10, "line":2 },
+        { text:"ne",  "note":"fa#", "start":2.10, "end":2.45, "line":2 },
+        { text:"gü",  "note":"mi",  "start":2.45, "end":2.85, "line":2 },
+        { text:"zel", "note":"re",  "start":2.90, "end":3.20, "line":2 }
+      ],
+      phraseGroups: [
+        { members:[1,2,3] },
+        { members:[4,5,6,7] }
+      ]
+    }
+  },
+
+  "istiklal-marsi": {
+    id: "istiklal-marsi",
+    title: "İstiklal Marşı",
+    practiceLink: "index.html?song=istiklal-marsi",
+    assessmentAudio: "sozsuz.mp3",
+    assessment: {
+      introDuration: 4.20,
+      songEndTime: 18.97,
+      heceler: [
+        { text:"Kork", note:"si", start:4.21, end:4.61, line:1 },
+        { text:"ma", note:"mi", start:4.68, end:5.23, line:1 },
+        { text:"sön", note:"fa", start:5.30, end:5.82, line:1 },
+        { text:"mez", note:"sol", start:5.84, end:6.45, line:1 },
+        { text:"bu", note:"re#", start:6.43, end:6.91, line:1 },
+        { text:"şa", note:"fa", start:6.96, end:7.10, line:1 },
+        { text:"fak", note:"mi", start:7.11, end:8.75, line:1 },
+        { text:"lar", note:"mi", start:8.74, end:9.30, line:1 },
+        { text:"da", note:"la", start:9.30, end:9.95, line:1 },
+        { text:"yü", note:"si", start:9.95, end:10.51, line:1 },
+        { text:"zen", note:"do", start:10.51, end:11.10, line:1 },
+        { text:"al", note:"sol#", start:11.10, end:11.60, line:1 },
+        { text:"san", note:"si", start:11.50, end:11.72, line:1 },
+        { text:"cak", note:"la", start:11.71, end:13.47, line:1 },
+
+        { text:"Sön", note:"si", start:13.47, end:13.68, line:2 },
+        { text:"me", note:"la#", start:13.67, end:13.84, line:2 },
+        { text:"den", note:"si", start:13.84, end:14.04, line:2 },
+        { text:"yur", note:"fa", start:14.03, end:14.68, line:2 },
+        { text:"du", note:"fa", start:14.68, end:15.68, line:2 },
+        { text:"mun", note:"la", start:15.62, end:15.82, line:2 },
+        { text:"üs", note:"sol#", start:15.84, end:16.29, line:2 },
+        { text:"tün", note:"re", start:16.30, end:16.41, line:2 },
+        { text:"de", note:"mi", start:16.43, end:16.86, line:2 },
+        { text:"tü", note:"fa", start:16.78, end:17.02, line:2 },
+        { text:"ten", note:"sol", start:17.03, end:17.49, line:2 },
+        { text:"en", note:"fa", start:17.49, end:17.69, line:2 },
+        { text:"son", note:"mi", start:17.64, end:18.03, line:2 },
+        { text:"o", note:"re", start:18.03, end:18.25, line:2 },
+        { text:"cak", note:"si", start:18.25, end:18.67, line:2 }
+      ],
+      phraseGroups: [
+        { members:[2,3] },
+        { members:[5,6] },
+        { members:[14,15,16] },
+        { members:[17,18] },
+        { members:[20,21] },
+        { members:[23,24,25] },
+        { members:[26,27,28] }
+      ]
+    }
+  }
+};
+
+function getSongIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("song") || "istiklal-marsi";
+}
+const activeSongId = getSongIdFromUrl();
+const activeSong = SONG_LIBRARY[activeSongId] || SONG_LIBRARY["istiklal-marsi"];
 
 /* AFFEDİCİ PENCERELER */
 const SINGLE_EARLY_GRACE = 0.45;
@@ -562,48 +686,10 @@ const PC_TO_TR = {
   6:"Fa#/Solb",7:"Sol",8:"Sol#/Lab",9:"La",10:"La#/Sib",11:"Si"
 };
 
-const heceler = [
-  { text:"Kork", note:"si", start:4.21, end:4.61, line:1 },
-  { text:"ma", note:"mi", start:4.68, end:5.23, line:1 },
-  { text:"sön", note:"fa", start:5.30, end:5.82, line:1 },
-  { text:"mez", note:"sol", start:5.84, end:6.45, line:1 },
-  { text:"bu", note:"re#", start:6.43, end:6.91, line:1 },
-  { text:"şa", note:"fa", start:6.96, end:7.10, line:1 },
-  { text:"fak", note:"mi", start:7.11, end:8.75, line:1 },
-  { text:"lar", note:"mi", start:8.74, end:9.30, line:1 },
-  { text:"da", note:"la", start:9.30, end:9.95, line:1 },
-  { text:"yü", note:"si", start:9.95, end:10.51, line:1 },
-  { text:"zen", note:"do", start:10.51, end:11.10, line:1 },
-  { text:"al", note:"sol#", start:11.10, end:11.60, line:1 },
-  { text:"san", note:"si", start:11.50, end:11.72, line:1 },
-  { text:"cak", note:"la", start:11.71, end:13.47, line:1 },
-
-  { text:"Sön", note:"si", start:13.47, end:13.68, line:2 },
-  { text:"me", note:"la#", start:13.67, end:13.84, line:2 },
-  { text:"den", note:"si", start:13.84, end:14.04, line:2 },
-  { text:"yur", note:"fa", start:14.03, end:14.68, line:2 },
-  { text:"du", note:"fa", start:14.68, end:15.68, line:2 },
-  { text:"mun", note:"la", start:15.62, end:15.82, line:2 },
-  { text:"üs", note:"sol#", start:15.84, end:16.29, line:2 },
-  { text:"tün", note:"re", start:16.30, end:16.41, line:2 },
-  { text:"de", note:"mi", start:16.43, end:16.86, line:2 },
-  { text:"tü", note:"fa", start:16.78, end:17.02, line:2 },
-  { text:"ten", note:"sol", start:17.03, end:17.49, line:2 },
-  { text:"en", note:"fa", start:17.49, end:17.69, line:2 },
-  { text:"son", note:"mi", start:17.64, end:18.03, line:2 },
-  { text:"o", note:"re", start:18.03, end:18.25, line:2 },
-  { text:"cak", note:"si", start:18.25, end:18.67, line:2 }
-];
-
-const PHRASE_GROUPS = [
-  { members:[2,3] },
-  { members:[5,6] },
-  { members:[14,15,16] },
-  { members:[17,18] },
-  { members:[20,21] },
-  { members:[23,24,25] },
-  { members:[26,27,28] }
-];
+let INTRO_DURATION = activeSong.assessment?.introDuration ?? 4.20;
+let SONG_END_TIME = activeSong.assessment?.songEndTime ?? 18.97;
+let heceler = activeSong.assessment?.heceler ?? [];
+let PHRASE_GROUPS = activeSong.assessment?.phraseGroups ?? [];
 
 let micStream = null;
 let micContext = null;
@@ -637,6 +723,9 @@ const pitchDotEl = document.getElementById("pitchDot");
 const tickLayer = document.getElementById("tickLayer");
 const speedSelect = document.getElementById("speedSelect");
 const toleranceSelect = document.getElementById("toleranceSelect");
+const assessmentTitleEl = document.getElementById("assessmentTitle");
+const practicePageLink = document.getElementById("practicePageLink");
+const groupInfo = document.getElementById("groupInfo");
 
 function normalizePc(pc){
   return ((pc % 12) + 12) % 12;
@@ -780,13 +869,14 @@ function buildUnits(){
     const firstHece = heceler[firstIndex];
     const lastIndex = group.members[group.members.length - 1];
     const lastHece = heceler[lastIndex];
+    if (!firstHece || !lastHece) return;
 
     const unit = {
       type: "phrase",
       id: "phrase_" + idx,
       members: group.members,
-      label: group.members.map(i => heceler[i].text).join("-"),
-      targetNotes: [...new Set(group.members.map(i => heceler[i].note))],
+      label: group.members.map(i => heceler[i]?.text || "").join("-"),
+      targetNotes: [...new Set(group.members.map(i => heceler[i]?.note).filter(Boolean))],
       listenStart: firstHece.start - PHRASE_EARLY_GRACE,
       listenEnd: lastHece.end + PHRASE_LATE_GRACE,
       activeStart: firstHece.start - PHRASE_EARLY_GRACE,
@@ -1271,11 +1361,31 @@ toleranceSelect.addEventListener("change", () => {
   toleranceCent = Number(toleranceSelect.value);
 });
 
+function updateGroupInfo() {
+  if (!PHRASE_GROUPS.length) {
+    groupInfo.textContent = "Bu eserde öbek tanımı yok.";
+    return;
+  }
+  const labels = PHRASE_GROUPS
+    .map(g => g.members.map(i => heceler[i]?.text || "").join("-"))
+    .filter(Boolean);
+  groupInfo.textContent = "Öbekler: " + labels.join(" / ");
+}
+
+function applySongConfig(song) {
+  assessmentTitleEl.textContent = `${song.title} – Ölçme`;
+  practicePageLink.href = song.practiceLink || "./index.html";
+  audio.innerHTML = `<source src="${song.assessmentAudio || "sozsuz.mp3"}" type="audio/mpeg">`;
+  audio.load();
+  updateGroupInfo();
+}
+
 buildUnits();
 createTicks();
 renderLyrics();
 audio.playbackRate = Number(speedSelect.value);
 toleranceCent = Number(toleranceSelect.value);
+applySongConfig(activeSong);
 </script>
 </body>
 </html>
