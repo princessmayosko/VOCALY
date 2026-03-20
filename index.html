@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>İSTİKLAL MARŞI - Vocaly</title>
+<title>Vocaly - Eser Çalışma</title>
 <style>
 :root{
   --text:#111827;
@@ -25,14 +25,11 @@
   --safe-bottom:env(safe-area-inset-bottom, 0px);
   --safe-left:env(safe-area-inset-left, 0px);
 }
-
 *{ box-sizing:border-box; }
-
 html{
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;
 }
-
 body{
   font-family: Arial, sans-serif;
   padding:calc(18px + var(--safe-top)) calc(16px + var(--safe-right)) calc(36px + var(--safe-bottom)) calc(16px + var(--safe-left));
@@ -48,7 +45,6 @@ body{
   overscroll-behavior-y:contain;
   position:relative;
 }
-
 body::before,
 body::after{
   content:"";
@@ -76,7 +72,6 @@ body::after{
   background:linear-gradient(135deg, rgba(31,138,112,0.05), rgba(109,40,217,0.03));
   transform:rotate(-10deg);
 }
-
 h1{
   font-size:34px;
   margin:12px 0 16px;
@@ -84,17 +79,14 @@ h1{
   position:relative;
   z-index:1;
 }
-
 h2{
   font-size:26px;
   margin:14px 0 14px;
 }
-
 h3{
   font-size:18px;
   margin:6px 0 10px;
 }
-
 #vocaly{
   position:fixed;
   top:calc(12px + var(--safe-top));
@@ -114,7 +106,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 #introCard{
   background:rgba(255,255,255,0.90);
   border:1px solid rgba(255,255,255,0.9);
@@ -125,7 +116,6 @@ h3{
   position:relative;
   overflow:hidden;
 }
-
 #introCard::before{
   content:"";
   position:absolute;
@@ -135,7 +125,6 @@ h3{
     linear-gradient(120deg, rgba(109,40,217,0.05), transparent 30%),
     linear-gradient(300deg, rgba(31,138,112,0.05), transparent 32%);
 }
-
 #introTitle{
   font-size:22px;
   font-weight:800;
@@ -143,7 +132,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 #introText{
   font-size:14px;
   line-height:1.6;
@@ -152,7 +140,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 #stepCards{
   display:grid;
   grid-template-columns:repeat(4, minmax(0,1fr));
@@ -160,7 +147,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .step-card{
   background:rgba(255,255,255,0.92);
   border:1px solid rgba(17,24,39,0.06);
@@ -168,7 +154,6 @@ h3{
   padding:14px 14px 12px;
   box-shadow:0 8px 22px rgba(0,0,0,0.06);
 }
-
 .step-no{
   display:inline-flex;
   align-items:center;
@@ -182,14 +167,12 @@ h3{
   font-weight:800;
   margin-bottom:8px;
 }
-
 .step-title{
   font-size:16px;
   font-weight:800;
   margin-bottom:6px;
   color:#111827;
 }
-
 .step-desc{
   font-size:13px;
   color:#4b5563;
@@ -207,7 +190,6 @@ h3{
   position:relative;
   z-index:30;
 }
-
 .mode-btn,
 .mode-link{
   border:none;
@@ -229,17 +211,14 @@ h3{
   touch-action:manipulation;
   border:1px solid rgba(17,24,39,0.06);
 }
-
 .mode-btn:hover,
 .mode-link:hover{
   transform:translateY(-1px) scale(1.02);
 }
-
 .mode-btn.active{
   background:linear-gradient(135deg, var(--purple), var(--petrol));
   color:white;
 }
-
 #songMode,
 #warmupMode{
   width:100%;
@@ -254,7 +233,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 #tunerCard{
   position:relative;
   background:var(--panel);
@@ -265,7 +243,6 @@ h3{
   backdrop-filter:blur(8px);
   overflow:hidden;
 }
-
 #tunerCard::before{
   content:"";
   position:absolute;
@@ -275,7 +252,6 @@ h3{
     linear-gradient(120deg, rgba(109,40,217,0.06), transparent 30%),
     linear-gradient(300deg, rgba(31,138,112,0.06), transparent 32%);
 }
-
 #tunerTopBar{
   display:flex;
   align-items:center;
@@ -285,7 +261,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 #targetMini{
   min-height:22px;
   font-size:16px;
@@ -296,12 +271,10 @@ h3{
   flex:1 1 auto;
   min-width:0;
 }
-
 #targetMini .dot{
   opacity:0.45;
   margin:0 6px;
 }
-
 #miniPlayerArea{
   display:flex;
   align-items:center;
@@ -310,7 +283,6 @@ h3{
   flex-wrap:wrap;
   justify-content:flex-end;
 }
-
 #tunerMiniBtn{
   border:none;
   background:linear-gradient(135deg, var(--petrol), var(--petrol-dark));
@@ -326,17 +298,12 @@ h3{
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
 }
-
-#tunerMiniBtn:hover{
-  transform:translateY(-1px);
-}
-
+#tunerMiniBtn:hover{ transform:translateY(-1px); }
 #song{
   width:190px;
   height:32px;
   max-width:100%;
 }
-
 #tunerSwitchRow{
   display:flex;
   align-items:center;
@@ -347,20 +314,17 @@ h3{
   color:#374151;
   flex:0 0 auto;
 }
-
 .switch{
   position:relative;
   width:50px;
   height:28px;
   display:inline-block;
 }
-
 .switch input{
   opacity:0;
   width:0;
   height:0;
 }
-
 .slider{
   position:absolute;
   inset:0;
@@ -369,7 +333,6 @@ h3{
   cursor:pointer;
   transition:0.2s;
 }
-
 .slider:before{
   content:"";
   position:absolute;
@@ -382,21 +345,17 @@ h3{
   transition:0.2s;
   box-shadow:0 1px 4px rgba(0,0,0,0.15);
 }
-
 .switch input:checked + .slider{
   background:linear-gradient(135deg, var(--purple), var(--petrol));
 }
-
 .switch input:checked + .slider:before{
   transform:translateX(22px);
 }
-
 #tunerRulerWrap{
   position:relative;
   padding:2px 2px 0;
   z-index:1;
 }
-
 #tunerScaleTop{
   display:flex;
   justify-content:space-between;
@@ -406,12 +365,10 @@ h3{
   margin-bottom:4px;
   padding:0 2px;
 }
-
 #tunerScaleTop .mid{
   color:#374151;
   font-weight:700;
 }
-
 #tunerRuler{
   position:relative;
   height:44px;
@@ -420,7 +377,6 @@ h3{
   overflow:hidden;
   border:1px solid rgba(17,24,39,0.06);
 }
-
 #targetZone{
   position:absolute;
   left:50%;
@@ -433,7 +389,6 @@ h3{
   border:1px solid rgba(31,138,112,0.22);
   z-index:1;
 }
-
 #centerMark{
   position:absolute;
   left:50%;
@@ -445,7 +400,6 @@ h3{
   border-radius:999px;
   z-index:2;
 }
-
 #plusText{
   position:absolute;
   left:50%;
@@ -456,13 +410,11 @@ h3{
   color:#166534;
   z-index:3;
 }
-
 #tickLayer{
   position:absolute;
   inset:0;
   z-index:1;
 }
-
 .tuner-tick{
   position:absolute;
   bottom:8px;
@@ -472,10 +424,8 @@ h3{
   transform:translateX(-50%);
   opacity:0.75;
 }
-
 .tuner-tick.major{ height:18px; }
 .tuner-tick.minor{ height:10px; }
-
 #pitchDot{
   position:absolute;
   left:50%;
@@ -489,20 +439,12 @@ h3{
   box-shadow:none;
   transition:left 0.10s linear, background 0.10s linear, box-shadow 0.10s linear;
 }
-
 #pitchDot.correct{
   background:var(--green);
   box-shadow:0 0 0 6px rgba(31,138,112,0.16), 0 0 12px rgba(31,138,112,0.35);
 }
-
-#pitchDot.wrong{
-  background:var(--red);
-}
-
-#pitchDot.waiting{
-  background:#94a3b8;
-}
-
+#pitchDot.wrong{ background:var(--red); }
+#pitchDot.waiting{ background:#94a3b8; }
 #tunerInfo{
   min-height:18px;
   margin-top:6px;
@@ -512,7 +454,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 #tunerFlash{
   position:absolute;
   right:14px;
@@ -526,7 +467,6 @@ h3{
   pointer-events:none;
   z-index:1;
 }
-
 #tunerFlash.show{
   opacity:1;
   transform:translateY(0);
@@ -545,7 +485,6 @@ h3{
   position:relative;
   overflow:hidden;
 }
-
 .section-head::before{
   content:"";
   position:absolute;
@@ -555,7 +494,6 @@ h3{
     linear-gradient(120deg, rgba(109,40,217,0.04), transparent 30%),
     linear-gradient(300deg, rgba(31,138,112,0.04), transparent 32%);
 }
-
 .section-step{
   display:inline-flex;
   align-items:center;
@@ -572,7 +510,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .section-title{
   font-size:28px;
   font-weight:800;
@@ -580,7 +517,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .section-desc{
   font-size:14px;
   line-height:1.6;
@@ -601,7 +537,6 @@ h3{
   position:relative;
   overflow:hidden;
 }
-
 #audio-wrap::before{
   content:"";
   position:absolute;
@@ -611,7 +546,6 @@ h3{
     linear-gradient(120deg, rgba(109,40,217,0.05), transparent 30%),
     linear-gradient(300deg, rgba(31,138,112,0.05), transparent 32%);
 }
-
 .controls{
   margin-top:8px;
   display:flex;
@@ -622,7 +556,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 #stopBtn{
   border:none;
   color:white;
@@ -638,10 +571,7 @@ h3{
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
 }
-
-#stopBtn:hover{
-  transform:translateY(-1px);
-}
+#stopBtn:hover{ transform:translateY(-1px); }
 
 #lyrics{
   font-size:24px;
@@ -663,7 +593,6 @@ h3{
   overflow-x:hidden;
   position:relative;
 }
-
 #lyrics::before{
   content:"";
   position:absolute;
@@ -674,10 +603,8 @@ h3{
     linear-gradient(120deg, rgba(109,40,217,0.04), transparent 30%),
     linear-gradient(300deg, rgba(31,138,112,0.04), transparent 32%);
 }
-
 .kita{ margin-bottom:22px; position:relative; z-index:1; }
 .kita:last-child{ margin-bottom:0; }
-
 .satir{
   white-space:nowrap;
   display:flex;
@@ -688,17 +615,14 @@ h3{
   border-radius:14px;
   transition:background 0.15s ease;
 }
-
 .satir.active-satir{
   background:rgba(109,40,217,0.06);
 }
-
 .satir-text{
   display:inline-block;
   flex:1;
   min-width:0;
 }
-
 .satir-play{
   width:32px;
   height:32px;
@@ -716,12 +640,10 @@ h3{
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
 }
-
 .satir-play:hover{
   background:#e9ddff;
   transform:scale(1.05);
 }
-
 .hece{
   display:inline-block;
   cursor:pointer;
@@ -731,42 +653,34 @@ h3{
   padding:0 2px;
   -webkit-tap-highlight-color:transparent;
 }
-
 .hece:hover{
   transform:scale(1.14);
   color:var(--blue);
 }
-
 .hece.active{
   transform:scale(1.14);
   color:var(--blue);
 }
-
 .hece.selected{
   background:var(--blue-soft);
   color:#5b21b6;
 }
-
 .hece.target-hece{
   outline:2px solid var(--amber);
   outline-offset:1px;
   border-radius:8px;
 }
-
 .hece.tune-correct{
   color:var(--green) !important;
   transform:scale(1.18) !important;
   font-weight:bold;
 }
-
 .hece.tune-wrong{
   color:var(--red) !important;
 }
-
 .satir.active-satir .hece{
   color:#5b21b6;
 }
-
 #status{
   margin-top:10px;
   font-size:13px;
@@ -774,7 +688,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .tip{
   margin-top:6px;
   font-size:12px;
@@ -795,7 +708,6 @@ h3{
   position:relative;
   overflow:hidden;
 }
-
 #warmupWrap::before{
   content:"";
   position:absolute;
@@ -805,7 +717,6 @@ h3{
     linear-gradient(120deg, rgba(109,40,217,0.05), transparent 30%),
     linear-gradient(300deg, rgba(31,138,112,0.05), transparent 32%);
 }
-
 .warmup-intro{
   font-size:13px;
   color:#4b5563;
@@ -813,7 +724,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .warmup-badge{
   display:inline-flex;
   align-items:center;
@@ -828,7 +738,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .warmup-toolbar{
   display:flex;
   justify-content:center;
@@ -838,7 +747,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .warmup-select{
   border:1px solid #d8dbe2;
   background:#fff;
@@ -851,7 +759,6 @@ h3{
   box-shadow:0 4px 12px rgba(0,0,0,0.05);
   min-height:42px;
 }
-
 .warmup-controls{
   display:flex;
   justify-content:center;
@@ -861,7 +768,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .warmup-btn{
   border:none;
   background:linear-gradient(135deg, var(--petrol), var(--petrol-dark));
@@ -877,15 +783,10 @@ h3{
   -webkit-tap-highlight-color:transparent;
   touch-action:manipulation;
 }
-
-.warmup-btn:hover{
-  transform:translateY(-1px);
-}
-
+.warmup-btn:hover{ transform:translateY(-1px); }
 .warmup-btn.secondary{
   background:linear-gradient(135deg, var(--purple), var(--purple-dark));
 }
-
 .warmup-nav{
   display:flex;
   justify-content:center;
@@ -893,7 +794,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .next-step-btn{
   border:none;
   background:linear-gradient(135deg, var(--purple), var(--purple-dark));
@@ -907,11 +807,7 @@ h3{
   min-height:44px;
   transition:transform 0.15s ease;
 }
-
-.next-step-btn:hover{
-  transform:translateY(-1px);
-}
-
+.next-step-btn:hover{ transform:translateY(-1px); }
 .warmup-section{
   text-align:left;
   margin:0 auto 18px;
@@ -919,7 +815,6 @@ h3{
   position:relative;
   z-index:1;
 }
-
 .warmup-line{
   line-height:2.0;
   user-select:none;
@@ -927,7 +822,6 @@ h3{
   -webkit-touch-callout:none;
   touch-action:pan-y pinch-zoom;
 }
-
 .warmup-item{
   display:inline-flex;
   align-items:center;
@@ -940,55 +834,45 @@ h3{
   transform-origin:center bottom;
   -webkit-tap-highlight-color:transparent;
 }
-
 .warmup-item:hover{
   transform:scale(1.11);
   color:var(--blue);
 }
-
 .warmup-item.active{
   transform:scale(1.12);
   color:var(--blue);
 }
-
 .warmup-item.selected{
   background:var(--blue-soft);
   color:#5b21b6;
 }
-
 .warmup-item.target{
   outline:2px solid var(--amber);
   outline-offset:1px;
 }
-
 .warmup-part{
   display:inline-block;
   padding:0 1px;
   border-radius:8px;
   transition:transform 0.15s ease, color 0.15s ease, background 0.15s ease, outline 0.15s ease;
 }
-
 .warmup-part.current{
   outline:2px solid var(--amber);
   outline-offset:1px;
   transform:scale(1.10);
 }
-
 .warmup-part.correct{
   color:var(--green);
   font-weight:bold;
   transform:scale(1.14);
 }
-
 .warmup-part.wrong{
   color:var(--red);
 }
-
 .warmup-sep{
   display:inline-block;
   padding:0 2px;
 }
-
 #warmupStatus{
   margin-top:8px;
   font-size:13px;
@@ -996,127 +880,87 @@ h3{
   position:relative;
   z-index:1;
 }
-
 @media (max-width: 1000px){
   #stepCards{
     grid-template-columns:repeat(2, minmax(0,1fr));
   }
 }
-
 @media (max-width: 900px){
   #tunerTopBar{
     flex-direction:column;
     align-items:stretch;
     gap:10px;
   }
-
-  #targetMini{
-    text-align:center;
-  }
-
-  #miniPlayerArea{
-    justify-content:center;
-  }
+  #targetMini{ text-align:center; }
+  #miniPlayerArea{ justify-content:center; }
 }
-
 @media (max-width: 768px){
   body{ padding:calc(14px + var(--safe-top)) calc(10px + var(--safe-right)) calc(28px + var(--safe-bottom)) calc(10px + var(--safe-left)); }
-
   h1{
     font-size:26px;
     margin-top:44px;
   }
-
   h2{ font-size:22px; }
   h3{ font-size:17px; }
-
   #vocaly{
     top:calc(10px + var(--safe-top));
     right:calc(12px + var(--safe-right));
     font-size:17px;
   }
-
   #miniPlayerArea{
     flex-direction:column;
     align-items:stretch;
     width:100%;
   }
-
   #song{
     width:100%;
     height:40px;
   }
-
-  #tunerMiniBtn{
-    width:100%;
-  }
-
+  #tunerMiniBtn{ width:100%; }
   #tunerSwitchRow{
     justify-content:space-between;
     width:100%;
   }
-
   #lyrics{
     font-size:19px;
     line-height:1.8;
     width:100%;
     padding:14px 12px;
   }
-
   .satir{
     white-space:normal;
     gap:8px;
     align-items:flex-start;
   }
-
   .satir-text{
     white-space:normal;
     overflow-wrap:anywhere;
     word-break:normal;
   }
-
   .satir-play{
     width:30px;
     height:30px;
     margin-top:2px;
   }
-
   .warmup-item{
     font-size:20px;
     margin:2px 8px 6px 0;
   }
-
   .warmup-select{
     min-width:150px;
     width:100%;
     max-width:320px;
   }
-
-  .section-title{
-    font-size:24px;
-  }
-
-  #introTitle{
-    font-size:20px;
-  }
+  .section-title{ font-size:24px; }
+  #introTitle{ font-size:20px; }
 }
-
 @media (max-width: 640px){
-  #stepCards{
-    grid-template-columns:1fr;
-  }
+  #stepCards{ grid-template-columns:1fr; }
 }
-
 @media (max-width: 480px){
-  #topMenu{
-    gap:8px;
-  }
-
+  #topMenu{ gap:8px; }
   .mode-btn,
-  .mode-link{
-    width:100%;
-  }
-
+  .mode-link{ width:100%; }
   #tunerCard,
   #audio-wrap,
   #warmupWrap,
@@ -1125,14 +969,8 @@ h3{
   .section-head{
     border-radius:18px;
   }
-
-  #tunerScaleTop{
-    font-size:10px;
-  }
-
-  #targetMini{
-    font-size:14px;
-  }
+  #tunerScaleTop{ font-size:10px; }
+  #targetMini{ font-size:14px; }
 }
 </style>
 </head>
@@ -1152,7 +990,7 @@ h3{
       <div class="step-card">
         <div class="step-no">1</div>
         <div class="step-title">Vokal Isınma ve Hazırlık</div>
-        <div class="step-desc">Çalışmaya başlamadan önce sesini hazırla. Sayfa açıldığında ton otomatik olarak Mi minör gelir.</div>
+        <div class="step-desc">Çalışmaya başlamadan önce sesini hazırla. Ton ve mod seçimi eserle uyumlu başlar.</div>
       </div>
       <div class="step-card">
         <div class="step-no">2</div>
@@ -1176,8 +1014,9 @@ h3{
 <div id="topMenu">
   <button class="mode-btn active" id="warmupModeBtn" onclick="showMode('warmup')">1. Vokal Isınma ve Hazırlık</button>
   <button class="mode-btn" id="songModeBtn" onclick="showMode('song')">2. Eser Çalışma</button>
-  <a class="mode-link" href="./olcme.html">3. Ölçme / Karaoke Modu</a>
-  <a class="mode-link" href="./editor.html">4. Öğretmen Editörü</a>
+  <a class="mode-link" id="assessmentModeLink" href="./olcme.html">3. Ölçme / Karaoke Modu</a>
+  <a class="mode-link" href="./editor1.html">4. Öğretmen Editörü</a>
+  <a class="mode-link" href="./panel.html">Kütüphane</a>
 </div>
 
 <div id="globalTop">
@@ -1187,7 +1026,6 @@ h3{
 
       <div id="miniPlayerArea">
         <audio id="song" controls preload="auto" playsinline webkit-playsinline>
-          <source src="temiz_kayit.mp3" type="audio/mpeg">
           Tarayıcınız audio etiketini desteklemiyor.
         </audio>
 
@@ -1229,13 +1067,13 @@ h3{
     <div class="section-step">1. Aşama</div>
     <div class="section-title">Vokal Isınma ve Hazırlık</div>
     <div class="section-desc">
-      Önce sesini hazırla. Bu bölüm şimdilik otomatik olarak <strong>Mi minör</strong> ile başlar.
+      Önce sesini hazırla. Bu bölüm seçilen eserin tonuna göre açılır.
       İstersen aynı sayfada tonu ve modu değiştirebilirsin.
     </div>
   </div>
 
   <div id="warmupWrap">
-    <div class="warmup-badge">Başlangıç tonu: Mi Minör</div>
+    <div class="warmup-badge" id="warmupBadge">Başlangıç tonu: Mi Minör</div>
 
     <div class="warmup-intro">
       Tıkla = egzersizi dinle, sonra tuner hedefi o çalışmaya geçsin. Basılı tutup sürükle = çoklu seçim.
@@ -1274,7 +1112,7 @@ h3{
       <div class="warmup-line" id="motifLine"></div>
     </div>
 
-    <div id="warmupStatus">Mi Minör hazır.</div>
+    <div id="warmupStatus">Hazır.</div>
 
     <div class="warmup-nav">
       <button class="next-step-btn" type="button" onclick="showMode('song')">Eser Çalışmaya Geç</button>
@@ -1292,7 +1130,7 @@ h3{
     </div>
   </div>
 
-  <h1>İSTİKLAL MARŞI</h1>
+  <h1 id="songTitle">ESER ÇALIŞMA</h1>
 
   <div id="audio-wrap">
     <div class="controls">
@@ -1300,86 +1138,162 @@ h3{
     </div>
 
     <div id="status">Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır</div>
-    <div class="tip">Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.</div>
+    <div class="tip" id="practiceTip">Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.</div>
   </div>
 
   <div id="lyrics"></div>
 </div>
 
 <script>
-const lyricsData = [
-  [
-    [["Kork","ma,"], ["sön","mez"], ["bu"], ["şa","fak","lar","da"], ["yü","zen"], ["al"], ["san","cak;"]],
-    [["Sön","me","den"], ["yur","du","mun"], ["üs","tün","de"], ["tü","ten"], ["en"], ["son"], ["o","cak."]],
-    [["O"], ["be","nim"], ["mil","le","ti","min"], ["yıl","dı","zı","dır,"], ["par","la","ya","cak;"]],
-    [["O"], ["be","nim","dir,"], ["o"], ["be","nim"], ["mil","le","ti","min","dir"], ["an","cak."]]
-  ],
-  [
-    [["Çat","ma,"], ["kur","ban"], ["o","la","yım"], ["çeh","re","ni"], ["ey"], ["naz","lı"], ["hi","lâl!"]],
-    [["Kah","ra","man"], ["ır","kı","ma"], ["bir"], ["gül…"], ["ne"], ["bu"], ["şid","det"], ["bu"], ["ce","lâl?"]],
-    [["Sa","na"], ["ol","maz"], ["dö","kü","len"], ["kan","la","rı","mız"], ["son","ra"], ["he","lâl,"]],
-    [["Hak","kı","dır,"], ["Hakk’a"], ["ta","pan,"], ["mil","le","ti","min"], ["is","tik","lâl."]]
-  ]
-];
+/* =========================
+   E S E R  K Ü T Ü P H A N E S İ
+   Yeni eser eklemek için buraya yeni obje ekle.
+========================= */
+const SONG_LIBRARY = {
+  "kus-sesleri": {
+    id: "kus-sesleri",
+    title: "Kuş Sesleri",
+    introText: "Bu çalışma 4 adımdan oluşur. Önce sesini hazırla, sonra eseri hece hece çalış, ardından kendini ölç. Amaç kusursuz olmak değil; doğru sese yaklaşarak güven kazanmaktır.",
+    practiceTitle: "KUŞ SESLERİ",
+    practiceAudio: "practice.mp3",
+    assessmentLink: "olcme.html?song=kus-sesleri",
+    warmup: {
+      defaultTonePc: 4,
+      defaultScaleType: "minor",
+      badgeText: "Başlangıç tonu: Mi Minör"
+    },
+    practiceStatus: "Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır",
+    practiceTip: "Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.",
+    lyricsData: [
+      [
+        [["Kuş"], ["ses","le","ri"], ["duy"], ["or","man","da"]],
+        [["Bak"], ["ne"], ["gü","zel"], ["bah","ar","da"]]
+      ]
+    ],
+    heceTimings: {
+      0:[0.30,0.70],
+      1:[0.70,1.05],
+      2:[1.05,1.35],
+      3:[1.35,1.70],
+      4:[1.75,2.10],
+      5:[2.10,2.45],
+      6:[2.45,2.85],
+      7:[2.90,3.20],
+      8:[3.20,3.55],
+      9:[3.55,3.90]
+    },
+    heceNotes: {
+      0:["mi"],
+      1:["fa#"],
+      2:["sol"],
+      3:["la"],
+      4:["sol"],
+      5:["fa#"],
+      6:["mi"],
+      7:["re"],
+      8:["mi"],
+      9:["mi"]
+    }
+  },
 
-const heceTimings = {
-  0:[0.28,1.3], 1:[1.11,1.62], 2:[1.70,2.58], 3:[2.58,3.18], 4:[3.12,3.5],
-  5:[3.6,3.8], 6:[3.9,5.60], 7:[5.80,6.40], 8:[6.50,6.88], 9:[7.10,7.7],
-  10:[7.75,8.50], 11:[8.47,8.85], 12:[8.85,9.20], 13:[9.21,10.70],
-  14:[10.85,11.35], 15:[11.36,11.50], 16:[11.50,11.85], 17:[11.80,12.30],
-  18:[12.35,13.58], 19:[13.55,13.80], 20:[13.85,14.20], 21:[14.20,14.50],
-  22:[14.45,14.77], 23:[14.92,15.25], 24:[15.20,15.60], 25:[15.56,15.83],
-  26:[15.84,16.25], 27:[16.15,16.45], 28:[16.45,16.92], 29:[22.41,22.77],
-  30:[22.77,23.13], 31:[23.13,23.52], 32:[23.52,23.92], 33:[23.92,24.31],
-  34:[24.31,24.71], 35:[24.71,25.15], 36:[25.15,25.55], 37:[25.55,25.95],
-  38:[28.64,29.03], 39:[29.03,29.43], 40:[29.43,29.82], 41:[29.82,30.99],
-  42:[30.99,32.16], 43:[32.16,33.03], 44:[33.03,33.9], 45:[33.9,34.53],
-  46:[34.53,35.16], 47:[35.16,35.93], 48:[35.93,36.71], 49:[36.71,37.48],
-  50:[37.48,38.25], 51:[38.25,39.03], 52:[39.03,39.8], 53:[46.23,46.48],
-  54:[46.48,46.74], 55:[46.74,46.99], 56:[46.99,47.23], 57:[50.08,50.36],
-  58:[50.36,50.65], 59:[50.65,50.93], 60:[50.93,51.22], 61:[53.84,54.16],
-  62:[54.16,54.47], 63:[54.47,54.78], 64:[54.78,55.1], 65:[55.1,55.64],
-  66:[55.64,56.18], 67:[56.18,56.42], 68:[56.42,56.66], 69:[56.66,56.99],
-  70:[56.99,57.31], 71:[57.31,57.64], 72:[59.85,60.19], 73:[60.19,60.52],
-  74:[60.52,60.86], 75:[60.86,61.19], 76:[61.19,61.94], 77:[61.94,62.7],
-  78:[62.7,63.45], 79:[66.07,66.29], 80:[66.29,66.51], 81:[66.51,66.73],
-  82:[66.73,66.86], 83:[66.86,67.0], 84:[67.0,67.13], 85:[67.13,67.3],
-  86:[67.3,67.47], 87:[67.47,67.64], 88:[67.64,67.81], 89:[67.81,68.03],
-  90:[68.03,68.25], 91:[68.25,68.4], 92:[68.4,68.54], 93:[68.54,68.69]
+  "istiklal-marsi": {
+    id: "istiklal-marsi",
+    title: "İstiklal Marşı",
+    introText: "Bu çalışma 4 adımdan oluşur. Önce sesini hazırla, sonra eseri hece hece çalış, ardından kendini ölç, istersen öğretmen editöründen içerik düzenle. Amaç kusursuz olmak değil; doğru sese yaklaşarak güven kazanmaktır.",
+    practiceTitle: "İSTİKLAL MARŞI",
+    practiceAudio: "temiz_kayit.mp3",
+    assessmentLink: "olcme.html?song=istiklal-marsi",
+    warmup: {
+      defaultTonePc: 4,
+      defaultScaleType: "minor",
+      badgeText: "Başlangıç tonu: Mi Minör"
+    },
+    practiceStatus: "Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır",
+    practiceTip: "Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.",
+    lyricsData: [
+      [
+        [["Kork","ma,"], ["sön","mez"], ["bu"], ["şa","fak","lar","da"], ["yü","zen"], ["al"], ["san","cak;"]],
+        [["Sön","me","den"], ["yur","du","mun"], ["üs","tün","de"], ["tü","ten"], ["en"], ["son"], ["o","cak."]],
+        [["O"], ["be","nim"], ["mil","le","ti","min"], ["yıl","dı","zı","dır,"], ["par","la","ya","cak;"]],
+        [["O"], ["be","nim","dir,"], ["o"], ["be","nim"], ["mil","le","ti","min","dir"], ["an","cak."]]
+      ],
+      [
+        [["Çat","ma,"], ["kur","ban"], ["o","la","yım"], ["çeh","re","ni"], ["ey"], ["naz","lı"], ["hi","lâl!"]],
+        [["Kah","ra","man"], ["ır","kı","ma"], ["bir"], ["gül…"], ["ne"], ["bu"], ["şid","det"], ["bu"], ["ce","lâl?"]],
+        [["Sa","na"], ["ol","maz"], ["dö","kü","len"], ["kan","la","rı","mız"], ["son","ra"], ["he","lâl,"]],
+        [["Hak","kı","dır,"], ["Hakk’a"], ["ta","pan,"], ["mil","le","ti","min"], ["is","tik","lâl."]]
+      ]
+    ],
+    heceTimings: {
+      0:[0.28,1.3], 1:[1.11,1.62], 2:[1.70,2.58], 3:[2.58,3.18], 4:[3.12,3.5],
+      5:[3.6,3.8], 6:[3.9,5.60], 7:[5.80,6.40], 8:[6.50,6.88], 9:[7.10,7.7],
+      10:[7.75,8.50], 11:[8.47,8.85], 12:[8.85,9.20], 13:[9.21,10.70],
+      14:[10.85,11.35], 15:[11.36,11.50], 16:[11.50,11.85], 17:[11.80,12.30],
+      18:[12.35,13.58], 19:[13.55,13.80], 20:[13.85,14.20], 21:[14.20,14.50],
+      22:[14.45,14.77], 23:[14.92,15.25], 24:[15.20,15.60], 25:[15.56,15.83],
+      26:[15.84,16.25], 27:[16.15,16.45], 28:[16.45,16.92], 29:[22.41,22.77],
+      30:[22.77,23.13], 31:[23.13,23.52], 32:[23.52,23.92], 33:[23.92,24.31],
+      34:[24.31,24.71], 35:[24.71,25.15], 36:[25.15,25.55], 37:[25.55,25.95],
+      38:[28.64,29.03], 39:[29.03,29.43], 40:[29.43,29.82], 41:[29.82,30.99],
+      42:[30.99,32.16], 43:[32.16,33.03], 44:[33.03,33.9], 45:[33.9,34.53],
+      46:[34.53,35.16], 47:[35.16,35.93], 48:[35.93,36.71], 49:[36.71,37.48],
+      50:[37.48,38.25], 51:[38.25,39.03], 52:[39.03,39.8], 53:[46.23,46.48],
+      54:[46.48,46.74], 55:[46.74,46.99], 56:[46.99,47.23], 57:[50.08,50.36],
+      58:[50.36,50.65], 59:[50.65,50.93], 60:[50.93,51.22], 61:[53.84,54.16],
+      62:[54.16,54.47], 63:[54.47,54.78], 64:[54.78,55.1], 65:[55.1,55.64],
+      66:[55.64,56.18], 67:[56.18,56.42], 68:[56.42,56.66], 69:[56.66,56.99],
+      70:[56.99,57.31], 71:[57.31,57.64], 72:[59.85,60.19], 73:[60.19,60.52],
+      74:[60.52,60.86], 75:[60.86,61.19], 76:[61.19,61.94], 77:[61.94,62.7],
+      78:[62.7,63.45], 79:[66.07,66.29], 80:[66.29,66.51], 81:[66.51,66.73],
+      82:[66.73,66.86], 83:[66.86,67.0], 84:[67.0,67.13], 85:[67.13,67.3],
+      86:[67.3,67.47], 87:[67.47,67.64], 88:[67.64,67.81], 89:[67.81,68.03],
+      90:[68.03,68.25], 91:[68.25,68.4], 92:[68.4,68.54], 93:[68.54,68.69]
+    },
+    heceNotes: {
+      0:["si"], 1:["mi"], 2:["fa"], 3:["sol"], 4:["re#"],
+      5:["fa"], 6:["mi"], 7:["mi"], 8:["la"], 9:["si"],
+      10:["do","si"], 11:["sol#"], 12:["si"], 13:["la"],
+      14:["si"], 15:["la#"], 16:["si"], 17:["fa"], 18:["fa"],
+      19:["la"], 20:["sol#"], 21:["re"], 22:["mi"], 23:["fa"],
+      24:["sol"], 25:["la"], 26:["si"], 27:["do"], 28:["re"]
+    }
+  }
 };
 
-const heceNotes = {
-  0:["si"], 1:["mi"], 2:["fa"], 3:["sol"], 4:["re#"],
-  5:["fa"], 6:["mi"], 7:["mi"], 8:["la"], 9:["si"],
-  10:["do","si"], 11:["sol#"], 12:["si"], 13:["la"],
-  14:["si"], 15:["la#"], 16:["si"], 17:["fa"], 18:["fa"],
-  19:["la"], 20:["sol#"], 21:["re"], 22:["mi"], 23:["fa"],
-  24:["sol"], 25:["la"], 26:["si"], 27:["do"], 28:["re"]
-};
+/* =========================
+   PARAMETRE VE AKTİF ESER
+========================= */
+function getSongIdFromUrl(){
+  const params = new URLSearchParams(window.location.search);
+  return params.get("song") || "istiklal-marsi";
+}
+const activeSongId = getSongIdFromUrl();
+const activeSong = SONG_LIBRARY[activeSongId] || SONG_LIBRARY["istiklal-marsi"];
 
+/* =========================
+   DEĞİŞKEN VERİLER
+========================= */
+let lyricsData = activeSong.lyricsData || [];
+let heceTimings = activeSong.heceTimings || {};
+let heceNotes = activeSong.heceNotes || {};
 const NOTE_ALIASES = {
   "do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,
   "fa#":6,"solb":6,"sol":7,"sol#":8,"lab":8,"la":9,"la#":10,"sib":10,"si":11
 };
-
 const PC_TO_TR = {
   0:"Do",1:"Do#/Reb",2:"Re",3:"Re#/Mib",4:"Mi",5:"Fa",
   6:"Fa#/Solb",7:"Sol",8:"Sol#/Lab",9:"La",10:"La#/Sib",11:"Si"
 };
-
 const PC_TO_SIMPLE = {
   0:"do",1:"do#",2:"re",3:"re#",4:"mi",5:"fa",6:"fa#",7:"sol",8:"sol#",9:"la",10:"la#",11:"si"
 };
-
 const TONE_OPTIONS = [
   { label:"Do", pc:0 }, { label:"Do#/Reb", pc:1 }, { label:"Re", pc:2 }, { label:"Re#/Mib", pc:3 },
   { label:"Mi", pc:4 }, { label:"Fa", pc:5 }, { label:"Fa#/Solb", pc:6 }, { label:"Sol", pc:7 },
   { label:"Sol#/Lab", pc:8 }, { label:"La", pc:9 }, { label:"La#/Sib", pc:10 }, { label:"Si", pc:11 }
 ];
-
 const MAJOR_STEPS = [0,2,4,5,7,9,11,12];
 const MINOR_STEPS = [0,2,3,5,7,8,10,12];
-
 const INTERVAL_DEFS = [
   { name:"3'lü", step:2 },
   { name:"4'lü", step:3 },
@@ -1402,6 +1316,11 @@ const tunerFlashEl = document.getElementById("tunerFlash");
 const tickLayer = document.getElementById("tickLayer");
 const warmupToneSelect = document.getElementById("warmupToneSelect");
 const warmupScaleTypeSelect = document.getElementById("warmupScaleTypeSelect");
+const warmupBadgeEl = document.getElementById("warmupBadge");
+const songTitleEl = document.getElementById("songTitle");
+const introTextEl = document.getElementById("introText");
+const practiceTipEl = document.getElementById("practiceTip");
+const assessmentModeLink = document.getElementById("assessmentModeLink");
 
 let heceCounter = 0;
 let stopTimeout = null;
@@ -1467,33 +1386,27 @@ function createTicks(){
 function setTargetMini(text){
   targetMiniEl.innerHTML = text || "Hedef seçilmedi";
 }
-
 function showTunerFlash(){
   tunerFlashEl.classList.add("show");
   clearTimeout(showTunerFlash._t);
   showTunerFlash._t = setTimeout(() => tunerFlashEl.classList.remove("show"), 650);
 }
-
 function setPitchDotState(mode){
   pitchDotEl.classList.remove("correct","wrong","waiting");
   pitchDotEl.classList.add(mode);
 }
-
 function updatePitchDotByCents(cents){
   if (cents === null || Number.isNaN(cents)) {
     pitchDotEl.style.left = "50%";
     setPitchDotState("waiting");
     return;
   }
-
   const clamped = Math.max(-50, Math.min(50, cents));
   const percent = 50 + (clamped / 50) * 40;
   pitchDotEl.style.left = `${percent}%`;
-
   if (Math.abs(cents) <= 10) setPitchDotState("correct");
   else setPitchDotState("wrong");
 }
-
 function showMode(mode){
   const songMode = document.getElementById("songMode");
   const warmupMode = document.getElementById("warmupMode");
@@ -1507,12 +1420,12 @@ function showMode(mode){
     songMode.style.display = "block";
     warmupMode.style.display = "none";
     songBtn.classList.add("active");
-    statusEl.textContent = "Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır";
+    statusEl.textContent = activeSong.practiceStatus || "Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır";
   } else {
     songMode.style.display = "none";
     warmupMode.style.display = "block";
     warmupBtn.classList.add("active");
-    warmupStatusEl.textContent = "Mi Minör hazır.";
+    warmupStatusEl.textContent = (activeSong.warmup && activeSong.warmup.badgeText) ? activeSong.warmup.badgeText : "Hazır.";
     window.scrollTo({ top:0, behavior:"smooth" });
   }
 }
@@ -1520,29 +1433,20 @@ function showMode(mode){
 /* WARMUP GENERATION */
 function buildWarmupToneOptions(){
   warmupToneSelect.innerHTML = TONE_OPTIONS.map(opt => `<option value="${opt.pc}">${opt.label}</option>`).join("");
-  warmupToneSelect.value = "4";
-  warmupScaleTypeSelect.value = "minor";
+  warmupToneSelect.value = String(activeSong.warmup?.defaultTonePc ?? 4);
+  warmupScaleTypeSelect.value = activeSong.warmup?.defaultScaleType || "minor";
 }
-
 function getScalePcs(rootPc, type){
   const steps = type === "minor" ? MINOR_STEPS : MAJOR_STEPS;
   return steps.map(s => rootPc + s);
 }
-
-function getWarmupDisplayName(absPc){
-  return PC_TO_TR[normalizePc(absPc)];
-}
-
-function getWarmupTargetName(absPc){
-  return PC_TO_SIMPLE[normalizePc(absPc)];
-}
-
+function getWarmupDisplayName(absPc){ return PC_TO_TR[normalizePc(absPc)]; }
+function getWarmupTargetName(absPc){ return PC_TO_SIMPLE[normalizePc(absPc)]; }
 function getWarmupSynthName(absPc){
   const pc = normalizePc(absPc);
   const baseOctave = absPc >= 12 ? 5 : 4;
   return simpleTrToSynthName(getWarmupTargetName(pc), baseOctave);
 }
-
 function buildWarmupData(){
   const rootPc = Number(warmupToneSelect.value);
   const scaleType = warmupScaleTypeSelect.value;
@@ -1579,7 +1483,6 @@ function buildWarmupData(){
   const motifIndices = [
     [0,1,2],[2,1,0],[0,2,4],[4,2,0],[4,3,2,1],[0,1,0],[2,3,2]
   ];
-
   const motifs = motifIndices.map((arr, idx) => {
     const pcs = arr.filter(v => v < scale.length).map(v => scale[v]);
     return {
@@ -1599,7 +1502,9 @@ function buildWarmupData(){
   renderWarmupLine("motifLine", motifs);
 
   const toneLabel = TONE_OPTIONS.find(x => x.pc === rootPc)?.label || "Mi";
-  warmupStatusEl.textContent = `${toneLabel} ${scaleType === "major" ? "Majör" : "Minör"} hazır.`;
+  const text = `${toneLabel} ${scaleType === "major" ? "Majör" : "Minör"} hazır.`;
+  warmupStatusEl.textContent = text;
+  warmupBadgeEl.textContent = `Başlangıç tonu: ${toneLabel} ${scaleType === "major" ? "Majör" : "Minör"}`;
 }
 
 /* SONG HELPERS */
@@ -1607,12 +1512,10 @@ function clearSelectionSuccessVisualOnly() {
   document.querySelectorAll(".hece.tune-correct").forEach(el => el.classList.remove("tune-correct"));
   document.querySelectorAll(".hece.tune-wrong").forEach(el => el.classList.remove("tune-wrong"));
 }
-
 function clearWarmupMarks() {
   document.querySelectorAll(".warmup-item").forEach(item => item.classList.remove("active", "target"));
   document.querySelectorAll(".warmup-part").forEach(part => part.classList.remove("current", "correct", "wrong"));
 }
-
 function clearCurrentTargetState() {
   currentTargetNotes = [];
   currentSelectionIds = [];
@@ -1628,14 +1531,12 @@ function clearCurrentTargetState() {
   setTargetMini("Hedef seçilmedi");
   updatePitchDotByCents(null);
 }
-
 function clearWrongMarksExceptCorrect() {
   document.querySelectorAll(".hece.tune-wrong").forEach(el => {
     const id = Number(el.dataset.id);
     if (!correctHeceIds.has(id)) el.classList.remove("tune-wrong");
   });
 }
-
 function setHeceCorrect(id) {
   const el = document.querySelector(`.hece[data-id="${id}"]`);
   if (!el) return;
@@ -1643,7 +1544,6 @@ function setHeceCorrect(id) {
   el.classList.add("tune-correct");
   correctHeceIds.add(id);
 }
-
 function setHeceWrong(id) {
   if (correctHeceIds.has(id)) return;
   const el = document.querySelector(`.hece[data-id="${id}"]`);
@@ -1651,7 +1551,6 @@ function setHeceWrong(id) {
   el.classList.remove("tune-correct");
   el.classList.add("tune-wrong");
 }
-
 function markTargetSelection(ids) {
   document.querySelectorAll(".hece.target-hece").forEach(el => el.classList.remove("target-hece"));
   ids.forEach(id => {
@@ -1659,7 +1558,6 @@ function markTargetSelection(ids) {
     if (el) el.classList.add("target-hece");
   });
 }
-
 function setCurrentTarget(ids, notes) {
   currentSelectionIds = [...ids];
   currentTargetNotes = [...new Set(notes)];
@@ -1684,7 +1582,6 @@ function setCurrentTarget(ids, notes) {
       : "Bu seçim için hedef nota atanmadı.";
   }
 }
-
 function setActivePlaybackHece(id) {
   activePlaybackHeceId = id;
   setCurrentTarget([id], heceNotes[id] || []);
@@ -1699,7 +1596,6 @@ function setActivePlaybackHece(id) {
     tunerInfo.textContent = hedefler ? `Hedef: ${hedefler} | Ses bekleniyor...` : "Bu hece için hedef nota atanmadı.";
   }
 }
-
 function getActiveHeceIdAtTime(currentTime) {
   if (!playbackRangeIds.length) return null;
 
@@ -1717,33 +1613,25 @@ function getActiveHeceIdAtTime(currentTime) {
     if (!timing) continue;
     if (currentTime >= Number(timing[0])) return id;
   }
-
   return playbackRangeIds[0] ?? null;
 }
-
 function temizleAktifHeceler() {
   document.querySelectorAll(".hece.active").forEach(el => el.classList.remove("active"));
   document.querySelectorAll(".hece.selected").forEach(el => el.classList.remove("selected"));
   document.querySelectorAll(".satir.active-satir").forEach(el => el.classList.remove("active-satir"));
 }
-
 function basaDonBeklet() {
   try { audio.pause(); } catch (e) {}
   try { audio.currentTime = 0; } catch (e) {}
   statusEl.textContent = "Durduruldu. Baştan bekliyor.";
 }
-
 function gecerliZamanVarMi(timing) {
   if (!timing || !Array.isArray(timing) || timing.length !== 2) return false;
   const start = Number(timing[0]);
   const end = Number(timing[1]);
   return !(Number.isNaN(start) || Number.isNaN(end) || start < 0 || end <= start);
 }
-
-function heceSayisi() {
-  return Object.keys(heceTimings).length;
-}
-
+function heceSayisi() { return Object.keys(heceTimings).length; }
 function sonrakiGecerliBaslangic(currentId) {
   for (let i = currentId + 1; i < heceSayisi(); i++) {
     const t = heceTimings[i];
@@ -1751,7 +1639,6 @@ function sonrakiGecerliBaslangic(currentId) {
   }
   return null;
 }
-
 function guvenliAralikHesapla(currentId) {
   const timing = heceTimings[currentId];
   if (!gecerliZamanVarMi(timing)) return null;
@@ -1765,7 +1652,6 @@ function guvenliAralikHesapla(currentId) {
 
   return [start, end];
 }
-
 function idAraligiIcinGuvenliZaman(firstId, lastId) {
   let start = null;
   let end = null;
@@ -1778,52 +1664,43 @@ function idAraligiIcinGuvenliZaman(firstId, lastId) {
   if (start === null || end === null || end <= start) return null;
   return [start, end];
 }
-
 function collectIdsForRange(firstId, lastId) {
   const ids = [];
   for (let i = firstId; i <= lastId; i++) ids.push(i);
   return ids;
 }
-
 function durdurAktifSes() {
   if (stopTimeout) {
     clearTimeout(stopTimeout);
     stopTimeout = null;
   }
-
   if (activeTimeUpdateHandler) {
     audio.removeEventListener("timeupdate", activeTimeUpdateHandler);
     activeTimeUpdateHandler = null;
   }
-
   try { audio.pause(); } catch (e) {}
   temizleAktifHeceler();
 }
-
 function herSeyiSifirla() {
   durdurAktifSes();
   basaDonBeklet();
 }
-
 function secimGorseliniGuncelle() {
   document.querySelectorAll(".hece.selected").forEach(el => el.classList.remove("selected"));
   if (selectionStartId === null || selectionEndId === null) return;
   const minId = Math.min(selectionStartId, selectionEndId);
   const maxId = Math.max(selectionStartId, selectionEndId);
-
   for (let i = minId; i <= maxId; i++) {
     const el = document.querySelector(`.hece[data-id="${i}"]`);
     if (el) el.classList.add("selected");
   }
 }
-
 function secimTemizle() {
   selectionMode = false;
   selectionStartId = null;
   selectionEndId = null;
   document.querySelectorAll(".hece.selected").forEach(el => el.classList.remove("selected"));
 }
-
 async function aralikCal(start, end, label, highlightEls = [], rangeIds = []) {
   const duration = end - start;
   if (duration <= 0) return;
@@ -1854,14 +1731,12 @@ async function aralikCal(start, end, label, highlightEls = [], rangeIds = []) {
 
     activeTimeUpdateHandler = () => {
       const current = audio.currentTime;
-
       if (playbackRangeIds.length > 1) {
         const currentHeceId = getActiveHeceIdAtTime(current);
         if (currentHeceId !== null && currentHeceId !== activePlaybackHeceId) {
           setActivePlaybackHece(currentHeceId);
         }
       }
-
       if (audio.currentTime >= end) {
         durdurAktifSes();
         try { audio.currentTime = 0; } catch (e) {}
@@ -1883,7 +1758,6 @@ async function aralikCal(start, end, label, highlightEls = [], rangeIds = []) {
     statusEl.textContent = "Ses çalınamadı.";
   }
 }
-
 async function heceCal(span, currentId) {
   const aralik = guvenliAralikHesapla(currentId);
   if (!aralik) return;
@@ -1896,7 +1770,6 @@ async function heceCal(span, currentId) {
     { el: span, className: "target-hece" }
   ], [currentId]);
 }
-
 async function seciliAralikCal(firstId, lastId) {
   const aralik = idAraligiIcinGuvenliZaman(firstId, lastId);
   if (!aralik) return;
@@ -1913,18 +1786,15 @@ async function seciliAralikCal(firstId, lastId) {
 
   await aralikCal(aralik[0], aralik[1], "Seçili bölüm", highlightEls, ids);
 }
-
 async function satirCal(satirDiv, firstId, lastId) {
   const aralik = idAraligiIcinGuvenliZaman(firstId, lastId);
   if (!aralik) return;
-
   const ids = collectIdsForRange(firstId, lastId);
 
   await aralikCal(aralik[0], aralik[1], "Satır", [
     { el: satirDiv, className: "active-satir" }
   ], ids);
 }
-
 function basiliSecimBaslat(startId) {
   selectionMode = true;
   selectionStartId = startId;
@@ -1932,7 +1802,6 @@ function basiliSecimBaslat(startId) {
   secimGorseliniGuncelle();
   statusEl.textContent = "Seçim başladı. Parmağını/mouse'u sürükle ve bırak.";
 }
-
 function pointerAltindakiHeceId(clientX, clientY) {
   const el = document.elementFromPoint(clientX, clientY);
   if (!el) return null;
@@ -1940,12 +1809,10 @@ function pointerAltindakiHeceId(clientX, clientY) {
   if (!hece) return null;
   return Number(hece.dataset.id);
 }
-
 function longPressTimerBaslat(startId) {
   temizleLongPressTimer();
   pressTimer = setTimeout(() => basiliSecimBaslat(startId), 280);
 }
-
 function temizleLongPressTimer() {
   if (pressTimer) {
     clearTimeout(pressTimer);
@@ -1957,16 +1824,13 @@ function temizleLongPressTimer() {
 function freqToMidi(freq) {
   return 69 + 12 * Math.log2(freq / 440);
 }
-
 function centsAgainstTarget(freq, targetName) {
   const midi = freqToMidi(freq);
   const pc = noteNameToPitchClass(targetName);
   if (pc === undefined) return null;
-
   const nearestMidi = pc + 12 * Math.round((midi - pc) / 12);
   return (midi - nearestMidi) * 100;
 }
-
 function markWarmupCurrentPart(itemId, index) {
   clearWarmupMarks();
   const itemEl = document.querySelector(`.warmup-item[data-item-id="${itemId}"]`);
@@ -1975,7 +1839,6 @@ function markWarmupCurrentPart(itemId, index) {
   const part = itemEl.querySelector(`.warmup-part[data-part-index="${index}"]`);
   if (part) part.classList.add("current");
 }
-
 function setWarmupPartCorrect(itemId, index) {
   const part = document.querySelector(`.warmup-item[data-item-id="${itemId}"] .warmup-part[data-part-index="${index}"]`);
   if (part) {
@@ -1983,12 +1846,10 @@ function setWarmupPartCorrect(itemId, index) {
     part.classList.add("correct");
   }
 }
-
 function setWarmupPartWrong(itemId, index) {
   const part = document.querySelector(`.warmup-item[data-item-id="${itemId}"] .warmup-part[data-part-index="${index}"]`);
   if (part && !part.classList.contains("correct")) part.classList.add("wrong");
 }
-
 function stopWarmupTargeting() {
   if (warmupAdvanceTimeout) {
     clearTimeout(warmupAdvanceTimeout);
@@ -1999,7 +1860,6 @@ function stopWarmupTargeting() {
   warmupStepLatched = false;
   clearWarmupMarks();
 }
-
 function startWarmupTargeting(item) {
   stopWarmupTargeting();
   warmupActiveItemId = item.id;
@@ -2020,7 +1880,6 @@ function startWarmupTargeting(item) {
   tunerInfo.textContent = `Hedef: ${pitchClassToDisplay(noteNameToPitchClass(item.target[0]))} | Ses bekleniyor...`;
   warmupStatusEl.textContent = `${item.parts.join(" - ")} hazır.`;
 }
-
 function advanceWarmupStep() {
   if (!warmupActiveItemId) return;
   const item = warmupMap[warmupActiveItemId];
@@ -2056,7 +1915,6 @@ function advanceWarmupStep() {
   warmupStatusEl.textContent = `${item.parts.join(" - ")} | Sıra: ${item.parts[warmupSequenceIndex]}`;
   updatePitchDotByCents(null);
 }
-
 function hedeftenSapmaUygula(freq) {
   if (!tunerRunning || !currentTargetNotes.length) return;
 
@@ -2113,7 +1971,6 @@ function hedeftenSapmaUygula(freq) {
   }
 
   if (activePlaybackHeceId === null && currentSelectionIds.length !== 1) return;
-
   const activeId = currentSelectionIds[0];
 
   if (Math.abs(bestCents) <= 10) {
@@ -2130,11 +1987,9 @@ function hedeftenSapmaUygula(freq) {
     }
   }
 }
-
 function autoCorrelate(buffer, sampleRate) {
   let SIZE = buffer.length;
   let rms = 0;
-
   for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
   rms = Math.sqrt(rms / SIZE);
   if (rms < 0.01) return -1;
@@ -2177,13 +2032,11 @@ function autoCorrelate(buffer, sampleRate) {
 
   return sampleRate / T0;
 }
-
 function tunerLoop() {
   if (!tunerRunning || !analyser) return;
 
   const buffer = new Float32Array(analyser.fftSize);
   analyser.getFloatTimeDomainData(buffer);
-
   const freq = autoCorrelate(buffer, micContext.sampleRate);
 
   if (freq !== -1 && freq > 50 && freq < 1200) {
@@ -2203,7 +2056,6 @@ function tunerLoop() {
 
   tunerAnimation = requestAnimationFrame(tunerLoop);
 }
-
 async function tunerAc() {
   if (tunerRunning) return;
 
@@ -2224,7 +2076,6 @@ async function tunerAc() {
     : "Tuner açık. Hedef hece/nota seç.";
   tunerLoop();
 }
-
 function tunerKapat() {
   tunerRunning = false;
 
@@ -2237,17 +2088,14 @@ function tunerKapat() {
     try { micSource.disconnect(); } catch(e) {}
     micSource = null;
   }
-
   if (analyser) {
     try { analyser.disconnect(); } catch(e) {}
     analyser = null;
   }
-
   if (micStream) {
     micStream.getTracks().forEach(track => track.stop());
     micStream = null;
   }
-
   if (micContext) {
     try { micContext.close(); } catch(e) {}
     micContext = null;
@@ -2268,7 +2116,6 @@ function ensureWarmupAudioContext() {
   if (warmupAudioCtx.state === "suspended") return warmupAudioCtx.resume();
   return Promise.resolve();
 }
-
 function noteToFreq(note) {
   const map = {C:0, "C#":1, D:2, "D#":3, E:4, F:5, "F#":6, G:7, "G#":8, A:9, "A#":10, B:11};
   const match = /^([A-G]#?)(\d)$/.exec(note);
@@ -2278,7 +2125,6 @@ function noteToFreq(note) {
   const midi = (octave + 1) * 12 + map[pitch];
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
-
 function playWarmupTone(note, startAt, duration = 1.1) {
   const freq = noteToFreq(note);
   const master = warmupAudioCtx.createGain();
@@ -2314,7 +2160,6 @@ function playWarmupTone(note, startAt, duration = 1.1) {
   lowpass.connect(master);
   master.connect(warmupAudioCtx.destination);
 }
-
 async function playWarmupItem(item) {
   try {
     await ensureWarmupAudioContext();
@@ -2337,10 +2182,9 @@ async function playWarmupItem(item) {
     warmupStatusEl.textContent = "Warmup sesi çalınamadı.";
   }
 }
-
 function renderWarmupLine(containerId, items) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
+  const lineContainer = document.getElementById(containerId);
+  lineContainer.innerHTML = "";
 
   items.forEach(item => {
     const wrapper = document.createElement("span");
@@ -2381,7 +2225,6 @@ function renderWarmupLine(containerId, items) {
         clearTimeout(wrapper._warmupTimer);
         wrapper._warmupTimer = null;
       }
-
       if (warmupSelecting) return;
       if (!warmupSelectionStarted) return;
 
@@ -2397,22 +2240,19 @@ function renderWarmupLine(containerId, items) {
       warmupSelectionStarted = false;
     });
 
-    container.appendChild(wrapper);
+    lineContainer.appendChild(wrapper);
   });
 }
-
 function clearWarmupSelectionStateOnly() {
   warmupSelecting = false;
   warmupSelectionStarted = false;
 }
-
 function clearWarmupSelection() {
   document.querySelectorAll(".warmup-item.selected").forEach(el => el.classList.remove("selected"));
   clearWarmupMarks();
   stopWarmupTargeting();
   warmupStatusEl.textContent = "Seçim temizlendi.";
 }
-
 async function playSelectedWarmups() {
   const selectedEls = [...document.querySelectorAll(".warmup-item.selected")];
   if (!selectedEls.length) {
@@ -2448,17 +2288,118 @@ async function playSelectedWarmups() {
     warmupStatusEl.textContent = "Seçili warmup çalınamadı.";
   }
 }
-
 function pointerAltindakiWarmupItem(clientX, clientY) {
   const el = document.elementFromPoint(clientX, clientY);
   if (!el) return null;
   return el.closest(".warmup-item");
 }
 
+/* PRACTICE RENDER */
+function renderPracticeLyrics() {
+  container.innerHTML = "";
+  heceCounter = 0;
+
+  lyricsData.forEach((kitaData) => {
+    const kitaDiv = document.createElement("div");
+    kitaDiv.className = "kita";
+
+    kitaData.forEach((satirData) => {
+      const satirDiv = document.createElement("div");
+      satirDiv.className = "satir";
+
+      const satirPlayBtn = document.createElement("button");
+      satirPlayBtn.className = "satir-play";
+      satirPlayBtn.type = "button";
+      satirPlayBtn.textContent = "▶";
+
+      const satirText = document.createElement("div");
+      satirText.className = "satir-text";
+
+      let satirFirstId = null;
+      let satirLastId = null;
+
+      satirData.forEach((word, wordIndex) => {
+        word.forEach((hece) => {
+          const span = document.createElement("span");
+          span.className = "hece";
+          span.textContent = hece;
+
+          const currentId = heceCounter;
+          span.dataset.id = currentId;
+
+          if (satirFirstId === null) satirFirstId = currentId;
+          satirLastId = currentId;
+
+          span.addEventListener("pointerdown", (e) => {
+            e.stopPropagation();
+            pointerDown = true;
+            longPressTimerBaslat(currentId);
+          });
+
+          span.addEventListener("pointerup", async (e) => {
+            e.stopPropagation();
+            pointerDown = false;
+            temizleLongPressTimer();
+
+            if (selectionMode) {
+              const minId = Math.min(selectionStartId, selectionEndId);
+              const maxId = Math.max(selectionStartId, selectionEndId);
+              await seciliAralikCal(minId, maxId);
+              secimTemizle();
+            } else {
+              await heceCal(span, currentId);
+            }
+          });
+
+          span.addEventListener("pointercancel", () => {
+            pointerDown = false;
+            temizleLongPressTimer();
+          });
+
+          satirText.appendChild(span);
+          heceCounter++;
+        });
+
+        if (wordIndex < satirData.length - 1) satirText.appendChild(document.createTextNode(" "));
+      });
+
+      satirPlayBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        await satirCal(satirDiv, satirFirstId, satirLastId);
+      });
+
+      satirDiv.appendChild(satirPlayBtn);
+      satirDiv.appendChild(satirText);
+      kitaDiv.appendChild(satirDiv);
+    });
+
+    container.appendChild(kitaDiv);
+  });
+}
+
+/* SAYFA BAĞLAMA */
+function applySongConfig(song) {
+  document.title = `Vocaly - ${song.title}`;
+  songTitleEl.textContent = song.practiceTitle || song.title || "ESER ÇALIŞMA";
+  introTextEl.textContent = song.introText || introTextEl.textContent;
+  statusEl.textContent = song.practiceStatus || statusEl.textContent;
+  practiceTipEl.textContent = song.practiceTip || practiceTipEl.textContent;
+  warmupBadgeEl.textContent = song.warmup?.badgeText || "Başlangıç tonu: Mi Minör";
+  assessmentModeLink.href = song.assessmentLink || "./olcme.html";
+
+  audio.innerHTML = `<source src="${song.practiceAudio || "temiz_kayit.mp3"}" type="audio/mpeg">`;
+  audio.load();
+
+  warmupToneSelect.value = String(song.warmup?.defaultTonePc ?? 4);
+  warmupScaleTypeSelect.value = song.warmup?.defaultScaleType || "minor";
+}
+
 /* INIT */
 createTicks();
 buildWarmupToneOptions();
+applySongConfig(activeSong);
 buildWarmupData();
+renderPracticeLyrics();
 updatePitchDotByCents(null);
 showMode("warmup");
 
@@ -2469,83 +2410,6 @@ warmupToneSelect.addEventListener("change", () => {
 warmupScaleTypeSelect.addEventListener("change", () => {
   clearWarmupSelection();
   buildWarmupData();
-});
-
-lyricsData.forEach((kitaData) => {
-  const kitaDiv = document.createElement("div");
-  kitaDiv.className = "kita";
-
-  kitaData.forEach((satirData) => {
-    const satirDiv = document.createElement("div");
-    satirDiv.className = "satir";
-
-    const satirPlayBtn = document.createElement("button");
-    satirPlayBtn.className = "satir-play";
-    satirPlayBtn.type = "button";
-    satirPlayBtn.textContent = "▶";
-
-    const satirText = document.createElement("div");
-    satirText.className = "satir-text";
-
-    let satirFirstId = null;
-    let satirLastId = null;
-
-    satirData.forEach((word, wordIndex) => {
-      word.forEach((hece) => {
-        const span = document.createElement("span");
-        span.className = "hece";
-        span.textContent = hece;
-
-        const currentId = heceCounter;
-        span.dataset.id = currentId;
-
-        if (satirFirstId === null) satirFirstId = currentId;
-        satirLastId = currentId;
-
-        span.addEventListener("pointerdown", (e) => {
-          e.stopPropagation();
-          pointerDown = true;
-          longPressTimerBaslat(currentId);
-        });
-
-        span.addEventListener("pointerup", async (e) => {
-          e.stopPropagation();
-          pointerDown = false;
-          temizleLongPressTimer();
-
-          if (selectionMode) {
-            const minId = Math.min(selectionStartId, selectionEndId);
-            const maxId = Math.max(selectionStartId, selectionEndId);
-            await seciliAralikCal(minId, maxId);
-            secimTemizle();
-          } else {
-            await heceCal(span, currentId);
-          }
-        });
-
-        span.addEventListener("pointercancel", () => {
-          pointerDown = false;
-          temizleLongPressTimer();
-        });
-
-        satirText.appendChild(span);
-        heceCounter++;
-      });
-
-      if (wordIndex < satirData.length - 1) satirText.appendChild(document.createTextNode(" "));
-    });
-
-    satirPlayBtn.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      await satirCal(satirDiv, satirFirstId, satirLastId);
-    });
-
-    satirDiv.appendChild(satirPlayBtn);
-    satirDiv.appendChild(satirText);
-    kitaDiv.appendChild(satirDiv);
-  });
-
-  container.appendChild(kitaDiv);
 });
 
 document.addEventListener("pointermove", (e) => {
