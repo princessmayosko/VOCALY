@@ -1,2511 +1,2644 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Vocaly - Eser Çalışma</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VOCALY</title>
+<script src="https://unpkg.com/wavesurfer.js@6"></script>
 <style>
 :root{
-  --text:#111827;
-  --blue:#6d28d9;
-  --blue-soft:rgba(109,40,217,0.14);
-  --green:#1f8a70;
-  --green-soft:rgba(31,138,112,0.14);
-  --red:#dc2626;
+  --bg:#0b1020;
+  --bg2:#0f172a;
+  --panel:#121a31;
+  --panel2:#17213f;
+  --card:#1b2747;
+  --line:#2a3762;
+  --text:#eef4ff;
+  --muted:#9fb0d8;
+  --yellow:#facc15;
+  --yellow-soft:rgba(250,204,21,.16);
+  --purple:#8b5cf6;
+  --purple-soft:rgba(139,92,246,.16);
+  --aqua:#67e8f9;
+  --aqua-soft:rgba(103,232,249,.18);
+  --green:#22c55e;
+  --green-soft:rgba(34,197,94,.16);
+  --red:#ef4444;
+  --red-soft:rgba(239,68,68,.16);
   --amber:#f59e0b;
-  --shadow:0 12px 30px rgba(0,0,0,0.10);
-  --panel:rgba(255,255,255,0.88);
-  --line:#d1d5db;
-  --purple:#6d28d9;
-  --purple-dark:#4c1d95;
-  --petrol:#1f8a70;
-  --petrol-dark:#145c4a;
-  --safe-top:env(safe-area-inset-top, 0px);
-  --safe-right:env(safe-area-inset-right, 0px);
-  --safe-bottom:env(safe-area-inset-bottom, 0px);
-  --safe-left:env(safe-area-inset-left, 0px);
+  --amber-soft:rgba(245,158,11,.16);
+  --shadow:0 14px 38px rgba(0,0,0,.28);
+  --radius:22px;
 }
-*{ box-sizing:border-box; }
-html{
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
-body{
-  font-family: Arial, sans-serif;
-  padding:calc(18px + var(--safe-top)) calc(16px + var(--safe-right)) calc(36px + var(--safe-bottom)) calc(16px + var(--safe-left));
-  background:
-    radial-gradient(circle at top left, rgba(109,40,217,0.16) 0, rgba(109,40,217,0.08) 20%, transparent 42%),
-    radial-gradient(circle at bottom right, rgba(31,138,112,0.18) 0, rgba(31,138,112,0.07) 22%, transparent 44%),
-    linear-gradient(180deg,#f8fafc 0%, #f5f3ff 42%, #ecfeff 100%);
-  text-align:center;
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;
+  font-family:Arial,sans-serif;
   color:var(--text);
-  margin:0;
-  min-height:100svh;
-  overflow-x:hidden;
-  overscroll-behavior-y:contain;
-  position:relative;
+  background:
+    radial-gradient(circle at top left, rgba(103,232,249,.10), transparent 30%),
+    radial-gradient(circle at top right, rgba(139,92,246,.10), transparent 30%),
+    linear-gradient(180deg,#08101f 0%, #0b1224 100%);
 }
-body::before,
-body::after{
-  content:"";
-  position:fixed;
-  pointer-events:none;
-  border-radius:34px;
-  z-index:0;
-  opacity:.8;
+body{padding:16px}
+.wrap{max-width:1450px;margin:0 auto}
+.pageBrand{
+  display:flex;align-items:center;gap:14px;margin:0 0 16px 2px;
 }
-body::before{
-  top:40px;
-  right:-90px;
-  width:320px;
-  height:320px;
-  border:2px solid rgba(109,40,217,0.12);
-  background:linear-gradient(135deg, rgba(109,40,217,0.05), rgba(31,138,112,0.03));
-  transform:rotate(12deg);
+.pageLogo{
+  width:54px;height:54px;border-radius:16px;
+  background:linear-gradient(180deg,#fde047,#facc15);
+  box-shadow:0 10px 24px rgba(250,204,21,.25);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
 }
-body::after{
-  left:-110px;
-  bottom:36px;
-  width:360px;
-  height:360px;
-  border:2px solid rgba(31,138,112,0.12);
-  background:linear-gradient(135deg, rgba(31,138,112,0.05), rgba(109,40,217,0.03));
-  transform:rotate(-10deg);
+.pageLogo:before{
+  content:"";width:22px;height:22px;border-radius:999px 999px 999px 3px;
+  background:#fff8db;transform:rotate(-35deg);display:block;
 }
-h1{
-  font-size:34px;
-  margin:12px 0 16px;
-  letter-spacing:0.4px;
-  position:relative;
-  z-index:1;
-}
-h2{
-  font-size:26px;
-  margin:14px 0 14px;
-}
-h3{
-  font-size:18px;
-  margin:6px 0 10px;
-}
-#vocaly{
-  position:fixed;
-  top:calc(12px + var(--safe-top));
-  right:calc(14px + var(--safe-right));
-  font-size:20px;
-  color:#b7791f;
-  font-weight:bold;
-  z-index:60;
-  text-shadow:0 1px 0 rgba(255,255,255,0.8);
-  pointer-events:none;
-}
-
-/* INTRO */
-#introWrap{
-  max-width:1040px;
-  margin:0 auto 14px;
-  position:relative;
-  z-index:1;
-}
-#introCard{
-  background:rgba(255,255,255,0.90);
-  border:1px solid rgba(255,255,255,0.9);
+.pageBrandTitle{font-size:30px;font-weight:800;letter-spacing:.4px;color:#fef3c7}
+.pageBrandSub{margin-top:4px;font-size:14px;color:var(--muted)}
+.shell{
+  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:28px;
+  overflow:hidden;
   box-shadow:var(--shadow);
+}
+.tabs{
+  display:flex;gap:8px;flex-wrap:wrap;
+  padding:12px;background:rgba(255,255,255,.03);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.tab{
+  padding:10px 16px;border-radius:14px;cursor:pointer;
+  background:#16213c;color:#dce8ff;border:1px solid rgba(255,255,255,.08);
+  font-weight:800;user-select:none;
+}
+.tab.active{background:linear-gradient(180deg,#ffd95f,#facc15);color:#2c2100}
+.view{display:none;padding:16px}
+.view.active{display:block}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.07);
   border-radius:24px;
-  padding:18px 18px 16px;
-  text-align:left;
-  position:relative;
-  overflow:hidden;
+  padding:18px;margin-bottom:16px;box-shadow:var(--shadow);
+}
+.sectionTop{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+}
+h2,h3,h4{margin:0 0 10px}
+.sub{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.toolbar{
+  display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:end;margin-top:14px;
+}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:700;color:#dbe6ff}
+.g12{grid-column:span 12}.g9{grid-column:span 9}.g6{grid-column:span 6}.g4{grid-column:span 4}.g3{grid-column:span 3}.g2{grid-column:span 2}
+input,select,textarea{
+  width:100%;padding:11px 12px;border-radius:14px;border:1px solid #334267;
+  font-size:14px;background:#0f1830;color:#edf4ff;
+}
+textarea{resize:vertical;min-height:120px;line-height:1.5}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#a78bfa;box-shadow:0 0 0 4px rgba(139,92,246,.12)}
+button{
+  padding:10px 14px;border-radius:14px;border:none;cursor:pointer;font-weight:800;min-height:42px;
+}
+button:disabled{opacity:.6;cursor:not-allowed}
+.btn-purple{background:linear-gradient(180deg,#9b6bff,#7c3aed);color:#fff}
+.btn-aqua{background:#0f2a36;color:#baf7ff;border:1px solid #1b5266}
+.btn-soft{background:#13203d;color:#dce8ff;border:1px solid #304264}
+.btn-red{background:#311319;color:#ffc7cf;border:1px solid #6c2430}
+.btn-amber{background:#33220b;color:#ffd8a1;border:1px solid #6f4b16}
+.btn-yellow{background:#332b06;color:#ffe58a;border:1px solid #7a6510}
+.status{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.pill{
+  padding:8px 12px;border-radius:999px;font-size:13px;font-weight:800;
+  border:1px solid rgba(255,255,255,.07);background:#101a31;color:#d9e7ff;
+}
+.pill.purple{background:var(--purple-soft);color:#eadcff;border-color:rgba(139,92,246,.35)}
+.pill.aqua{background:var(--aqua-soft);color:#c4f7ff;border-color:rgba(103,232,249,.35)}
+.pill.green{background:var(--green-soft);color:#d4ffe0;border-color:rgba(34,197,94,.35)}
+.pill.red{background:var(--red-soft);color:#ffd8dc;border-color:rgba(239,68,68,.35)}
+.pill.amber{background:var(--amber-soft);color:#ffe3bd;border-color:rgba(245,158,11,.35)}
+.hidden{display:none !important}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px}
+.gridLib{display:grid;grid-template-columns:350px minmax(0,1fr);gap:16px}
+.list{
+  display:flex;flex-direction:column;gap:10px;max-height:560px;overflow:auto;padding-right:4px;
+}
+.songItem{
+  padding:12px;border-radius:16px;background:#111b33;border:1px solid rgba(255,255,255,.07);cursor:pointer;
+}
+.songItem.active{border-color:rgba(250,204,21,.35);background:#19284d}
+.songTitle{font-weight:800}.songSub{font-size:13px;color:var(--muted);margin-top:4px}
+.previewSegments,.karaokeWrap{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;
+  line-height:2;margin-top:16px;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;
+  padding:14px;max-height:320px;border:1px dashed #2d3d65;border-radius:18px;background:#0d162c;touch-action:none;
+}
+.karaokeBox,.miniChip{
+  position:relative;overflow:hidden;min-width:78px;padding:12px 14px;border-radius:14px;
+  background:#1c2a4f;border:1px solid #2f4475;font-weight:700;cursor:pointer;user-select:none;transition:.15s ease;flex:0 0 auto;
+}
+.karaokeBox .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(139,92,246,.18);pointer-events:none;transition:width .05s linear}
+.karaokeBox .label{position:relative;z-index:1}
+.karaokeBox.active{border-color:#c4b5fd;box-shadow:0 0 0 4px rgba(139,92,246,.12);transform:scale(1.05)}
+.karaokeBox.ok{background:var(--green-soft);border-color:rgba(34,197,94,.4);color:#d5ffe4}
+.karaokeBox.bad{background:var(--red-soft);border-color:rgba(239,68,68,.4);color:#ffdbe0}
+.karaokeBox.intro{background:#342d0d;border-color:#7f6b13;color:#ffe18d}
+.karaokeBox.selected{box-shadow:0 0 0 4px rgba(37,99,235,.16);border-color:#60a5fa}
+.lineBreak{flex-basis:100%;height:0;width:0}
+.hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.55}
+#waveArea{
+  position:relative;margin-top:16px;border:1px solid #2b3d69;border-radius:18px;background:#0f1830;overflow:hidden;
+}
+#waveform{
+  position:relative;z-index:1;width:100%;height:320px;overflow-x:auto !important;overflow-y:hidden !important;cursor:grab;
+}
+#waveform:active{cursor:grabbing}
+#waveform > wave{overflow-x:auto !important;overflow-y:hidden !important}
+#overlayViewport{
+  position:absolute;top:0;left:0;right:0;height:112px;overflow:hidden;z-index:8;pointer-events:none;
+  background:linear-gradient(180deg, rgba(10,17,33,.96) 0%, rgba(10,17,33,.90) 68%, rgba(10,17,33,0) 100%);
+}
+#overlayContent{position:absolute;left:0;top:0;height:112px}
+#ruler{
+  position:absolute;left:0;top:0;height:40px;border-bottom:1px solid #24355a;
+  background:linear-gradient(180deg,rgba(13,22,44,.98) 0%, rgba(13,22,44,.92) 100%);pointer-events:auto;
+}
+.ruler-tick{position:absolute;bottom:0;width:1px;background:#4a5f8e}
+.ruler-tick.major{height:28px;background:#9fb0d8}
+.ruler-tick.medium{height:18px;background:#6f84b4}
+.ruler-tick.minor{height:10px;background:#43577f}
+.ruler-label{
+  position:absolute;top:4px;transform:translateX(-50%);font-size:11px;color:#dce8ff;white-space:nowrap;font-weight:700;
+}
+#segmentStrip{position:absolute;left:0;top:40px;height:54px;pointer-events:auto}
+.strip-block{
+  position:absolute;top:8px;height:34px;border-radius:10px;background:#1c2b52;border:1px solid #3c57a1;
+  box-shadow:0 4px 12px rgba(0,0,0,.18);color:#e8efff;min-width:34px;overflow:hidden;touch-action:none;
+}
+.strip-block.intro{background:#3a3011;border-color:#8f7614;color:#ffe18a}
+.strip-block.active{box-shadow:0 0 0 4px rgba(139,92,246,.12);border-color:#bba6ff}
+.strip-block .body{
+  position:absolute;left:8px;right:8px;top:50%;transform:translateY(-50%);
+  font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
 }
-#introCard::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(120deg, rgba(109,40,217,0.05), transparent 30%),
-    linear-gradient(300deg, rgba(31,138,112,0.05), transparent 32%);
+.strip-block .handle{position:absolute;top:0;bottom:0;width:12px;z-index:2}
+.strip-block .handle.left{left:0;cursor:ew-resize}
+.strip-block .handle.right{right:0;cursor:ew-resize}
+.strip-block .drag{position:absolute;left:12px;right:12px;top:0;bottom:0;cursor:grab}
+#stripCursor{position:absolute;top:0;bottom:0;width:2px;background:#facc15;opacity:.95;pointer-events:none;z-index:20}
+.libraryHero{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
 }
-#introTitle{
-  font-size:22px;
-  font-weight:800;
-  margin:0 0 8px;
-  position:relative;
-  z-index:1;
+.heroBox{
+  min-height:220px;display:flex;flex-direction:column;justify-content:space-between;
 }
-#introText{
-  font-size:14px;
-  line-height:1.6;
-  color:#374151;
-  margin:0 0 14px;
-  position:relative;
-  z-index:1;
+.tunerWrap{
+  background:#0f1830;border:1px solid #2c3a62;border-radius:18px;padding:14px;
 }
-#stepCards{
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
-  gap:12px;
-  position:relative;
-  z-index:1;
+.tunerBar{
+  position:relative;height:22px;border-radius:999px;background:#0a1122;overflow:hidden;border:1px solid #273556;
 }
-.step-card{
-  background:rgba(255,255,255,0.92);
-  border:1px solid rgba(17,24,39,0.06);
-  border-radius:18px;
-  padding:14px 14px 12px;
-  box-shadow:0 8px 22px rgba(0,0,0,0.06);
+.tunerCenter{
+  position:absolute;left:50%;top:0;bottom:0;width:4px;background:#facc15;transform:translateX(-50%);
 }
-.step-no{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:28px;
-  height:28px;
-  border-radius:999px;
-  background:linear-gradient(135deg, var(--purple), var(--petrol));
-  color:white;
-  font-size:13px;
-  font-weight:800;
-  margin-bottom:8px;
+.tunerNeedle{
+  position:absolute;top:0;bottom:0;width:8px;background:#22c55e;border-radius:999px;left:50%;transform:translateX(-50%);
+  transition:left .05s linear;
 }
-.step-title{
-  font-size:16px;
-  font-weight:800;
-  margin-bottom:6px;
-  color:#111827;
+.bigNote{
+  font-size:44px;font-weight:900;letter-spacing:.5px;
 }
-.step-desc{
-  font-size:13px;
-  color:#4b5563;
-  line-height:1.5;
+.smallMuted{font-size:13px;color:var(--muted)}
+.warmupGrid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
 }
-
-/* TOP MENU */
-#topMenu{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:0 auto 12px;
-  max-width:1100px;
-  position:relative;
-  z-index:30;
+.exerciseCard{
+  background:#10192f;border:1px solid #26385f;border-radius:18px;padding:14px;
 }
-.mode-btn,
-.mode-link{
-  border:none;
-  background:rgba(255,255,255,0.95);
-  color:#1f2937;
-  padding:10px 15px;
-  border-radius:14px;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:700;
-  box-shadow:var(--shadow);
-  transition:transform 0.15s ease, background 0.15s ease, color 0.15s ease;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:42px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-  border:1px solid rgba(17,24,39,0.06);
+.measureGrid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
 }
-.mode-btn:hover,
-.mode-link:hover{
-  transform:translateY(-1px) scale(1.02);
+.scoreBox{
+  font-size:44px;font-weight:900;color:#ffe8a3;
 }
-.mode-btn.active{
-  background:linear-gradient(135deg, var(--purple), var(--petrol));
-  color:white;
+kbd{
+  background:#13203d;border:1px solid #32466f;border-radius:8px;padding:2px 8px;font-size:12px;color:#e7efff
 }
-#songMode,
-#warmupMode{
-  width:100%;
-  position:relative;
-  z-index:1;
+@media (max-width:1100px){
+  .grid2,.gridLib,.libraryHero,.measureGrid,.warmupGrid{grid-template-columns:1fr}
 }
-
-/* GLOBAL TUNER */
-#globalTop{
-  max-width:980px;
-  margin:0 auto 14px;
-  position:relative;
-  z-index:1;
-}
-#tunerCard{
-  position:relative;
-  background:var(--panel);
-  border:1px solid rgba(255,255,255,0.9);
-  box-shadow:var(--shadow);
-  border-radius:22px;
-  padding:12px 14px 12px;
-  backdrop-filter:blur(8px);
-  overflow:hidden;
-}
-#tunerCard::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(120deg, rgba(109,40,217,0.06), transparent 30%),
-    linear-gradient(300deg, rgba(31,138,112,0.06), transparent 32%);
-}
-#tunerTopBar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:8px;
-  position:relative;
-  z-index:1;
-}
-#targetMini{
-  min-height:22px;
-  font-size:16px;
-  font-weight:700;
-  color:#1f2937;
-  letter-spacing:0.1px;
-  text-align:left;
-  flex:1 1 auto;
-  min-width:0;
-}
-#targetMini .dot{
-  opacity:0.45;
-  margin:0 6px;
-}
-#miniPlayerArea{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex:0 0 auto;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-#tunerMiniBtn{
-  border:none;
-  background:linear-gradient(135deg, var(--petrol), var(--petrol-dark));
-  color:white;
-  padding:8px 12px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:12px;
-  font-weight:700;
-  box-shadow:0 6px 16px rgba(31,138,112,0.16);
-  transition:transform 0.15s ease, background 0.15s ease;
-  min-height:38px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-#tunerMiniBtn:hover{ transform:translateY(-1px); }
-#song{
-  width:190px;
-  height:32px;
-  max-width:100%;
-}
-#tunerSwitchRow{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  font-size:13px;
-  font-weight:700;
-  color:#374151;
-  flex:0 0 auto;
-}
-.switch{
-  position:relative;
-  width:50px;
-  height:28px;
-  display:inline-block;
-}
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
-.slider{
-  position:absolute;
-  inset:0;
-  background:#cbd5e1;
-  border-radius:999px;
-  cursor:pointer;
-  transition:0.2s;
-}
-.slider:before{
-  content:"";
-  position:absolute;
-  width:22px;
-  height:22px;
-  left:3px;
-  top:3px;
-  border-radius:50%;
-  background:white;
-  transition:0.2s;
-  box-shadow:0 1px 4px rgba(0,0,0,0.15);
-}
-.switch input:checked + .slider{
-  background:linear-gradient(135deg, var(--purple), var(--petrol));
-}
-.switch input:checked + .slider:before{
-  transform:translateX(22px);
-}
-#tunerRulerWrap{
-  position:relative;
-  padding:2px 2px 0;
-  z-index:1;
-}
-#tunerScaleTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:11px;
-  color:#6b7280;
-  margin-bottom:4px;
-  padding:0 2px;
-}
-#tunerScaleTop .mid{
-  color:#374151;
-  font-weight:700;
-}
-#tunerRuler{
-  position:relative;
-  height:44px;
-  border-radius:14px;
-  background:linear-gradient(180deg,rgba(248,250,252,1) 0%, rgba(241,245,249,1) 100%);
-  overflow:hidden;
-  border:1px solid rgba(17,24,39,0.06);
-}
-#targetZone{
-  position:absolute;
-  left:50%;
-  top:8px;
-  width:58px;
-  height:28px;
-  transform:translateX(-50%);
-  border-radius:10px;
-  background:linear-gradient(90deg, rgba(109,40,217,0.12), rgba(31,138,112,0.16));
-  border:1px solid rgba(31,138,112,0.22);
-  z-index:1;
-}
-#centerMark{
-  position:absolute;
-  left:50%;
-  top:6px;
-  transform:translateX(-50%);
-  width:2px;
-  height:32px;
-  background:var(--green);
-  border-radius:999px;
-  z-index:2;
-}
-#plusText{
-  position:absolute;
-  left:50%;
-  top:10px;
-  transform:translateX(-50%);
-  font-size:13px;
-  font-weight:700;
-  color:#166534;
-  z-index:3;
-}
-#tickLayer{
-  position:absolute;
-  inset:0;
-  z-index:1;
-}
-.tuner-tick{
-  position:absolute;
-  bottom:8px;
-  width:2px;
-  background:#9ca3af;
-  border-radius:999px;
-  transform:translateX(-50%);
-  opacity:0.75;
-}
-.tuner-tick.major{ height:18px; }
-.tuner-tick.minor{ height:10px; }
-#pitchDot{
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:14px;
-  height:14px;
-  border-radius:50%;
-  background:#94a3b8;
-  transform:translate(-50%, -50%);
-  z-index:4;
-  box-shadow:none;
-  transition:left 0.10s linear, background 0.10s linear, box-shadow 0.10s linear;
-}
-#pitchDot.correct{
-  background:var(--green);
-  box-shadow:0 0 0 6px rgba(31,138,112,0.16), 0 0 12px rgba(31,138,112,0.35);
-}
-#pitchDot.wrong{ background:var(--red); }
-#pitchDot.waiting{ background:#94a3b8; }
-#tunerInfo{
-  min-height:18px;
-  margin-top:6px;
-  font-size:12px;
-  color:#4b5563;
-  line-height:1.3;
-  position:relative;
-  z-index:1;
-}
-#tunerFlash{
-  position:absolute;
-  right:14px;
-  bottom:10px;
-  font-size:13px;
-  font-weight:700;
-  color:var(--green);
-  opacity:0;
-  transform:translateY(4px);
-  transition:opacity 0.18s ease, transform 0.18s ease;
-  pointer-events:none;
-  z-index:1;
-}
-#tunerFlash.show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* SECTION HEAD */
-.section-head{
-  max-width:980px;
-  margin:0 auto 14px;
-  background:rgba(255,255,255,0.85);
-  border:1px solid rgba(255,255,255,0.9);
-  box-shadow:var(--shadow);
-  border-radius:22px;
-  padding:16px 18px 14px;
-  text-align:left;
-  position:relative;
-  overflow:hidden;
-}
-.section-head::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(120deg, rgba(109,40,217,0.04), transparent 30%),
-    linear-gradient(300deg, rgba(31,138,112,0.04), transparent 32%);
-}
-.section-step{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-width:34px;
-  height:34px;
-  padding:0 12px;
-  border-radius:999px;
-  background:linear-gradient(135deg, var(--purple), var(--petrol));
-  color:#fff;
-  font-size:13px;
-  font-weight:800;
-  margin-bottom:10px;
-  position:relative;
-  z-index:1;
-}
-.section-title{
-  font-size:28px;
-  font-weight:800;
-  margin:0 0 8px;
-  position:relative;
-  z-index:1;
-}
-.section-desc{
-  font-size:14px;
-  line-height:1.6;
-  color:#4b5563;
-  position:relative;
-  z-index:1;
-}
-
-/* AUDIO + SONG */
-#audio-wrap{
-  background:rgba(255,255,255,0.86);
-  border:1px solid rgba(255,255,255,0.9);
-  box-shadow:var(--shadow);
-  border-radius:24px;
-  padding:12px 16px 12px;
-  margin:0 auto 16px;
-  max-width:960px;
-  position:relative;
-  overflow:hidden;
-}
-#audio-wrap::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(120deg, rgba(109,40,217,0.05), transparent 30%),
-    linear-gradient(300deg, rgba(31,138,112,0.05), transparent 32%);
-}
-.controls{
-  margin-top:8px;
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
-  position:relative;
-  z-index:1;
-}
-#stopBtn{
-  border:none;
-  color:white;
-  padding:9px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:13px;
-  font-weight:bold;
-  transition:transform 0.15s ease, background 0.15s ease;
-  box-shadow:0 6px 16px rgba(0,0,0,0.12);
-  background:linear-gradient(135deg, #dc2626, #991b1b);
-  min-height:40px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-#stopBtn:hover{ transform:translateY(-1px); }
-
-#lyrics{
-  font-size:24px;
-  line-height:1.9;
-  text-align:left;
-  display:block;
-  width:min(100%, 980px);
-  max-width:980px;
-  margin:0 auto;
-  user-select:none;
-  -webkit-user-select:none;
-  -webkit-touch-callout:none;
-  touch-action:pan-y pinch-zoom;
-  background:rgba(255,255,255,0.86);
-  border:1px solid rgba(255,255,255,0.9);
-  box-shadow:var(--shadow);
-  border-radius:24px;
-  padding:18px 18px;
-  overflow-x:hidden;
-  position:relative;
-}
-#lyrics::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  border-radius:24px;
-  background:
-    linear-gradient(120deg, rgba(109,40,217,0.04), transparent 30%),
-    linear-gradient(300deg, rgba(31,138,112,0.04), transparent 32%);
-}
-.kita{ margin-bottom:22px; position:relative; z-index:1; }
-.kita:last-child{ margin-bottom:0; }
-.satir{
-  white-space:nowrap;
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-  margin-bottom:6px;
-  padding:4px 6px;
-  border-radius:14px;
-  transition:background 0.15s ease;
-}
-.satir.active-satir{
-  background:rgba(109,40,217,0.06);
-}
-.satir-text{
-  display:inline-block;
-  flex:1;
-  min-width:0;
-}
-.satir-play{
-  width:32px;
-  height:32px;
-  border:none;
-  border-radius:999px;
-  cursor:pointer;
-  background:#eef2f7;
-  color:#111827;
-  font-size:13px;
-  font-weight:bold;
-  flex:0 0 auto;
-  margin-top:4px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
-  transition:transform 0.15s ease, background 0.15s ease;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-.satir-play:hover{
-  background:#e9ddff;
-  transform:scale(1.05);
-}
-.hece{
-  display:inline-block;
-  cursor:pointer;
-  transition:transform 0.15s ease, color 0.15s ease, background 0.15s ease, outline 0.15s ease, box-shadow 0.15s ease;
-  transform-origin:center bottom;
-  border-radius:8px;
-  padding:0 2px;
-  -webkit-tap-highlight-color:transparent;
-}
-.hece:hover{
-  transform:scale(1.14);
-  color:var(--blue);
-}
-.hece.active{
-  transform:scale(1.14);
-  color:var(--blue);
-}
-.hece.selected{
-  background:var(--blue-soft);
-  color:#5b21b6;
-}
-.hece.target-hece{
-  outline:2px solid var(--amber);
-  outline-offset:1px;
-  border-radius:8px;
-}
-.hece.tune-correct{
-  color:var(--green) !important;
-  transform:scale(1.18) !important;
-  font-weight:bold;
-}
-.hece.tune-wrong{
-  color:var(--red) !important;
-}
-.satir.active-satir .hece{
-  color:#5b21b6;
-}
-#status{
-  margin-top:10px;
-  font-size:13px;
-  color:#4b5563;
-  position:relative;
-  z-index:1;
-}
-.tip{
-  margin-top:6px;
-  font-size:12px;
-  color:#6b7280;
-  position:relative;
-  z-index:1;
-}
-
-/* WARMUP */
-#warmupWrap{
-  max-width:1050px;
-  margin:0 auto;
-  background:rgba(255,255,255,0.86);
-  border:1px solid rgba(255,255,255,0.9);
-  box-shadow:var(--shadow);
-  border-radius:24px;
-  padding:16px 16px 16px;
-  position:relative;
-  overflow:hidden;
-}
-#warmupWrap::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(120deg, rgba(109,40,217,0.05), transparent 30%),
-    linear-gradient(300deg, rgba(31,138,112,0.05), transparent 32%);
-}
-.warmup-intro{
-  font-size:13px;
-  color:#4b5563;
-  margin-bottom:8px;
-  position:relative;
-  z-index:1;
-}
-.warmup-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:8px 12px;
-  border-radius:999px;
-  background:rgba(109,40,217,0.10);
-  color:#5b21b6;
-  font-size:12px;
-  font-weight:800;
-  margin-bottom:10px;
-  position:relative;
-  z-index:1;
-}
-.warmup-toolbar{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:8px 0 14px;
-  position:relative;
-  z-index:1;
-}
-.warmup-select{
-  border:1px solid #d8dbe2;
-  background:#fff;
-  color:#111827;
-  padding:9px 12px;
-  border-radius:12px;
-  font-size:13px;
-  font-weight:700;
-  min-width:170px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.05);
-  min-height:42px;
-}
-.warmup-controls{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:8px 0 16px;
-  position:relative;
-  z-index:1;
-}
-.warmup-btn{
-  border:none;
-  background:linear-gradient(135deg, var(--petrol), var(--petrol-dark));
-  color:white;
-  padding:9px 13px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:13px;
-  font-weight:bold;
-  box-shadow:0 6px 16px rgba(0,0,0,0.12);
-  transition:transform 0.15s ease, background 0.15s ease;
-  min-height:40px;
-  -webkit-tap-highlight-color:transparent;
-  touch-action:manipulation;
-}
-.warmup-btn:hover{ transform:translateY(-1px); }
-.warmup-btn.secondary{
-  background:linear-gradient(135deg, var(--purple), var(--purple-dark));
-}
-.warmup-nav{
-  display:flex;
-  justify-content:center;
-  margin-top:14px;
-  position:relative;
-  z-index:1;
-}
-.next-step-btn{
-  border:none;
-  background:linear-gradient(135deg, var(--purple), var(--purple-dark));
-  color:white;
-  padding:11px 16px;
-  border-radius:14px;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:800;
-  box-shadow:0 8px 18px rgba(109,40,217,0.22);
-  min-height:44px;
-  transition:transform 0.15s ease;
-}
-.next-step-btn:hover{ transform:translateY(-1px); }
-.warmup-section{
-  text-align:left;
-  margin:0 auto 18px;
-  max-width:980px;
-  position:relative;
-  z-index:1;
-}
-.warmup-line{
-  line-height:2.0;
-  user-select:none;
-  -webkit-user-select:none;
-  -webkit-touch-callout:none;
-  touch-action:pan-y pinch-zoom;
-}
-.warmup-item{
-  display:inline-flex;
-  align-items:center;
-  gap:0;
-  cursor:pointer;
-  margin:2px 10px 6px 0;
-  padding:2px 4px;
-  border-radius:10px;
-  transition:transform 0.15s ease, background 0.15s ease, color 0.15s ease, outline 0.15s ease;
-  transform-origin:center bottom;
-  -webkit-tap-highlight-color:transparent;
-}
-.warmup-item:hover{
-  transform:scale(1.11);
-  color:var(--blue);
-}
-.warmup-item.active{
-  transform:scale(1.12);
-  color:var(--blue);
-}
-.warmup-item.selected{
-  background:var(--blue-soft);
-  color:#5b21b6;
-}
-.warmup-item.target{
-  outline:2px solid var(--amber);
-  outline-offset:1px;
-}
-.warmup-part{
-  display:inline-block;
-  padding:0 1px;
-  border-radius:8px;
-  transition:transform 0.15s ease, color 0.15s ease, background 0.15s ease, outline 0.15s ease;
-}
-.warmup-part.current{
-  outline:2px solid var(--amber);
-  outline-offset:1px;
-  transform:scale(1.10);
-}
-.warmup-part.correct{
-  color:var(--green);
-  font-weight:bold;
-  transform:scale(1.14);
-}
-.warmup-part.wrong{
-  color:var(--red);
-}
-.warmup-sep{
-  display:inline-block;
-  padding:0 2px;
-}
-#warmupStatus{
-  margin-top:8px;
-  font-size:13px;
-  color:#4b5563;
-  position:relative;
-  z-index:1;
-}
-@media (max-width: 1000px){
-  #stepCards{
-    grid-template-columns:repeat(2, minmax(0,1fr));
-  }
-}
-@media (max-width: 900px){
-  #tunerTopBar{
-    flex-direction:column;
-    align-items:stretch;
-    gap:10px;
-  }
-  #targetMini{ text-align:center; }
-  #miniPlayerArea{ justify-content:center; }
-}
-@media (max-width: 768px){
-  body{ padding:calc(14px + var(--safe-top)) calc(10px + var(--safe-right)) calc(28px + var(--safe-bottom)) calc(10px + var(--safe-left)); }
-  h1{
-    font-size:26px;
-    margin-top:44px;
-  }
-  h2{ font-size:22px; }
-  h3{ font-size:17px; }
-  #vocaly{
-    top:calc(10px + var(--safe-top));
-    right:calc(12px + var(--safe-right));
-    font-size:17px;
-  }
-  #miniPlayerArea{
-    flex-direction:column;
-    align-items:stretch;
-    width:100%;
-  }
-  #song{
-    width:100%;
-    height:40px;
-  }
-  #tunerMiniBtn{ width:100%; }
-  #tunerSwitchRow{
-    justify-content:space-between;
-    width:100%;
-  }
-  #lyrics{
-    font-size:19px;
-    line-height:1.8;
-    width:100%;
-    padding:14px 12px;
-  }
-  .satir{
-    white-space:normal;
-    gap:8px;
-    align-items:flex-start;
-  }
-  .satir-text{
-    white-space:normal;
-    overflow-wrap:anywhere;
-    word-break:normal;
-  }
-  .satir-play{
-    width:30px;
-    height:30px;
-    margin-top:2px;
-  }
-  .warmup-item{
-    font-size:20px;
-    margin:2px 8px 6px 0;
-  }
-  .warmup-select{
-    min-width:150px;
-    width:100%;
-    max-width:320px;
-  }
-  .section-title{ font-size:24px; }
-  #introTitle{ font-size:20px; }
-}
-@media (max-width: 640px){
-  #stepCards{ grid-template-columns:1fr; }
-}
-@media (max-width: 480px){
-  #topMenu{ gap:8px; }
-  .mode-btn,
-  .mode-link{ width:100%; }
-  #tunerCard,
-  #audio-wrap,
-  #warmupWrap,
-  #lyrics,
-  #introCard,
-  .section-head{
-    border-radius:18px;
-  }
-  #tunerScaleTop{ font-size:10px; }
-  #targetMini{ font-size:14px; }
+@media (max-width:900px){
+  body{padding:10px}
+  .g9,.g6,.g4,.g3,.g2{grid-column:span 12}
+  #waveform{height:240px}
+  #overlayViewport{height:104px}
 }
 </style>
 </head>
 <body>
-
-<div id="vocaly">Vocaly</div>
-
-<div id="introWrap">
-  <div id="introCard">
-    <div id="introTitle">Nasıl kullanılır?</div>
-    <div id="introText">
-      Bu çalışma 4 adımdan oluşur. Önce sesini hazırla, sonra eseri hece hece çalış, ardından kendini ölç, istersen öğretmen editöründen içerik düzenle.
-      Amaç kusursuz olmak değil; doğru sese yaklaşarak güven kazanmaktır.
-    </div>
-
-    <div id="stepCards">
-      <div class="step-card">
-        <div class="step-no">1</div>
-        <div class="step-title">Vokal Isınma ve Hazırlık</div>
-        <div class="step-desc">Çalışmaya başlamadan önce sesini hazırla. Ton ve mod seçimi eserle uyumlu başlar.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-no">2</div>
-        <div class="step-title">Eser Çalışma</div>
-        <div class="step-desc">Hecelere tıkla, satırları dinle, seçili bölümleri tekrar et ve hedef notaya yaklaş.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-no">3</div>
-        <div class="step-title">Ölçme</div>
-        <div class="step-desc">Hazır olduğunda karaoke modunda kendini dene ve sonucu gör.</div>
-      </div>
-      <div class="step-card">
-        <div class="step-no">4</div>
-        <div class="step-title">Öğretmen Editörü</div>
-        <div class="step-desc">Ayrı sayfada hece, zaman ve nota eşleşmelerini düzenle, yeni içerik üret.</div>
-      </div>
+<div class="wrap">
+  <div class="pageBrand">
+    <div class="pageLogo"></div>
+    <div>
+      <div class="pageBrandTitle">VOCALY</div>
+      <div class="pageBrandSub">Kütüphane + Çalışma + Ölçme + Editör</div>
     </div>
   </div>
-</div>
 
-<div id="topMenu">
-  <button class="mode-btn active" id="warmupModeBtn" onclick="showMode('warmup')">1. Vokal Isınma ve Hazırlık</button>
-  <button class="mode-btn" id="songModeBtn" onclick="showMode('song')">2. Eser Çalışma</button>
-  <a class="mode-link" id="assessmentModeLink" href="./olcme.html">3. Ölçme / Karaoke Modu</a>
-  <a class="mode-link" href="./editor1.html">4. Öğretmen Editörü</a>
-  <a class="mode-link" href="./panel.html">Kütüphane</a>
-</div>
+  <div class="shell">
+    <div class="tabs">
+      <div class="tab active" data-view="libraryView">Kütüphane</div>
+      <div class="tab" data-view="practiceView">Çalışma</div>
+      <div class="tab" data-view="measureView">Ölçme</div>
+      <div class="tab" data-view="editorView">Editör</div>
+    </div>
 
-<div id="globalTop">
-  <div id="tunerCard">
-    <div id="tunerTopBar">
-      <div id="targetMini">Hedef seçilmedi</div>
+    <!-- LIBRARY -->
+    <section class="view active" id="libraryView">
+      <div class="gridLib">
+        <div class="card">
+          <div class="sectionTop">
+            <div>
+              <h2>Kütüphane</h2>
+              <p class="sub">Kayıtlı eserler. İstersen JSON’dan tek eser ekle, istersen editörden kaydet.</p>
+            </div>
+          </div>
+          <div class="toolbar">
+            <div class="field g12">
+              <label for="librarySearch">Ara</label>
+              <input id="librarySearch" type="text" placeholder="Eser adı..." />
+            </div>
+            <div class="field g6">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="libraryImportBtn">JSON Eser Aç</button>
+              <input id="libraryImportInput" class="hidden" type="file" accept=".json,application/json">
+            </div>
+            <div class="field g6">
+              <label>&nbsp;</label>
+              <button class="btn-red" id="deleteSongBtn">Seçili Eseri Sil</button>
+            </div>
+          </div>
+          <div class="list" id="songList"></div>
+        </div>
 
-      <div id="miniPlayerArea">
-        <audio id="song" controls preload="auto" playsinline webkit-playsinline>
-          Tarayıcınız audio etiketini desteklemiyor.
-        </audio>
+        <div>
+          <div class="libraryHero">
+            <div class="card heroBox">
+              <div>
+                <h2 id="librarySongTitle">Boş</h2>
+                <p class="sub" id="librarySongDesc">Henüz eser seçili değil.</p>
+              </div>
+              <div class="status">
+                <div class="pill purple" id="librarySegCount">0 segment</div>
+                <div class="pill aqua" id="libraryAudioInfo">Audio: yok</div>
+                <div class="pill amber" id="libraryKeyInfo">Ton: -</div>
+              </div>
+            </div>
 
-        <button id="tunerMiniBtn" type="button">TUNER AÇ</button>
+            <div class="card heroBox">
+              <div>
+                <h3>Hızlı geçiş</h3>
+                <p class="sub">Seçili eseri çalışma, ölçme ya da editörde aç.</p>
+              </div>
+              <div class="row">
+                <button class="btn-purple" id="openPracticeBtn">Çalışmada Aç</button>
+                <button class="btn-aqua" id="openMeasureBtn">Ölçmede Aç</button>
+                <button class="btn-yellow" id="openEditorBtn">Editörde Aç</button>
+              </div>
+            </div>
+          </div>
 
-        <div id="tunerSwitchRow">
-          <span>Tuner</span>
-          <label class="switch">
-            <input type="checkbox" id="tunerSwitch">
-            <span class="slider"></span>
-          </label>
+          <div class="card">
+            <h3>Segment önizleme</h3>
+            <div class="previewSegments" id="librarySegments"></div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div id="tunerRulerWrap">
-      <div id="tunerScaleTop">
-        <span>PES</span>
-        <span class="mid">+</span>
-        <span>TİZ</span>
+    <!-- PRACTICE -->
+    <section class="view" id="practiceView">
+      <div class="measureGrid">
+        <div class="card">
+          <h2>Vokal Isınma</h2>
+          <p class="sub">Ton seç, çıkıcı / inici diziler, 2’li 3’lü 4’lü 5’li aralıklar ve 3 sesli motif çalış.</p>
+
+          <div class="toolbar">
+            <div class="field g4">
+              <label for="practiceKeySelect">Ton</label>
+              <select id="practiceKeySelect">
+                <option value="Do Majör">Do Majör</option>
+                <option value="Sol Majör" selected>Sol Majör</option>
+                <option value="Re Majör">Re Majör</option>
+                <option value="La Majör">La Majör</option>
+                <option value="Mi Majör">Mi Majör</option>
+                <option value="Fa Majör">Fa Majör</option>
+                <option value="Sib Majör">Sib Majör</option>
+                <option value="La Minör">La Minör</option>
+                <option value="Mi Minör">Mi Minör</option>
+                <option value="Si Minör">Si Minör</option>
+                <option value="Fa# Minör">Fa# Minör</option>
+                <option value="Re Minör">Re Minör</option>
+                <option value="Sol Minör">Sol Minör</option>
+              </select>
+            </div>
+            <div class="field g4">
+              <label>&nbsp;</label>
+              <button class="btn-purple" id="micBtnPractice">Tuner / Mikrofon Aç</button>
+            </div>
+            <div class="field g4">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="stopWarmupBtn">Sesleri Durdur</button>
+            </div>
+          </div>
+
+          <div class="tunerWrap" style="margin-top:12px">
+            <div class="row" style="justify-content:space-between">
+              <div class="bigNote" id="practiceDetectedNote">-</div>
+              <div>
+                <div class="smallMuted">Hedef</div>
+                <div style="font-weight:800;font-size:20px" id="practiceTargetNote">-</div>
+              </div>
+              <div>
+                <div class="smallMuted">Durum</div>
+                <div style="font-weight:800;font-size:18px" id="practiceTunerText">Hazır</div>
+              </div>
+            </div>
+            <div class="tunerBar" style="margin-top:12px">
+              <div class="tunerCenter"></div>
+              <div class="tunerNeedle" id="practiceTunerNeedle"></div>
+            </div>
+          </div>
+
+          <div class="warmupGrid" style="margin-top:14px">
+            <div class="exerciseCard">
+              <h4>Dizi</h4>
+              <div class="row">
+                <button class="btn-soft" id="ascendingScaleBtn">Çıkıcı</button>
+                <button class="btn-soft" id="descendingScaleBtn">İnici</button>
+              </div>
+            </div>
+            <div class="exerciseCard">
+              <h4>Aralıklar</h4>
+              <div class="row">
+                <button class="btn-soft intervalBtn" data-interval="2">2'li</button>
+                <button class="btn-soft intervalBtn" data-interval="3">3'lü</button>
+                <button class="btn-soft intervalBtn" data-interval="4">4'lü</button>
+                <button class="btn-soft intervalBtn" data-interval="5">5'li</button>
+              </div>
+            </div>
+            <div class="exerciseCard">
+              <h4>3 Sesli Motif</h4>
+              <div class="row">
+                <button class="btn-soft motifBtn" data-motif="up">1-2-3</button>
+                <button class="btn-soft motifBtn" data-motif="down">3-2-1</button>
+                <button class="btn-soft motifBtn" data-motif="wave">1-3-2</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Eser Çalışma</h2>
+          <p class="sub">Tek tıkla hece dinle. Mikrofon açıksa tuner de aynı panelde açık kalır.</p>
+          <div class="status">
+            <div class="pill purple" id="practiceSongTitle">Eser: -</div>
+            <div class="pill aqua" id="practiceSongMeta">Segment: 0</div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <button class="btn-purple" id="practicePlayAllBtn">Baştan Oynat</button>
+            <button class="btn-aqua" id="practiceStopBtn">Durdur</button>
+          </div>
+          <div id="practiceKaraoke" class="karaokeWrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEASURE -->
+    <section class="view" id="measureView">
+      <div class="measureGrid">
+        <div class="card">
+          <h2>Tuner Ölçme</h2>
+          <p class="sub">Hedef nota ile sesini karşılaştır. Merkeze yakınsa doğruya yaklaşır.</p>
+
+          <div class="toolbar">
+            <div class="field g4">
+              <label>&nbsp;</label>
+              <button class="btn-purple" id="micBtnMeasure">Mikrofon Aç</button>
+            </div>
+            <div class="field g4">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="measureResetBtn">Ölçmeyi Sıfırla</button>
+            </div>
+            <div class="field g4">
+              <label>&nbsp;</label>
+              <button class="btn-aqua" id="measureStartBtn">Eser Ölçmeyi Başlat</button>
+            </div>
+          </div>
+
+          <div class="tunerWrap" style="margin-top:12px">
+            <div class="row" style="justify-content:space-between">
+              <div class="bigNote" id="measureDetectedNote">-</div>
+              <div>
+                <div class="smallMuted">Hedef</div>
+                <div style="font-weight:800;font-size:20px" id="measureTargetNote">-</div>
+              </div>
+              <div>
+                <div class="smallMuted">Skor</div>
+                <div class="scoreBox" id="measureScore">0</div>
+              </div>
+            </div>
+            <div class="tunerBar" style="margin-top:12px">
+              <div class="tunerCenter"></div>
+              <div class="tunerNeedle" id="measureTunerNeedle"></div>
+            </div>
+            <div class="status" style="margin-top:12px">
+              <div class="pill amber" id="measureStatusText">Hazır</div>
+              <div class="pill green" id="measureAccuracyText">%0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Karaoke Ölçme</h2>
+          <p class="sub">Editördeki nota hedefleri varsa yeşil/kırmızı değerlendirme çalışır.</p>
+          <div class="row">
+            <button class="btn-purple" id="measurePreviewBtn">Önizlemeyi Oynat</button>
+            <button class="btn-aqua" id="measureStopPreviewBtn">Durdur</button>
+          </div>
+          <div id="measureKaraoke" class="karaokeWrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDITOR -->
+    <section class="view" id="editorView">
+      <div class="card">
+        <h2>Waveform & Kontroller</h2>
+        <p class="sub">Bu panel, senin v20.3 editör mantığını koruyarak tek uygulamaya yerleştirildi. JSON yapısı `heceler` temelli kalır. </p>
+
+        <div class="toolbar">
+          <div class="field g3">
+            <label for="titleInput">Eser Başlığı</label>
+            <input id="titleInput" type="text" placeholder="Eser başlığı">
+          </div>
+
+          <div class="field g3">
+            <label for="audioFile">MP3 Yükle</label>
+            <input id="audioFile" type="file" accept="audio/*">
+          </div>
+
+          <div class="field g2">
+            <label for="intro">Intro Süresi (sn)</label>
+            <input id="intro" type="number" step="0.01" min="0" value="0.00">
+          </div>
+
+          <div class="field g2">
+            <label for="difficultySelect">Zorluk</label>
+            <select id="difficultySelect">
+              <option value="çok kolay">Çok Kolay</option>
+              <option value="kolay">Kolay</option>
+              <option value="orta" selected>Orta</option>
+              <option value="zor">Zor</option>
+              <option value="çok zor">Çok Zor</option>
+            </select>
+          </div>
+
+          <div class="field g2">
+            <label for="keySelect">Ton</label>
+            <select id="keySelect">
+              <option value="Do Majör">Do Majör</option>
+              <option value="Sol Majör" selected>Sol Majör</option>
+              <option value="Re Majör">Re Majör</option>
+              <option value="La Majör">La Majör</option>
+              <option value="Mi Majör">Mi Majör</option>
+              <option value="Fa Majör">Fa Majör</option>
+              <option value="Sib Majör">Sib Majör</option>
+              <option value="La Minör">La Minör</option>
+              <option value="Mi Minör">Mi Minör</option>
+              <option value="Si Minör">Si Minör</option>
+              <option value="Fa# Minör">Fa# Minör</option>
+              <option value="Re Minör">Re Minör</option>
+              <option value="Sol Minör">Sol Minör</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="field g2">
+            <label>&nbsp;</label>
+            <button class="btn-purple" id="playBtn">Play / Pause</button>
+          </div>
+
+          <div class="field g2">
+            <label for="zoom">Zoom</label>
+            <input id="zoom" type="range" min="20" max="420" step="1" value="140">
+          </div>
+
+          <div class="field g2">
+            <label for="rateSelect">Hız</label>
+            <select id="rateSelect">
+              <option value="1">1.00x</option>
+              <option value="0.75">0.75x</option>
+              <option value="0.50">0.50x</option>
+              <option value="1.25">1.25x</option>
+            </select>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-aqua" id="autoTimingBtn">Otomatik Timing Öner</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-yellow" id="saveProjectBtn">Kaydet / JSON İndir</button>
+          </div>
+        </div>
+
+        <div class="status">
+          <div class="pill purple" id="statusText">Hazır</div>
+          <div class="pill aqua" id="timeText">0.00 sn</div>
+          <div class="pill aqua" id="cursorText">Cursor: 0.00 sn</div>
+          <div class="pill" id="micText">Mikrofon kapalı</div>
+          <div class="pill" id="noteText">Nota: -</div>
+          <div class="pill aqua" id="activeSegmentText">Aktif segment: -</div>
+          <div class="pill amber" id="analysisText">Analiz: -</div>
+        </div>
+
+        <div id="waveArea">
+          <div id="waveform"></div>
+
+          <div id="overlayViewport">
+            <div id="overlayContent">
+              <div id="ruler"></div>
+              <div id="segmentStrip"></div>
+            </div>
+            <div id="stripCursor"></div>
+          </div>
+        </div>
+
+        <div class="hint">
+          Ok tuşları: segment seçili değilse cursor ilerler/geriler. Segment seçiliyse komşu segmentlere geçer.
+          <kbd>Escape</kbd> ile seçimden çıkılır.
+        </div>
       </div>
 
-      <div id="tunerRuler">
-        <div id="targetZone"></div>
-        <div id="centerMark"></div>
-        <div id="plusText">+</div>
-        <div id="tickLayer"></div>
-        <div id="pitchDot" class="waiting"></div>
+      <div class="card">
+        <div class="sectionTop">
+          <div>
+            <h2>Canlı Karaoke Önizleme</h2>
+            <p class="sub">Tek tıkla tek kutu çalar. Basılı tutup sürükleyerek seçilen kutular bırakınca grup halinde sırayla çalar.</p>
+          </div>
+          <div class="row">
+            <button class="btn-purple" id="previewPlayBtn">Önizlemeyi Oynat</button>
+            <button class="btn-soft" id="previewStopBtn">Durdur</button>
+            <button class="btn-aqua" id="micBtn">Tuner / Mikrofon Aç</button>
+            <button class="btn-soft" id="clearSelectionBtn">Seçimi Temizle</button>
+            <button class="btn-amber" id="playLineBtn">Seçili Satırı Çal</button>
+          </div>
+        </div>
+        <div id="karaoke" class="karaokeWrap"></div>
       </div>
-    </div>
 
-    <div id="tunerInfo">Tuner kapalı.</div>
-    <div id="tunerFlash">✓ DOĞRU</div>
+      <div class="card">
+        <h2>Söz Girişi</h2>
+        <div class="toolbar">
+          <div class="field g12">
+            <label for="lyricsInput">Sözler</label>
+            <textarea id="lyricsInput" placeholder="Sözleri satır satır yapıştır..."></textarea>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-purple" id="splitWordsBtn">Kelimelere Böl</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="loadProjectBtn">Son Kaydı Yükle</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="importJsonBtn">JSON Aç</button>
+            <input id="importJsonInput" class="hidden" type="file" accept=".json,application/json">
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-red" id="resetTimingBtn">Timing Sıfırla</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Segment Bilgisi</h2>
+        <div class="toolbar">
+          <div class="field g2">
+            <label for="start">Start</label>
+            <input id="start" type="number" step="0.01">
+          </div>
+          <div class="field g2">
+            <label for="end">End</label>
+            <input id="end" type="number" step="0.01">
+          </div>
+          <div class="field g3">
+            <label for="hece">Kelime / Öbek</label>
+            <input id="hece" type="text">
+          </div>
+          <div class="field g3">
+            <label for="nota">Hedef Nota / Nota Dizisi</label>
+            <input id="nota" type="text" placeholder="Örn: la veya fa# mi re">
+          </div>
+          <div class="field g2">
+            <label for="satir">Satır No</label>
+            <input id="satir" type="number" min="0" step="1">
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-purple" id="saveBtn">Kaydet / Ekle</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="updateBtn">Seçileni Güncelle</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-red" id="deleteLoadedBtn">Seçileni Sil</button>
+          </div>
+
+          <div class="field g3">
+            <label for="nudgeAmount">Kaydırma Miktarı</label>
+            <select id="nudgeAmount">
+              <option value="0.01">0.01 sn</option>
+              <option value="0.02">0.02 sn</option>
+              <option value="0.05" selected>0.05 sn</option>
+              <option value="0.10">0.10 sn</option>
+              <option value="0.25">0.25 sn</option>
+            </select>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="minusStartBtn">Start -</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="plusStartBtn">Start +</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="minusEndBtn">End -</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="plusEndBtn">End +</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-amber" id="shiftLeftBtn">Tüm Segmenti Sola Kaydır</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-amber" id="shiftRightBtn">Tüm Segmenti Sağa Kaydır</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-aqua" id="analyzeNoteBtn">Nota Öner</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-aqua" id="analyzeAllBtn">Tümüne Nota Öner</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="previewSelectedBtn">Seçili Segmenti Dinle</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-yellow" id="saveToLibraryBtn">Kütüphaneye Kaydet</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
-</div>
-
-<div id="warmupMode">
-  <div class="section-head">
-    <div class="section-step">1. Aşama</div>
-    <div class="section-title">Vokal Isınma ve Hazırlık</div>
-    <div class="section-desc">
-      Önce sesini hazırla. Bu bölüm seçilen eserin tonuna göre açılır.
-      İstersen aynı sayfada tonu ve modu değiştirebilirsin.
-    </div>
-  </div>
-
-  <div id="warmupWrap">
-    <div class="warmup-badge" id="warmupBadge">Başlangıç tonu: Mi Minör</div>
-
-    <div class="warmup-intro">
-      Tıkla = egzersizi dinle, sonra tuner hedefi o çalışmaya geçsin. Basılı tutup sürükle = çoklu seçim.
-    </div>
-
-    <div class="warmup-toolbar">
-      <select id="warmupToneSelect" class="warmup-select"></select>
-      <select id="warmupScaleTypeSelect" class="warmup-select">
-        <option value="major">Majör</option>
-        <option value="minor">Minör</option>
-      </select>
-    </div>
-
-    <div class="warmup-controls">
-      <button class="warmup-btn" type="button" onclick="playSelectedWarmups()">Seçileni Çal</button>
-      <button class="warmup-btn secondary" type="button" onclick="clearWarmupSelection()">Seçimi Temizle</button>
-    </div>
-
-    <div class="warmup-section">
-      <h3>Tek Sesler – Çıkıcı</h3>
-      <div class="warmup-line" id="singleUpLine"></div>
-    </div>
-
-    <div class="warmup-section">
-      <h3>Tek Sesler – İnici</h3>
-      <div class="warmup-line" id="singleDownLine"></div>
-    </div>
-
-    <div class="warmup-section">
-      <h3>Aralıklar – 3'lü / 4'lü / 5'li / 7'li / 8'li</h3>
-      <div class="warmup-line" id="intervalLine"></div>
-    </div>
-
-    <div class="warmup-section">
-      <h3>Anahtar Motifler</h3>
-      <div class="warmup-line" id="motifLine"></div>
-    </div>
-
-    <div id="warmupStatus">Hazır.</div>
-
-    <div class="warmup-nav">
-      <button class="next-step-btn" type="button" onclick="showMode('song')">Eser Çalışmaya Geç</button>
-    </div>
-  </div>
-</div>
-
-<div id="songMode" style="display:none;">
-  <div class="section-head">
-    <div class="section-step">2. Aşama</div>
-    <div class="section-title">Eser Çalışma</div>
-    <div class="section-desc">
-      Şimdi eseri hece hece çalış. Kısa tıkla heceyi dinle, istersen seçili bölümü tekrar et,
-      tuner yardımıyla hedef sese yaklaş.
-    </div>
-  </div>
-
-  <h1 id="songTitle">ESER ÇALIŞMA</h1>
-
-  <div id="audio-wrap">
-    <div class="controls">
-      <button id="stopBtn" type="button">STOP</button>
-    </div>
-
-    <div id="status">Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır</div>
-    <div class="tip" id="practiceTip">Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.</div>
-  </div>
-
-  <div id="lyrics"></div>
 </div>
 
 <script>
-/* =========================
-   E S E R  K Ü T Ü P H A N E S İ
-   Yeni eser eklemek için buraya yeni obje ekle.
-========================= */
-const SONG_LIBRARY = {
-  "kus-sesleri": {
-    id: "kus-sesleri",
-    title: "Kuş Sesleri",
-    introText: "Bu çalışma 4 adımdan oluşur. Önce sesini hazırla, sonra eseri hece hece çalış, ardından kendini ölç. Amaç kusursuz olmak değil; doğru sese yaklaşarak güven kazanmaktır.",
-    practiceTitle: "KUŞ SESLERİ",
-    practiceAudio: "practice.mp3",
-    assessmentLink: "olcme.html?song=kus-sesleri",
-    warmup: {
-      defaultTonePc: 4,
-      defaultScaleType: "minor",
-      badgeText: "Başlangıç tonu: Mi Minör"
-    },
-    practiceStatus: "Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır",
-    practiceTip: "Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.",
-    lyricsData: [
-      [
-        [["Kuş"], ["ses","le","ri"], ["duy"], ["or","man","da"]],
-        [["Bak"], ["ne"], ["gü","zel"], ["bah","ar","da"]]
-      ]
-    ],
-    heceTimings: {
-      0:[0.30,0.70],
-      1:[0.70,1.05],
-      2:[1.05,1.35],
-      3:[1.35,1.70],
-      4:[1.75,2.10],
-      5:[2.10,2.45],
-      6:[2.45,2.85],
-      7:[2.90,3.20],
-      8:[3.20,3.55],
-      9:[3.55,3.90]
-    },
-    heceNotes: {
-      0:["mi"],
-      1:["fa#"],
-      2:["sol"],
-      3:["la"],
-      4:["sol"],
-      5:["fa#"],
-      6:["mi"],
-      7:["re"],
-      8:["mi"],
-      9:["mi"]
+/* ---------------- GLOBAL APP ---------------- */
+const APP_LIBRARY_KEY = "vocaly_multi_library_v1"
+const PROJECT_AUTOSAVE_KEY = "vocaly_editor_v20_3_autosave"
+
+let appLibrary = []
+let currentLibraryIndex = -1
+
+function saveLibrary(){
+  localStorage.setItem(APP_LIBRARY_KEY, JSON.stringify(appLibrary))
+}
+function loadLibrary(){
+  try{
+    const raw = localStorage.getItem(APP_LIBRARY_KEY)
+    appLibrary = raw ? JSON.parse(raw) : []
+  }catch(err){
+    appLibrary = []
+  }
+}
+function getSelectedSong(){
+  if(currentLibraryIndex < 0 || currentLibraryIndex >= appLibrary.length) return null
+  return appLibrary[currentLibraryIndex]
+}
+function deepClone(obj){
+  return JSON.parse(JSON.stringify(obj))
+}
+function showView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"))
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
+  document.getElementById(id).classList.add("active")
+  document.querySelector(`.tab[data-view="${id}"]`).classList.add("active")
+}
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>showView(tab.dataset.view))
+})
+
+/* ---------------- MUSIC / NOTES ---------------- */
+const NOTE_NAMES = ["do","do#","re","re#","mi","fa","fa#","sol","sol#","la","la#","si"]
+const SCALE_MAP = {
+  "Do Majör":["do","re","mi","fa","sol","la","si"],
+  "Sol Majör":["sol","la","si","do","re","mi","fa#"],
+  "Re Majör":["re","mi","fa#","sol","la","si","do#"],
+  "La Majör":["la","si","do#","re","mi","fa#","sol#"],
+  "Mi Majör":["mi","fa#","sol#","la","si","do#","re#"],
+  "Fa Majör":["fa","sol","la","sib","do","re","mi"],
+  "Sib Majör":["sib","do","re","mib","fa","sol","la"],
+  "La Minör":["la","si","do","re","mi","fa","sol"],
+  "Mi Minör":["mi","fa#","sol","la","si","do","re"],
+  "Si Minör":["si","do#","re","mi","fa#","sol","la"],
+  "Fa# Minör":["fa#","sol#","la","si","do#","re","mi"],
+  "Re Minör":["re","mi","fa","sol","la","sib","do"],
+  "Sol Minör":["sol","la","sib","do","re","mib","fa"]
+}
+const MIDI_MAP = {"do":60,"do#":61,"reb":61,"re":62,"re#":63,"mib":63,"mi":64,"fa":65,"fa#":66,"solb":66,"sol":67,"sol#":68,"lab":68,"la":69,"la#":70,"sib":70,"si":71}
+function escapeHtml(str){
+  return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")
+}
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)) }
+function round2(v){ return Number((v || 0).toFixed(2)) }
+function normalizeNoteName(name){
+  return String(name || "").trim().toLowerCase().replaceAll("♯","#").replaceAll("diyez","#").replaceAll("♭","b").replace(/\s+/g,"")
+    .replace("sib","la#").replace("mib","re#").replace("lab","sol#").replace("reb","do#").replace("solb","fa#")
+}
+function noteToSemitone(name){
+  const map = {"do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,"fa#":6,"solb":6,"sol":7,"sol#":8,"lab":8,"la":9,"la#":10,"sib":10,"si":11}
+  return map[normalizeNoteName(name)]
+}
+function freqToMidi(freq){ return Math.round(69 + 12 * Math.log2(freq / 440)) }
+function midiToNoteName(midi){ return NOTE_NAMES[((midi % 12) + 12) % 12] }
+function semitoneToNearestScaleNote(semitone, scaleNotes){
+  let bestNote = scaleNotes[0], bestDist = Infinity
+  scaleNotes.forEach(note=>{
+    const s = noteToSemitone(note)
+    let d = Math.abs(s - semitone)
+    d = Math.min(d, 12 - d)
+    if(d < bestDist){ bestDist = d; bestNote = note }
+  })
+  return bestNote
+}
+function getScaleNotesByKey(key){ return SCALE_MAP[key] || SCALE_MAP["Sol Majör"] }
+function autoCorrelate(buffer, sampleRate){
+  let SIZE = buffer.length
+  let rms = 0
+  for(let i=0;i<SIZE;i++) rms += buffer[i] * buffer[i]
+  rms = Math.sqrt(rms / SIZE)
+  if(rms < 0.01) return -1
+
+  let r1 = 0, r2 = SIZE - 1
+  const threshold = 0.2
+  for(let i=0;i<SIZE/2;i++){ if(Math.abs(buffer[i]) < threshold){ r1 = i; break } }
+  for(let i=1;i<SIZE/2;i++){ if(Math.abs(buffer[SIZE-i]) < threshold){ r2 = SIZE - i; break } }
+
+  buffer = buffer.slice(r1, r2)
+  SIZE = buffer.length
+  const c = new Array(SIZE).fill(0)
+
+  for(let i=0;i<SIZE;i++){
+    for(let j=0;j<SIZE-i;j++) c[i] += buffer[j] * buffer[j+i]
+  }
+  let d = 0
+  while(d + 1 < c.length && c[d] > c[d+1]) d++
+
+  let maxval = -1, maxpos = -1
+  for(let i=d;i<SIZE;i++){ if(c[i] > maxval){ maxval = c[i]; maxpos = i } }
+  let T0 = maxpos
+  if(T0 <= 0) return -1
+
+  const x1 = c[T0 - 1] || c[T0]
+  const x2 = c[T0]
+  const x3 = c[T0 + 1] || c[T0]
+  const a = (x1 + x3 - 2 * x2) / 2
+  const b = (x3 - x1) / 2
+  if(a) T0 = T0 - b / (2 * a)
+
+  return sampleRate / T0
+}
+function compressNoteSequence(seq){
+  const normalized = seq.map(normalizeNoteName).filter(Boolean)
+  const out = []
+  let last = null
+  for(const n of normalized){
+    if(n !== last){ out.push(n); last = n }
+  }
+  return out
+}
+function parseTargetNotes(noteString){
+  return compressNoteSequence(String(noteString || "").split(/\s+/))
+}
+function arraysUniqueIntersectionCount(a, b){
+  const setB = new Set(b.map(normalizeNoteName))
+  let count = 0
+  a.map(normalizeNoteName).forEach(item => { if(setB.has(item)) count += 1 })
+  return count
+}
+function splitWordsFromText(text){
+  const lines = String(text || "").split(/\n/).map(line => line.trim())
+  const words = []
+  lines.forEach((line, lineIndex)=>{
+    if(!line) return
+    line.split(/\s+/).filter(Boolean).forEach(word=>{
+      words.push({ text:word, line: lineIndex + 1 })
+    })
+  })
+  return words
+}
+
+/* ---------------- MIC / TUNER ---------------- */
+let micReady = false
+let audioContext = null
+let analyser = null
+let micSource = null
+let micStream = null
+let pitchBuffer = null
+let latestDetected = { note:null, midi:null, freq:null, cents:0 }
+
+async function setupMicShared(){
+  try{
+    if(micReady) return true
+    micStream = await navigator.mediaDevices.getUserMedia({ audio:true })
+    audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    analyser = audioContext.createAnalyser()
+    analyser.fftSize = 2048
+    pitchBuffer = new Float32Array(analyser.fftSize)
+    micSource = audioContext.createMediaStreamSource(micStream)
+    micSource.connect(analyser)
+    micReady = true
+    micText.textContent = "Mikrofon açık"
+    micText.className = "pill green"
+    return true
+  }catch(err){
+    console.error(err)
+    micText.textContent = "Mikrofon açılamadı"
+    micText.className = "pill red"
+    return false
+  }
+}
+function getCurrentDetectedPitch(){
+  if(!micReady || !analyser || !audioContext) return null
+  analyser.getFloatTimeDomainData(pitchBuffer)
+  const freq = autoCorrelate(pitchBuffer, audioContext.sampleRate)
+  if(freq === -1 || freq < 50 || freq > 1200){
+    latestDetected = { note:null, midi:null, freq:null, cents:0 }
+    return null
+  }
+  const midi = freqToMidi(freq)
+  const note = midiToNoteName(midi)
+  const ref = 440 * Math.pow(2, (midi - 69)/12)
+  const cents = Math.round(1200 * Math.log2(freq / ref))
+  latestDetected = { note, midi, freq, cents }
+  return latestDetected
+}
+function updateSharedTunerUI(targetNote, detectedEl, needleEl, targetEl, textEl){
+  const det = getCurrentDetectedPitch()
+  if(targetEl) targetEl.textContent = targetNote || "-"
+  if(!det){
+    if(detectedEl) detectedEl.textContent = "-"
+    if(needleEl) needleEl.style.left = "50%"
+    if(textEl) textEl.textContent = "Ses bekleniyor"
+    noteText.textContent = "Nota: -"
+    return
+  }
+  if(detectedEl) detectedEl.textContent = det.note
+  noteText.textContent = "Nota: " + det.note + " (" + det.freq.toFixed(1) + " Hz)"
+  let cents = det.cents
+  if(targetNote){
+    const targetSemi = noteToSemitone(targetNote)
+    const detSemi = noteToSemitone(det.note)
+    let diffSemis = detSemi - targetSemi
+    if(diffSemis > 6) diffSemis -= 12
+    if(diffSemis < -6) diffSemis += 12
+    cents = diffSemis * 100 + det.cents
+  }
+  const left = clamp(50 + cents * 0.18, 5, 95)
+  if(needleEl) needleEl.style.left = left + "%"
+  if(textEl){
+    if(Math.abs(cents) <= 15) textEl.textContent = "Tam merkez"
+    else if(cents < 0) textEl.textContent = "Biraz pes"
+    else textEl.textContent = "Biraz tiz"
+  }
+}
+
+/* ---------------- PRACTICE AUDIO ---------------- */
+let practiceOscillators = []
+let practiceTargetNote = ""
+function stopWarmupAudio(){
+  practiceOscillators.forEach(o=>{
+    try{ o.osc.stop() }catch(e){}
+    try{ o.gain.disconnect() }catch(e){}
+  })
+  practiceOscillators = []
+}
+function noteNameToFreq(note){
+  const semi = MIDI_MAP[note]
+  const midi = semi !== undefined ? semi : 69
+  return 440 * Math.pow(2, (midi - 69)/12)
+}
+function playToneSequence(noteNames, tempo=420){
+  if(!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)()
+  stopWarmupAudio()
+  noteNames.forEach((note, i)=>{
+    const startTime = audioContext.currentTime + i * (tempo / 1000)
+    const osc = audioContext.createOscillator()
+    const gain = audioContext.createGain()
+    osc.type = "sine"
+    osc.frequency.value = noteNameToFreq(note)
+    gain.gain.setValueAtTime(0.0001, startTime)
+    gain.gain.linearRampToValueAtTime(0.18, startTime + 0.02)
+    gain.gain.linearRampToValueAtTime(0.0001, startTime + 0.34)
+    osc.connect(gain).connect(audioContext.destination)
+    osc.start(startTime)
+    osc.stop(startTime + 0.36)
+    practiceOscillators.push({ osc, gain })
+  })
+  practiceTargetNote = noteNames[noteNames.length - 1] || ""
+}
+function getPracticeScale(){
+  return getScaleNotesByKey(practiceKeySelect.value)
+}
+function playAscendingScale(){ playToneSequence(getPracticeScale()) }
+function playDescendingScale(){ playToneSequence([...getPracticeScale()].reverse()) }
+function playInterval(interval){
+  const scale = getPracticeScale()
+  const seq = []
+  for(let i=0;i<scale.length - (interval - 1);i++){
+    seq.push(scale[i], scale[i + interval - 1])
+  }
+  playToneSequence(seq, 350)
+}
+function playMotif(type){
+  const scale = getPracticeScale()
+  let seq = []
+  if(type === "up") seq = [scale[0], scale[1], scale[2]]
+  if(type === "down") seq = [scale[2], scale[1], scale[0]]
+  if(type === "wave") seq = [scale[0], scale[2], scale[1]]
+  playToneSequence(seq, 430)
+}
+
+/* ---------------- EDITOR CORE (v20.3 derived) ---------------- */
+let ws = null
+let heceler = []
+let loadedIndex = -1
+let currentAudioName = "audio.mp3"
+let currentAudioDataUrl = ""
+let cursorTime = 0
+let dragState = null
+let wrapperBound = false
+let objectUrlRef = null
+let dragPreviewRAF = null
+let dragPreviewTarget = null
+let overlaySyncScheduled = false
+let karaokeSelectionRaf = null
+let previewPlaying = false
+let lastIntroValue = 0
+let selectedSegmentIndexes = []
+let isSequencePlaying = false
+let sequenceStopRequested = false
+let karaokeSelectionState = null
+let lastScrolledActiveId = null
+let waveformDragState = null
+
+/* editor dom */
+const titleInput = document.getElementById("titleInput")
+const audioFile = document.getElementById("audioFile")
+const playBtn = document.getElementById("playBtn")
+const zoom = document.getElementById("zoom")
+const rateSelect = document.getElementById("rateSelect")
+const introInput = document.getElementById("intro")
+const difficultySelect = document.getElementById("difficultySelect")
+const keySelect = document.getElementById("keySelect")
+const startInput = document.getElementById("start")
+const endInput = document.getElementById("end")
+const heceInput = document.getElementById("hece")
+const notaInput = document.getElementById("nota")
+const satirInput = document.getElementById("satir")
+const autoTimingBtn = document.getElementById("autoTimingBtn")
+const saveProjectBtn = document.getElementById("saveProjectBtn")
+const splitWordsBtn = document.getElementById("splitWordsBtn")
+const loadProjectBtn = document.getElementById("loadProjectBtn")
+const resetTimingBtn = document.getElementById("resetTimingBtn")
+const saveBtn = document.getElementById("saveBtn")
+const updateBtn = document.getElementById("updateBtn")
+const deleteLoadedBtn = document.getElementById("deleteLoadedBtn")
+const lyricsInput = document.getElementById("lyricsInput")
+const importJsonBtn = document.getElementById("importJsonBtn")
+const importJsonInput = document.getElementById("importJsonInput")
+const nudgeAmount = document.getElementById("nudgeAmount")
+const minusStartBtn = document.getElementById("minusStartBtn")
+const plusStartBtn = document.getElementById("plusStartBtn")
+const minusEndBtn = document.getElementById("minusEndBtn")
+const plusEndBtn = document.getElementById("plusEndBtn")
+const shiftLeftBtn = document.getElementById("shiftLeftBtn")
+const shiftRightBtn = document.getElementById("shiftRightBtn")
+const analyzeNoteBtn = document.getElementById("analyzeNoteBtn")
+const analyzeAllBtn = document.getElementById("analyzeAllBtn")
+const previewSelectedBtn = document.getElementById("previewSelectedBtn")
+const previewPlayBtn = document.getElementById("previewPlayBtn")
+const previewStopBtn = document.getElementById("previewStopBtn")
+const micBtn = document.getElementById("micBtn")
+const clearSelectionBtn = document.getElementById("clearSelectionBtn")
+const playLineBtn = document.getElementById("playLineBtn")
+const statusText = document.getElementById("statusText")
+const timeText = document.getElementById("timeText")
+const cursorText = document.getElementById("cursorText")
+const micText = document.getElementById("micText")
+const noteText = document.getElementById("noteText")
+const activeSegmentText = document.getElementById("activeSegmentText")
+const analysisText = document.getElementById("analysisText")
+const overlayViewport = document.getElementById("overlayViewport")
+const overlayContent = document.getElementById("overlayContent")
+const ruler = document.getElementById("ruler")
+const segmentStrip = document.getElementById("segmentStrip")
+const stripCursor = document.getElementById("stripCursor")
+const karaoke = document.getElementById("karaoke")
+const waveformEl = document.getElementById("waveform")
+
+/* practice dom */
+const practiceKeySelect = document.getElementById("practiceKeySelect")
+const micBtnPractice = document.getElementById("micBtnPractice")
+const stopWarmupBtn = document.getElementById("stopWarmupBtn")
+const ascendingScaleBtn = document.getElementById("ascendingScaleBtn")
+const descendingScaleBtn = document.getElementById("descendingScaleBtn")
+const practiceDetectedNote = document.getElementById("practiceDetectedNote")
+const practiceTargetNoteEl = document.getElementById("practiceTargetNote")
+const practiceTunerText = document.getElementById("practiceTunerText")
+const practiceTunerNeedle = document.getElementById("practiceTunerNeedle")
+const practiceSongTitle = document.getElementById("practiceSongTitle")
+const practiceSongMeta = document.getElementById("practiceSongMeta")
+const practiceKaraoke = document.getElementById("practiceKaraoke")
+const practicePlayAllBtn = document.getElementById("practicePlayAllBtn")
+const practiceStopBtn = document.getElementById("practiceStopBtn")
+
+/* measure dom */
+const micBtnMeasure = document.getElementById("micBtnMeasure")
+const measureResetBtn = document.getElementById("measureResetBtn")
+const measureStartBtn = document.getElementById("measureStartBtn")
+const measureDetectedNote = document.getElementById("measureDetectedNote")
+const measureTargetNoteEl = document.getElementById("measureTargetNote")
+const measureTunerNeedle = document.getElementById("measureTunerNeedle")
+const measureScore = document.getElementById("measureScore")
+const measureStatusText = document.getElementById("measureStatusText")
+const measureAccuracyText = document.getElementById("measureAccuracyText")
+const measurePreviewBtn = document.getElementById("measurePreviewBtn")
+const measureStopPreviewBtn = document.getElementById("measureStopPreviewBtn")
+const measureKaraoke = document.getElementById("measureKaraoke")
+
+/* library dom */
+const librarySearch = document.getElementById("librarySearch")
+const libraryImportBtn = document.getElementById("libraryImportBtn")
+const libraryImportInput = document.getElementById("libraryImportInput")
+const deleteSongBtn = document.getElementById("deleteSongBtn")
+const songList = document.getElementById("songList")
+const librarySongTitle = document.getElementById("librarySongTitle")
+const librarySongDesc = document.getElementById("librarySongDesc")
+const librarySegCount = document.getElementById("librarySegCount")
+const libraryAudioInfo = document.getElementById("libraryAudioInfo")
+const libraryKeyInfo = document.getElementById("libraryKeyInfo")
+const librarySegments = document.getElementById("librarySegments")
+const openPracticeBtn = document.getElementById("openPracticeBtn")
+const openMeasureBtn = document.getElementById("openMeasureBtn")
+const openEditorBtn = document.getElementById("openEditorBtn")
+const saveToLibraryBtn = document.getElementById("saveToLibraryBtn")
+
+function getIntroValue(){
+  const val = parseFloat(introInput.value)
+  return isNaN(val) ? 0 : round2(val)
+}
+function getNudgeValue(){
+  const val = parseFloat(nudgeAmount.value)
+  return isNaN(val) ? 0.05 : val
+}
+function hasAudioLoaded(){ return !!(ws && ws.getDuration && ws.getDuration() > 0) }
+function getWaveWrapper(){ return ws && ws.drawer ? ws.drawer.wrapper : null }
+function getWaveInner(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return null
+  return wrapper.querySelector(".wavesurfer-wave") || wrapper.firstElementChild
+}
+function getScrollableWidth(){
+  const inner = getWaveInner()
+  if(inner && inner.scrollWidth) return inner.scrollWidth
+  const wrapper = getWaveWrapper()
+  if(wrapper && wrapper.scrollWidth) return wrapper.scrollWidth
+  return overlayViewport.clientWidth || 1
+}
+function getVisibleWidth(){
+  const wrapper = getWaveWrapper()
+  return wrapper ? wrapper.clientWidth : (overlayViewport.clientWidth || 1)
+}
+function getScrollLeft(){
+  const wrapper = getWaveWrapper()
+  return wrapper ? wrapper.scrollLeft : 0
+}
+function getDurationSafe(){ return hasAudioLoaded() ? ws.getDuration() : 1 }
+function getPxPerSec(){ return getScrollableWidth() / getDurationSafe() }
+function timeToPx(t){ return t * getPxPerSec() }
+function pxToTime(px){ return px / getPxPerSec() }
+function seekToTime(t){
+  if(!hasAudioLoaded()) return
+  const duration = ws.getDuration()
+  const clamped = clamp(t, 0, duration)
+  ws.seekTo(duration ? clamped / duration : 0)
+  setCursorTime(clamped)
+}
+function setCursorTime(t){
+  cursorTime = clamp(round2(t || 0), 0, hasAudioLoaded() ? ws.getDuration() : 999999)
+  cursorText.textContent = "Cursor: " + cursorTime.toFixed(2) + " sn"
+  updateStripCursor()
+}
+function scrollToTime(t){
+  const wrapper = getWaveWrapper()
+  if(!wrapper || !hasAudioLoaded()) return
+  const x = timeToPx(t)
+  const targetScroll = clamp(x - wrapper.clientWidth * 0.35, 0, wrapper.scrollWidth - wrapper.clientWidth)
+  wrapper.scrollLeft = targetScroll
+  scheduleOverlaySync()
+}
+function previewDragCursor(t){
+  dragPreviewTarget = t
+  if(dragPreviewRAF) return
+  dragPreviewRAF = requestAnimationFrame(() => {
+    if(dragPreviewTarget !== null){
+      seekToTime(dragPreviewTarget)
+      scrollToTime(dragPreviewTarget)
     }
-  },
+    dragPreviewRAF = null
+  })
+}
+function scrollKaraokeToActive(el, container=karaoke){
+  if(!el || !container) return
+  const cRect = container.getBoundingClientRect()
+  const eRect = el.getBoundingClientRect()
+  const relativeTop = eRect.top - cRect.top
+  const targetTop = container.scrollTop + relativeTop - (container.clientHeight / 2) + (eRect.height / 2)
+  container.scrollTo({ top: Math.max(0, targetTop), behavior:"smooth" })
+}
+function syncOverlayPosition(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+  overlayContent.style.transform = `translateX(${-wrapper.scrollLeft}px)`
+  updateStripCursor()
+}
+function scheduleOverlaySync(){
+  if(overlaySyncScheduled) return
+  overlaySyncScheduled = true
+  requestAnimationFrame(()=>{
+    overlaySyncScheduled = false
+    syncOverlayPosition()
+  })
+}
+function moveWaveCursorBy(delta){
+  if(!hasAudioLoaded()) return
+  const now = ws.getCurrentTime()
+  const target = clamp(now + delta, 0, ws.getDuration())
+  seekToTime(target)
+  scrollToTime(target)
+}
+function selectAdjacentSegment(direction){
+  const ordered = heceler.map((seg, idx)=>({ seg, idx })).filter(x=>!x.seg.isIntro && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  if(!ordered.length) return
+  if(loadedIndex === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+  const pos = ordered.findIndex(x => x.idx === loadedIndex)
+  if(pos === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+  const nextPos = clamp(pos + direction, 0, ordered.length - 1)
+  const nextItem = ordered[nextPos]
+  seekToSegment(nextItem.idx, false)
+  selectedSegmentIndexes = [nextItem.idx]
+  refreshKaraokeSelectionClasses()
+}
+function bindWaveformDrag(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
 
-  "istiklal-marsi": {
-    id: "istiklal-marsi",
-    title: "İstiklal Marşı",
-    introText: "Bu çalışma 4 adımdan oluşur. Önce sesini hazırla, sonra eseri hece hece çalış, ardından kendini ölç, istersen öğretmen editöründen içerik düzenle. Amaç kusursuz olmak değil; doğru sese yaklaşarak güven kazanmaktır.",
-    practiceTitle: "İSTİKLAL MARŞI",
-    practiceAudio: "temiz_kayit.mp3",
-    assessmentLink: "olcme.html?song=istiklal-marsi",
-    warmup: {
-      defaultTonePc: 4,
-      defaultScaleType: "minor",
-      badgeText: "Başlangıç tonu: Mi Minör"
-    },
-    practiceStatus: "Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır",
-    practiceTip: "Doğru perde bir kez yakalanınca ilgili hece yeşil kalır. Tuner tüm modlarda üstte aynıdır.",
-    lyricsData: [
-      [
-        [["Kork","ma,"], ["sön","mez"], ["bu"], ["şa","fak","lar","da"], ["yü","zen"], ["al"], ["san","cak;"]],
-        [["Sön","me","den"], ["yur","du","mun"], ["üs","tün","de"], ["tü","ten"], ["en"], ["son"], ["o","cak."]],
-        [["O"], ["be","nim"], ["mil","le","ti","min"], ["yıl","dı","zı","dır,"], ["par","la","ya","cak;"]],
-        [["O"], ["be","nim","dir,"], ["o"], ["be","nim"], ["mil","le","ti","min","dir"], ["an","cak."]]
-      ],
-      [
-        [["Çat","ma,"], ["kur","ban"], ["o","la","yım"], ["çeh","re","ni"], ["ey"], ["naz","lı"], ["hi","lâl!"]],
-        [["Kah","ra","man"], ["ır","kı","ma"], ["bir"], ["gül…"], ["ne"], ["bu"], ["şid","det"], ["bu"], ["ce","lâl?"]],
-        [["Sa","na"], ["ol","maz"], ["dö","kü","len"], ["kan","la","rı","mız"], ["son","ra"], ["he","lâl,"]],
-        [["Hak","kı","dır,"], ["Hakk’a"], ["ta","pan,"], ["mil","le","ti","min"], ["is","tik","lâl."]]
-      ]
-    ],
-    heceTimings: {
-      0:[0.28,1.3], 1:[1.11,1.62], 2:[1.70,2.58], 3:[2.58,3.18], 4:[3.12,3.5],
-      5:[3.6,3.8], 6:[3.9,5.60], 7:[5.80,6.40], 8:[6.50,6.88], 9:[7.10,7.7],
-      10:[7.75,8.50], 11:[8.47,8.85], 12:[8.85,9.20], 13:[9.21,10.70],
-      14:[10.85,11.35], 15:[11.36,11.50], 16:[11.50,11.85], 17:[11.80,12.30],
-      18:[12.35,13.58], 19:[13.55,13.80], 20:[13.85,14.20], 21:[14.20,14.50],
-      22:[14.45,14.77], 23:[14.92,15.25], 24:[15.20,15.60], 25:[15.56,15.83],
-      26:[15.84,16.25], 27:[16.15,16.45], 28:[16.45,16.92], 29:[22.41,22.77],
-      30:[22.77,23.13], 31:[23.13,23.52], 32:[23.52,23.92], 33:[23.92,24.31],
-      34:[24.31,24.71], 35:[24.71,25.15], 36:[25.15,25.55], 37:[25.55,25.95],
-      38:[28.64,29.03], 39:[29.03,29.43], 40:[29.43,29.82], 41:[29.82,30.99],
-      42:[30.99,32.16], 43:[32.16,33.03], 44:[33.03,33.9], 45:[33.9,34.53],
-      46:[34.53,35.16], 47:[35.16,35.93], 48:[35.93,36.71], 49:[36.71,37.48],
-      50:[37.48,38.25], 51:[38.25,39.03], 52:[39.03,39.8], 53:[46.23,46.48],
-      54:[46.48,46.74], 55:[46.74,46.99], 56:[46.99,47.23], 57:[50.08,50.36],
-      58:[50.36,50.65], 59:[50.65,50.93], 60:[50.93,51.22], 61:[53.84,54.16],
-      62:[54.16,54.47], 63:[54.47,54.78], 64:[54.78,55.1], 65:[55.1,55.64],
-      66:[55.64,56.18], 67:[56.18,56.42], 68:[56.42,56.66], 69:[56.66,56.99],
-      70:[56.99,57.31], 71:[57.31,57.64], 72:[59.85,60.19], 73:[60.19,60.52],
-      74:[60.52,60.86], 75:[60.86,61.19], 76:[61.19,61.94], 77:[61.94,62.7],
-      78:[62.7,63.45], 79:[66.07,66.29], 80:[66.29,66.51], 81:[66.51,66.73],
-      82:[66.73,66.86], 83:[66.86,67.0], 84:[67.0,67.13], 85:[67.13,67.3],
-      86:[67.3,67.47], 87:[67.47,67.64], 88:[67.64,67.81], 89:[67.81,68.03],
-      90:[68.03,68.25], 91:[68.25,68.4], 92:[68.4,68.54], 93:[68.54,68.69]
-    },
-    heceNotes: {
-      0:["si"], 1:["mi"], 2:["fa"], 3:["sol"], 4:["re#"],
-      5:["fa"], 6:["mi"], 7:["mi"], 8:["la"], 9:["si"],
-      10:["do","si"], 11:["sol#"], 12:["si"], 13:["la"],
-      14:["si"], 15:["la#"], 16:["si"], 17:["fa"], 18:["fa"],
-      19:["la"], 20:["sol#"], 21:["re"], 22:["mi"], 23:["fa"],
-      24:["sol"], 25:["la"], 26:["si"], 27:["do"], 28:["re"]
+  wrapper.addEventListener("pointerdown", (e)=>{
+    if(e.target.closest(".handle") || e.target.closest(".strip-block")) return
+    waveformDragState = { startX:e.clientX, startScroll:wrapper.scrollLeft, moved:false }
+    try{ wrapper.setPointerCapture(e.pointerId) }catch(err){}
+  })
+  wrapper.addEventListener("pointermove", (e)=>{
+    if(!waveformDragState) return
+    const dx = e.clientX - waveformDragState.startX
+    if(Math.abs(dx) > 2) waveformDragState.moved = true
+    wrapper.scrollLeft = waveformDragState.startScroll - dx
+    scheduleOverlaySync()
+  })
+  const end = ()=>{ waveformDragState = null }
+  wrapper.addEventListener("pointerup", end)
+  wrapper.addEventListener("pointercancel", end)
+  wrapper.addEventListener("lostpointercapture", end)
+}
+function bindWrapperEvents(){
+  if(wrapperBound) return
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+  wrapper.addEventListener("scroll", scheduleOverlaySync, { passive:true })
+  bindWaveformDrag()
+  wrapperBound = true
+}
+function initWave(){
+  ws = WaveSurfer.create({
+    container:"#waveform",
+    waveColor:"#4a5f8e",
+    progressColor:"#facc15",
+    cursorColor:"#facc15",
+    height:320,
+    normalize:true,
+    responsive:true,
+    scrollParent:true,
+    minPxPerSec:Number(zoom.value)
+  })
+
+  ws.on("ready", function(){
+    statusText.textContent = "Ses yüklendi"
+    statusText.className = "pill purple"
+    ws.zoom(Number(zoom.value))
+    ws.setPlaybackRate(Number(rateSelect.value))
+    bindWrapperEvents()
+    setCursorTime(ws.getCurrentTime())
+    normalizeIntroSegment()
+    renderAll()
+    scheduleOverlaySync()
+    refreshLibraryPreviewOnly()
+  })
+
+  ws.on("audioprocess", function(){
+    const now = ws.getCurrentTime()
+    timeText.textContent = now.toFixed(2) + " sn"
+    setCursorTime(now)
+    getCurrentDetectedPitch()
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+  ws.on("seek", function(progress){
+    const duration = ws.getDuration() || 0
+    const now = progress * duration
+    timeText.textContent = now.toFixed(2) + " sn"
+    setCursorTime(now)
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+  ws.on("pause", function(){
+    const now = ws.getCurrentTime()
+    lastScrolledActiveId = null
+    setCursorTime(now)
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+  ws.on("finish", function(){
+    previewPlaying = false
+    isSequencePlaying = false
+    lastScrolledActiveId = null
+    karaokePlaybackUpdate(ws.getDuration())
+  })
+  ws.on("zoom", function(){
+    renderAll()
+    scheduleOverlaySync()
+  })
+}
+function normalizeIntroSegment(){
+  const intro = getIntroValue()
+  const introIndex = heceler.findIndex(h => h.isIntro)
+  if(introIndex === -1){
+    heceler.unshift({
+      text:"INTRO", note:"", start:0, end:intro, line:0,
+      detectedSemis:[], detectedNotesRaw:[], isIntro:true
+    })
+  }else{
+    const seg = heceler[introIndex]
+    seg.text = "INTRO"; seg.start = 0; seg.end = intro; seg.line = 0; seg.isIntro = true
+    if(!Array.isArray(seg.detectedSemis)) seg.detectedSemis = []
+    if(!Array.isArray(seg.detectedNotesRaw)) seg.detectedNotesRaw = []
+  }
+}
+function shiftAllNonIntroBy(delta){
+  if(delta === 0) return
+  heceler.forEach(h=>{
+    if(h.isIntro) return
+    if(h.start !== null) h.start = round2(Math.max(0, h.start + delta))
+    if(h.end !== null) h.end = round2(Math.max(0.03, h.end + delta))
+  })
+}
+function alignFirstSegmentToIntro(){
+  const ordered = getOrderedTimedSegments().filter(x => !x.s.isIntro)
+  if(ordered.length === 0) return
+  const first = ordered[0].s
+  if(first.start === null || first.end === null) return
+  const len = Math.max(0.03, round2(first.end - first.start))
+  first.start = getIntroValue()
+  first.end = round2(first.start + len)
+  for(let i=1;i<ordered.length;i++){
+    const prev = ordered[i - 1].s
+    const cur = ordered[i].s
+    const curLen = Math.max(0.03, round2(cur.end - cur.start))
+    cur.start = round2(prev.end)
+    cur.end = round2(cur.start + curLen)
+  }
+}
+function parseLyricsToSegmentsPreserve(){
+  const parsedWords = splitWordsFromText(lyricsInput.value)
+  const oldWords = heceler.filter(h => !h.isIntro)
+  const introSeg = heceler.find(h => h.isIntro) || { text:"INTRO", note:"", start:0, end:getIntroValue(), line:0, detectedSemis:[], detectedNotesRaw:[], isIntro:true }
+
+  const next = [{
+    text:"INTRO", note:introSeg.note || "", start:0, end:getIntroValue(), line:0,
+    detectedSemis:[], detectedNotesRaw:[], isIntro:true
+  }]
+  parsedWords.forEach((w, i)=>{
+    const old = oldWords[i]
+    next.push({
+      text:w.text,
+      note: old ? (old.note || "") : "",
+      start: old ? old.start : null,
+      end: old ? old.end : null,
+      line:w.line,
+      detectedSemis:[], detectedNotesRaw:[], isIntro:false
+    })
+  })
+  heceler = next
+  selectedSegmentIndexes = []
+}
+function getOrderedTimedSegments(){
+  return heceler.map((s, i)=>({ s, i })).filter(x => x.s.start !== null && x.s.end !== null).sort((a,b)=>a.s.start - b.s.start)
+}
+function updateActiveSegmentLabel(index=-1){
+  if(index === -1 || !heceler[index]){ activeSegmentText.textContent = "Aktif segment: -"; return }
+  activeSegmentText.textContent = "Aktif segment: " + heceler[index].text
+}
+function seekToSegment(index, playSnippet=false){
+  const seg = heceler[index]
+  if(!seg) return
+  loadedIndex = index
+  updateActiveSegmentLabel(index)
+  heceInput.value = seg.text
+  notaInput.value = seg.note || ""
+  satirInput.value = seg.line || ""
+  startInput.value = seg.start !== null ? Number(seg.start).toFixed(2) : ""
+  endInput.value = seg.end !== null ? Number(seg.end).toFixed(2) : ""
+
+  if(seg.start !== null && hasAudioLoaded()){ seekToTime(seg.start); scrollToTime(seg.start) }
+  renderStrip()
+  if(playSnippet && hasAudioLoaded() && seg.start !== null && seg.end !== null){ ws.play(seg.start, seg.end) }
+}
+function getRulerPrecisionConfig(){
+  const z = Number(zoom.value || 100)
+  if(z >= 420) return { minor:0.05, medium:0.10, major:0.50, decimals:2 }
+  if(z >= 300) return { minor:0.05, medium:0.25, major:1.00, decimals:2 }
+  if(z >= 200) return { minor:0.10, medium:0.50, major:1.00, decimals:1 }
+  if(z >= 120) return { minor:0.25, medium:0.50, major:1.00, decimals:1 }
+  if(z >= 70) return { minor:0.50, medium:1.00, major:2.00, decimals:1 }
+  return { minor:1.00, medium:2.00, major:5.00, decimals:0 }
+}
+function isMultipleOf(value, step){
+  if(step <= 0) return false
+  const ratio = value / step
+  return Math.abs(ratio - Math.round(ratio)) < 0.0001
+}
+function renderRuler(){
+  ruler.innerHTML = ""
+  const duration = getDurationSafe()
+  const totalWidth = Math.max(getScrollableWidth(), getVisibleWidth())
+  const { minor, medium, major, decimals } = getRulerPrecisionConfig()
+  ruler.style.width = totalWidth + "px"
+  segmentStrip.style.width = totalWidth + "px"
+  overlayContent.style.width = totalWidth + "px"
+
+  for(let t=0;t<=duration + 0.0001;t+=minor){
+    const tFixed = round2(t)
+    const x = timeToPx(tFixed)
+    const tick = document.createElement("div")
+    tick.className = "ruler-tick"
+    const isMajor = isMultipleOf(tFixed, major)
+    const isMedium = !isMajor && isMultipleOf(tFixed, medium)
+    if(isMajor) tick.classList.add("major")
+    else if(isMedium) tick.classList.add("medium")
+    else tick.classList.add("minor")
+    tick.style.left = x + "px"
+    ruler.appendChild(tick)
+    if(isMajor){
+      const label = document.createElement("div")
+      label.className = "ruler-label"
+      label.style.left = x + "px"
+      label.textContent = tFixed.toFixed(decimals) + "s"
+      ruler.appendChild(label)
     }
   }
-};
-
-/* =========================
-   PARAMETRE VE AKTİF ESER
-========================= */
-function getSongIdFromUrl(){
-  const params = new URLSearchParams(window.location.search);
-  return params.get("song") || "istiklal-marsi";
-}
-const activeSongId = getSongIdFromUrl();
-const activeSong = SONG_LIBRARY[activeSongId] || SONG_LIBRARY["istiklal-marsi"];
-
-/* =========================
-   DEĞİŞKEN VERİLER
-========================= */
-let lyricsData = activeSong.lyricsData || [];
-let heceTimings = activeSong.heceTimings || {};
-let heceNotes = activeSong.heceNotes || {};
-const NOTE_ALIASES = {
-  "do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,
-  "fa#":6,"solb":6,"sol":7,"sol#":8,"lab":8,"la":9,"la#":10,"sib":10,"si":11
-};
-const PC_TO_TR = {
-  0:"Do",1:"Do#/Reb",2:"Re",3:"Re#/Mib",4:"Mi",5:"Fa",
-  6:"Fa#/Solb",7:"Sol",8:"Sol#/Lab",9:"La",10:"La#/Sib",11:"Si"
-};
-const PC_TO_SIMPLE = {
-  0:"do",1:"do#",2:"re",3:"re#",4:"mi",5:"fa",6:"fa#",7:"sol",8:"sol#",9:"la",10:"la#",11:"si"
-};
-const TONE_OPTIONS = [
-  { label:"Do", pc:0 }, { label:"Do#/Reb", pc:1 }, { label:"Re", pc:2 }, { label:"Re#/Mib", pc:3 },
-  { label:"Mi", pc:4 }, { label:"Fa", pc:5 }, { label:"Fa#/Solb", pc:6 }, { label:"Sol", pc:7 },
-  { label:"Sol#/Lab", pc:8 }, { label:"La", pc:9 }, { label:"La#/Sib", pc:10 }, { label:"Si", pc:11 }
-];
-const MAJOR_STEPS = [0,2,4,5,7,9,11,12];
-const MINOR_STEPS = [0,2,3,5,7,8,10,12];
-const INTERVAL_DEFS = [
-  { name:"3'lü", step:2 },
-  { name:"4'lü", step:3 },
-  { name:"5'li", step:4 },
-  { name:"7'li", step:6 },
-  { name:"8'li", step:7 }
-];
-
-const container = document.getElementById("lyrics");
-const audio = document.getElementById("song");
-const statusEl = document.getElementById("status");
-const stopBtn = document.getElementById("stopBtn");
-const tunerMiniBtn = document.getElementById("tunerMiniBtn");
-const tunerSwitch = document.getElementById("tunerSwitch");
-const tunerInfo = document.getElementById("tunerInfo");
-const warmupStatusEl = document.getElementById("warmupStatus");
-const targetMiniEl = document.getElementById("targetMini");
-const pitchDotEl = document.getElementById("pitchDot");
-const tunerFlashEl = document.getElementById("tunerFlash");
-const tickLayer = document.getElementById("tickLayer");
-const warmupToneSelect = document.getElementById("warmupToneSelect");
-const warmupScaleTypeSelect = document.getElementById("warmupScaleTypeSelect");
-const warmupBadgeEl = document.getElementById("warmupBadge");
-const songTitleEl = document.getElementById("songTitle");
-const introTextEl = document.getElementById("introText");
-const practiceTipEl = document.getElementById("practiceTip");
-const assessmentModeLink = document.getElementById("assessmentModeLink");
-
-let heceCounter = 0;
-let stopTimeout = null;
-let activeTimeUpdateHandler = null;
-
-let pressTimer = null;
-let pointerDown = false;
-let selectionMode = false;
-let selectionStartId = null;
-let selectionEndId = null;
-
-let micStream = null;
-let micContext = null;
-let analyser = null;
-let micSource = null;
-let tunerRunning = false;
-let tunerAnimation = null;
-
-let currentTargetNotes = [];
-let currentSelectionIds = [];
-let detectedPitchClass = null;
-let latchedPitchClass = null;
-let lastBestCents = null;
-
-let playbackRangeIds = [];
-let activePlaybackHeceId = null;
-let correctHeceIds = new Set();
-
-let warmupAudioCtx = null;
-let warmupSelecting = false;
-let warmupSelectionStarted = false;
-let warmupActiveItemId = null;
-let warmupSequenceIndex = -1;
-let warmupStepLatched = false;
-let warmupAdvanceTimeout = null;
-
-let currentWarmupData = [];
-let warmupMap = {};
-
-function normalizePc(pc){ return ((pc % 12) + 12) % 12; }
-function noteNameToPitchClass(name){ return NOTE_ALIASES[String(name).toLowerCase().trim()]; }
-function pitchClassToDisplay(pc){ return PC_TO_TR[normalizePc(pc)]; }
-
-function simpleTrToSynthName(simpleName, octave){
-  const map = {
-    "do":"C","do#":"C#","re":"D","re#":"D#","mi":"E","fa":"F","fa#":"F#",
-    "sol":"G","sol#":"G#","la":"A","la#":"A#","si":"B"
-  };
-  return `${map[simpleName]}${octave}`;
-}
-
-function createTicks(){
-  tickLayer.innerHTML = "";
-  const tickPercents = [10,20,30,40,50,60,70,80,90];
-  tickPercents.forEach((left, idx) => {
-    const tick = document.createElement("div");
-    tick.className = "tuner-tick " + (idx % 2 === 0 ? "major" : "minor");
-    tick.style.left = left + "%";
-    tickLayer.appendChild(tick);
-  });
-}
-
-function setTargetMini(text){
-  targetMiniEl.innerHTML = text || "Hedef seçilmedi";
-}
-function showTunerFlash(){
-  tunerFlashEl.classList.add("show");
-  clearTimeout(showTunerFlash._t);
-  showTunerFlash._t = setTimeout(() => tunerFlashEl.classList.remove("show"), 650);
-}
-function setPitchDotState(mode){
-  pitchDotEl.classList.remove("correct","wrong","waiting");
-  pitchDotEl.classList.add(mode);
-}
-function updatePitchDotByCents(cents){
-  if (cents === null || Number.isNaN(cents)) {
-    pitchDotEl.style.left = "50%";
-    setPitchDotState("waiting");
-    return;
-  }
-  const clamped = Math.max(-50, Math.min(50, cents));
-  const percent = 50 + (clamped / 50) * 40;
-  pitchDotEl.style.left = `${percent}%`;
-  if (Math.abs(cents) <= 10) setPitchDotState("correct");
-  else setPitchDotState("wrong");
-}
-function showMode(mode){
-  const songMode = document.getElementById("songMode");
-  const warmupMode = document.getElementById("warmupMode");
-  const songBtn = document.getElementById("songModeBtn");
-  const warmupBtn = document.getElementById("warmupModeBtn");
-
-  songBtn.classList.remove("active");
-  warmupBtn.classList.remove("active");
-
-  if(mode === "song"){
-    songMode.style.display = "block";
-    warmupMode.style.display = "none";
-    songBtn.classList.add("active");
-    statusEl.textContent = activeSong.practiceStatus || "Kısa tık = hece, basılı tutup sürükle = seçili bölüm, ▶ = satır";
-  } else {
-    songMode.style.display = "none";
-    warmupMode.style.display = "block";
-    warmupBtn.classList.add("active");
-    warmupStatusEl.textContent = (activeSong.warmup && activeSong.warmup.badgeText) ? activeSong.warmup.badgeText : "Hazır.";
-    window.scrollTo({ top:0, behavior:"smooth" });
+  ruler.onclick = function(e){
+    if(!hasAudioLoaded()) return
+    const rect = ruler.getBoundingClientRect()
+    const localX = e.clientX - rect.left
+    const absoluteX = localX + getScrollLeft()
+    seekToTime(pxToTime(absoluteX))
   }
 }
-
-/* WARMUP GENERATION */
-function buildWarmupToneOptions(){
-  warmupToneSelect.innerHTML = TONE_OPTIONS.map(opt => `<option value="${opt.pc}">${opt.label}</option>`).join("");
-  warmupToneSelect.value = String(activeSong.warmup?.defaultTonePc ?? 4);
-  warmupScaleTypeSelect.value = activeSong.warmup?.defaultScaleType || "minor";
+function renderStrip(){
+  segmentStrip.innerHTML = ""
+  if(heceler.length === 0) return
+  const ordered = heceler.map((seg, idx)=>({ seg, idx })).filter(x => x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start - b.seg.start)
+  ordered.forEach(item=>{
+    const seg = item.seg
+    const left = timeToPx(seg.start)
+    const width = Math.max(34, timeToPx(seg.end) - timeToPx(seg.start))
+    const block = document.createElement("div")
+    block.className = "strip-block" + (seg.isIntro ? " intro" : "") + (item.idx === loadedIndex ? " active" : "")
+    block.style.left = left + "px"
+    block.style.width = width + "px"
+    block.dataset.index = item.idx
+    block.innerHTML = `
+      <div class="handle left"></div>
+      <div class="drag"></div>
+      <div class="handle right"></div>
+      <div class="body">${escapeHtml(seg.text)}</div>
+    `
+    block.addEventListener("click", (e)=>{ e.stopPropagation(); if(!dragState) seekToSegment(item.idx, true) })
+    block.querySelector(".drag").addEventListener("pointerdown", e => startDrag(e, item.idx, "move"))
+    block.querySelector(".handle.left").addEventListener("pointerdown", e => startDrag(e, item.idx, "resize-left"))
+    block.querySelector(".handle.right").addEventListener("pointerdown", e => startDrag(e, item.idx, "resize-right"))
+    segmentStrip.appendChild(block)
+  })
+  segmentStrip.onclick = function(e){
+    if(!hasAudioLoaded()) return
+    const rect = segmentStrip.getBoundingClientRect()
+    const localX = e.clientX - rect.left
+    const absoluteX = localX + getScrollLeft()
+    seekToTime(pxToTime(absoluteX))
+  }
+  updateStripCursor()
 }
-function getScalePcs(rootPc, type){
-  const steps = type === "minor" ? MINOR_STEPS : MAJOR_STEPS;
-  return steps.map(s => rootPc + s);
+function updateStripCursor(){
+  if(!hasAudioLoaded()){ stripCursor.style.left = "0px"; return }
+  stripCursor.style.left = (timeToPx(cursorTime) - getScrollLeft()) + "px"
 }
-function getWarmupDisplayName(absPc){ return PC_TO_TR[normalizePc(absPc)]; }
-function getWarmupTargetName(absPc){ return PC_TO_SIMPLE[normalizePc(absPc)]; }
-function getWarmupSynthName(absPc){
-  const pc = normalizePc(absPc);
-  const baseOctave = absPc >= 12 ? 5 : 4;
-  return simpleTrToSynthName(getWarmupTargetName(pc), baseOctave);
+function startDrag(e, index, mode){
+  e.preventDefault(); e.stopPropagation()
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null) return
+  dragState = { index, mode, pointerId:e.pointerId, startX:e.clientX, origStart:seg.start, origEnd:seg.end }
+  try{ e.target.setPointerCapture(e.pointerId) }catch(err){}
+  document.addEventListener("pointermove", onDragMove, { passive:false })
+  document.addEventListener("pointerup", endDrag)
+  document.addEventListener("pointercancel", endDrag)
 }
-function buildWarmupData(){
-  const rootPc = Number(warmupToneSelect.value);
-  const scaleType = warmupScaleTypeSelect.value;
-  const scale = getScalePcs(rootPc, scaleType);
+function onDragMove(e){
+  if(!dragState) return
+  e.preventDefault()
+  const seg = heceler[dragState.index]
+  const deltaPx = e.clientX - dragState.startX
+  const deltaTime = pxToTime(deltaPx)
+  const minLen = 0.03
+  const duration = hasAudioLoaded() ? ws.getDuration() : Infinity
 
-  const singleUp = scale.map((pc, i) => ({
-    id:`su${i+1}`,
-    parts:[getWarmupDisplayName(pc)],
-    synth:[getWarmupSynthName(pc)],
-    target:[getWarmupTargetName(pc)]
-  }));
-
-  const singleDown = [...scale].reverse().map((pc, i) => ({
-    id:`sd${i+1}`,
-    parts:[getWarmupDisplayName(pc)],
-    synth:[getWarmupSynthName(pc)],
-    target:[getWarmupTargetName(pc)]
-  }));
-
-  const intervals = [];
-  INTERVAL_DEFS.forEach(def => {
-    for (let i = 0; i + def.step < scale.length; i++) {
-      const a = scale[i];
-      const b = scale[i + def.step];
-      intervals.push({
-        id:`int_${def.step}_${i}`,
-        parts:[getWarmupDisplayName(a), getWarmupDisplayName(b)],
-        synth:[getWarmupSynthName(a), getWarmupSynthName(b)],
-        target:[getWarmupTargetName(a), getWarmupTargetName(b)]
-      });
+  if(dragState.mode === "move"){
+    if(seg.isIntro) return
+    const len = dragState.origEnd - dragState.origStart
+    let newStart = dragState.origStart + deltaTime
+    let newEnd = newStart + len
+    const sorted = getOrderedTimedSegments()
+    const pos = sorted.findIndex(x => x.i === dragState.index)
+    const prev = pos > 0 ? sorted[pos - 1].s : null
+    const next = pos < sorted.length - 1 ? sorted[pos + 1].s : null
+    if(prev && newStart < prev.end){ newStart = prev.end; newEnd = newStart + len }
+    if(next && newEnd > next.start){
+      newEnd = next.start; newStart = newEnd - len
+      if(prev && newStart < prev.end){ newStart = prev.end; newEnd = newStart + len }
     }
-  });
-
-  const motifIndices = [
-    [0,1,2],[2,1,0],[0,2,4],[4,2,0],[4,3,2,1],[0,1,0],[2,3,2]
-  ];
-  const motifs = motifIndices.map((arr, idx) => {
-    const pcs = arr.filter(v => v < scale.length).map(v => scale[v]);
-    return {
-      id:`mo${idx+1}`,
-      parts:pcs.map(getWarmupDisplayName),
-      synth:pcs.map(getWarmupSynthName),
-      target:pcs.map(getWarmupTargetName)
-    };
-  });
-
-  currentWarmupData = [...singleUp, ...singleDown, ...intervals, ...motifs];
-  warmupMap = Object.fromEntries(currentWarmupData.map(item => [item.id, item]));
-
-  renderWarmupLine("singleUpLine", singleUp);
-  renderWarmupLine("singleDownLine", singleDown);
-  renderWarmupLine("intervalLine", intervals);
-  renderWarmupLine("motifLine", motifs);
-
-  const toneLabel = TONE_OPTIONS.find(x => x.pc === rootPc)?.label || "Mi";
-  const text = `${toneLabel} ${scaleType === "major" ? "Majör" : "Minör"} hazır.`;
-  warmupStatusEl.textContent = text;
-  warmupBadgeEl.textContent = `Başlangıç tonu: ${toneLabel} ${scaleType === "major" ? "Majör" : "Minör"}`;
-}
-
-/* SONG HELPERS */
-function clearSelectionSuccessVisualOnly() {
-  document.querySelectorAll(".hece.tune-correct").forEach(el => el.classList.remove("tune-correct"));
-  document.querySelectorAll(".hece.tune-wrong").forEach(el => el.classList.remove("tune-wrong"));
-}
-function clearWarmupMarks() {
-  document.querySelectorAll(".warmup-item").forEach(item => item.classList.remove("active", "target"));
-  document.querySelectorAll(".warmup-part").forEach(part => part.classList.remove("current", "correct", "wrong"));
-}
-function clearCurrentTargetState() {
-  currentTargetNotes = [];
-  currentSelectionIds = [];
-  detectedPitchClass = null;
-  latchedPitchClass = null;
-  lastBestCents = null;
-  activePlaybackHeceId = null;
-  playbackRangeIds = [];
-  correctHeceIds.clear();
-  document.querySelectorAll(".hece.target-hece").forEach(el => el.classList.remove("target-hece"));
-  clearSelectionSuccessVisualOnly();
-  stopWarmupTargeting();
-  setTargetMini("Hedef seçilmedi");
-  updatePitchDotByCents(null);
-}
-function clearWrongMarksExceptCorrect() {
-  document.querySelectorAll(".hece.tune-wrong").forEach(el => {
-    const id = Number(el.dataset.id);
-    if (!correctHeceIds.has(id)) el.classList.remove("tune-wrong");
-  });
-}
-function setHeceCorrect(id) {
-  const el = document.querySelector(`.hece[data-id="${id}"]`);
-  if (!el) return;
-  el.classList.remove("tune-wrong");
-  el.classList.add("tune-correct");
-  correctHeceIds.add(id);
-}
-function setHeceWrong(id) {
-  if (correctHeceIds.has(id)) return;
-  const el = document.querySelector(`.hece[data-id="${id}"]`);
-  if (!el) return;
-  el.classList.remove("tune-correct");
-  el.classList.add("tune-wrong");
-}
-function markTargetSelection(ids) {
-  document.querySelectorAll(".hece.target-hece").forEach(el => el.classList.remove("target-hece"));
-  ids.forEach(id => {
-    const el = document.querySelector(`.hece[data-id="${id}"]`);
-    if (el) el.classList.add("target-hece");
-  });
-}
-function setCurrentTarget(ids, notes) {
-  currentSelectionIds = [...ids];
-  currentTargetNotes = [...new Set(notes)];
-  markTargetSelection(ids);
-  updatePitchDotByCents(null);
-
-  if (ids.length === 1) {
-    const heceEl = document.querySelector(`.hece[data-id="${ids[0]}"]`);
-    const heceText = heceEl ? heceEl.textContent.trim() : "Hece";
-    const noteText = currentTargetNotes.length ? currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ") : "-";
-    setTargetMini(`${heceText}<span class="dot">•</span>${noteText}`);
-  } else if (ids.length > 1) {
-    const noteText = currentTargetNotes.length ? currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ") : "-";
-    setTargetMini(`Seçili bölüm<span class="dot">•</span>${noteText}`);
-  } else {
-    setTargetMini("Hedef seçilmedi");
+    if(newStart < 0){ newStart = 0; newEnd = len }
+    if(newEnd > duration){ newEnd = duration; newStart = newEnd - len; if(newStart < 0) newStart = 0 }
+    seg.start = round2(newStart); seg.end = round2(newEnd)
+    startInput.value = seg.start.toFixed(2); endInput.value = seg.end.toFixed(2)
+    previewDragCursor(seg.end); renderStrip(); return
   }
 
-  if (tunerRunning) {
-    tunerInfo.textContent = currentTargetNotes.length
-      ? `Hedef: ${currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")} | Ses bekleniyor...`
-      : "Bu seçim için hedef nota atanmadı.";
-  }
-}
-function setActivePlaybackHece(id) {
-  activePlaybackHeceId = id;
-  setCurrentTarget([id], heceNotes[id] || []);
-  clearWrongMarksExceptCorrect();
-
-  const heceEl = document.querySelector(`.hece[data-id="${id}"]`);
-  const heceText = heceEl ? heceEl.textContent.trim() : "Hece";
-  const hedefler = (heceNotes[id] || []).map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ");
-  setTargetMini(`${heceText}<span class="dot">•</span>${hedefler || "-"}`);
-
-  if (tunerRunning) {
-    tunerInfo.textContent = hedefler ? `Hedef: ${hedefler} | Ses bekleniyor...` : "Bu hece için hedef nota atanmadı.";
-  }
-}
-function getActiveHeceIdAtTime(currentTime) {
-  if (!playbackRangeIds.length) return null;
-
-  for (const id of playbackRangeIds) {
-    const timing = heceTimings[id];
-    if (!timing) continue;
-    const start = Number(timing[0]);
-    const end = Number(timing[1]);
-    if (currentTime >= start && currentTime < end) return id;
+  if(dragState.mode === "resize-left"){
+    const sorted = getOrderedTimedSegments()
+    const pos = sorted.findIndex(x => x.i === dragState.index)
+    const prev = pos > 0 ? sorted[pos - 1].s : null
+    let newStart = dragState.origStart + deltaTime
+    if(seg.isIntro) newStart = 0
+    if(prev) newStart = Math.max(newStart, prev.end)
+    newStart = Math.max(0, newStart)
+    if(seg.end <= newStart + minLen) newStart = seg.end - minLen
+    seg.start = round2(newStart)
+    if(seg.isIntro) seg.start = 0
+    startInput.value = seg.start.toFixed(2)
+    previewDragCursor(seg.start); renderStrip(); return
   }
 
-  for (let i = playbackRangeIds.length - 1; i >= 0; i--) {
-    const id = playbackRangeIds[i];
-    const timing = heceTimings[id];
-    if (!timing) continue;
-    if (currentTime >= Number(timing[0])) return id;
-  }
-  return playbackRangeIds[0] ?? null;
-}
-function temizleAktifHeceler() {
-  document.querySelectorAll(".hece.active").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".hece.selected").forEach(el => el.classList.remove("selected"));
-  document.querySelectorAll(".satir.active-satir").forEach(el => el.classList.remove("active-satir"));
-}
-function basaDonBeklet() {
-  try { audio.pause(); } catch (e) {}
-  try { audio.currentTime = 0; } catch (e) {}
-  statusEl.textContent = "Durduruldu. Baştan bekliyor.";
-}
-function gecerliZamanVarMi(timing) {
-  if (!timing || !Array.isArray(timing) || timing.length !== 2) return false;
-  const start = Number(timing[0]);
-  const end = Number(timing[1]);
-  return !(Number.isNaN(start) || Number.isNaN(end) || start < 0 || end <= start);
-}
-function heceSayisi() { return Object.keys(heceTimings).length; }
-function sonrakiGecerliBaslangic(currentId) {
-  for (let i = currentId + 1; i < heceSayisi(); i++) {
-    const t = heceTimings[i];
-    if (gecerliZamanVarMi(t)) return Number(t[0]);
-  }
-  return null;
-}
-function guvenliAralikHesapla(currentId) {
-  const timing = heceTimings[currentId];
-  if (!gecerliZamanVarMi(timing)) return null;
-
-  let start = Number(timing[0]);
-  let end = Number(timing[1]);
-
-  const nextStart = sonrakiGecerliBaslangic(currentId);
-  if (nextStart !== null && nextStart > start) end = Math.min(end, nextStart);
-  if (end - start < 0.03) end = start + 0.03;
-
-  return [start, end];
-}
-function idAraligiIcinGuvenliZaman(firstId, lastId) {
-  let start = null;
-  let end = null;
-  for (let i = firstId; i <= lastId; i++) {
-    const aralik = guvenliAralikHesapla(i);
-    if (!aralik) continue;
-    if (start === null) start = aralik[0];
-    end = aralik[1];
-  }
-  if (start === null || end === null || end <= start) return null;
-  return [start, end];
-}
-function collectIdsForRange(firstId, lastId) {
-  const ids = [];
-  for (let i = firstId; i <= lastId; i++) ids.push(i);
-  return ids;
-}
-function durdurAktifSes() {
-  if (stopTimeout) {
-    clearTimeout(stopTimeout);
-    stopTimeout = null;
-  }
-  if (activeTimeUpdateHandler) {
-    audio.removeEventListener("timeupdate", activeTimeUpdateHandler);
-    activeTimeUpdateHandler = null;
-  }
-  try { audio.pause(); } catch (e) {}
-  temizleAktifHeceler();
-}
-function herSeyiSifirla() {
-  durdurAktifSes();
-  basaDonBeklet();
-}
-function secimGorseliniGuncelle() {
-  document.querySelectorAll(".hece.selected").forEach(el => el.classList.remove("selected"));
-  if (selectionStartId === null || selectionEndId === null) return;
-  const minId = Math.min(selectionStartId, selectionEndId);
-  const maxId = Math.max(selectionStartId, selectionEndId);
-  for (let i = minId; i <= maxId; i++) {
-    const el = document.querySelector(`.hece[data-id="${i}"]`);
-    if (el) el.classList.add("selected");
-  }
-}
-function secimTemizle() {
-  selectionMode = false;
-  selectionStartId = null;
-  selectionEndId = null;
-  document.querySelectorAll(".hece.selected").forEach(el => el.classList.remove("selected"));
-}
-async function aralikCal(start, end, label, highlightEls = [], rangeIds = []) {
-  const duration = end - start;
-  if (duration <= 0) return;
-
-  try {
-    stopWarmupTargeting();
-    durdurAktifSes();
-
-    highlightEls.forEach(item => {
-      if (item?.el && item?.className) item.el.classList.add(item.className);
-    });
-
-    playbackRangeIds = [...rangeIds];
-    activePlaybackHeceId = null;
-    correctHeceIds.clear();
-    document.querySelectorAll(".hece.tune-correct").forEach(el => el.classList.remove("tune-correct"));
-    document.querySelectorAll(".hece.tune-wrong").forEach(el => el.classList.remove("tune-wrong"));
-
-    if (rangeIds.length === 1) {
-      setActivePlaybackHece(rangeIds[0]);
-    } else if (rangeIds.length > 1) {
-      const firstActive = getActiveHeceIdAtTime(start);
-      if (firstActive !== null) setActivePlaybackHece(firstActive);
-    }
-
-    audio.currentTime = start;
-    await audio.play();
-
-    activeTimeUpdateHandler = () => {
-      const current = audio.currentTime;
-      if (playbackRangeIds.length > 1) {
-        const currentHeceId = getActiveHeceIdAtTime(current);
-        if (currentHeceId !== null && currentHeceId !== activePlaybackHeceId) {
-          setActivePlaybackHece(currentHeceId);
+  if(dragState.mode === "resize-right"){
+    let newEnd = dragState.origEnd + deltaTime
+    newEnd = Math.max(seg.start + minLen, newEnd)
+    if(hasAudioLoaded()) newEnd = Math.min(newEnd, duration)
+    const diff = round2(newEnd - seg.end)
+    seg.end = round2(newEnd)
+    if(seg.isIntro) introInput.value = seg.end.toFixed(2)
+    const ordered = getOrderedTimedSegments()
+    const pos = ordered.findIndex(x => x.i === dragState.index)
+    if(pos !== -1){
+      for(let i=pos+1;i<ordered.length;i++){
+        const cur = ordered[i].s
+        const len = Math.max(minLen, round2(cur.end - cur.start))
+        cur.start = round2(cur.start + diff)
+        cur.end = round2(cur.start + len)
+        if(hasAudioLoaded() && cur.end > duration){
+          cur.end = round2(duration)
+          if(cur.end <= cur.start) cur.start = round2(Math.max(0, cur.end - minLen))
         }
       }
-      if (audio.currentTime >= end) {
-        durdurAktifSes();
-        try { audio.currentTime = 0; } catch (e) {}
-        statusEl.textContent = "Durduruldu. Baştan bekliyor.";
+      for(let i=pos+1;i<ordered.length;i++){
+        const prev = ordered[i - 1].s
+        const cur = ordered[i].s
+        const len = Math.max(minLen, round2(cur.end - cur.start))
+        cur.start = round2(prev.end)
+        cur.end = round2(cur.start + len)
       }
-    };
-
-    audio.addEventListener("timeupdate", activeTimeUpdateHandler);
-
-    stopTimeout = setTimeout(() => {
-      durdurAktifSes();
-      try { audio.currentTime = 0; } catch (e) {}
-      statusEl.textContent = "Durduruldu. Baştan bekliyor.";
-    }, duration * 1000 + 80);
-
-    statusEl.textContent = `${label} çalınıyor (${start.toFixed(2)} - ${end.toFixed(2)})`;
-  } catch (err) {
-    console.error(err);
-    statusEl.textContent = "Ses çalınamadı.";
-  }
-}
-async function heceCal(span, currentId) {
-  const aralik = guvenliAralikHesapla(currentId);
-  if (!aralik) return;
-
-  correctHeceIds.clear();
-  setActivePlaybackHece(currentId);
-
-  await aralikCal(aralik[0], aralik[1], `Hece: ${span.textContent}`, [
-    { el: span, className: "active" },
-    { el: span, className: "target-hece" }
-  ], [currentId]);
-}
-async function seciliAralikCal(firstId, lastId) {
-  const aralik = idAraligiIcinGuvenliZaman(firstId, lastId);
-  if (!aralik) return;
-
-  const minId = Math.min(firstId, lastId);
-  const maxId = Math.max(firstId, lastId);
-  const ids = collectIdsForRange(minId, maxId);
-
-  const highlightEls = [];
-  ids.forEach(id => {
-    const el = document.querySelector(`.hece[data-id="${id}"]`);
-    if (el) highlightEls.push({ el, className: "selected" });
-  });
-
-  await aralikCal(aralik[0], aralik[1], "Seçili bölüm", highlightEls, ids);
-}
-async function satirCal(satirDiv, firstId, lastId) {
-  const aralik = idAraligiIcinGuvenliZaman(firstId, lastId);
-  if (!aralik) return;
-  const ids = collectIdsForRange(firstId, lastId);
-
-  await aralikCal(aralik[0], aralik[1], "Satır", [
-    { el: satirDiv, className: "active-satir" }
-  ], ids);
-}
-function basiliSecimBaslat(startId) {
-  selectionMode = true;
-  selectionStartId = startId;
-  selectionEndId = startId;
-  secimGorseliniGuncelle();
-  statusEl.textContent = "Seçim başladı. Parmağını/mouse'u sürükle ve bırak.";
-}
-function pointerAltindakiHeceId(clientX, clientY) {
-  const el = document.elementFromPoint(clientX, clientY);
-  if (!el) return null;
-  const hece = el.closest(".hece");
-  if (!hece) return null;
-  return Number(hece.dataset.id);
-}
-function longPressTimerBaslat(startId) {
-  temizleLongPressTimer();
-  pressTimer = setTimeout(() => basiliSecimBaslat(startId), 280);
-}
-function temizleLongPressTimer() {
-  if (pressTimer) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-  }
-}
-
-/* TUNER */
-function freqToMidi(freq) {
-  return 69 + 12 * Math.log2(freq / 440);
-}
-function centsAgainstTarget(freq, targetName) {
-  const midi = freqToMidi(freq);
-  const pc = noteNameToPitchClass(targetName);
-  if (pc === undefined) return null;
-  const nearestMidi = pc + 12 * Math.round((midi - pc) / 12);
-  return (midi - nearestMidi) * 100;
-}
-function markWarmupCurrentPart(itemId, index) {
-  clearWarmupMarks();
-  const itemEl = document.querySelector(`.warmup-item[data-item-id="${itemId}"]`);
-  if (!itemEl) return;
-  itemEl.classList.add("active", "target");
-  const part = itemEl.querySelector(`.warmup-part[data-part-index="${index}"]`);
-  if (part) part.classList.add("current");
-}
-function setWarmupPartCorrect(itemId, index) {
-  const part = document.querySelector(`.warmup-item[data-item-id="${itemId}"] .warmup-part[data-part-index="${index}"]`);
-  if (part) {
-    part.classList.remove("wrong", "current");
-    part.classList.add("correct");
-  }
-}
-function setWarmupPartWrong(itemId, index) {
-  const part = document.querySelector(`.warmup-item[data-item-id="${itemId}"] .warmup-part[data-part-index="${index}"]`);
-  if (part && !part.classList.contains("correct")) part.classList.add("wrong");
-}
-function stopWarmupTargeting() {
-  if (warmupAdvanceTimeout) {
-    clearTimeout(warmupAdvanceTimeout);
-    warmupAdvanceTimeout = null;
-  }
-  warmupActiveItemId = null;
-  warmupSequenceIndex = -1;
-  warmupStepLatched = false;
-  clearWarmupMarks();
-}
-function startWarmupTargeting(item) {
-  stopWarmupTargeting();
-  warmupActiveItemId = item.id;
-  warmupSequenceIndex = 0;
-  warmupStepLatched = false;
-  currentSelectionIds = [];
-  playbackRangeIds = [];
-  activePlaybackHeceId = null;
-  correctHeceIds.clear();
-  markWarmupCurrentPart(item.id, 0);
-  currentTargetNotes = [item.target[0]];
-  latchedPitchClass = null;
-  detectedPitchClass = null;
-  lastBestCents = null;
-  updatePitchDotByCents(null);
-
-  setTargetMini(`${item.parts[0]}<span class="dot">•</span>${pitchClassToDisplay(noteNameToPitchClass(item.target[0]))}`);
-  tunerInfo.textContent = `Hedef: ${pitchClassToDisplay(noteNameToPitchClass(item.target[0]))} | Ses bekleniyor...`;
-  warmupStatusEl.textContent = `${item.parts.join(" - ")} hazır.`;
-}
-function advanceWarmupStep() {
-  if (!warmupActiveItemId) return;
-  const item = warmupMap[warmupActiveItemId];
-  if (!item) return;
-
-  warmupSequenceIndex += 1;
-  warmupStepLatched = false;
-
-  if (warmupSequenceIndex >= item.target.length) {
-    const finalTarget = item.target[item.target.length - 1];
-    currentTargetNotes = [finalTarget];
-    markWarmupCurrentPart(item.id, item.target.length - 1);
-    const finalPart = document.querySelector(`.warmup-item[data-item-id="${item.id}"] .warmup-part[data-part-index="${item.target.length - 1}"]`);
-    if (finalPart) {
-      finalPart.classList.remove("current");
-      finalPart.classList.add("correct");
     }
-    tunerInfo.textContent = `Tamamlandı: ${item.parts.join(" - ")}`;
-    warmupStatusEl.textContent = `Tamamlandı: ${item.parts.join(" - ")}`;
-    warmupAdvanceTimeout = setTimeout(() => {
-      stopWarmupTargeting();
-      currentTargetNotes = [finalTarget];
-      setTargetMini(`${item.parts[item.parts.length - 1]}<span class="dot">•</span>${pitchClassToDisplay(noteNameToPitchClass(finalTarget))}`);
-      updatePitchDotByCents(0);
-    }, 400);
-    return;
+    endInput.value = seg.end.toFixed(2)
+    previewDragCursor(seg.end)
+    renderStrip()
   }
-
-  currentTargetNotes = [item.target[warmupSequenceIndex]];
-  markWarmupCurrentPart(item.id, warmupSequenceIndex);
-  setTargetMini(`${item.parts[warmupSequenceIndex]}<span class="dot">•</span>${pitchClassToDisplay(noteNameToPitchClass(item.target[warmupSequenceIndex]))}`);
-  tunerInfo.textContent = `Hedef: ${pitchClassToDisplay(noteNameToPitchClass(item.target[warmupSequenceIndex]))} | Ses bekleniyor...`;
-  warmupStatusEl.textContent = `${item.parts.join(" - ")} | Sıra: ${item.parts[warmupSequenceIndex]}`;
-  updatePitchDotByCents(null);
 }
-function hedeftenSapmaUygula(freq) {
-  if (!tunerRunning || !currentTargetNotes.length) return;
+function endDrag(){
+  if(!dragState) return
+  const idx = dragState.index
+  dragState = null
+  document.removeEventListener("pointermove", onDragMove)
+  document.removeEventListener("pointerup", endDrag)
+  document.removeEventListener("pointercancel", endDrag)
+  renderKaraoke()
+  seekToSegment(idx, false)
+  statusText.textContent = "Segment düzenlendi"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function nudgeSegmentBoundary(which, direction){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null) return
+  const amount = getNudgeValue()
+  const delta = direction * amount
+  const minLen = 0.03
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
 
-  let bestCents = null;
-  let bestTarget = null;
-
-  for (const target of currentTargetNotes) {
-    const cents = centsAgainstTarget(freq, target);
-    if (cents === null) continue;
-    if (bestCents === null || Math.abs(cents) < Math.abs(bestCents)) {
-      bestCents = cents;
-      bestTarget = target;
-    }
+  if(which === "start"){
+    const prev = pos > 0 ? ordered[pos - 1].s : null
+    let newStart = seg.start + delta
+    if(seg.isIntro) newStart = 0
+    if(prev) newStart = Math.max(newStart, prev.end)
+    newStart = Math.max(0, newStart)
+    if(seg.end <= newStart + minLen) newStart = seg.end - minLen
+    seg.start = round2(newStart)
+    if(seg.isIntro) seg.start = 0
+    startInput.value = seg.start.toFixed(2)
+    seekToTime(seg.start); scrollToTime(seg.start)
   }
 
-  detectedPitchClass = normalizePc(Math.round(freqToMidi(freq)));
+  if(which === "end"){
+    let newEnd = seg.end + delta
+    newEnd = Math.max(seg.start + minLen, newEnd)
+    if(hasAudioLoaded()) newEnd = Math.min(newEnd, ws.getDuration())
+    const diff = round2(newEnd - seg.end)
+    seg.end = round2(newEnd)
+    if(seg.isIntro) introInput.value = seg.end.toFixed(2)
 
-  if (bestCents === null) {
-    updatePitchDotByCents(null);
-    return;
-  }
-
-  lastBestCents = bestCents;
-  updatePitchDotByCents(bestCents);
-
-  const centsText = bestCents >= 0 ? `+${bestCents.toFixed(1)}` : bestCents.toFixed(1);
-  const bestTargetDisplay = pitchClassToDisplay(noteNameToPitchClass(bestTarget));
-
-  if (warmupActiveItemId) {
-    if (Math.abs(bestCents) <= 10) {
-      latchedPitchClass = detectedPitchClass;
-      const item = warmupMap[warmupActiveItemId];
-      if (item && warmupSequenceIndex >= 0 && warmupSequenceIndex < item.parts.length) {
-        setWarmupPartCorrect(item.id, warmupSequenceIndex);
+    for(let i=pos+1;i<ordered.length;i++){
+      const cur = ordered[i].s
+      const len = Math.max(minLen, round2(cur.end - cur.start))
+      cur.start = round2(cur.start + diff)
+      cur.end = round2(cur.start + len)
+      if(hasAudioLoaded() && cur.end > ws.getDuration()){
+        cur.end = round2(ws.getDuration())
+        if(cur.end <= cur.start) cur.start = round2(Math.max(0, cur.end - minLen))
       }
-      tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTargetDisplay} | Doğru`;
-      warmupStatusEl.textContent = `Doğru: ${bestTargetDisplay}`;
-      showTunerFlash();
-
-      if (!warmupStepLatched) {
-        warmupStepLatched = true;
-        warmupAdvanceTimeout = setTimeout(() => advanceWarmupStep(), 280);
-      }
-    } else {
-      const item = warmupMap[warmupActiveItemId];
-      if (item && warmupSequenceIndex >= 0 && warmupSequenceIndex < item.parts.length) {
-        setWarmupPartWrong(item.id, warmupSequenceIndex);
-      }
-      tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTargetDisplay} | Sapma: ${centsText} cent`;
-      warmupStatusEl.textContent = `Sapma var: ${bestTargetDisplay}`;
-      warmupStepLatched = false;
     }
-    return;
-  }
-
-  if (activePlaybackHeceId === null && currentSelectionIds.length !== 1) return;
-  const activeId = currentSelectionIds[0];
-
-  if (Math.abs(bestCents) <= 10) {
-    latchedPitchClass = detectedPitchClass;
-    if (activeId !== undefined) setHeceCorrect(activeId);
-    tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTargetDisplay} | Doğru`;
-    showTunerFlash();
-  } else {
-    if (activeId !== undefined && !correctHeceIds.has(activeId)) {
-      setHeceWrong(activeId);
-      tunerInfo.textContent = `Duyulan: ${pitchClassToDisplay(detectedPitchClass)} | Hedef: ${bestTargetDisplay} | Sapma: ${centsText} cent`;
-    } else {
-      tunerInfo.textContent = `Son doğru: ${pitchClassToDisplay(latchedPitchClass ?? detectedPitchClass)} | Hedef: ${bestTargetDisplay}`;
-    }
-  }
-}
-function autoCorrelate(buffer, sampleRate) {
-  let SIZE = buffer.length;
-  let rms = 0;
-  for (let i = 0; i < SIZE; i++) rms += buffer[i] * buffer[i];
-  rms = Math.sqrt(rms / SIZE);
-  if (rms < 0.01) return -1;
-
-  let r1 = 0;
-  let r2 = SIZE - 1;
-  const threshold = 0.2;
-
-  for (let i = 0; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[i]) < threshold) { r1 = i; break; }
-  }
-  for (let i = 1; i < SIZE / 2; i++) {
-    if (Math.abs(buffer[SIZE - i]) < threshold) { r2 = SIZE - i; break; }
-  }
-
-  buffer = buffer.slice(r1, r2);
-  SIZE = buffer.length;
-
-  const c = new Array(SIZE).fill(0);
-  for (let i = 0; i < SIZE; i++) {
-    for (let j = 0; j < SIZE - i; j++) c[i] += buffer[j] * buffer[j + i];
-  }
-
-  let d = 0;
-  while (d + 1 < c.length && c[d] > c[d + 1]) d++;
-
-  let maxval = -1, maxpos = -1;
-  for (let i = d; i < SIZE; i++) {
-    if (c[i] > maxval) { maxval = c[i]; maxpos = i; }
-  }
-  if (maxpos <= 0) return -1;
-
-  let T0 = maxpos;
-  const x1 = c[T0 - 1] || 0;
-  const x2 = c[T0] || 0;
-  const x3 = c[T0 + 1] || 0;
-  const a = (x1 + x3 - 2 * x2) / 2;
-  const b = (x3 - x1) / 2;
-  if (a) T0 = T0 - b / (2 * a);
-
-  return sampleRate / T0;
-}
-function tunerLoop() {
-  if (!tunerRunning || !analyser) return;
-
-  const buffer = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(buffer);
-  const freq = autoCorrelate(buffer, micContext.sampleRate);
-
-  if (freq !== -1 && freq > 50 && freq < 1200) {
-    hedeftenSapmaUygula(freq);
-  } else {
-    detectedPitchClass = null;
-    updatePitchDotByCents(null);
-
-    if (currentTargetNotes.length) {
-      tunerInfo.textContent = `Hedef: ${currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")} | Ses bekleniyor...`;
-    } else {
-      tunerInfo.textContent = tunerRunning ? "Tuner açık. Hedef hece/nota seç." : "Tuner kapalı.";
+    for(let i=pos+1;i<ordered.length;i++){
+      const prev = ordered[i - 1].s
+      const cur = ordered[i].s
+      const len = Math.max(minLen, round2(cur.end - cur.start))
+      cur.start = round2(prev.end)
+      cur.end = round2(cur.start + len)
     }
 
-    clearWrongMarksExceptCorrect();
+    endInput.value = seg.end.toFixed(2)
+    seekToTime(seg.end); scrollToTime(seg.end)
+  }
+  renderAll()
+  statusText.textContent = "Segment sınırı düzeltildi"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function shiftWholeSegment(direction){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null) return
+  if(seg.isIntro){ alert("Intro segmenti bu şekilde kaydırılamaz."); return }
+
+  const amount = getNudgeValue()
+  const delta = direction * amount
+  const len = seg.end - seg.start
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+  const prev = pos > 0 ? ordered[pos - 1].s : null
+  const next = pos < ordered.length - 1 ? ordered[pos + 1].s : null
+
+  let newStart = seg.start + delta
+  let newEnd = seg.end + delta
+  if(prev && newStart < prev.end){ newStart = prev.end; newEnd = newStart + len }
+  if(next && newEnd > next.start){ newEnd = next.start; newStart = newEnd - len }
+  if(newStart < 0){ newStart = 0; newEnd = len }
+  if(hasAudioLoaded() && newEnd > ws.getDuration()){
+    newEnd = ws.getDuration(); newStart = newEnd - len; if(newStart < 0) newStart = 0
   }
 
-  tunerAnimation = requestAnimationFrame(tunerLoop);
+  seg.start = round2(newStart)
+  seg.end = round2(newEnd)
+  startInput.value = seg.start.toFixed(2)
+  endInput.value = seg.end.toFixed(2)
+  seekToTime(direction < 0 ? seg.start : seg.end)
+  scrollToTime(direction < 0 ? seg.start : seg.end)
+  renderAll()
+  statusText.textContent = "Segment kaydırıldı"
+  statusText.className = "pill amber"
+  autoSaveProject()
 }
-async function tunerAc() {
-  if (tunerRunning) return;
-
-  micStream = await navigator.mediaDevices.getUserMedia({ audio:true });
-  micContext = new (window.AudioContext || window.webkitAudioContext)();
-  if (micContext.state === "suspended") await micContext.resume();
-  analyser = micContext.createAnalyser();
-  analyser.fftSize = 2048;
-
-  micSource = micContext.createMediaStreamSource(micStream);
-  micSource.connect(analyser);
-
-  tunerRunning = true;
-  tunerMiniBtn.textContent = "TUNER KAPAT";
-  tunerSwitch.checked = true;
-  tunerInfo.textContent = currentTargetNotes.length
-    ? `Hedef: ${currentTargetNotes.map(n => pitchClassToDisplay(noteNameToPitchClass(n))).join(" / ")} | Ses bekleniyor...`
-    : "Tuner açık. Hedef hece/nota seç.";
-  tunerLoop();
+function getCentralWeight(progress){
+  const dist = Math.abs(progress - 0.5)
+  return 1.45 - dist * 2.1
 }
-function tunerKapat() {
-  tunerRunning = false;
+function buildStableRuns(notes){
+  if(!notes.length) return []
+  const runs = []
+  let cur = { note:notes[0].note, weight:notes[0].weight, count:1 }
+  for(let i=1;i<notes.length;i++){
+    if(notes[i].note === cur.note){ cur.weight += notes[i].weight; cur.count += 1 }
+    else{ runs.push(cur); cur = { note:notes[i].note, weight:notes[i].weight, count:1 } }
+  }
+  runs.push(cur)
+  return runs
+}
+function analyzeSegmentPitchSequence(index){
+  if(index === -1 || !hasAudioLoaded()) return null
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null) return null
+  const segDur = seg.end - seg.start
+  if(segDur < 0.06) return null
 
-  if (tunerAnimation) {
-    cancelAnimationFrame(tunerAnimation);
-    tunerAnimation = null;
+  const scaleNotes = getScaleNotesByKey(keySelect.value)
+  const buffer = ws.backend.buffer
+  const data = buffer.getChannelData(0)
+  const sampleRate = buffer.sampleRate
+  const startSample = Math.max(0, Math.floor(seg.start * sampleRate))
+  const endSample = Math.min(data.length, Math.floor(seg.end * sampleRate))
+  if(endSample - startSample <= 1024) return null
+
+  const shortSegment = segDur < 0.70
+  const midSegment = segDur < 1.60
+  const windowSize = 2048
+  const hopSize = 256
+  const frames = []
+
+  for(let i=startSample;i + windowSize < endSample;i += hopSize){
+    const slice = data.slice(i, i + windowSize)
+    let energy = 0
+    for(let k=0;k<slice.length;k++) energy += Math.abs(slice[k])
+    energy /= slice.length
+    if(energy < 0.008) continue
+    const freq = autoCorrelate(slice, sampleRate)
+    if(freq === -1 || freq < 70 || freq > 1200) continue
+
+    const midi = freqToMidi(freq)
+    const rawNote = midiToNoteName(midi)
+    const filteredNote = semitoneToNearestScaleNote(noteToSemitone(rawNote), scaleNotes)
+    const t = i / sampleRate
+    const progress = clamp((t - seg.start) / Math.max(0.001, segDur), 0, 1)
+    const centralWeight = getCentralWeight(progress)
+    const edgePenalty = (progress < 0.15 || progress > 0.85) ? 0.30 : 1
+    const totalWeight = energy * centralWeight * edgePenalty
+    frames.push({ rawNote, filteredNote, weight:totalWeight, progress })
+  }
+  if(!frames.length) return null
+  const focusedFrames = frames.filter(f => shortSegment ? (f.progress >= 0.22 && f.progress <= 0.78) : true)
+  const workFrames = focusedFrames.length ? focusedFrames : frames
+  const filteredNotes = workFrames.map(x => ({ note:x.filteredNote, weight:x.weight }))
+  const runs = buildStableRuns(filteredNotes)
+  const weighted = {}
+  filteredNotes.forEach(f => weighted[f.note] = (weighted[f.note] || 0) + f.weight)
+  runs.forEach(run => { weighted[run.note] = (weighted[run.note] || 0) + run.weight * 0.65 + run.count * 0.12 })
+  const ranked = Object.entries(weighted).sort((a,b)=>b[1]-a[1]).map(x=>x[0])
+
+  if(shortSegment){
+    const bestRun = runs.sort((a,b)=>(b.weight + b.count*0.4) - (a.weight + a.count*0.4))[0]
+    const best = bestRun ? bestRun.note : ranked[0]
+    return { sequence:[best], dominantNote:best, confidence:1 }
   }
 
-  if (micSource) {
-    try { micSource.disconnect(); } catch(e) {}
-    micSource = null;
+  let seq = compressNoteSequence(runs.filter(run => run.count >= 2 || run.weight >= 0.03).map(run => run.note))
+  if(!seq.length) seq = [ranked[0]]
+  seq = seq.filter(n => ranked.includes(n))
+  seq = compressNoteSequence(seq)
+
+  if(midSegment){
+    seq = seq.slice(0, 2)
+    if(!seq.length) seq = [ranked[0]]
+  }else{
+    seq = seq.slice(0, 3)
+    if(!seq.length) seq = [ranked[0]]
   }
-  if (analyser) {
-    try { analyser.disconnect(); } catch(e) {}
-    analyser = null;
+  const dominantNote = ranked[0] || seq[0]
+  const totalWeight = Object.values(weighted).reduce((a,b)=>a+b,0) || 1
+  const confidence = dominantNote ? (weighted[dominantNote] || 0) / totalWeight : 0
+  return { sequence:seq, dominantNote, confidence }
+}
+function analyzeSelectedSegmentNote(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const result = analyzeSegmentPitchSequence(loadedIndex)
+  if(!result){
+    analysisText.textContent = "Analiz: nota bulunamadı"
+    analysisText.className = "pill red"
+    return
   }
-  if (micStream) {
-    micStream.getTracks().forEach(track => track.stop());
-    micStream = null;
+  const seqString = compressNoteSequence(result.sequence).join(" ")
+  notaInput.value = seqString
+  heceler[loadedIndex].note = seqString
+  const percent = Math.round(result.confidence * 100)
+  analysisText.textContent = "Analiz: " + seqString + " | baskın: " + result.dominantNote + " (%" + percent + ")"
+  analysisText.className = "pill green"
+  renderKaraoke(); refreshMeasurePanel(); refreshPracticePanel()
+  statusText.textContent = "Nota önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
+}
+function analyzeAllSegmentsNotes(){
+  const targets = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null)
+  if(!targets.length){ alert("Önce zamanlanmış segmentler olmalı."); return }
+  let updated = 0
+  targets.forEach(item=>{
+    const result = analyzeSegmentPitchSequence(item.idx)
+    if(result){ heceler[item.idx].note = compressNoteSequence(result.sequence).join(" "); updated += 1 }
+  })
+  renderAll(); refreshMeasurePanel(); refreshPracticePanel()
+  analysisText.textContent = "Analiz: " + updated + " segment güncellendi"
+  analysisText.className = "pill green"
+  statusText.textContent = "Tümüne nota önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
+}
+function renderKaraoke(){
+  const sorted = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  if(sorted.length === 0){
+    karaoke.innerHTML = '<div class="karaokeBox" style="width:100%;cursor:default;">Henüz zamanlanmış karaoke kutusu oluşmadı.</div>'
+    return
   }
-  if (micContext) {
-    try { micContext.close(); } catch(e) {}
-    micContext = null;
+  karaoke.innerHTML = ""
+  const intro = heceler.find(h => h.isIntro)
+  if(intro && intro.end !== null && intro.end > 0){
+    const introBox = document.createElement("div")
+    introBox.className = "karaokeBox intro"
+    introBox.id = "karaoke-intro"
+    introBox.innerHTML = `<div class="fill"></div><div class="label">Intro ${intro.end.toFixed(2)} sn</div>`
+    introBox.onclick = () => hasAudioLoaded() && ws.play(0, intro.end)
+    karaoke.appendChild(introBox)
+    const br = document.createElement("div"); br.className = "lineBreak"; karaoke.appendChild(br)
+  }
+  let lastLine = null
+  sorted.forEach((item, sortedIndex)=>{
+    if(lastLine !== null && item.seg.line !== lastLine){
+      const br = document.createElement("div"); br.className = "lineBreak"; karaoke.appendChild(br)
+    }
+    const btn = document.createElement("div")
+    btn.className = "karaokeBox" + (selectedSegmentIndexes.includes(item.idx) ? " selected" : "")
+    btn.id = "karaoke-box-" + sortedIndex
+    btn.dataset.realIndex = item.idx
+    const noteSmall = item.seg.note ? ` <span style="opacity:.72;font-size:12px;">(${escapeHtml(item.seg.note)})</span>` : ""
+    btn.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(item.seg.text)}${noteSmall}</div>`
+    btn.onclick = ()=>{ if(karaokeSelectionState && karaokeSelectionState.moved) return; playSingleKaraokeSegment(item.idx) }
+    karaoke.appendChild(btn)
+    lastLine = item.seg.line
+  })
+}
+function refreshKaraokeSelectionClasses(){
+  document.querySelectorAll(".karaokeBox").forEach(el=>{
+    const realIndex = el.dataset.realIndex
+    if(!realIndex) return
+    const idx = Number(realIndex)
+    el.classList.toggle("selected", selectedSegmentIndexes.includes(idx))
+  })
+}
+function scheduleKaraokeSelectionUpdate(){
+  if(karaokeSelectionRaf) return
+  karaokeSelectionRaf = requestAnimationFrame(()=>{
+    karaokeSelectionRaf = null
+    refreshKaraokeSelectionClasses()
+  })
+}
+function clearSelection(){ selectedSegmentIndexes = []; refreshKaraokeSelectionClasses() }
+function selectWholeLine(lineNo){
+  selectedSegmentIndexes = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.line === lineNo && x.seg.start !== null && x.seg.end !== null).map(x=>x.idx)
+  refreshKaraokeSelectionClasses()
+}
+function getSegmentIndexFromElement(el){
+  if(!el) return null
+  const box = el.closest(".karaokeBox")
+  if(!box) return null
+  if(!box.dataset.realIndex) return null
+  return Number(box.dataset.realIndex)
+}
+function playSingleKaraokeSegment(index){
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null || !hasAudioLoaded()) return
+  selectedSegmentIndexes = [index]
+  refreshKaraokeSelectionClasses()
+  seekToSegment(index, true)
+}
+function startKaraokeTouchSelection(e){
+  const idx = getSegmentIndexFromElement(e.target)
+  if(idx === null) return
+  karaokeSelectionState = { pointerId:e.pointerId, moved:false, startIndex:idx, indexes:new Set([idx]) }
+  selectedSegmentIndexes = [idx]
+  refreshKaraokeSelectionClasses()
+  try{ karaoke.setPointerCapture(e.pointerId) }catch(err){}
+}
+function moveKaraokeTouchSelection(e){
+  if(!karaokeSelectionState) return
+  const el = document.elementFromPoint(e.clientX, e.clientY)
+  const idx = getSegmentIndexFromElement(el)
+  if(idx === null) return
+  if(idx !== karaokeSelectionState.startIndex) karaokeSelectionState.moved = true
+  karaokeSelectionState.indexes.add(idx)
+  selectedSegmentIndexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
+  scheduleKaraokeSelectionUpdate()
+}
+function endKaraokeTouchSelection(){
+  if(!karaokeSelectionState) return
+  const moved = karaokeSelectionState.moved
+  const indexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
+  karaokeSelectionState = null
+  if(!indexes.length) return
+  if(moved && indexes.length > 1) playSegmentsSequentially(indexes)
+  else playSingleKaraokeSegment(indexes[0])
+}
+async function playSegmentsSequentially(indexes){
+  if(!hasAudioLoaded() || !indexes.length) return
+  sequenceStopRequested = false
+  isSequencePlaying = true
+  const ordered = indexes.map(i => ({ i, seg:heceler[i] })).filter(x => x.seg && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  for(const item of ordered){
+    if(sequenceStopRequested) break
+    selectedSegmentIndexes = [item.i]
+    refreshKaraokeSelectionClasses()
+    seekToSegment(item.i, false)
+    ws.play(item.seg.start, item.seg.end)
+    await new Promise(resolve => {
+      const ms = Math.max(40, ((item.seg.end - item.seg.start) * 1000) + 50)
+      setTimeout(resolve, ms)
+    })
+  }
+  isSequencePlaying = false
+}
+function playSelectedLine(){
+  if(!selectedSegmentIndexes.length){ alert("Önce bir kelime seç."); return }
+  const first = heceler[selectedSegmentIndexes[0]]
+  if(!first) return
+  selectWholeLine(first.line)
+  playSegmentsSequentially(selectedSegmentIndexes)
+}
+function resetKaraokeClasses(){
+  document.querySelectorAll(".karaokeBox").forEach(el=>{
+    el.classList.remove("active","ok","bad")
+    const fill = el.querySelector(".fill")
+    if(fill) fill.style.width = "0%"
+  })
+}
+function evaluateTargetVsDetected(seg){
+  const targets = parseTargetNotes(seg.note)
+  const actual = compressNoteSequence(seg.detectedNotesRaw || [])
+  if(targets.length === 0) return null
+  if(actual.length === 0) return null
+  const matched = arraysUniqueIntersectionCount(targets, actual)
+  const ratio = matched / targets.length
+  return { matched, total:targets.length, ratio, success:ratio >= (2/3) }
+}
+function karaokePlaybackUpdate(time){
+  const sorted = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  if(sorted.length === 0) return
+
+  resetKaraokeClasses()
+  const intro = heceler.find(h => h.isIntro)
+  if(intro && intro.end !== null && intro.end > 0){
+    const introEl = document.getElementById("karaoke-intro")
+    if(introEl){
+      const fill = introEl.querySelector(".fill")
+      if(time <= intro.end){
+        introEl.classList.add("active")
+        fill.style.width = Math.max(0, Math.min(100, (time / intro.end) * 100)) + "%"
+        if(lastScrolledActiveId !== introEl.id){ lastScrolledActiveId = introEl.id; scrollKaraokeToActive(introEl) }
+      }else fill.style.width = "100%"
+    }
   }
 
-  detectedPitchClass = null;
-  latchedPitchClass = null;
-  lastBestCents = null;
-  tunerMiniBtn.textContent = "TUNER AÇ";
-  tunerSwitch.checked = false;
-  tunerInfo.textContent = "Tuner kapalı.";
-  updatePitchDotByCents(null);
-}
+  const currentDetected = getCurrentDetectedPitch()
+  const detectedSemi = currentDetected ? noteToSemitone(currentDetected.note) : null
 
-/* WARMUP AUDIO */
-function ensureWarmupAudioContext() {
-  if (!warmupAudioCtx) warmupAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (warmupAudioCtx.state === "suspended") return warmupAudioCtx.resume();
-  return Promise.resolve();
-}
-function noteToFreq(note) {
-  const map = {C:0, "C#":1, D:2, "D#":3, E:4, F:5, "F#":6, G:7, "G#":8, A:9, "A#":10, B:11};
-  const match = /^([A-G]#?)(\d)$/.exec(note);
-  if (!match) return 440;
-  const [, pitch, octaveStr] = match;
-  const octave = Number(octaveStr);
-  const midi = (octave + 1) * 12 + map[pitch];
-  return 440 * Math.pow(2, (midi - 69) / 12);
-}
-function playWarmupTone(note, startAt, duration = 1.1) {
-  const freq = noteToFreq(note);
-  const master = warmupAudioCtx.createGain();
-  master.gain.setValueAtTime(0.0001, startAt);
-  master.gain.linearRampToValueAtTime(0.19, startAt + 0.015);
-  master.gain.exponentialRampToValueAtTime(0.11, startAt + 0.18);
-  master.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+  sorted.forEach((item, i)=>{
+    const el = document.getElementById("karaoke-box-" + i)
+    if(!el) return
+    const fill = el.querySelector(".fill")
+    const h = item.seg
+    if(!Array.isArray(h.detectedSemis)) h.detectedSemis = []
+    if(!Array.isArray(h.detectedNotesRaw)) h.detectedNotesRaw = []
 
-  const lowpass = warmupAudioCtx.createBiquadFilter();
-  lowpass.type = "lowpass";
-  lowpass.frequency.value = 2800;
-  lowpass.Q.value = 0.4;
-
-  const partials = [
-    { type:"triangle", gain:1.0, detune:0 },
-    { type:"sine", gain:0.32, detune:2 },
-    { type:"triangle", gain:0.18, detune:-3 }
-  ];
-
-  partials.forEach((p, idx) => {
-    const osc = warmupAudioCtx.createOscillator();
-    const g = warmupAudioCtx.createGain();
-    osc.type = p.type;
-    osc.frequency.value = freq * (idx === 0 ? 1 : (idx + 1));
-    osc.detune.value = p.detune;
-    g.gain.value = p.gain / (idx + 1.3);
-    osc.connect(g);
-    g.connect(lowpass);
-    osc.start(startAt);
-    osc.stop(startAt + duration + 0.05);
-  });
-
-  lowpass.connect(master);
-  master.connect(warmupAudioCtx.destination);
-}
-async function playWarmupItem(item) {
-  try {
-    await ensureWarmupAudioContext();
-    durdurAktifSes();
-
-    clearWarmupMarks();
-    document.querySelectorAll(".warmup-item.active").forEach(el => el.classList.remove("active"));
-    const itemEl = document.querySelector(`.warmup-item[data-item-id="${item.id}"]`);
-    if (itemEl) itemEl.classList.add("active");
-
-    const now = warmupAudioCtx.currentTime + 0.04;
-    const step = 0.78;
-
-    item.synth.forEach((note, i) => playWarmupTone(note, now + i * step, 1.02));
-    warmupStatusEl.textContent = `${item.parts.join(" - ")} çalınıyor...`;
-
-    setTimeout(() => startWarmupTargeting(item), item.synth.length * step * 1000 + 120);
-  } catch (err) {
-    console.error(err);
-    warmupStatusEl.textContent = "Warmup sesi çalınamadı.";
-  }
-}
-function renderWarmupLine(containerId, items) {
-  const lineContainer = document.getElementById(containerId);
-  lineContainer.innerHTML = "";
-
-  items.forEach(item => {
-    const wrapper = document.createElement("span");
-    wrapper.className = "warmup-item";
-    wrapper.dataset.itemId = item.id;
-
-    item.parts.forEach((part, index) => {
-      const partEl = document.createElement("span");
-      partEl.className = "warmup-part";
-      partEl.dataset.partIndex = index;
-      partEl.textContent = part;
-      wrapper.appendChild(partEl);
-
-      if (index < item.parts.length - 1) {
-        const sep = document.createElement("span");
-        sep.className = "warmup-sep";
-        sep.textContent = "-";
-        wrapper.appendChild(sep);
+    if(time >= h.start && time <= h.end){
+      el.classList.add("active")
+      if(lastScrolledActiveId !== el.id){ lastScrolledActiveId = el.id; scrollKaraokeToActive(el) }
+      fill.style.width = Math.max(0, Math.min(100, ((time - h.start) / (h.end - h.start)) * 100)) + "%"
+      if(detectedSemi !== null && !h.detectedSemis.includes(detectedSemi)) h.detectedSemis.push(detectedSemi)
+      if(currentDetected){
+        const nearest = semitoneToNearestScaleNote(noteToSemitone(currentDetected.note), getScaleNotesByKey(keySelect.value))
+        h.detectedNotesRaw.push(nearest)
       }
-    });
-
-    wrapper.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
-      warmupSelecting = false;
-      warmupSelectionStarted = true;
-
-      wrapper._warmupTimer = setTimeout(() => {
-        warmupSelecting = true;
-        wrapper.classList.toggle("selected");
-        warmupStatusEl.textContent = "Warmup seçimi başladı. Sürükleyip bırak.";
-      }, 280);
-    });
-
-    wrapper.addEventListener("pointerup", async (e) => {
-      e.preventDefault();
-
-      if (wrapper._warmupTimer) {
-        clearTimeout(wrapper._warmupTimer);
-        wrapper._warmupTimer = null;
-      }
-      if (warmupSelecting) return;
-      if (!warmupSelectionStarted) return;
-
-      clearWarmupSelectionStateOnly();
-      await playWarmupItem(item);
-    });
-
-    wrapper.addEventListener("pointercancel", () => {
-      if (wrapper._warmupTimer) {
-        clearTimeout(wrapper._warmupTimer);
-        wrapper._warmupTimer = null;
-      }
-      warmupSelectionStarted = false;
-    });
-
-    lineContainer.appendChild(wrapper);
-  });
+    }else if(time > h.end){
+      fill.style.width = "100%"
+      const evalResult = evaluateTargetVsDetected(h)
+      if(evalResult) el.classList.add(evalResult.success ? "ok" : "bad")
+    }
+    if(selectedSegmentIndexes.includes(item.idx)) el.classList.add("selected")
+  })
 }
-function clearWarmupSelectionStateOnly() {
-  warmupSelecting = false;
-  warmupSelectionStarted = false;
+function resetEvaluationFlags(){
+  heceler.forEach(h => { h.detectedSemis = []; h.detectedNotesRaw = [] })
 }
-function clearWarmupSelection() {
-  document.querySelectorAll(".warmup-item.selected").forEach(el => el.classList.remove("selected"));
-  clearWarmupMarks();
-  stopWarmupTargeting();
-  warmupStatusEl.textContent = "Seçim temizlendi.";
-}
-async function playSelectedWarmups() {
-  const selectedEls = [...document.querySelectorAll(".warmup-item.selected")];
-  if (!selectedEls.length) {
-    warmupStatusEl.textContent = "Önce warmup öğesi seç.";
-    return;
-  }
-
-  const queue = selectedEls.map(el => warmupMap[el.dataset.itemId]).filter(Boolean);
-  if (!queue.length) return;
-
-  try {
-    await ensureWarmupAudioContext();
-    durdurAktifSes();
-    stopWarmupTargeting();
-
-    let offset = warmupAudioCtx.currentTime + 0.04;
-    queue.forEach(item => {
-      item.synth.forEach((note, i) => playWarmupTone(note, offset + i * 0.78, 1.02));
-      offset += item.synth.length * 0.78 + 0.22;
-    });
-
-    warmupStatusEl.textContent = "Seçili warmup zinciri çalınıyor...";
-
-    const lastItem = queue[queue.length - 1];
-    const totalMs = (offset - warmupAudioCtx.currentTime) * 1000;
-
-    setTimeout(() => {
-      startWarmupTargeting(lastItem);
-      warmupStatusEl.textContent = "Seçili zincir bitti. Son çalışma hedefte.";
-    }, totalMs + 90);
-  } catch (err) {
-    console.error(err);
-    warmupStatusEl.textContent = "Seçili warmup çalınamadı.";
+function buildProjectPayload(){
+  return {
+    version:20.3,
+    title:titleInput.value.trim(),
+    intro:getIntroValue(),
+    difficulty:difficultySelect.value,
+    key:keySelect.value,
+    lyrics:lyricsInput.value,
+    audioName:currentAudioName,
+    audioDataUrl:currentAudioDataUrl || "",
+    selectedSegmentIndexes,
+    heceler:heceler.map(h => ({
+      text:h.text || "",
+      note:h.note || "",
+      start:h.start ?? null,
+      end:h.end ?? null,
+      line:h.line ?? 0,
+      isIntro:!!h.isIntro
+    })),
+    cursorTime
   }
 }
-function pointerAltindakiWarmupItem(clientX, clientY) {
-  const el = document.elementFromPoint(clientX, clientY);
-  if (!el) return null;
-  return el.closest(".warmup-item");
+function applyProjectPayload(parsed){
+  titleInput.value = parsed.title || ""
+  introInput.value = Number(parsed.intro || 0).toFixed(2)
+  difficultySelect.value = parsed.difficulty || "orta"
+  keySelect.value = parsed.key || "Sol Majör"
+  practiceKeySelect.value = parsed.key || "Sol Majör"
+  lyricsInput.value = parsed.lyrics || ""
+  currentAudioName = parsed.audioName || "audio.mp3"
+  currentAudioDataUrl = parsed.audioDataUrl || ""
+  selectedSegmentIndexes = Array.isArray(parsed.selectedSegmentIndexes) ? parsed.selectedSegmentIndexes : []
+  heceler = Array.isArray(parsed.heceler) ? parsed.heceler.map(h => ({
+    text:h.text || "", note:h.note || "", start:h.start ?? null, end:h.end ?? null, line:h.line ?? 0,
+    detectedSemis:[], detectedNotesRaw:[], isIntro:!!h.isIntro
+  })) : []
+  cursorTime = parsed.cursorTime || 0
+  loadedIndex = -1
+  normalizeIntroSegment()
+  lastIntroValue = getIntroValue()
+  renderAll()
+  setCursorTime(cursorTime)
+  if(currentAudioDataUrl){
+    currentAudioName = parsed.audioName || currentAudioName
+    ws.load(currentAudioDataUrl)
+  }else if(hasAudioLoaded()) scrollToTime(cursorTime)
+  refreshPracticePanel()
+  refreshMeasurePanel()
+}
+function saveProject(){
+  const payload = buildProjectPayload()
+  localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(payload))
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  const safeTitle = (payload.title || "vocaly_proje").replace(/[^\w\u00C0-\u024F-]+/g, "_")
+  a.href = url
+  a.download = safeTitle + ".json"
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+  statusText.textContent = "Proje kaydedildi ve indirildi"
+  statusText.className = "pill green"
+}
+function autoSaveProject(){
+  localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(buildProjectPayload()))
+}
+function loadProject(){
+  const raw = localStorage.getItem(PROJECT_AUTOSAVE_KEY)
+  if(!raw) return
+  try{
+    applyProjectPayload(JSON.parse(raw))
+    statusText.textContent = "Son otomatik kayıt yüklendi"
+    statusText.className = "pill green"
+  }catch(err){ console.error(err) }
+}
+function importProjectFromJsonText(text){
+  try{
+    const parsed = JSON.parse(text)
+    applyProjectPayload(parsed)
+    autoSaveProject()
+    statusText.textContent = "JSON proje yüklendi"
+    statusText.className = "pill green"
+  }catch(err){
+    console.error(err)
+    alert("JSON okunamadı.")
+  }
+}
+function renderAll(){
+  normalizeIntroSegment()
+  renderRuler()
+  renderStrip()
+  renderKaraoke()
+  scheduleOverlaySync()
+  refreshPracticePanel()
+  refreshMeasurePanel()
+}
+function autoTimingSuggest(){
+  const words = heceler.filter(h => !h.isIntro)
+  if(!words.length){ alert("Önce sözleri kelimelere böl."); return }
+  const intro = getIntroValue()
+  let duration = hasAudioLoaded() ? ws.getDuration() : 0
+  if(!duration || duration <= intro){
+    duration = intro + Math.max(8, words.length * 0.7)
+  }
+  const available = Math.max(0.6, duration - intro)
+  const totalChars = words.reduce((sum,w)=>sum + Math.max(1, (w.text || "").length), 0)
+
+  let cursor = intro
+  words.forEach(w=>{
+    const weight = Math.max(1, (w.text || "").length)
+    const segDur = Math.max(0.10, round2((weight / totalChars) * available))
+    w.start = round2(cursor)
+    w.end = round2(cursor + segDur)
+    cursor = w.end
+  })
+
+  if(words.length){
+    words[words.length - 1].end = round2(duration)
+  }
+  renderAll()
+  statusText.textContent = "Otomatik timing önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
 }
 
-/* PRACTICE RENDER */
-function renderPracticeLyrics() {
-  container.innerHTML = "";
-  heceCounter = 0;
-
-  lyricsData.forEach((kitaData) => {
-    const kitaDiv = document.createElement("div");
-    kitaDiv.className = "kita";
-
-    kitaData.forEach((satirData) => {
-      const satirDiv = document.createElement("div");
-      satirDiv.className = "satir";
-
-      const satirPlayBtn = document.createElement("button");
-      satirPlayBtn.className = "satir-play";
-      satirPlayBtn.type = "button";
-      satirPlayBtn.textContent = "▶";
-
-      const satirText = document.createElement("div");
-      satirText.className = "satir-text";
-
-      let satirFirstId = null;
-      let satirLastId = null;
-
-      satirData.forEach((word, wordIndex) => {
-        word.forEach((hece) => {
-          const span = document.createElement("span");
-          span.className = "hece";
-          span.textContent = hece;
-
-          const currentId = heceCounter;
-          span.dataset.id = currentId;
-
-          if (satirFirstId === null) satirFirstId = currentId;
-          satirLastId = currentId;
-
-          span.addEventListener("pointerdown", (e) => {
-            e.stopPropagation();
-            pointerDown = true;
-            longPressTimerBaslat(currentId);
-          });
-
-          span.addEventListener("pointerup", async (e) => {
-            e.stopPropagation();
-            pointerDown = false;
-            temizleLongPressTimer();
-
-            if (selectionMode) {
-              const minId = Math.min(selectionStartId, selectionEndId);
-              const maxId = Math.max(selectionStartId, selectionEndId);
-              await seciliAralikCal(minId, maxId);
-              secimTemizle();
-            } else {
-              await heceCal(span, currentId);
-            }
-          });
-
-          span.addEventListener("pointercancel", () => {
-            pointerDown = false;
-            temizleLongPressTimer();
-          });
-
-          satirText.appendChild(span);
-          heceCounter++;
-        });
-
-        if (wordIndex < satirData.length - 1) satirText.appendChild(document.createTextNode(" "));
-      });
-
-      satirPlayBtn.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        await satirCal(satirDiv, satirFirstId, satirLastId);
-      });
-
-      satirDiv.appendChild(satirPlayBtn);
-      satirDiv.appendChild(satirText);
-      kitaDiv.appendChild(satirDiv);
-    });
-
-    container.appendChild(kitaDiv);
-  });
+/* ---------------- PRACTICE / MEASURE PANELS ---------------- */
+let measureRunning = false
+let measureHits = 0
+let measureChecks = 0
+function playSnippetOnWs(start, end){
+  if(!hasAudioLoaded()) return
+  ws.play(start, end)
+}
+function refreshPracticePanel(){
+  const timed = heceler.filter(h => !h.isIntro && h.start !== null && h.end !== null)
+  practiceSongTitle.textContent = "Eser: " + (titleInput.value.trim() || "-")
+  practiceSongMeta.textContent = "Segment: " + timed.length
+  practiceKaraoke.innerHTML = ""
+  if(!timed.length){
+    practiceKaraoke.innerHTML = '<div class="karaokeBox" style="width:100%;cursor:default;">Çalışılacak zamanlanmış segment yok.</div>'
+    return
+  }
+  timed.sort((a,b)=>a.start-b.start).forEach(seg=>{
+    const box = document.createElement("div")
+    box.className = "karaokeBox"
+    box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(seg.text)}${seg.note ? ' <span style="opacity:.7;font-size:12px">(' + escapeHtml(seg.note) + ')</span>' : ''}</div>`
+    box.onclick = ()=>{
+      practiceTargetNote = parseTargetNotes(seg.note)[0] || ""
+      practiceTargetNoteEl.textContent = practiceTargetNote || "-"
+      playSnippetOnWs(seg.start, seg.end)
+    }
+    practiceKaraoke.appendChild(box)
+  })
+}
+function refreshMeasurePanel(){
+  const timed = heceler.filter(h => !h.isIntro && h.start !== null && h.end !== null)
+  measureKaraoke.innerHTML = ""
+  if(!timed.length){
+    measureKaraoke.innerHTML = '<div class="karaokeBox" style="width:100%;cursor:default;">Ölçülecek zamanlanmış segment yok.</div>'
+    return
+  }
+  timed.sort((a,b)=>a.start-b.start).forEach(seg=>{
+    const box = document.createElement("div")
+    box.className = "karaokeBox"
+    box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(seg.text)}${seg.note ? ' <span style="opacity:.7;font-size:12px">(' + escapeHtml(seg.note) + ')</span>' : ''}</div>`
+    box.onclick = ()=>{
+      measureTargetNoteEl.textContent = parseTargetNotes(seg.note)[0] || "-"
+      playSnippetOnWs(seg.start, seg.end)
+    }
+    measureKaraoke.appendChild(box)
+  })
+}
+function resetMeasureData(){
+  measureRunning = false
+  measureHits = 0
+  measureChecks = 0
+  measureScore.textContent = "0"
+  measureAccuracyText.textContent = "%0"
+  measureStatusText.textContent = "Hazır"
+  measureTargetNoteEl.textContent = "-"
+}
+function runMeasureTick(){
+  if(!measureRunning) return
+  const det = getCurrentDetectedPitch()
+  const target = measureTargetNoteEl.textContent.trim()
+  if(det && target && target !== "-"){
+    const ds = noteToSemitone(det.note)
+    const ts = noteToSemitone(target)
+    let diff = Math.abs(ds - ts)
+    diff = Math.min(diff, 12 - diff)
+    measureChecks += 1
+    if(diff === 0 || Math.abs(det.cents) <= 20) measureHits += 1
+    const pct = measureChecks ? Math.round((measureHits / measureChecks) * 100) : 0
+    measureScore.textContent = String(measureHits)
+    measureAccuracyText.textContent = "%" + pct
+    measureStatusText.textContent = diff <= 1 ? "Yakın" : "Uzak"
+  }
 }
 
-/* SAYFA BAĞLAMA */
-function applySongConfig(song) {
-  document.title = `Vocaly - ${song.title}`;
-  songTitleEl.textContent = song.practiceTitle || song.title || "ESER ÇALIŞMA";
-  introTextEl.textContent = song.introText || introTextEl.textContent;
-  statusEl.textContent = song.practiceStatus || statusEl.textContent;
-  practiceTipEl.textContent = song.practiceTip || practiceTipEl.textContent;
-  warmupBadgeEl.textContent = song.warmup?.badgeText || "Başlangıç tonu: Mi Minör";
-  assessmentModeLink.href = song.assessmentLink || "./olcme.html";
-
-  audio.innerHTML = `<source src="${song.practiceAudio || "temiz_kayit.mp3"}" type="audio/mpeg">`;
-  audio.load();
-
-  warmupToneSelect.value = String(song.warmup?.defaultTonePc ?? 4);
-  warmupScaleTypeSelect.value = song.warmup?.defaultScaleType || "minor";
+/* ---------------- LIBRARY ---------------- */
+function refreshLibraryList(){
+  const q = librarySearch.value.trim().toLowerCase()
+  songList.innerHTML = ""
+  const filtered = appLibrary.map((song, idx)=>({ song, idx })).filter(x => !q || (x.song.title || "").toLowerCase().includes(q))
+  if(!filtered.length){
+    songList.innerHTML = '<div class="songItem">Kütüphane boş.</div>'
+  }
+  filtered.forEach(item=>{
+    const el = document.createElement("div")
+    el.className = "songItem" + (item.idx === currentLibraryIndex ? " active" : "")
+    el.innerHTML = `
+      <div class="songTitle">${escapeHtml(item.song.title || "İsimsiz eser")}</div>
+      <div class="songSub">${(item.song.heceler || []).filter(h => !h.isIntro).length} segment • ${item.song.key || "-"}</div>
+    `
+    el.onclick = ()=>{
+      currentLibraryIndex = item.idx
+      refreshLibraryList()
+      refreshLibraryPreviewOnly()
+    }
+    songList.appendChild(el)
+  })
+  refreshLibraryPreviewOnly()
+}
+function refreshLibraryPreviewOnly(){
+  const song = getSelectedSong()
+  if(!song){
+    librarySongTitle.textContent = "Boş"
+    librarySongDesc.textContent = "Henüz eser seçili değil."
+    librarySegCount.textContent = "0 segment"
+    libraryAudioInfo.textContent = "Audio: yok"
+    libraryKeyInfo.textContent = "Ton: -"
+    librarySegments.innerHTML = ""
+    return
+  }
+  const segs = (song.heceler || []).filter(h => !h.isIntro)
+  librarySongTitle.textContent = song.title || "İsimsiz eser"
+  librarySongDesc.textContent = "Kütüphanede kayıtlı eser"
+  librarySegCount.textContent = segs.length + " segment"
+  libraryAudioInfo.textContent = "Audio: " + (song.audioDataUrl ? "var" : "yok")
+  libraryKeyInfo.textContent = "Ton: " + (song.key || "-")
+  librarySegments.innerHTML = ""
+  segs.forEach(seg=>{
+    const chip = document.createElement("div")
+    chip.className = "miniChip"
+    chip.textContent = seg.text
+    chip.onclick = ()=>{
+      applyProjectPayload(song)
+      if(seg.start !== null && seg.end !== null && hasAudioLoaded()) ws.play(seg.start, seg.end)
+    }
+    librarySegments.appendChild(chip)
+  })
+}
+function saveCurrentToLibrary(){
+  const payload = buildProjectPayload()
+  const copy = deepClone(payload)
+  const idx = appLibrary.findIndex(x => x.title === copy.title && x.title)
+  if(idx >= 0) appLibrary[idx] = copy
+  else{
+    appLibrary.push(copy)
+    currentLibraryIndex = appLibrary.length - 1
+  }
+  saveLibrary()
+  refreshLibraryList()
+  statusText.textContent = "Kütüphaneye kaydedildi"
+  statusText.className = "pill green"
+}
+function importSongToLibraryFromText(text){
+  try{
+    const parsed = JSON.parse(text)
+    if(!parsed.heceler) throw new Error("Geçersiz JSON")
+    appLibrary.push(parsed)
+    currentLibraryIndex = appLibrary.length - 1
+    saveLibrary()
+    refreshLibraryList()
+  }catch(err){
+    alert("JSON okunamadı.")
+  }
 }
 
-/* INIT */
-createTicks();
-buildWarmupToneOptions();
-applySongConfig(activeSong);
-buildWarmupData();
-renderPracticeLyrics();
-updatePitchDotByCents(null);
-showMode("warmup");
+/* ---------------- INIT ---------------- */
+initWave()
+renderAll()
+setCursorTime(0)
+lastIntroValue = getIntroValue()
+loadLibrary()
+refreshLibraryList()
+refreshPracticePanel()
+refreshMeasurePanel()
+resetMeasureData()
 
-warmupToneSelect.addEventListener("change", () => {
-  clearWarmupSelection();
-  buildWarmupData();
-});
-warmupScaleTypeSelect.addEventListener("change", () => {
-  clearWarmupSelection();
-  buildWarmupData();
-});
+/* ---------------- EVENTS ---------------- */
+karaoke.addEventListener("pointerdown", startKaraokeTouchSelection)
+karaoke.addEventListener("pointermove", moveKaraokeTouchSelection)
+karaoke.addEventListener("pointerup", endKaraokeTouchSelection)
+karaoke.addEventListener("pointercancel", endKaraokeTouchSelection)
+karaoke.addEventListener("lostpointercapture", endKaraokeTouchSelection)
 
-document.addEventListener("pointermove", (e) => {
-  if (!pointerDown || !selectionMode) return;
-  const hoveredId = pointerAltindakiHeceId(e.clientX, e.clientY);
-  if (hoveredId === null) return;
-  selectionEndId = hoveredId;
-  secimGorseliniGuncelle();
-});
-
-document.addEventListener("pointerup", async (e) => {
-  if (!pointerDown && !selectionMode) {
-    const hoveredWarmup = pointerAltindakiWarmupItem(e.clientX, e.clientY);
-    if (warmupSelecting && hoveredWarmup) hoveredWarmup.classList.add("selected");
-    clearWarmupSelectionStateOnly();
-    return;
+audioFile.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  currentAudioName = file.name
+  const reader = new FileReader()
+  reader.onload = ()=>{
+    currentAudioDataUrl = reader.result
+    if(objectUrlRef) URL.revokeObjectURL(objectUrlRef)
+    objectUrlRef = URL.createObjectURL(file)
+    statusText.textContent = "Yükleniyor: " + file.name
+    statusText.className = "pill purple"
+    ws.load(objectUrlRef)
+    autoSaveProject()
   }
+  reader.readAsDataURL(file)
+})
 
-  temizleLongPressTimer();
-  pointerDown = false;
+playBtn.addEventListener("click", ()=>{ sequenceStopRequested = true; isSequencePlaying = false; hasAudioLoaded() && ws.playPause() })
+zoom.addEventListener("input", ()=>{
+  if(!hasAudioLoaded()) return
+  ws.zoom(Number(zoom.value))
+  setTimeout(()=>{ renderAll(); scheduleOverlaySync() }, 20)
+})
+rateSelect.addEventListener("change", ()=> hasAudioLoaded() && ws.setPlaybackRate(Number(rateSelect.value)))
 
-  if (selectionMode) {
-    const hoveredId = pointerAltindakiHeceId(e.clientX, e.clientY);
-    if (hoveredId !== null) selectionEndId = hoveredId;
+introInput.addEventListener("change", function(){
+  const newIntro = getIntroValue()
+  const diff = round2(newIntro - lastIntroValue)
+  normalizeIntroSegment()
+  const hasTimedNonIntro = heceler.some(h => !h.isIntro && h.start !== null && h.end !== null)
+  if(hasTimedNonIntro && diff !== 0){ shiftAllNonIntroBy(diff); alignFirstSegmentToIntro() }
+  renderAll()
+  if(hasAudioLoaded()){ seekToTime(newIntro); scrollToTime(newIntro) }
+  else setCursorTime(newIntro)
+  lastIntroValue = newIntro
+  statusText.textContent = "Intro otomatik güncellendi"
+  statusText.className = "pill green"
+  autoSaveProject()
+})
 
-    const minId = Math.min(selectionStartId, selectionEndId);
-    const maxId = Math.max(selectionStartId, selectionEndId);
+splitWordsBtn.addEventListener("click", function(){
+  parseLyricsToSegmentsPreserve()
+  loadedIndex = -1
+  renderAll()
+  const intro = getIntroValue()
+  if(hasAudioLoaded()){ seekToTime(intro); scrollToTime(intro) }
+  else setCursorTime(intro)
+  lastIntroValue = intro
+  statusText.textContent = "Kelimeler güncellendi"
+  statusText.className = "pill purple"
+  autoSaveProject()
+})
 
-    await seciliAralikCal(minId, maxId);
-    secimTemizle();
+autoTimingBtn.addEventListener("click", autoTimingSuggest)
+saveProjectBtn.addEventListener("click", saveProject)
+loadProjectBtn.addEventListener("click", loadProject)
+importJsonBtn.addEventListener("click", ()=>importJsonInput.click())
+importJsonInput.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  const reader = new FileReader()
+  reader.onload = ()=>importProjectFromJsonText(reader.result)
+  reader.readAsText(file, "utf-8")
+  importJsonInput.value = ""
+})
+
+resetTimingBtn.addEventListener("click", function(){
+  normalizeIntroSegment()
+  heceler.forEach(h=>{
+    if(h.isIntro){ h.start = 0; h.end = getIntroValue() }
+    else{ h.start = null; h.end = null; h.detectedSemis = []; h.detectedNotesRaw = [] }
+  })
+  loadedIndex = -1
+  selectedSegmentIndexes = []
+  renderAll()
+  statusText.textContent = "Timing sıfırlandı"
+  statusText.className = "pill red"
+  autoSaveProject()
+})
+
+saveBtn.addEventListener("click", function(){
+  const text = heceInput.value.trim()
+  const note = notaInput.value.trim()
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+  const line = Number(satirInput.value || 1)
+  if(!text){ alert("Kelime / öbek gir."); return }
+  if(!isNaN(start) && !isNaN(end) && end <= start){ alert("End, start’tan büyük olmalı."); return }
+
+  const obj = {
+    text, note,
+    start:isNaN(start) ? null : round2(start),
+    end:isNaN(end) ? null : round2(end),
+    line, detectedSemis:[], detectedNotesRaw:[], isIntro:false
   }
+  if(loadedIndex > -1){
+    const wasIntro = !!heceler[loadedIndex]?.isIntro
+    heceler[loadedIndex] = { ...obj, isIntro:wasIntro }
+    loadedIndex = -1
+  }else heceler.push(obj)
+  normalizeIntroSegment()
+  renderAll()
+  statusText.textContent = "Kayıt eklendi / güncellendi"
+  statusText.className = "pill purple"
+  autoSaveProject()
+})
 
-  const hoveredWarmup = pointerAltindakiWarmupItem(e.clientX, e.clientY);
-  if (warmupSelecting && hoveredWarmup) hoveredWarmup.classList.add("selected");
-  clearWarmupSelectionStateOnly();
-});
+updateBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+  if(isNaN(start) || isNaN(end) || end <= start){ alert("Geçerli bir start/end gir."); return }
 
-document.addEventListener("pointermove", (e) => {
-  if (!warmupSelecting) return;
-  const hoveredWarmup = pointerAltindakiWarmupItem(e.clientX, e.clientY);
-  if (hoveredWarmup) hoveredWarmup.classList.add("selected");
-});
+  const oldEnd = seg.end
+  seg.text = heceInput.value.trim()
+  seg.note = notaInput.value.trim()
+  seg.start = round2(start)
+  seg.end = round2(end)
+  seg.line = Number(satirInput.value || seg.line || 1)
+  if(seg.isIntro){ seg.text = "INTRO"; seg.start = 0; introInput.value = seg.end.toFixed(2) }
 
-document.addEventListener("pointercancel", () => {
-  pointerDown = false;
-  temizleLongPressTimer();
-  secimTemizle();
-  clearWarmupSelectionStateOnly();
-});
-
-stopBtn.addEventListener("click", () => {
-  secimTemizle();
-  herSeyiSifirla();
-  clearCurrentTargetState();
-  tunerInfo.textContent = tunerRunning ? "Tuner açık. Hedef hece/nota seç." : "Tuner kapalı.";
-});
-
-tunerMiniBtn.addEventListener("click", async () => {
-  try {
-    if (tunerRunning) tunerKapat();
-    else await tunerAc();
-  } catch (err) {
-    console.error(err);
-    tunerInfo.textContent = "Mikrofon açılamadı.";
-    tunerSwitch.checked = false;
+  const diff = round2(seg.end - oldEnd)
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+  if(pos !== -1 && diff !== 0){
+    for(let i=pos+1;i<ordered.length;i++){
+      const cur = ordered[i].s
+      const len = Math.max(0.03, round2(cur.end - cur.start))
+      cur.start = round2(cur.start + diff)
+      cur.end = round2(cur.start + len)
+    }
+    for(let i=pos+1;i<ordered.length;i++){
+      const prev = ordered[i - 1].s
+      const cur = ordered[i].s
+      const len = Math.max(0.03, round2(cur.end - cur.start))
+      cur.start = round2(prev.end)
+      cur.end = round2(cur.start + len)
+    }
   }
-});
+  renderAll()
+  seekToSegment(loadedIndex, false)
+  statusText.textContent = "Segment güncellendi"
+  statusText.className = "pill green"
+  autoSaveProject()
+})
 
-tunerSwitch.addEventListener("change", async () => {
-  try {
-    if (tunerSwitch.checked) await tunerAc();
-    else tunerKapat();
-  } catch (err) {
-    console.error(err);
-    tunerInfo.textContent = "Mikrofon açılamadı.";
-    tunerSwitch.checked = false;
+deleteLoadedBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  if(heceler[loadedIndex] && heceler[loadedIndex].isIntro){ alert("Intro segmenti silinmez."); return }
+  const removedIndex = loadedIndex
+  heceler.splice(removedIndex, 1)
+  loadedIndex = -1
+  selectedSegmentIndexes = selectedSegmentIndexes.filter(i => i !== removedIndex).map(i => i > removedIndex ? i - 1 : i)
+  renderAll()
+  statusText.textContent = "Seçili segment silindi"
+  statusText.className = "pill red"
+  autoSaveProject()
+})
+
+minusStartBtn.addEventListener("click", ()=>nudgeSegmentBoundary("start", -1))
+plusStartBtn.addEventListener("click", ()=>nudgeSegmentBoundary("start", 1))
+minusEndBtn.addEventListener("click", ()=>nudgeSegmentBoundary("end", -1))
+plusEndBtn.addEventListener("click", ()=>nudgeSegmentBoundary("end", 1))
+shiftLeftBtn.addEventListener("click", ()=>shiftWholeSegment(-1))
+shiftRightBtn.addEventListener("click", ()=>shiftWholeSegment(1))
+analyzeNoteBtn.addEventListener("click", analyzeSelectedSegmentNote)
+analyzeAllBtn.addEventListener("click", analyzeAllSegmentsNotes)
+
+previewSelectedBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null || !hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  ws.play(seg.start, seg.end)
+  statusText.textContent = "Seçili segment dinleniyor"
+  statusText.className = "pill amber"
+})
+previewPlayBtn.addEventListener("click", function(){
+  if(!hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  resetEvaluationFlags()
+  previewPlaying = true
+  ws.stop()
+  ws.play(0)
+  statusText.textContent = "Karaoke önizleme oynuyor"
+  statusText.className = "pill purple"
+})
+previewStopBtn.addEventListener("click", function(){
+  if(!hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  previewPlaying = false
+  ws.pause()
+  lastScrolledActiveId = null
+  statusText.textContent = "Karaoke önizleme durdu"
+  statusText.className = "pill amber"
+})
+micBtn.addEventListener("click", setupMicShared)
+clearSelectionBtn.addEventListener("click", clearSelection)
+playLineBtn.addEventListener("click", playSelectedLine)
+saveToLibraryBtn.addEventListener("click", saveCurrentToLibrary)
+
+/* practice events */
+micBtnPractice.addEventListener("click", async ()=>{ await setupMicShared() })
+stopWarmupBtn.addEventListener("click", stopWarmupAudio)
+ascendingScaleBtn.addEventListener("click", ()=>{ practiceTargetNote = getPracticeScale().slice(-1)[0] || ""; playAscendingScale() })
+descendingScaleBtn.addEventListener("click", ()=>{ practiceTargetNote = getPracticeScale()[0] || ""; playDescendingScale() })
+document.querySelectorAll(".intervalBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const interval = Number(btn.dataset.interval)
+    const scale = getPracticeScale()
+    practiceTargetNote = scale[Math.max(0, interval - 1)] || ""
+    playInterval(interval)
+  })
+})
+document.querySelectorAll(".motifBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const type = btn.dataset.motif
+    const scale = getPracticeScale()
+    if(type === "up") practiceTargetNote = scale[2] || scale[0]
+    if(type === "down") practiceTargetNote = scale[0]
+    if(type === "wave") practiceTargetNote = scale[1] || scale[0]
+    playMotif(type)
+  })
+})
+practicePlayAllBtn.addEventListener("click", ()=>{ if(hasAudioLoaded()) ws.play(0) })
+practiceStopBtn.addEventListener("click", ()=>{ if(hasAudioLoaded()) ws.pause() }),
+
+/* measure events */
+micBtnMeasure.addEventListener("click", async ()=>{ await setupMicShared() })
+measureResetBtn.addEventListener("click", resetMeasureData)
+measureStartBtn.addEventListener("click", ()=>{
+  measureRunning = true
+  const firstNoted = heceler.find(h => !h.isIntro && h.note)
+  measureTargetNoteEl.textContent = firstNoted ? (parseTargetNotes(firstNoted.note)[0] || "-") : "-"
+  measureStatusText.textContent = "Ölçüm başladı"
+})
+measurePreviewBtn.addEventListener("click", ()=>{
+  if(!hasAudioLoaded()) return
+  resetEvaluationFlags()
+  ws.stop()
+  ws.play(0)
+})
+measureStopPreviewBtn.addEventListener("click", ()=>{ if(hasAudioLoaded()) ws.pause() }),
+
+/* library events */
+librarySearch.addEventListener("input", refreshLibraryList)
+libraryImportBtn.addEventListener("click", ()=>libraryImportInput.click())
+libraryImportInput.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  const reader = new FileReader()
+  reader.onload = ()=>importSongToLibraryFromText(reader.result)
+  reader.readAsText(file, "utf-8")
+  libraryImportInput.value = ""
+})
+deleteSongBtn.addEventListener("click", ()=>{
+  if(currentLibraryIndex === -1){ alert("Önce bir eser seç."); return }
+  appLibrary.splice(currentLibraryIndex, 1)
+  currentLibraryIndex = appLibrary.length ? 0 : -1
+  saveLibrary()
+  refreshLibraryList()
+})
+openPracticeBtn.addEventListener("click", ()=>{
+  const song = getSelectedSong()
+  if(!song) return
+  applyProjectPayload(song)
+  showView("practiceView")
+})
+openMeasureBtn.addEventListener("click", ()=>{
+  const song = getSelectedSong()
+  if(!song) return
+  applyProjectPayload(song)
+  showView("measureView")
+})
+openEditorBtn.addEventListener("click", ()=>{
+  const song = getSelectedSong()
+  if(!song) return
+  applyProjectPayload(song)
+  showView("editorView")
+})
+
+/* shared live tuner loop */
+setInterval(()=>{
+  updateSharedTunerUI(practiceTargetNote, practiceDetectedNote, practiceTunerNeedle, practiceTargetNoteEl, practiceTunerText)
+  updateSharedTunerUI(measureTargetNoteEl.textContent.trim() === "-" ? "" : measureTargetNoteEl.textContent.trim(), measureDetectedNote, measureTunerNeedle, measureTargetNoteEl, measureStatusText)
+  runMeasureTick()
+}, 80)
+
+document.addEventListener("keydown", function(e){
+  const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : ""
+  const inInput = tag === "input" || tag === "textarea" || tag === "select"
+  if(inInput) return
+
+  if(e.code === "Space"){
+    e.preventDefault()
+    if(hasAudioLoaded()) ws.playPause()
+    return
   }
-});
-
-audio.addEventListener("pause", () => {
-  if (!stopTimeout && !activeTimeUpdateHandler) return;
-  durdurAktifSes();
-});
-
-document.addEventListener("touchend", () => {
-  if (warmupAudioCtx && warmupAudioCtx.state === "suspended") {
-    warmupAudioCtx.resume().catch(()=>{});
+  if(e.code === "Escape"){
+    loadedIndex = -1
+    selectedSegmentIndexes = []
+    refreshKaraokeSelectionClasses()
+    updateActiveSegmentLabel(-1)
+    return
   }
-}, { passive:true });
-
-document.addEventListener("touchend", () => {
-  if (micContext && micContext.state === "suspended") {
-    micContext.resume().catch(()=>{});
+  if(e.code === "ArrowRight"){
+    e.preventDefault()
+    if(loadedIndex !== -1) selectAdjacentSegment(1)
+    else moveWaveCursorBy(0.20)
+    return
   }
-}, { passive:true });
+  if(e.code === "ArrowLeft"){
+    e.preventDefault()
+    if(loadedIndex !== -1) selectAdjacentSegment(-1)
+    else moveWaveCursorBy(-0.20)
+    return
+  }
+})
+window.addEventListener("resize", ()=>{
+  setTimeout(()=>{ renderAll(); scheduleOverlaySync() }, 50)
+})
 </script>
-
 </body>
 </html>
