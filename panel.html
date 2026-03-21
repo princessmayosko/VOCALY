@@ -3,279 +3,3292 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Vocaly</title>
+<title>VOCALY Studio + Editor v20.4</title>
+<script src="https://unpkg.com/wavesurfer.js@6"></script>
 <style>
 :root{
-  --text:#111827;
-  --muted:#6b7280;
+  --text:#0f172a;
+  --muted:#64748b;
   --purple:#6d28d9;
   --purple-dark:#4c1d95;
   --purple-soft:rgba(109,40,217,0.14);
-  --green:#1f8a70;
-  --green-dark:#145c4a;
-  --green-soft:rgba(31,138,112,0.14);
-  --shadow:0 14px 36px rgba(0,0,0,0.10);
+  --aqua:#67e8f9;
+  --aqua-dark:#0891b2;
+  --aqua-soft:rgba(103,232,249,0.18);
+  --yellow:#facc15;
+  --yellow-dark:#ca8a04;
+  --yellow-soft:rgba(250,204,21,0.16);
+  --green:#16a34a;
+  --green-soft:rgba(22,163,74,0.12);
+  --red:#dc2626;
+  --red-soft:rgba(220,38,38,0.12);
+  --amber:#f59e0b;
+  --amber-soft:rgba(245,158,11,0.16);
+  --blue:#2563eb;
+  --shadow:0 14px 32px rgba(25,25,50,0.10);
   --panel:rgba(255,255,255,0.90);
-  --safe-top:env(safe-area-inset-top, 0px);
-  --safe-right:env(safe-area-inset-right, 0px);
-  --safe-bottom:env(safe-area-inset-bottom, 0px);
-  --safe-left:env(safe-area-inset-left, 0px);
+  --border:rgba(255,255,255,0.55);
+  --line:#d7dff0;
 }
 *{box-sizing:border-box}
-html{
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-}
-body{
+html,body{
   margin:0;
-  min-height:100svh;
+  padding:0;
   font-family:Arial,sans-serif;
   color:var(--text);
-  padding:calc(18px + var(--safe-top)) calc(14px + var(--safe-right)) calc(28px + var(--safe-bottom)) calc(14px + var(--safe-left));
   background:
-    radial-gradient(circle at top left, rgba(109,40,217,0.16) 0, rgba(109,40,217,0.08) 20%, transparent 42%),
-    radial-gradient(circle at bottom right, rgba(31,138,112,0.18) 0, rgba(31,138,112,0.07) 22%, transparent 44%),
-    linear-gradient(180deg,#f8fafc 0%, #f5f3ff 42%, #ecfeff 100%);
-  overflow-x:hidden;
-  position:relative;
+    radial-gradient(circle at top left, rgba(103,232,249,0.22), transparent 35%),
+    radial-gradient(circle at top right, rgba(109,40,217,0.20), transparent 35%),
+    linear-gradient(180deg,#eef8ff 0%, #f3f0ff 55%, #eef6ff 100%);
 }
-body::before,
-body::after{
-  content:"";
-  position:fixed;
-  pointer-events:none;
-  border-radius:34px;
-  z-index:0;
-}
-body::before{
-  top:40px;
-  right:-90px;
-  width:320px;
-  height:320px;
-  border:2px solid rgba(109,40,217,0.12);
-  background:linear-gradient(135deg, rgba(109,40,217,0.05), rgba(31,138,112,0.03));
-  transform:rotate(12deg);
-}
-body::after{
-  left:-110px;
-  bottom:36px;
-  width:360px;
-  height:360px;
-  border:2px solid rgba(31,138,112,0.12);
-  background:linear-gradient(135deg, rgba(31,138,112,0.05), rgba(109,40,217,0.03));
-  transform:rotate(-10deg);
-}
-.wrap{
-  max-width:1080px;
-  margin:0 auto;
-  position:relative;
-  z-index:1;
-}
-.card{
-  background:var(--panel);
-  border:1px solid rgba(255,255,255,0.92);
-  box-shadow:var(--shadow);
-  border-radius:24px;
-  padding:20px;
-  backdrop-filter:blur(8px);
-  position:relative;
-  overflow:hidden;
+body{padding:18px}
+.app{max-width:1400px;margin:0 auto}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
   margin-bottom:18px;
-}
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    linear-gradient(120deg, rgba(109,40,217,0.06), transparent 30%),
-    linear-gradient(300deg, rgba(31,138,112,0.06), transparent 32%);
 }
 .brand{
   display:flex;
   align-items:center;
   gap:14px;
-  margin-bottom:14px;
-  position:relative;
-  z-index:1;
 }
 .logo{
-  width:58px;
-  height:58px;
-  border-radius:18px;
+  width:54px;
+  height:54px;
+  border-radius:16px;
   background:linear-gradient(180deg,#fde047 0%, #facc15 100%);
   box-shadow:0 10px 22px rgba(250,204,21,0.28);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  position:relative;
   flex:0 0 auto;
 }
 .logo:before{
   content:"";
-  width:24px;
-  height:24px;
+  position:absolute;
+  left:16px;
+  top:15px;
+  width:22px;
+  height:22px;
   border-radius:999px 999px 999px 3px;
   background:#fff8db;
   transform:rotate(-35deg);
-  display:block;
 }
-.brandTitle{
-  font-size:34px;
+.brand h1{
+  margin:0;
+  font-size:30px;
   font-weight:800;
+  letter-spacing:.5px;
   color:#4c1d95;
 }
-.brandSub{
-  margin-top:4px;
-  color:#4b5563;
+.brand p{
+  margin:4px 0 0;
   font-size:14px;
-  line-height:1.6;
+  color:#64748b;
 }
-.heroTitle{
-  font-size:28px;
-  font-weight:800;
-  margin-bottom:8px;
-  position:relative;
-  z-index:1;
-}
-.heroText{
-  font-size:14px;
-  line-height:1.7;
-  color:#4b5563;
-  position:relative;
-  z-index:1;
-}
-.grid{
+
+.shell{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:18px;
-  position:relative;
-  z-index:1;
+  grid-template-columns:260px 1fr;
+  gap:18px;
 }
-.featureCard{
-  background:rgba(255,255,255,0.96);
-  border:1px solid rgba(17,24,39,0.07);
-  border-radius:22px;
-  padding:20px;
-  box-shadow:0 8px 22px rgba(0,0,0,0.06);
+.sidebar,.panelCard{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(10px);
+}
+.sidebar{
+  padding:16px;
+  position:sticky;
+  top:14px;
+  align-self:start;
+}
+.navTitle{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:var(--muted);
+  margin:0 0 12px;
+  text-transform:uppercase;
+}
+.nav{
   display:flex;
   flex-direction:column;
-  min-height:260px;
+  gap:10px;
 }
-.featureIcon{
-  width:52px;
-  height:52px;
-  border-radius:16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  margin-bottom:14px;
-}
-.featureIcon.library{background:var(--purple-soft)}
-.featureIcon.editor{background:var(--green-soft)}
-.featureTitle{
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:8px;
-}
-.featureText{
-  font-size:14px;
-  color:#4b5563;
-  line-height:1.7;
-  margin-bottom:18px;
-  flex:1;
-}
-.featureNote{
-  font-size:12px;
-  color:#6b7280;
-  line-height:1.6;
-  margin-bottom:14px;
-}
-a.btn{
+.navBtn{
+  min-height:48px;
+  padding:12px 14px;
   border:none;
-  text-decoration:none;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+  border-radius:16px;
+  font-weight:700;
+  text-align:left;
   cursor:pointer;
-  border-radius:14px;
-  padding:12px 16px;
+  background:#fff;
+  border:1px solid var(--line);
+}
+.navBtn.active{
+  background:var(--yellow-soft);
+  border-color:#fde68a;
+}
+.sideCard{
+  margin-top:14px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+}
+.sideCard h3{margin:0 0 8px;font-size:15px}
+.sideCard p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+
+.main{min-width:0}
+.panel{
+  display:none;
+}
+.panel.active{
+  display:block;
+}
+.panelCard{
+  padding:20px;
+  margin-bottom:18px;
+}
+.panelHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
+.panelHead h2{margin:0;font-size:28px}
+.sub{
+  margin:0;
+  color:var(--muted);
   font-size:14px;
-  font-weight:800;
-  min-height:46px;
-  transition:transform .15s ease;
+  line-height:1.55;
 }
-a.btn:hover{transform:translateY(-1px)}
-.btn-primary{
-  background:linear-gradient(135deg, var(--purple), var(--purple-dark));
-  color:#fff;
-  box-shadow:0 8px 18px rgba(109,40,217,0.18);
-}
-.footerText{
-  margin-top:8px;
+.badge{
+  padding:8px 12px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid #e5e7eb;
   font-size:13px;
-  color:#6b7280;
-  line-height:1.7;
+  font-weight:700;
+}
+
+button{
+  padding:10px 14px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  min-height:42px;
+  font:inherit;
+}
+button:disabled{opacity:.6;cursor:not-allowed}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-purple:hover{background:var(--purple-dark)}
+.btn-aqua{background:#e6fbff;color:#0f5f72;border:1px solid #c7f3fb}
+.btn-aqua:hover{background:#d9f8ff}
+.btn-soft{background:#eef4ff;color:#1746a2;border:1px solid #d9e7ff}
+.btn-red{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
+.btn-amber{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.btn-yellow{background:#fff8cc;color:#8a6500;border:1px solid #fde68a}
+.btn-green{background:#ecfdf3;color:#166534;border:1px solid #bbf7d0}
+
+input,select,textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid #d7dff0;
+  font-size:14px;
+  background:rgba(255,255,255,0.94);
+  font:inherit;
+}
+textarea{
+  resize:vertical;
+  min-height:110px;
+  line-height:1.5;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:#a78bfa;
+  box-shadow:0 0 0 4px rgba(109,40,217,0.10);
+}
+
+.grid{
+  display:grid;
+  gap:14px;
+}
+.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.field label{
+  font-size:13px;
+  font-weight:700;
+  color:#334155;
+}
+.projectGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
+}
+.projectCard{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  overflow:hidden;
+}
+.projectTop{
+  padding:16px;
+  background:
+    linear-gradient(135deg, rgba(250,204,21,0.22), rgba(255,255,255,0.4)),
+    linear-gradient(135deg, #fffdf4, #fff);
+  border-bottom:1px solid var(--line);
+}
+.projectTop h3{margin:0 0 8px;font-size:20px}
+.projectBody{padding:16px}
+.projectMeta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:10px;
+}
+.metaPill{
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+.projectActions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.empty{
+  padding:24px;
+  text-align:center;
+  border:1px dashed #dbe3ef;
+  border-radius:18px;
+  background:#fff;
+  color:var(--muted);
+}
+
+/* practice / assessment */
+.practiceSubnav{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.practiceTab{
+  background:#fff;
+  border:1px solid var(--line);
+}
+.practiceTab.active{
+  background:var(--purple-soft);
+  border-color:#ddd6fe;
+  color:#5b21b6;
+}
+.practicePane{display:none}
+.practicePane.active{display:block}
+.karaokePreviewWrap{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  padding:14px;
+  border:1px dashed #dbe3ef;
+  border-radius:18px;
+  min-height:180px;
+  background:linear-gradient(180deg,#fcfdff 0%, #f8fbff 100%);
+}
+.smallKBox{
+  min-width:82px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#eef2ff;
+  border:1px solid #dbeafe;
+  font-weight:700;
+}
+.smallKBox.active{
+  border-color:var(--purple);
+  box-shadow:0 0 0 4px rgba(109,40,217,0.12);
+}
+.smallKBox.good{
+  background:var(--green-soft);
+  border-color:#bbf7d0;
+  color:#166534;
+}
+.smallKBox.bad{
+  background:var(--red-soft);
+  border-color:#fecaca;
+  color:#991b1b;
+}
+
+/* EDITOR v20.4 */
+.status{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.pill{
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  border:1px solid #e5e7eb;
+  background:#f8fafc;
+  color:#334155;
+}
+.pill.purple{background:var(--purple-soft);color:#5b21b6;border-color:#ddd6fe}
+.pill.aqua{background:var(--aqua-soft);color:#155e75;border-color:#bae6fd}
+.pill.green{background:var(--green-soft);color:#166534;border-color:#bbf7d0}
+.pill.red{background:var(--red-soft);color:#991b1b;border-color:#fecaca}
+.pill.amber{background:var(--amber-soft);color:#92400e;border-color:#fde68a}
+
+.editorToolbar{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:10px;
+  align-items:end;
+  margin-top:14px;
+}
+.g12{grid-column:span 12}
+.g9{grid-column:span 9}
+.g6{grid-column:span 6}
+.g4{grid-column:span 4}
+.g3{grid-column:span 3}
+.g2{grid-column:span 2}
+
+#waveArea{
+  position:relative;
+  margin-top:16px;
+  border:1px solid #dce7f4;
+  border-radius:18px;
+  background:rgba(255,255,255,0.94);
+  overflow:hidden;
+}
+#waveform{
   position:relative;
   z-index:1;
+  width:100%;
+  height:380px;
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+  cursor:grab;
 }
-@media (max-width:780px){
-  .grid{grid-template-columns:1fr}
-  .brandTitle{font-size:28px}
-  .heroTitle{font-size:24px}
-  .featureCard{min-height:auto}
+#waveform:active{cursor:grabbing}
+#waveform ::-webkit-scrollbar{height:12px}
+#waveform ::-webkit-scrollbar-track{background:#eef2f7;border-radius:999px}
+#waveform ::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:999px}
+#waveform > wave{
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+}
+
+#overlayViewport{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:112px;
+  overflow:hidden;
+  z-index:8;
+  pointer-events:none;
+  background:linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.93) 68%, rgba(255,255,255,0) 100%);
+}
+#overlayContent{
+  position:absolute;
+  left:0;
+  top:0;
+  height:112px;
+}
+#ruler{
+  position:absolute;
+  left:0;
+  top:0;
+  height:40px;
+  border-bottom:1px solid #e8edf4;
+  background:linear-gradient(180deg,rgba(255,255,255,.98) 0%, rgba(248,250,252,.93) 100%);
+  pointer-events:auto;
+}
+.ruler-tick{
+  position:absolute;
+  bottom:0;
+  width:1px;
+  background:#cbd5e1;
+}
+.ruler-tick.major{height:28px;background:#64748b}
+.ruler-tick.medium{height:18px;background:#94a3b8}
+.ruler-tick.minor{height:10px;background:#cbd5e1}
+.ruler-label{
+  position:absolute;
+  top:4px;
+  transform:translateX(-50%);
+  font-size:11px;
+  color:#475569;
+  white-space:nowrap;
+  font-weight:700;
+}
+#segmentStrip{
+  position:absolute;
+  left:0;
+  top:40px;
+  height:54px;
+  pointer-events:auto;
+}
+.strip-block{
+  position:absolute;
+  top:8px;
+  height:34px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.95);
+  border:1px solid #c7d2fe;
+  box-shadow:0 4px 12px rgba(15,23,42,0.06);
+  color:#312e81;
+  min-width:34px;
+  overflow:hidden;
+  touch-action:none;
+}
+.strip-block.intro{
+  background:#fff8d8;
+  border-color:#fde68a;
+  color:#8a6500;
+}
+.strip-block.active{
+  box-shadow:0 0 0 4px rgba(109,40,217,0.10);
+  border-color:var(--purple);
+}
+.strip-block .body{
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  pointer-events:none;
+}
+.strip-block .handle{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:12px;
+  z-index:2;
+}
+.strip-block .handle.left{left:0;cursor:ew-resize}
+.strip-block .handle.right{right:0;cursor:ew-resize}
+.strip-block .drag{
+  position:absolute;
+  left:12px;
+  right:12px;
+  top:0;
+  bottom:0;
+  cursor:grab;
+}
+#stripCursor{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:#111827;
+  opacity:.88;
+  pointer-events:none;
+  z-index:20;
+}
+.hint{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:10px;
+  line-height:1.55;
+}
+
+.karaokeTop{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.karaokeWrap{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:flex-start;
+  line-height:2;
+  margin-top:16px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scroll-behavior:smooth;
+  padding:14px;
+  max-height:320px;
+  border:1px dashed #dbe3ef;
+  border-radius:18px;
+  background:linear-gradient(180deg,#fcfdff 0%, #f8fbff 100%);
+  touch-action:none;
+}
+.karaokeBox{
+  position:relative;
+  overflow:hidden;
+  min-width:78px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#eef2ff;
+  border:1px solid #dbeafe;
+  font-weight:700;
+  cursor:pointer;
+  user-select:none;
+  transition:.15s ease;
+  flex:0 0 auto;
+}
+.karaokeBox .fill{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0%;
+  background:rgba(109,40,217,0.18);
+  pointer-events:none;
+  transition:width .05s linear;
+}
+.karaokeBox .label{position:relative;z-index:1}
+.karaokeBox.active{
+  border-color:var(--purple);
+  box-shadow:0 0 0 4px rgba(109,40,217,0.12);
+  transform:scale(1.05);
+}
+.karaokeBox.ok{
+  background:var(--green-soft);
+  border-color:#bbf7d0;
+  color:#166534;
+}
+.karaokeBox.ok .fill{background:rgba(22,163,74,0.18)}
+.karaokeBox.bad{
+  background:var(--red-soft);
+  border-color:#fecaca;
+  color:#991b1b;
+}
+.karaokeBox.bad .fill{background:rgba(220,38,38,0.16)}
+.karaokeBox.intro{
+  background:#fff8d8;
+  border-color:#fde68a;
+  color:#8a6500;
+}
+.karaokeBox.intro .fill{background:rgba(250,204,21,0.20)}
+.karaokeBox.selected{
+  box-shadow:0 0 0 4px rgba(37,99,235,0.16);
+  border-color:var(--blue);
+}
+.lineBreak{flex-basis:100%;height:0;width:0}
+.hidden{display:none}
+
+@media (max-width:1050px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:static}
+  .nav{flex-direction:row;flex-wrap:wrap}
+  .navBtn{flex:1 1 180px}
+}
+@media (max-width:900px){
+  body{padding:14px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .g9,.g6,.g4,.g3,.g2{grid-column:span 12}
+  #waveform{height:280px}
+  #overlayViewport{height:104px}
+  .strip-block .handle{width:18px}
+  .karaokeBox{min-width:88px;padding:14px 16px}
+  .projectActions{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <div class="card">
+<div class="app">
+  <div class="topbar">
     <div class="brand">
       <div class="logo"></div>
       <div>
-        <div class="brandTitle">VOCALY</div>
-        <div class="brandSub">Kütüphane, eser çalışma, ölçme ve editör yapısını tek sistemde toplar.</div>
+        <h1>VOCALY</h1>
+        <p>Tek panel arayüz + Editör v20.4</p>
       </div>
     </div>
-
-    <div class="heroTitle">Ana Panel</div>
-    <div class="heroText">
-      Buradan kütüphaneye geçebilir ya da doğrudan editörü açabilirsin. Kütüphane ve editör artık ayrı sayfalardır.
-    </div>
-
-    <div class="grid">
-      <div class="featureCard">
-        <div class="featureIcon library">🎼</div>
-        <div class="featureTitle">Kütüphane</div>
-        <div class="featureText">
-          Eserleri ayrı sayfada incele, kartlar arasında gez, bir şarkı seç ve çalışma ya da ölçme moduna geç.
-        </div>
-        <div class="featureNote">
-          Kullanıcı tarafı burada başlar. Eser seçimi yapıldıktan sonra çalışma ve ölçme sayfalarına yönlendirilir.
-        </div>
-        <a class="btn btn-primary" href="kutuphane.html">Kütüphaneyi Aç</a>
-      </div>
-
-      <div class="featureCard">
-        <div class="featureIcon editor">🎧</div>
-        <div class="featureTitle">Editör</div>
-        <div class="featureText">
-          Waveform üstünde zamanlama yap, segmentleri düzenle, karaoke verisini oluştur ve ileride bunu çalışma/ölçme sayfalarına bağla.
-        </div>
-        <div class="featureNote">
-          Editörde yaptığın üretimler ileride çalışma ve ölçme formatında kullanılacak ana kaynak olacak.
-        </div>
-        <a class="btn btn-primary" href="editor1.html">Editörü Aç</a>
-      </div>
-    </div>
-
-    <div class="footerText">
-      Not: Çalışma ve ölçme sayfaları şu an taslak motorlar gibi düşünülebilir. Nihai veri akışı editörden üretilecek içeriklere bağlanacak.
+    <div>
+      <button class="btn-yellow" id="newEditorProjectBtn">Editörde Yeni Eser</button>
     </div>
   </div>
 
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="navTitle">Ana Bölümler</div>
+      <div class="nav">
+        <button class="navBtn active" data-panel="libraryPanel">Kütüphane</button>
+        <button class="navBtn" data-panel="practicePanel">Çalışma</button>
+        <button class="navBtn" data-panel="assessmentPanel">Ölçme</button>
+        <button class="navBtn" data-panel="editorPanel">Editör</button>
+      </div>
+
+      <div class="sideCard">
+        <h3>Seçili Eser</h3>
+        <p id="selectedProjectText">Henüz eser seçilmedi.</p>
+      </div>
+
+      <div class="sideCard">
+        <h3>Akış</h3>
+        <p>Editörde hazırlanan eserler kaydedildiğinde kütüphaneye düşer. Çalışma ve ölçme seçili projeden beslenir.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- KÜTÜPHANE -->
+      <section class="panel active" id="libraryPanel">
+        <div class="panelCard">
+          <div class="panelHead">
+            <div>
+              <h2>Kütüphane</h2>
+              <p class="sub">Kaydedilen projeler burada görünür.</p>
+            </div>
+            <div class="badge" id="libraryCount">0 eser</div>
+          </div>
+
+          <div id="libraryGrid" class="projectGrid"></div>
+        </div>
+      </section>
+
+      <!-- ÇALIŞMA -->
+      <section class="panel" id="practicePanel">
+        <div class="panelCard">
+          <div class="panelHead">
+            <div>
+              <h2>Çalışma</h2>
+              <p class="sub">Hazırlık, hece hece ve akışta çalışma.</p>
+            </div>
+            <div class="badge" id="practiceProjectBadge">Eser seçilmedi</div>
+          </div>
+
+          <div class="practiceSubnav">
+            <button class="practiceTab active" data-practice="warmupPane">Hazırlık</button>
+            <button class="practiceTab" data-practice="syllablePane">Hece Hece</button>
+            <button class="practiceTab" data-practice="flowPane">Akışta</button>
+          </div>
+
+          <div class="practicePane active" id="warmupPane">
+            <div class="grid grid3">
+              <div class="panelCard" style="margin:0">
+                <h3>Hedef Nota</h3>
+                <p class="sub" id="warmupNoteText">-</p>
+              </div>
+              <div class="panelCard" style="margin:0">
+                <h3>Hedef Hece</h3>
+                <p class="sub" id="warmupSylText">-</p>
+              </div>
+              <div class="panelCard" style="margin:0">
+                <h3>Tuner</h3>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+                  <button class="btn-aqua" id="practiceMicBtn">Tuner / Mikrofon Aç</button>
+                  <div class="badge" id="practiceMicState">Kapalı</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="practicePane" id="syllablePane">
+            <div id="practiceSyllables" class="karaokePreviewWrap"></div>
+          </div>
+
+          <div class="practicePane" id="flowPane">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+              <button class="btn-purple" id="practiceFlowPlay">Akışı Oynat</button>
+              <button class="btn-soft" id="practiceFlowStop">Durdur</button>
+            </div>
+            <div id="practiceFlowBoxes" class="karaokePreviewWrap"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ÖLÇME -->
+      <section class="panel" id="assessmentPanel">
+        <div class="panelCard">
+          <div class="panelHead">
+            <div>
+              <h2>Ölçme</h2>
+              <p class="sub">Seçili projenin notalarına göre basit ölçme önizlemesi.</p>
+            </div>
+            <div class="badge" id="assessmentProjectBadge">Eser seçilmedi</div>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+            <button class="btn-aqua" id="assessmentMicBtn">Tuner / Mikrofon Aç</button>
+            <button class="btn-purple" id="assessmentStartBtn">Ölçmeyi Başlat</button>
+            <button class="btn-soft" id="assessmentStopBtn">Durdur</button>
+          </div>
+
+          <div class="grid grid3" style="margin-bottom:12px">
+            <div class="panelCard" style="margin:0">
+              <h3>Doğru</h3>
+              <p class="sub" id="assessmentCorrect">0</p>
+            </div>
+            <div class="panelCard" style="margin:0">
+              <h3>Yanlış</h3>
+              <p class="sub" id="assessmentWrong">0</p>
+            </div>
+            <div class="panelCard" style="margin:0">
+              <h3>Durum</h3>
+              <p class="sub" id="assessmentStatus">Hazır</p>
+            </div>
+          </div>
+
+          <div id="assessmentBoxes" class="karaokePreviewWrap"></div>
+        </div>
+      </section>
+
+      <!-- EDİTÖR -->
+      <section class="panel" id="editorPanel">
+        <div class="panelCard">
+          <div class="panelHead">
+            <div>
+              <h2>Editör v20.4</h2>
+              <p class="sub">Waveform, overlay strip, ok tuşları ve karaoke seçimi korunur.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <div class="badge" id="editorDraftBadge">Taslak</div>
+              <button class="btn-green" id="saveToLibraryBtn">Kütüphaneye Kaydet</button>
+            </div>
+          </div>
+
+          <div class="editorToolbar">
+            <div class="field g3">
+              <label for="titleInput">Eser Başlığı</label>
+              <input id="titleInput" type="text" placeholder="Örn: İstiklal Marşı">
+            </div>
+
+            <div class="field g3">
+              <label for="audioFile">MP3 Yükle</label>
+              <input id="audioFile" type="file" accept="audio/*">
+            </div>
+
+            <div class="field g2">
+              <label for="intro">Intro Süresi (sn)</label>
+              <input id="intro" type="number" step="0.01" min="0" value="0.00">
+            </div>
+
+            <div class="field g2">
+              <label for="difficultySelect">Zorluk</label>
+              <select id="difficultySelect">
+                <option value="çok kolay">Çok Kolay</option>
+                <option value="kolay">Kolay</option>
+                <option value="orta" selected>Orta</option>
+                <option value="zor">Zor</option>
+                <option value="çok zor">Çok Zor</option>
+              </select>
+            </div>
+
+            <div class="field g2">
+              <label for="keySelect">Ton</label>
+              <select id="keySelect">
+                <optgroup label="Majör">
+                  <option value="Do Majör">Do Majör</option>
+                  <option value="Sol Majör" selected>Sol Majör</option>
+                  <option value="Re Majör">Re Majör</option>
+                  <option value="La Majör">La Majör</option>
+                  <option value="Mi Majör">Mi Majör</option>
+                  <option value="Fa Majör">Fa Majör</option>
+                  <option value="Sib Majör">Sib Majör</option>
+                </optgroup>
+                <optgroup label="Minör">
+                  <option value="La Minör">La Minör</option>
+                  <option value="Mi Minör">Mi Minör</option>
+                  <option value="Si Minör">Si Minör</option>
+                  <option value="Fa# Minör">Fa# Minör</option>
+                  <option value="Re Minör">Re Minör</option>
+                  <option value="Sol Minör">Sol Minör</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <div class="editorToolbar">
+            <div class="field g2">
+              <label>&nbsp;</label>
+              <button class="btn-purple" id="playBtn">Play / Pause</button>
+            </div>
+
+            <div class="field g2">
+              <label for="zoom">Zoom</label>
+              <input id="zoom" type="range" min="20" max="420" step="1" value="140">
+            </div>
+
+            <div class="field g2">
+              <label for="rateSelect">Hız</label>
+              <select id="rateSelect">
+                <option value="1">1.00x</option>
+                <option value="0.75">0.75x</option>
+                <option value="0.50">0.50x</option>
+                <option value="1.25">1.25x</option>
+              </select>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-aqua" id="autoTimingBtn">Otomatik Timing Öner</button>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-yellow" id="saveProjectBtn">JSON Kaydet</button>
+            </div>
+          </div>
+
+          <div class="status">
+            <div class="pill purple" id="statusText">Hazır</div>
+            <div class="pill aqua" id="timeText">0.00 sn</div>
+            <div class="pill aqua" id="cursorText">Cursor: 0.00 sn</div>
+            <div class="pill" id="micText">Mikrofon kapalı</div>
+            <div class="pill" id="noteText">Nota: -</div>
+            <div class="pill aqua" id="activeSegmentText">Aktif segment: -</div>
+            <div class="pill amber" id="analysisText">Analiz: -</div>
+          </div>
+
+          <div id="waveArea">
+            <div id="waveform"></div>
+
+            <div id="overlayViewport">
+              <div id="overlayContent">
+                <div id="ruler"></div>
+                <div id="segmentStrip"></div>
+              </div>
+              <div id="stripCursor"></div>
+            </div>
+          </div>
+
+          <div class="hint">
+            Ok tuşları: segment seçili değilse cursor ilerler/geriler. Segment seçiliyse komşu segmentlere geçer. Escape ile segment seçiminden çıkılır.
+          </div>
+        </div>
+
+        <div class="panelCard">
+          <div class="sectionTop">
+            <div>
+              <h2>Canlı Karaoke Önizleme</h2>
+              <p class="sub">Tek tıkla tek kutu çalar. Basılı tutup sürükleyerek seçilen kutular bırakınca grup halinde sırayla çalar.</p>
+            </div>
+            <div class="karaokeTop">
+              <button class="btn-purple" id="previewPlayBtn">Önizlemeyi Oynat</button>
+              <button class="btn-soft" id="previewStopBtn">Durdur</button>
+              <button class="btn-aqua" id="micBtn">Tuner / Mikrofon Aç</button>
+              <button class="btn-soft" id="clearSelectionBtn">Seçimi Temizle</button>
+              <button class="btn-amber" id="playLineBtn">Seçili Satırı Çal</button>
+            </div>
+          </div>
+          <div id="karaoke" class="karaokeWrap"></div>
+        </div>
+
+        <div class="panelCard">
+          <h2>Söz Girişi</h2>
+          <div class="editorToolbar">
+            <div class="field g12">
+              <label for="lyricsInput">Sözler</label>
+              <textarea id="lyricsInput" placeholder="Sözleri satır satır yapıştır..."></textarea>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-purple" id="splitWordsBtn">Kelimelere Böl</button>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="loadProjectBtn">Son Taslağı Yükle</button>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="importJsonBtn">JSON Aç</button>
+              <input id="importJsonInput" class="hidden" type="file" accept=".json,application/json">
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-red" id="resetTimingBtn">Timing Sıfırla</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panelCard">
+          <h2>Segment Bilgisi</h2>
+          <div class="editorToolbar">
+            <div class="field g2">
+              <label for="start">Start</label>
+              <input id="start" type="number" step="0.01">
+            </div>
+            <div class="field g2">
+              <label for="end">End</label>
+              <input id="end" type="number" step="0.01">
+            </div>
+            <div class="field g3">
+              <label for="hece">Kelime / Öbek</label>
+              <input id="hece" type="text">
+            </div>
+            <div class="field g3">
+              <label for="nota">Hedef Nota / Nota Dizisi</label>
+              <input id="nota" type="text" placeholder="Örn: la veya fa# mi re">
+            </div>
+            <div class="field g2">
+              <label for="satir">Satır No</label>
+              <input id="satir" type="number" min="0" step="1">
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-purple" id="saveBtn">Kaydet / Ekle</button>
+            </div>
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="updateBtn">Seçileni Güncelle</button>
+            </div>
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-red" id="deleteLoadedBtn">Seçileni Sil</button>
+            </div>
+
+            <div class="field g3">
+              <label for="nudgeAmount">Kaydırma Miktarı</label>
+              <select id="nudgeAmount">
+                <option value="0.01">0.01 sn</option>
+                <option value="0.02">0.02 sn</option>
+                <option value="0.05" selected>0.05 sn</option>
+                <option value="0.10">0.10 sn</option>
+                <option value="0.25">0.25 sn</option>
+              </select>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="minusStartBtn">Start -</button>
+            </div>
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="plusStartBtn">Start +</button>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="minusEndBtn">End -</button>
+            </div>
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="plusEndBtn">End +</button>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-amber" id="shiftLeftBtn">Tüm Segmenti Sola Kaydır</button>
+            </div>
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-amber" id="shiftRightBtn">Tüm Segmenti Sağa Kaydır</button>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-aqua" id="analyzeNoteBtn">Nota Öner</button>
+            </div>
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-aqua" id="analyzeAllBtn">Tümüne Nota Öner</button>
+            </div>
+
+            <div class="field g3">
+              <label>&nbsp;</label>
+              <button class="btn-soft" id="previewSelectedBtn">Seçili Segmenti Dinle</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 </div>
+
+<script>
+/* =========================
+   APP SHELL STATE
+========================= */
+const LIBRARY_KEY = "vocaly_library_v1"
+let appProjects = []
+let selectedProjectId = null
+let activePracticePane = "warmupPane"
+let assessmentTimer = null
+let assessmentCorrect = 0
+let assessmentWrong = 0
+
+function loadLibrary(){
+  try{
+    appProjects = JSON.parse(localStorage.getItem(LIBRARY_KEY) || "[]")
+  }catch(err){
+    appProjects = []
+  }
+}
+function saveLibrary(){
+  localStorage.setItem(LIBRARY_KEY, JSON.stringify(appProjects))
+}
+function getSelectedProject(){
+  return appProjects.find(p => p.id === selectedProjectId) || null
+}
+function newProjectId(){
+  return "proj_" + Math.random().toString(36).slice(2,10)
+}
+function updateSelectedProjectText(){
+  const el = document.getElementById("selectedProjectText")
+  const p = getSelectedProject()
+  if(!p){
+    el.textContent = "Henüz eser seçilmedi."
+    return
+  }
+  el.textContent = `${p.title || "Adsız"} • ${p.heceler?.length || 0} segment`
+}
+function setPanel(id){
+  document.querySelectorAll(".navBtn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.panel === id)
+  })
+  document.querySelectorAll(".panel").forEach(panel => {
+    panel.classList.toggle("active", panel.id === id)
+  })
+}
+document.querySelectorAll(".navBtn").forEach(btn => {
+  btn.addEventListener("click", ()=>setPanel(btn.dataset.panel))
+})
+document.querySelectorAll(".practiceTab").forEach(btn => {
+  btn.addEventListener("click", ()=>{
+    activePracticePane = btn.dataset.practice
+    document.querySelectorAll(".practiceTab").forEach(b=>b.classList.toggle("active", b===btn))
+    document.querySelectorAll(".practicePane").forEach(p=>p.classList.toggle("active", p.id===activePracticePane))
+  })
+})
+
+function renderLibrary(){
+  const grid = document.getElementById("libraryGrid")
+  document.getElementById("libraryCount").textContent = `${appProjects.length} eser`
+
+  if(!appProjects.length){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">Henüz kütüphanede eser yok. Editörde yeni eser oluşturup kaydet.</div>`
+    return
+  }
+
+  grid.innerHTML = appProjects.map(p => `
+    <div class="projectCard">
+      <div class="projectTop">
+        <h3>${escapeHtml(p.title || "Adsız Eser")}</h3>
+        <div class="projectMeta">
+          <span class="metaPill">${(p.heceler || []).filter(h=>!h.isIntro).length} segment</span>
+          <span class="metaPill">${escapeHtml(p.key || "-")}</span>
+        </div>
+      </div>
+      <div class="projectBody">
+        <div class="projectActions">
+          <button class="btn-yellow" onclick="openProject('${p.id}','practicePanel')">Çalış</button>
+          <button class="btn-green" onclick="openProject('${p.id}','assessmentPanel')">Ölç</button>
+          <button class="btn-purple" onclick="openProject('${p.id}','editorPanel')">Düzenle</button>
+        </div>
+      </div>
+    </div>
+  `).join("")
+}
+
+function openProject(id, panelId){
+  const p = appProjects.find(x => x.id === id)
+  if(!p) return
+  selectedProjectId = id
+  loadProjectIntoEditor(p)
+  updateSelectedProjectText()
+  renderPractice()
+  renderAssessment()
+  setPanel(panelId)
+}
+
+document.getElementById("newEditorProjectBtn").addEventListener("click", ()=>{
+  selectedProjectId = null
+  resetEditorToBlank()
+  updateSelectedProjectText()
+  setPanel("editorPanel")
+})
+
+function saveEditorToLibrary(){
+  const payload = buildProjectPayload()
+  const project = {
+    id: selectedProjectId || newProjectId(),
+    title: payload.title || "Adsız Eser",
+    intro: payload.intro,
+    difficulty: payload.difficulty,
+    key: payload.key,
+    lyrics: payload.lyrics,
+    audioName: payload.audioName,
+    heceler: payload.heceler,
+    cursorTime: payload.cursorTime
+  }
+
+  const idx = appProjects.findIndex(p => p.id === project.id)
+  if(idx >= 0) appProjects[idx] = project
+  else appProjects.unshift(project)
+
+  selectedProjectId = project.id
+  saveLibrary()
+  renderLibrary()
+  updateSelectedProjectText()
+  renderPractice()
+  renderAssessment()
+  document.getElementById("editorDraftBadge").textContent = "Kayıtlı"
+  statusText.textContent = "Proje kütüphaneye kaydedildi"
+  statusText.className = "pill green"
+}
+
+document.getElementById("saveToLibraryBtn").addEventListener("click", saveEditorToLibrary)
+
+function loadProjectIntoEditor(project){
+  applyProjectPayload(project)
+  document.getElementById("editorDraftBadge").textContent = "Kayıtlı proje"
+}
+
+function resetEditorToBlank(){
+  titleInput.value = ""
+  introInput.value = "0.00"
+  difficultySelect.value = "orta"
+  keySelect.value = "Sol Majör"
+  lyricsInput.value = ""
+  currentAudioName = "audio.mp3"
+  heceler = []
+  loadedIndex = -1
+  selectedSegmentIndexes = []
+  cursorTime = 0
+  normalizeIntroSegment()
+  renderAll()
+  setCursorTime(0)
+  document.getElementById("editorDraftBadge").textContent = "Taslak"
+}
+
+/* =========================
+   PRACTICE / ASSESSMENT BRIDGE
+========================= */
+function getProjectPlayableSegments(p){
+  return (p?.heceler || []).filter(h => !h.isIntro && h.start !== null && h.end !== null)
+}
+
+function renderPractice(){
+  const p = getSelectedProject()
+  document.getElementById("practiceProjectBadge").textContent = p ? (p.title || "Seçili eser") : "Eser seçilmedi"
+  document.getElementById("warmupNoteText").textContent = p ? (getProjectPlayableSegments(p)[0]?.note || "-") : "-"
+  document.getElementById("warmupSylText").textContent = p ? (getProjectPlayableSegments(p)[0]?.text || "-") : "-"
+
+  const sylWrap = document.getElementById("practiceSyllables")
+  const flowWrap = document.getElementById("practiceFlowBoxes")
+
+  if(!p){
+    sylWrap.innerHTML = `<div class="empty" style="width:100%">Önce kütüphaneden eser seç.</div>`
+    flowWrap.innerHTML = `<div class="empty" style="width:100%">Önce kütüphaneden eser seç.</div>`
+    return
+  }
+
+  const segments = getProjectPlayableSegments(p)
+  sylWrap.innerHTML = segments.map((s, i) => `
+    <button class="smallKBox" onclick="playLibrarySegment(${i})">${escapeHtml(s.text)}${s.note ? `<br><small>${escapeHtml(s.note)}</small>` : ""}</button>
+  `).join("")
+
+  flowWrap.innerHTML = segments.map((s, i) => `
+    <div class="smallKBox" id="practice-flow-${i}">${escapeHtml(s.text)}</div>
+  `).join("")
+}
+
+function playLibrarySegment(index){
+  const p = getSelectedProject()
+  if(!p || !hasAudioLoaded()) return
+  const seg = getProjectPlayableSegments(p)[index]
+  if(!seg) return
+  ws.play(seg.start, seg.end)
+}
+
+document.getElementById("practiceMicBtn").addEventListener("click", async ()=>{
+  await setupMic()
+  document.getElementById("practiceMicState").textContent = micReady ? "Açık" : "Kapalı"
+})
+
+document.getElementById("practiceFlowPlay").addEventListener("click", ()=>{
+  const p = getSelectedProject()
+  if(!p || !hasAudioLoaded()) return
+  const segments = getProjectPlayableSegments(p)
+  if(!segments.length) return
+  ws.stop()
+  ws.play(0)
+  clearInterval(window.practiceFlowTimer)
+  window.practiceFlowTimer = setInterval(()=>{
+    const t = ws.getCurrentTime()
+    segments.forEach((s, i) => {
+      const el = document.getElementById("practice-flow-" + i)
+      if(!el) return
+      el.classList.toggle("active", t >= s.start && t <= s.end)
+    })
+  }, 60)
+})
+
+document.getElementById("practiceFlowStop").addEventListener("click", ()=>{
+  clearInterval(window.practiceFlowTimer)
+  if(hasAudioLoaded()) ws.pause()
+  document.querySelectorAll("[id^='practice-flow-']").forEach(el=>el.classList.remove("active"))
+})
+
+function renderAssessment(){
+  const p = getSelectedProject()
+  document.getElementById("assessmentProjectBadge").textContent = p ? (p.title || "Seçili eser") : "Eser seçilmedi"
+  const wrap = document.getElementById("assessmentBoxes")
+  document.getElementById("assessmentCorrect").textContent = "0"
+  document.getElementById("assessmentWrong").textContent = "0"
+  document.getElementById("assessmentStatus").textContent = "Hazır"
+
+  if(!p){
+    wrap.innerHTML = `<div class="empty" style="width:100%">Önce kütüphaneden eser seç.</div>`
+    return
+  }
+
+  const segments = getProjectPlayableSegments(p)
+  wrap.innerHTML = segments.map((s, i) => `
+    <div class="smallKBox" id="assessment-box-${i}">${escapeHtml(s.text)}${s.note ? `<br><small>${escapeHtml(s.note)}</small>` : ""}</div>
+  `).join("")
+}
+
+document.getElementById("assessmentMicBtn").addEventListener("click", setupMic)
+
+document.getElementById("assessmentStartBtn").addEventListener("click", ()=>{
+  const p = getSelectedProject()
+  if(!p || !hasAudioLoaded()){
+    alert("Önce eser seç ve audio yükle.")
+    return
+  }
+  if(!micReady){
+    alert("Önce tuner / mikrofon aç.")
+    return
+  }
+  const segments = getProjectPlayableSegments(p)
+  if(!segments.length) return
+
+  assessmentCorrect = 0
+  assessmentWrong = 0
+  document.getElementById("assessmentCorrect").textContent = "0"
+  document.getElementById("assessmentWrong").textContent = "0"
+  document.getElementById("assessmentStatus").textContent = "Ölçüm başladı"
+
+  segments.forEach((s, i) => {
+    const el = document.getElementById("assessment-box-" + i)
+    if(el) el.classList.remove("good","bad","active")
+  })
+
+  ws.stop()
+  ws.play(0)
+
+  clearInterval(assessmentTimer)
+  const results = new Array(segments.length).fill(false)
+
+  assessmentTimer = setInterval(()=>{
+    const t = ws.getCurrentTime()
+    const detected = getCurrentDetectedNote()
+
+    segments.forEach((s, i) => {
+      const el = document.getElementById("assessment-box-" + i)
+      if(!el) return
+
+      el.classList.toggle("active", t >= s.start && t <= s.end)
+
+      if(t >= s.start && t <= s.end && detected && s.note){
+        const targets = parseTargetNotes(s.note)
+        if(targets.includes(normalizeNoteName(detected))) results[i] = true
+      }
+
+      if(t > s.end && !el.dataset.done){
+        el.dataset.done = "1"
+        if(results[i]){
+          el.classList.add("good")
+          assessmentCorrect++
+        }else{
+          el.classList.add("bad")
+          assessmentWrong++
+        }
+        document.getElementById("assessmentCorrect").textContent = String(assessmentCorrect)
+        document.getElementById("assessmentWrong").textContent = String(assessmentWrong)
+      }
+    })
+
+    document.getElementById("assessmentStatus").textContent = detected ? `Canlı nota: ${detected}` : "Dinleniyor..."
+
+    if(t >= ws.getDuration() - 0.05){
+      clearInterval(assessmentTimer)
+      document.getElementById("assessmentStatus").textContent = "Ölçüm tamamlandı"
+    }
+  }, 70)
+})
+
+document.getElementById("assessmentStopBtn").addEventListener("click", ()=>{
+  clearInterval(assessmentTimer)
+  if(hasAudioLoaded()) ws.pause()
+  document.getElementById("assessmentStatus").textContent = "Durduruldu"
+})
+
+/* =========================
+   EDITOR v20.4 CORE
+========================= */
+let ws = null
+let heceler = []
+let loadedIndex = -1
+let currentAudioName = "audio.mp3"
+let cursorTime = 0
+let micReady = false
+let audioContext = null
+let analyser = null
+let micSource = null
+let micStream = null
+let pitchBuffer = null
+let dragState = null
+let wrapperBound = false
+let objectUrlRef = null
+let dragPreviewRAF = null
+let dragPreviewTarget = null
+let overlaySyncScheduled = false
+let karaokeSelectionRaf = null
+let previewPlaying = false
+let lastIntroValue = 0
+let selectedSegmentIndexes = []
+let isSequencePlaying = false
+let sequenceStopRequested = false
+let karaokeSelectionState = null
+let lastScrolledActiveId = null
+let waveformDragState = null
+
+const PROJECT_AUTOSAVE_KEY = "vocaly_editor_v20_4_autosave"
+
+const NOTE_NAMES = ["do","do#","re","re#","mi","fa","fa#","sol","sol#","la","la#","si"]
+const SCALE_MAP = {
+  "Do Majör": ["do","re","mi","fa","sol","la","si"],
+  "Sol Majör": ["sol","la","si","do","re","mi","fa#"],
+  "Re Majör": ["re","mi","fa#","sol","la","si","do#"],
+  "La Majör": ["la","si","do#","re","mi","fa#","sol#"],
+  "Mi Majör": ["mi","fa#","sol#","la","si","do#","re#"],
+  "Fa Majör": ["fa","sol","la","sib","do","re","mi"],
+  "Sib Majör": ["sib","do","re","mib","fa","sol","la"],
+  "La Minör": ["la","si","do","re","mi","fa","sol"],
+  "Mi Minör": ["mi","fa#","sol","la","si","do","re"],
+  "Si Minör": ["si","do#","re","mi","fa#","sol","la"],
+  "Fa# Minör": ["fa#","sol#","la","si","do#","re","mi"],
+  "Re Minör": ["re","mi","fa","sol","la","sib","do"],
+  "Sol Minör": ["sol","la","sib","do","re","mib","fa"]
+}
+
+const titleInput = document.getElementById("titleInput")
+const audioFile = document.getElementById("audioFile")
+const playBtn = document.getElementById("playBtn")
+const zoom = document.getElementById("zoom")
+const rateSelect = document.getElementById("rateSelect")
+const introInput = document.getElementById("intro")
+const difficultySelect = document.getElementById("difficultySelect")
+const keySelect = document.getElementById("keySelect")
+const startInput = document.getElementById("start")
+const endInput = document.getElementById("end")
+const heceInput = document.getElementById("hece")
+const notaInput = document.getElementById("nota")
+const satirInput = document.getElementById("satir")
+const autoTimingBtn = document.getElementById("autoTimingBtn")
+const saveProjectBtn = document.getElementById("saveProjectBtn")
+const splitWordsBtn = document.getElementById("splitWordsBtn")
+const loadProjectBtn = document.getElementById("loadProjectBtn")
+const resetTimingBtn = document.getElementById("resetTimingBtn")
+const saveBtn = document.getElementById("saveBtn")
+const updateBtn = document.getElementById("updateBtn")
+const deleteLoadedBtn = document.getElementById("deleteLoadedBtn")
+const lyricsInput = document.getElementById("lyricsInput")
+const importJsonBtn = document.getElementById("importJsonBtn")
+const importJsonInput = document.getElementById("importJsonInput")
+const nudgeAmount = document.getElementById("nudgeAmount")
+const minusStartBtn = document.getElementById("minusStartBtn")
+const plusStartBtn = document.getElementById("plusStartBtn")
+const minusEndBtn = document.getElementById("minusEndBtn")
+const plusEndBtn = document.getElementById("plusEndBtn")
+const shiftLeftBtn = document.getElementById("shiftLeftBtn")
+const shiftRightBtn = document.getElementById("shiftRightBtn")
+const analyzeNoteBtn = document.getElementById("analyzeNoteBtn")
+const analyzeAllBtn = document.getElementById("analyzeAllBtn")
+const previewSelectedBtn = document.getElementById("previewSelectedBtn")
+const previewPlayBtn = document.getElementById("previewPlayBtn")
+const previewStopBtn = document.getElementById("previewStopBtn")
+const micBtn = document.getElementById("micBtn")
+const clearSelectionBtn = document.getElementById("clearSelectionBtn")
+const playLineBtn = document.getElementById("playLineBtn")
+const statusText = document.getElementById("statusText")
+const timeText = document.getElementById("timeText")
+const cursorText = document.getElementById("cursorText")
+const micText = document.getElementById("micText")
+const noteTextEl = document.getElementById("noteText")
+const activeSegmentText = document.getElementById("activeSegmentText")
+const analysisText = document.getElementById("analysisText")
+const overlayViewport = document.getElementById("overlayViewport")
+const overlayContent = document.getElementById("overlayContent")
+const ruler = document.getElementById("ruler")
+const segmentStrip = document.getElementById("segmentStrip")
+const stripCursor = document.getElementById("stripCursor")
+const karaoke = document.getElementById("karaoke")
+const waveformEl = document.getElementById("waveform")
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;")
+}
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)) }
+function round2(v){ return Number((v || 0).toFixed(2)) }
+function median(arr){
+  if(!arr.length) return 0
+  const s = [...arr].sort((a,b)=>a-b)
+  const mid = Math.floor(s.length/2)
+  return s.length % 2 ? s[mid] : (s[mid-1]+s[mid])/2
+}
+function getIntroValue(){
+  const val = parseFloat(introInput.value)
+  return isNaN(val) ? 0 : round2(val)
+}
+function getNudgeValue(){
+  const val = parseFloat(nudgeAmount.value)
+  return isNaN(val) ? 0.05 : val
+}
+function normalizeNoteName(name){
+  return String(name || "")
+    .trim()
+    .toLowerCase()
+    .replaceAll("♯","#")
+    .replaceAll("diyez","#")
+    .replaceAll("♭","b")
+    .replace(/\s+/g, "")
+    .replace("sib","la#")
+    .replace("mib","re#")
+    .replace("lab","sol#")
+    .replace("reb","do#")
+    .replace("solb","fa#")
+}
+function enharmonicToScale(note, scaleNotes){
+  const n = normalizeNoteName(note)
+  if(scaleNotes.includes(n)) return n
+  const samePitch = {"la#":"sib","re#":"mib","sol#":"lab","do#":"reb","fa#":"solb"}
+  const reverse = {"sib":"la#","mib":"re#","lab":"sol#","reb":"do#","solb":"fa#"}
+  if(samePitch[n] && scaleNotes.includes(samePitch[n])) return samePitch[n]
+  if(reverse[n] && scaleNotes.includes(reverse[n])) return reverse[n]
+  return n
+}
+function noteToSemitone(name){
+  const map = {
+    "do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,"fa#":6,"solb":6,
+    "sol":7,"sol#":8,"lab":8,"la":9,"la#":10,"sib":10,"si":11
+  }
+  return map[normalizeNoteName(name)]
+}
+function semitoneToNearestScaleNote(semitone, scaleNotes){
+  let bestNote = scaleNotes[0]
+  let bestDist = Infinity
+  scaleNotes.forEach(note => {
+    const s = noteToSemitone(note)
+    let d = Math.abs(s - semitone)
+    d = Math.min(d, 12 - d)
+    if(d < bestDist){
+      bestDist = d
+      bestNote = note
+    }
+  })
+  return enharmonicToScale(bestNote, scaleNotes)
+}
+function getScaleNotes(){
+  return SCALE_MAP[keySelect.value] || SCALE_MAP["Sol Majör"]
+}
+function freqToMidi(freq){
+  return Math.round(69 + 12 * Math.log2(freq / 440))
+}
+function midiToNoteName(midi){
+  return NOTE_NAMES[((midi % 12) + 12) % 12]
+}
+function autoCorrelate(buffer, sampleRate){
+  let SIZE = buffer.length
+  let rms = 0
+  for(let i=0;i<SIZE;i++) rms += buffer[i] * buffer[i]
+  rms = Math.sqrt(rms / SIZE)
+  if(rms < 0.01) return -1
+
+  let r1 = 0, r2 = SIZE - 1
+  const threshold = 0.2
+  for(let i=0;i<SIZE/2;i++){ if(Math.abs(buffer[i]) < threshold){ r1 = i; break } }
+  for(let i=1;i<SIZE/2;i++){ if(Math.abs(buffer[SIZE-i]) < threshold){ r2 = SIZE - i; break } }
+
+  buffer = buffer.slice(r1, r2)
+  SIZE = buffer.length
+  const c = new Array(SIZE).fill(0)
+
+  for(let i=0;i<SIZE;i++){
+    for(let j=0;j<SIZE-i;j++) c[i] += buffer[j] * buffer[j+i]
+  }
+
+  let d = 0
+  while(d + 1 < c.length && c[d] > c[d+1]) d++
+
+  let maxval = -1, maxpos = -1
+  for(let i=d;i<SIZE;i++){
+    if(c[i] > maxval){ maxval = c[i]; maxpos = i }
+  }
+
+  let T0 = maxpos
+  if(T0 <= 0) return -1
+
+  const x1 = c[T0 - 1] || c[T0]
+  const x2 = c[T0]
+  const x3 = c[T0 + 1] || c[T0]
+  const a = (x1 + x3 - 2 * x2) / 2
+  const b = (x3 - x1) / 2
+  if(a) T0 = T0 - b / (2 * a)
+
+  return sampleRate / T0
+}
+function compressNoteSequence(seq){
+  const normalized = seq.map(normalizeNoteName).filter(Boolean)
+  const out = []
+  let last = null
+  for(const n of normalized){
+    if(n !== last){
+      out.push(n)
+      last = n
+    }
+  }
+  return out
+}
+function parseTargetNotes(noteString){
+  return compressNoteSequence(String(noteString || "").split(/\s+/))
+}
+function arraysUniqueIntersectionCount(a, b){
+  const setB = new Set(b.map(normalizeNoteName))
+  let count = 0
+  a.map(normalizeNoteName).forEach(item => { if(setB.has(item)) count += 1 })
+  return count
+}
+function splitWordsFromText(text){
+  const lines = String(text || "").split(/\n/).map(line => line.trim())
+  const words = []
+  lines.forEach((line, lineIndex) => {
+    if(!line) return
+    line.split(/\s+/).filter(Boolean).forEach(word => {
+      words.push({ text: word, line: lineIndex + 1 })
+    })
+  })
+  return words
+}
+function getEnergyEnvelope(){
+  if(!hasAudioLoaded()) return []
+  const buffer = ws.backend.buffer
+  if(!buffer) return []
+
+  const data = buffer.getChannelData(0)
+  const sampleRate = buffer.sampleRate
+  const frameMs = 35
+  const hopMs = 15
+  const frameSize = Math.max(256, Math.floor(sampleRate * frameMs / 1000))
+  const hopSize = Math.max(128, Math.floor(sampleRate * hopMs / 1000))
+
+  const env = []
+  for(let i = 0; i + frameSize < data.length; i += hopSize){
+    let sum = 0
+    for(let j = 0; j < frameSize; j++){
+      const v = data[i + j]
+      sum += v * v
+    }
+    const rms = Math.sqrt(sum / frameSize)
+    env.push({
+      time: i / sampleRate,
+      energy: rms
+    })
+  }
+  return env
+}
+function smoothEnvelope(env, radius = 3){
+  if(!env.length) return env
+  return env.map((item, i) => {
+    let sum = 0
+    let count = 0
+    for(let k = i - radius; k <= i + radius; k++){
+      if(k >= 0 && k < env.length){
+        sum += env[k].energy
+        count++
+      }
+    }
+    return { time: item.time, energy: count ? sum / count : item.energy }
+  })
+}
+function pickTimingAnchors(env, startTime, endTime, count){
+  const inRange = env.filter(x => x.time >= startTime && x.time <= endTime)
+  if(!inRange.length || count <= 0) return []
+
+  const energies = inRange.map(x => x.energy)
+  const maxE = Math.max(...energies, 0.0001)
+  const normalized = inRange.map(x => ({ time: x.time, energy: x.energy / maxE }))
+  const anchors = []
+  const segmentLen = (endTime - startTime) / count
+
+  for(let i = 0; i < count; i++){
+    const segStart = startTime + i * segmentLen
+    const segEnd = i === count - 1 ? endTime : segStart + segmentLen
+    const candidates = normalized.filter(x => x.time >= segStart && x.time <= segEnd)
+    if(!candidates.length){
+      anchors.push(round2(segStart))
+      continue
+    }
+    let best = candidates[0]
+    for(const c of candidates){
+      if(c.energy > best.energy) best = c
+    }
+    anchors.push(round2(best.time))
+  }
+  anchors.sort((a,b)=>a-b)
+  return anchors
+}
+function autoTimingFromAudio(){
+  if(!hasAudioLoaded()){
+    alert("Önce MP3 yükle.")
+    return
+  }
+  const words = splitWordsFromText(lyricsInput.value)
+  if(!words.length){
+    alert("Önce sözleri gir.")
+    return
+  }
+  normalizeIntroSegment()
+
+  const intro = getIntroValue()
+  const duration = ws.getDuration()
+  const usableStart = clamp(intro, 0, Math.max(0, duration - 0.2))
+  const usableEnd = duration
+  if(usableEnd - usableStart < 0.4){
+    alert("Timing için yeterli ses süresi yok.")
+    return
+  }
+
+  const envRaw = getEnergyEnvelope()
+  const env = smoothEnvelope(envRaw, 4)
+  if(!env.length){
+    alert("Ses analizi yapılamadı.")
+    return
+  }
+
+  const anchors = pickTimingAnchors(env, usableStart, usableEnd, words.length)
+  if(!anchors.length){
+    alert("Timing noktaları üretilemedi.")
+    return
+  }
+
+  const difficulty = difficultySelect.value
+  let minDur = 0.16
+  let tailPad = 0.04
+  if(difficulty === "çok kolay"){ minDur = 0.26; tailPad = 0.10 }
+  else if(difficulty === "kolay"){ minDur = 0.22; tailPad = 0.08 }
+  else if(difficulty === "orta"){ minDur = 0.18; tailPad = 0.06 }
+  else if(difficulty === "zor"){ minDur = 0.15; tailPad = 0.04 }
+  else if(difficulty === "çok zor"){ minDur = 0.12; tailPad = 0.03 }
+
+  const introSeg = heceler.find(h => h.isIntro) || {
+    text:"INTRO", note:"", start:0, end:intro, line:0, detectedSemis:[], detectedNotesRaw:[], isIntro:true
+  }
+
+  const next = [{
+    text:"INTRO",
+    note:introSeg.note || "",
+    start:0,
+    end:intro,
+    line:0,
+    detectedSemis:[],
+    detectedNotesRaw:[],
+    isIntro:true
+  }]
+
+  for(let i = 0; i < words.length; i++){
+    const start = i === 0 ? usableStart : anchors[i]
+    let end = i < words.length - 1 ? anchors[i + 1] - tailPad : usableEnd
+
+    if(end <= start + minDur) end = start + minDur
+    if(i < words.length - 1){
+      const nextAnchor = anchors[i + 1]
+      if(end > nextAnchor - 0.02){
+        end = Math.max(start + minDur, nextAnchor - 0.02)
+      }
+    }
+
+    end = Math.min(end, usableEnd)
+    next.push({
+      text: words[i].text,
+      note: "",
+      start: round2(start),
+      end: round2(end),
+      line: words[i].line,
+      detectedSemis:[],
+      detectedNotesRaw:[],
+      isIntro:false
+    })
+  }
+
+  for(let i = 2; i < next.length; i++){
+    const prev = next[i - 1]
+    const cur = next[i]
+    if(cur.start < prev.end){
+      cur.start = round2(prev.end)
+      if(cur.end <= cur.start + 0.03) cur.end = round2(cur.start + 0.12)
+    }
+  }
+
+  heceler = next
+  loadedIndex = -1
+  selectedSegmentIndexes = []
+  lastIntroValue = intro
+  renderAll()
+  seekToTime(intro)
+  scrollToTime(intro)
+
+  statusText.textContent = "Otomatik timing oluşturuldu"
+  statusText.className = "pill green"
+  analysisText.textContent = "Analiz: timing önerildi"
+  analysisText.className = "pill green"
+  autoSaveProject()
+}
+function hasAudioLoaded(){
+  return !!(ws && ws.getDuration && ws.getDuration() > 0)
+}
+function getWaveWrapper(){
+  return ws && ws.drawer ? ws.drawer.wrapper : null
+}
+function getWaveInner(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return null
+  return wrapper.querySelector(".wavesurfer-wave") || wrapper.firstElementChild
+}
+function getScrollableWidth(){
+  const inner = getWaveInner()
+  if(inner && inner.scrollWidth) return inner.scrollWidth
+  const wrapper = getWaveWrapper()
+  if(wrapper && wrapper.scrollWidth) return wrapper.scrollWidth
+  return overlayViewport.clientWidth || 1
+}
+function getVisibleWidth(){
+  const wrapper = getWaveWrapper()
+  return wrapper ? wrapper.clientWidth : (overlayViewport.clientWidth || 1)
+}
+function getScrollLeft(){
+  const wrapper = getWaveWrapper()
+  return wrapper ? wrapper.scrollLeft : 0
+}
+function getDurationSafe(){
+  return hasAudioLoaded() ? ws.getDuration() : 1
+}
+function getPxPerSec(){
+  const duration = getDurationSafe()
+  return getScrollableWidth() / duration
+}
+function timeToPx(t){ return t * getPxPerSec() }
+function pxToTime(px){ return px / getPxPerSec() }
+function seekToTime(t){
+  if(!hasAudioLoaded()) return
+  const duration = ws.getDuration()
+  const clamped = clamp(t, 0, duration)
+  ws.seekTo(duration ? clamped / duration : 0)
+  setCursorTime(clamped)
+}
+function setCursorTime(t){
+  cursorTime = clamp(round2(t || 0), 0, hasAudioLoaded() ? ws.getDuration() : 999999)
+  cursorText.textContent = "Cursor: " + cursorTime.toFixed(2) + " sn"
+  updateStripCursor()
+}
+function scrollToTime(t){
+  const wrapper = getWaveWrapper()
+  if(!wrapper || !hasAudioLoaded()) return
+  const x = timeToPx(t)
+  const targetScroll = clamp(x - wrapper.clientWidth * 0.35, 0, wrapper.scrollWidth - wrapper.clientWidth)
+  wrapper.scrollLeft = targetScroll
+  scheduleOverlaySync()
+}
+function previewDragCursor(t){
+  dragPreviewTarget = t
+  if(dragPreviewRAF) return
+  dragPreviewRAF = requestAnimationFrame(() => {
+    if(dragPreviewTarget !== null){
+      seekToTime(dragPreviewTarget)
+      scrollToTime(dragPreviewTarget)
+    }
+    dragPreviewRAF = null
+  })
+}
+function scrollKaraokeToActive(el){
+  if(!el || !karaoke) return
+  const cRect = karaoke.getBoundingClientRect()
+  const eRect = el.getBoundingClientRect()
+  const relativeTop = eRect.top - cRect.top
+  const targetTop = karaoke.scrollTop + relativeTop - (karaoke.clientHeight / 2) + (eRect.height / 2)
+  karaoke.scrollTo({ top: Math.max(0, targetTop), behavior:"smooth" })
+}
+function syncOverlayPosition(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+  overlayContent.style.transform = `translateX(${-wrapper.scrollLeft}px)`
+  updateStripCursor()
+}
+function scheduleOverlaySync(){
+  if(overlaySyncScheduled) return
+  overlaySyncScheduled = true
+  requestAnimationFrame(() => {
+    overlaySyncScheduled = false
+    syncOverlayPosition()
+  })
+}
+function moveWaveCursorBy(delta){
+  if(!hasAudioLoaded()) return
+  const now = ws.getCurrentTime()
+  const target = clamp(now + delta, 0, ws.getDuration())
+  seekToTime(target)
+  scrollToTime(target)
+}
+function selectAdjacentSegment(direction){
+  const ordered = heceler
+    .map((seg, idx) => ({ seg, idx }))
+    .filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null)
+    .sort((a,b) => a.seg.start - b.seg.start)
+  if(!ordered.length) return
+
+  if(loadedIndex === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+
+  const pos = ordered.findIndex(x => x.idx === loadedIndex)
+  if(pos === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+
+  const nextPos = clamp(pos + direction, 0, ordered.length - 1)
+  const nextItem = ordered[nextPos]
+  seekToSegment(nextItem.idx, false)
+  selectedSegmentIndexes = [nextItem.idx]
+  refreshKaraokeSelectionClasses()
+}
+function bindWaveformDrag(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+
+  wrapper.addEventListener("pointerdown", (e) => {
+    if(e.target.closest(".handle") || e.target.closest(".strip-block")) return
+    waveformDragState = { startX: e.clientX, startScroll: wrapper.scrollLeft, moved:false }
+    try{ wrapper.setPointerCapture(e.pointerId) }catch(err){}
+  })
+  wrapper.addEventListener("pointermove", (e) => {
+    if(!waveformDragState) return
+    const dx = e.clientX - waveformDragState.startX
+    if(Math.abs(dx) > 2) waveformDragState.moved = true
+    wrapper.scrollLeft = waveformDragState.startScroll - dx
+    scheduleOverlaySync()
+  })
+  const end = () => { waveformDragState = null }
+  wrapper.addEventListener("pointerup", end)
+  wrapper.addEventListener("pointercancel", end)
+  wrapper.addEventListener("lostpointercapture", end)
+}
+async function setupMic(){
+  try{
+    if(micReady) return
+    micStream = await navigator.mediaDevices.getUserMedia({ audio:true })
+    audioContext = new (window.AudioContext || window.webkitAudioContext)()
+    analyser = audioContext.createAnalyser()
+    analyser.fftSize = 2048
+    pitchBuffer = new Float32Array(analyser.fftSize)
+    micSource = audioContext.createMediaStreamSource(micStream)
+    micSource.connect(analyser)
+    micReady = true
+    micText.textContent = "Mikrofon açık"
+    micText.className = "pill green"
+    noteTextEl.textContent = "Nota: dinleniyor..."
+  }catch(err){
+    console.error(err)
+    micText.textContent = "Mikrofon açılamadı"
+    micText.className = "pill red"
+  }
+}
+function getCurrentDetectedNote(){
+  if(!micReady || !analyser || !audioContext) return null
+  analyser.getFloatTimeDomainData(pitchBuffer)
+  const freq = autoCorrelate(pitchBuffer, audioContext.sampleRate)
+  if(freq === -1 || freq < 50 || freq > 1200){
+    noteTextEl.textContent = "Nota: -"
+    return null
+  }
+  const midi = freqToMidi(freq)
+  const note = midiToNoteName(midi)
+  noteTextEl.textContent = "Nota: " + note + " (" + freq.toFixed(1) + " Hz)"
+  return note
+}
+function bindWrapperEvents(){
+  if(wrapperBound) return
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+  wrapper.addEventListener("scroll", scheduleOverlaySync, { passive:true })
+  bindWaveformDrag()
+  wrapperBound = true
+}
+function initWave(){
+  ws = WaveSurfer.create({
+    container:"#waveform",
+    waveColor:"#cbd5e1",
+    progressColor:"#2563eb",
+    cursorColor:"#111827",
+    height:380,
+    normalize:true,
+    responsive:true,
+    scrollParent:true,
+    minPxPerSec:Number(zoom.value)
+  })
+
+  ws.on("ready", function(){
+    statusText.textContent = "Ses yüklendi"
+    statusText.className = "pill purple"
+    ws.zoom(Number(zoom.value))
+    ws.setPlaybackRate(Number(rateSelect.value))
+    bindWrapperEvents()
+    setCursorTime(ws.getCurrentTime())
+    normalizeIntroSegment()
+    renderAll()
+    scheduleOverlaySync()
+  })
+
+  ws.on("audioprocess", function(){
+    const now = ws.getCurrentTime()
+    timeText.textContent = now.toFixed(2) + " sn"
+    setCursorTime(now)
+    getCurrentDetectedNote()
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+
+  ws.on("seek", function(progress){
+    const duration = ws.getDuration() || 0
+    const now = progress * duration
+    timeText.textContent = now.toFixed(2) + " sn"
+    setCursorTime(now)
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+
+  ws.on("pause", function(){
+    const now = ws.getCurrentTime()
+    lastScrolledActiveId = null
+    setCursorTime(now)
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+
+  ws.on("finish", function(){
+    previewPlaying = false
+    isSequencePlaying = false
+    lastScrolledActiveId = null
+    karaokePlaybackUpdate(ws.getDuration())
+  })
+
+  ws.on("zoom", function(){
+    renderAll()
+    scheduleOverlaySync()
+  })
+}
+function normalizeIntroSegment(){
+  const intro = getIntroValue()
+  const introIndex = heceler.findIndex(h => h.isIntro)
+  if(introIndex === -1){
+    heceler.unshift({
+      text:"INTRO", note:"", start:0, end:intro, line:0,
+      detectedSemis:[], detectedNotesRaw:[], isIntro:true
+    })
+  }else{
+    const seg = heceler[introIndex]
+    seg.text = "INTRO"
+    seg.start = 0
+    seg.end = intro
+    seg.line = 0
+    seg.isIntro = true
+    if(!Array.isArray(seg.detectedSemis)) seg.detectedSemis = []
+    if(!Array.isArray(seg.detectedNotesRaw)) seg.detectedNotesRaw = []
+  }
+}
+function shiftAllNonIntroBy(delta){
+  if(delta === 0) return
+  heceler.forEach(h => {
+    if(h.isIntro) return
+    if(h.start !== null) h.start = round2(Math.max(0, h.start + delta))
+    if(h.end !== null) h.end = round2(Math.max(0.03, h.end + delta))
+  })
+}
+function alignFirstSegmentToIntro(){
+  const ordered = getOrderedTimedSegments().filter(x => !x.s.isIntro)
+  if(ordered.length === 0) return
+  const first = ordered[0].s
+  if(first.start === null || first.end === null) return
+  const len = Math.max(0.03, round2(first.end - first.start))
+  first.start = getIntroValue()
+  first.end = round2(first.start + len)
+  for(let i = 1; i < ordered.length; i++){
+    const prev = ordered[i - 1].s
+    const cur = ordered[i].s
+    const curLen = Math.max(0.03, round2(cur.end - cur.start))
+    cur.start = round2(prev.end)
+    cur.end = round2(cur.start + curLen)
+  }
+}
+function parseLyricsToSegmentsPreserve(){
+  const parsedWords = splitWordsFromText(lyricsInput.value)
+  const oldWords = heceler.filter(h => !h.isIntro)
+  const introSeg = heceler.find(h => h.isIntro) || {
+    text:"INTRO", note:"", start:0, end:getIntroValue(), line:0,
+    detectedSemis:[], detectedNotesRaw:[], isIntro:true
+  }
+
+  const next = [{
+    text:"INTRO",
+    note:introSeg.note || "",
+    start:0,
+    end:getIntroValue(),
+    line:0,
+    detectedSemis:[],
+    detectedNotesRaw:[],
+    isIntro:true
+  }]
+
+  parsedWords.forEach((w, i) => {
+    const old = oldWords[i]
+    next.push({
+      text:w.text,
+      note: old ? (old.note || "") : "",
+      start: old ? old.start : null,
+      end: old ? old.end : null,
+      line:w.line,
+      detectedSemis:[],
+      detectedNotesRaw:[],
+      isIntro:false
+    })
+  })
+
+  heceler = next
+  selectedSegmentIndexes = []
+}
+function getOrderedTimedSegments(){
+  return heceler
+    .map((s, i) => ({ s, i }))
+    .filter(x => x.s.start !== null && x.s.end !== null)
+    .sort((a, b) => a.s.start - b.s.start)
+}
+function updateActiveSegmentLabel(index=-1){
+  if(index === -1 || !heceler[index]){
+    activeSegmentText.textContent = "Aktif segment: -"
+    return
+  }
+  activeSegmentText.textContent = "Aktif segment: " + heceler[index].text
+}
+function seekToSegment(index, playSnippet=false){
+  const seg = heceler[index]
+  if(!seg) return
+
+  loadedIndex = index
+  updateActiveSegmentLabel(index)
+
+  heceInput.value = seg.text
+  notaInput.value = seg.note || ""
+  satirInput.value = seg.line || ""
+  startInput.value = seg.start !== null ? Number(seg.start).toFixed(2) : ""
+  endInput.value = seg.end !== null ? Number(seg.end).toFixed(2) : ""
+
+  if(seg.start !== null && hasAudioLoaded()){
+    seekToTime(seg.start)
+    scrollToTime(seg.start)
+  }
+
+  renderStrip()
+  if(playSnippet && hasAudioLoaded() && seg.start !== null && seg.end !== null){
+    ws.play(seg.start, seg.end)
+  }
+}
+function getRulerPrecisionConfig(){
+  const z = Number(zoom.value || 100)
+  if(z >= 420) return { minor:0.05, medium:0.10, major:0.50, decimals:2 }
+  if(z >= 300) return { minor:0.05, medium:0.25, major:1.00, decimals:2 }
+  if(z >= 200) return { minor:0.10, medium:0.50, major:1.00, decimals:1 }
+  if(z >= 120) return { minor:0.25, medium:0.50, major:1.00, decimals:1 }
+  if(z >= 70)  return { minor:0.50, medium:1.00, major:2.00, decimals:1 }
+  return { minor:1.00, medium:2.00, major:5.00, decimals:0 }
+}
+function isMultipleOf(value, step){
+  if(step <= 0) return false
+  const ratio = value / step
+  return Math.abs(ratio - Math.round(ratio)) < 0.0001
+}
+function renderRuler(){
+  ruler.innerHTML = ""
+  const duration = getDurationSafe()
+  const totalWidth = Math.max(getScrollableWidth(), getVisibleWidth())
+  const { minor, medium, major, decimals } = getRulerPrecisionConfig()
+
+  ruler.style.width = totalWidth + "px"
+  segmentStrip.style.width = totalWidth + "px"
+  overlayContent.style.width = totalWidth + "px"
+
+  for(let t = 0; t <= duration + 0.0001; t += minor){
+    const tFixed = round2(t)
+    const x = timeToPx(tFixed)
+    const tick = document.createElement("div")
+    tick.className = "ruler-tick"
+
+    const isMajor = isMultipleOf(tFixed, major)
+    const isMedium = !isMajor && isMultipleOf(tFixed, medium)
+    if(isMajor) tick.classList.add("major")
+    else if(isMedium) tick.classList.add("medium")
+    else tick.classList.add("minor")
+
+    tick.style.left = x + "px"
+    ruler.appendChild(tick)
+
+    if(isMajor){
+      const label = document.createElement("div")
+      label.className = "ruler-label"
+      label.style.left = x + "px"
+      label.textContent = tFixed.toFixed(decimals) + "s"
+      ruler.appendChild(label)
+    }
+  }
+
+  ruler.onclick = function(e){
+    if(!hasAudioLoaded()) return
+    const rect = ruler.getBoundingClientRect()
+    const localX = e.clientX - rect.left
+    const absoluteX = localX + getScrollLeft()
+    seekToTime(pxToTime(absoluteX))
+  }
+}
+function renderStrip(){
+  segmentStrip.innerHTML = ""
+  if(heceler.length === 0) return
+
+  const ordered = heceler
+    .map((seg, idx) => ({seg, idx}))
+    .filter(x => x.seg.start !== null && x.seg.end !== null)
+    .sort((a,b)=>a.seg.start - b.seg.start)
+
+  ordered.forEach(item => {
+    const seg = item.seg
+    const left = timeToPx(seg.start)
+    const width = Math.max(34, timeToPx(seg.end) - timeToPx(seg.start))
+
+    const block = document.createElement("div")
+    block.className = "strip-block" + (seg.isIntro ? " intro" : "") + (item.idx === loadedIndex ? " active" : "")
+    block.style.left = left + "px"
+    block.style.width = width + "px"
+    block.dataset.index = item.idx
+
+    block.innerHTML = `
+      <div class="handle left"></div>
+      <div class="drag"></div>
+      <div class="handle right"></div>
+      <div class="body">${escapeHtml(seg.text)}</div>
+    `
+
+    block.addEventListener("click", (e) => {
+      e.stopPropagation()
+      if(!dragState) seekToSegment(item.idx, true)
+    })
+    block.querySelector(".drag").addEventListener("pointerdown", e => startDrag(e, item.idx, "move"))
+    block.querySelector(".handle.left").addEventListener("pointerdown", e => startDrag(e, item.idx, "resize-left"))
+    block.querySelector(".handle.right").addEventListener("pointerdown", e => startDrag(e, item.idx, "resize-right"))
+
+    segmentStrip.appendChild(block)
+  })
+
+  segmentStrip.onclick = function(e){
+    if(!hasAudioLoaded()) return
+    const rect = segmentStrip.getBoundingClientRect()
+    const localX = e.clientX - rect.left
+    const absoluteX = localX + getScrollLeft()
+    seekToTime(pxToTime(absoluteX))
+  }
+  updateStripCursor()
+}
+function updateStripCursor(){
+  if(!hasAudioLoaded()){
+    stripCursor.style.left = "0px"
+    return
+  }
+  stripCursor.style.left = (timeToPx(cursorTime) - getScrollLeft()) + "px"
+}
+function startDrag(e, index, mode){
+  e.preventDefault()
+  e.stopPropagation()
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null) return
+
+  dragState = {
+    index,
+    mode,
+    pointerId: e.pointerId,
+    startX: e.clientX,
+    origStart: seg.start,
+    origEnd: seg.end
+  }
+
+  try{ e.target.setPointerCapture(e.pointerId) }catch(err){}
+  document.addEventListener("pointermove", onDragMove, { passive:false })
+  document.addEventListener("pointerup", endDrag)
+  document.addEventListener("pointercancel", endDrag)
+}
+function onDragMove(e){
+  if(!dragState) return
+  e.preventDefault()
+
+  const seg = heceler[dragState.index]
+  const deltaPx = e.clientX - dragState.startX
+  const deltaTime = pxToTime(deltaPx)
+  const minLen = 0.03
+  const duration = hasAudioLoaded() ? ws.getDuration() : Infinity
+
+  if(dragState.mode === "move"){
+    if(seg.isIntro) return
+    const len = dragState.origEnd - dragState.origStart
+    let newStart = dragState.origStart + deltaTime
+    let newEnd = newStart + len
+
+    const sorted = getOrderedTimedSegments()
+    const pos = sorted.findIndex(x => x.i === dragState.index)
+    const prev = pos > 0 ? sorted[pos - 1].s : null
+    const next = pos < sorted.length - 1 ? sorted[pos + 1].s : null
+
+    if(prev && newStart < prev.end){
+      newStart = prev.end
+      newEnd = newStart + len
+    }
+    if(next && newEnd > next.start){
+      newEnd = next.start
+      newStart = newEnd - len
+      if(prev && newStart < prev.end){
+        newStart = prev.end
+        newEnd = newStart + len
+      }
+    }
+    if(newStart < 0){
+      newStart = 0
+      newEnd = len
+    }
+    if(newEnd > duration){
+      newEnd = duration
+      newStart = newEnd - len
+      if(newStart < 0) newStart = 0
+    }
+
+    seg.start = round2(newStart)
+    seg.end = round2(newEnd)
+    startInput.value = seg.start.toFixed(2)
+    endInput.value = seg.end.toFixed(2)
+
+    previewDragCursor(seg.end)
+    renderStrip()
+    return
+  }
+
+  if(dragState.mode === "resize-left"){
+    const sorted = getOrderedTimedSegments()
+    const pos = sorted.findIndex(x => x.i === dragState.index)
+    const prev = pos > 0 ? sorted[pos - 1].s : null
+
+    let newStart = dragState.origStart + deltaTime
+    if(seg.isIntro) newStart = 0
+    if(prev) newStart = Math.max(newStart, prev.end)
+    newStart = Math.max(0, newStart)
+    if(seg.end <= newStart + minLen) newStart = seg.end - minLen
+
+    seg.start = round2(newStart)
+    if(seg.isIntro) seg.start = 0
+    startInput.value = seg.start.toFixed(2)
+    previewDragCursor(seg.start)
+    renderStrip()
+    return
+  }
+
+  if(dragState.mode === "resize-right"){
+    let newEnd = dragState.origEnd + deltaTime
+    newEnd = Math.max(seg.start + minLen, newEnd)
+    if(hasAudioLoaded()) newEnd = Math.min(newEnd, duration)
+
+    const diff = round2(newEnd - seg.end)
+    seg.end = round2(newEnd)
+
+    if(seg.isIntro) introInput.value = seg.end.toFixed(2)
+
+    const ordered = getOrderedTimedSegments()
+    const pos = ordered.findIndex(x => x.i === dragState.index)
+
+    if(pos !== -1){
+      for(let i = pos + 1; i < ordered.length; i++){
+        const cur = ordered[i].s
+        const len = Math.max(minLen, round2(cur.end - cur.start))
+        cur.start = round2(cur.start + diff)
+        cur.end = round2(cur.start + len)
+        if(hasAudioLoaded() && cur.end > duration){
+          cur.end = round2(duration)
+          if(cur.end <= cur.start) cur.start = round2(Math.max(0, cur.end - minLen))
+        }
+      }
+      for(let i = pos + 1; i < ordered.length; i++){
+        const prev = ordered[i - 1].s
+        const cur = ordered[i].s
+        const len = Math.max(minLen, round2(cur.end - cur.start))
+        cur.start = round2(prev.end)
+        cur.end = round2(cur.start + len)
+      }
+    }
+
+    endInput.value = seg.end.toFixed(2)
+    previewDragCursor(seg.end)
+    renderStrip()
+  }
+}
+function endDrag(){
+  if(!dragState) return
+  const idx = dragState.index
+  dragState = null
+  document.removeEventListener("pointermove", onDragMove)
+  document.removeEventListener("pointerup", endDrag)
+  document.removeEventListener("pointercancel", endDrag)
+  renderKaraoke()
+  seekToSegment(idx, false)
+  statusText.textContent = "Segment düzenlendi"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function nudgeSegmentBoundary(which, direction){
+  if(loadedIndex === -1){
+    alert("Önce bir segment seç.")
+    return
+  }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null) return
+
+  const amount = getNudgeValue()
+  const delta = direction * amount
+  const minLen = 0.03
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+
+  if(which === "start"){
+    const prev = pos > 0 ? ordered[pos - 1].s : null
+    let newStart = seg.start + delta
+    if(seg.isIntro) newStart = 0
+    if(prev) newStart = Math.max(newStart, prev.end)
+    newStart = Math.max(0, newStart)
+    if(seg.end <= newStart + minLen) newStart = seg.end - minLen
+    seg.start = round2(newStart)
+    if(seg.isIntro) seg.start = 0
+    startInput.value = seg.start.toFixed(2)
+    seekToTime(seg.start)
+    scrollToTime(seg.start)
+  }
+
+  if(which === "end"){
+    let newEnd = seg.end + delta
+    newEnd = Math.max(seg.start + minLen, newEnd)
+    if(hasAudioLoaded()) newEnd = Math.min(newEnd, ws.getDuration())
+
+    const diff = round2(newEnd - seg.end)
+    seg.end = round2(newEnd)
+    if(seg.isIntro) introInput.value = seg.end.toFixed(2)
+
+    for(let i = pos + 1; i < ordered.length; i++){
+      const cur = ordered[i].s
+      const len = Math.max(minLen, round2(cur.end - cur.start))
+      cur.start = round2(cur.start + diff)
+      cur.end = round2(cur.start + len)
+      if(hasAudioLoaded() && cur.end > ws.getDuration()){
+        cur.end = round2(ws.getDuration())
+        if(cur.end <= cur.start) cur.start = round2(Math.max(0, cur.end - minLen))
+      }
+    }
+    for(let i = pos + 1; i < ordered.length; i++){
+      const prev = ordered[i - 1].s
+      const cur = ordered[i].s
+      const len = Math.max(minLen, round2(cur.end - cur.start))
+      cur.start = round2(prev.end)
+      cur.end = round2(cur.start + len)
+    }
+
+    endInput.value = seg.end.toFixed(2)
+    seekToTime(seg.end)
+    scrollToTime(seg.end)
+  }
+
+  renderAll()
+  statusText.textContent = "Segment sınırı düzeltildi"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function shiftWholeSegment(direction){
+  if(loadedIndex === -1){
+    alert("Önce bir segment seç.")
+    return
+  }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null) return
+  if(seg.isIntro){
+    alert("Intro segmenti bu şekilde kaydırılamaz.")
+    return
+  }
+
+  const amount = getNudgeValue()
+  const delta = direction * amount
+  const len = seg.end - seg.start
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+  const prev = pos > 0 ? ordered[pos - 1].s : null
+  const next = pos < ordered.length - 1 ? ordered[pos + 1].s : null
+
+  let newStart = seg.start + delta
+  let newEnd = seg.end + delta
+  if(prev && newStart < prev.end){
+    newStart = prev.end
+    newEnd = newStart + len
+  }
+  if(next && newEnd > next.start){
+    newEnd = next.start
+    newStart = newEnd - len
+  }
+  if(newStart < 0){
+    newStart = 0
+    newEnd = len
+  }
+  if(hasAudioLoaded() && newEnd > ws.getDuration()){
+    newEnd = ws.getDuration()
+    newStart = newEnd - len
+    if(newStart < 0) newStart = 0
+  }
+
+  seg.start = round2(newStart)
+  seg.end = round2(newEnd)
+  startInput.value = seg.start.toFixed(2)
+  endInput.value = seg.end.toFixed(2)
+
+  seekToTime(direction < 0 ? seg.start : seg.end)
+  scrollToTime(direction < 0 ? seg.start : seg.end)
+
+  renderAll()
+  statusText.textContent = "Segment kaydırıldı"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function getCentralWeight(progress){
+  const dist = Math.abs(progress - 0.5)
+  return 1.45 - dist * 2.1
+}
+function buildStableRuns(notes){
+  if(!notes.length) return []
+  const runs = []
+  let cur = { note: notes[0].note, weight: notes[0].weight, count: 1 }
+  for(let i = 1; i < notes.length; i++){
+    if(notes[i].note === cur.note){
+      cur.weight += notes[i].weight
+      cur.count += 1
+    }else{
+      runs.push(cur)
+      cur = { note: notes[i].note, weight: notes[i].weight, count: 1 }
+    }
+  }
+  runs.push(cur)
+  return runs
+}
+function analyzeSegmentPitchSequence(index){
+  if(index === -1 || !hasAudioLoaded()) return null
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null) return null
+
+  const segDur = seg.end - seg.start
+  if(segDur < 0.06) return null
+
+  const scaleNotes = getScaleNotes()
+  const buffer = ws.backend.buffer
+  const data = buffer.getChannelData(0)
+  const sampleRate = buffer.sampleRate
+  const startSample = Math.max(0, Math.floor(seg.start * sampleRate))
+  const endSample = Math.min(data.length, Math.floor(seg.end * sampleRate))
+  if(endSample - startSample <= 1024) return null
+
+  const shortSegment = segDur < 0.70
+  const midSegment = segDur < 1.60
+  const windowSize = 2048
+  const hopSize = 256
+  const frames = []
+
+  for(let i = startSample; i + windowSize < endSample; i += hopSize){
+    const slice = data.slice(i, i + windowSize)
+    let energy = 0
+    for(let k = 0; k < slice.length; k++) energy += Math.abs(slice[k])
+    energy /= slice.length
+    if(energy < 0.008) continue
+
+    const freq = autoCorrelate(slice, sampleRate)
+    if(freq === -1 || freq < 70 || freq > 1200) continue
+
+    const midi = freqToMidi(freq)
+    const rawNote = midiToNoteName(midi)
+    const filteredNote = semitoneToNearestScaleNote(noteToSemitone(rawNote), scaleNotes)
+
+    const t = i / sampleRate
+    const progress = clamp((t - seg.start) / Math.max(0.001, segDur), 0, 1)
+    const centralWeight = getCentralWeight(progress)
+    const edgePenalty = (progress < 0.15 || progress > 0.85) ? 0.30 : 1
+    const totalWeight = energy * centralWeight * edgePenalty
+
+    frames.push({ rawNote, filteredNote, weight: totalWeight, progress })
+  }
+
+  if(!frames.length) return null
+  const focusedFrames = frames.filter(f => shortSegment ? (f.progress >= 0.22 && f.progress <= 0.78) : true)
+  const workFrames = focusedFrames.length ? focusedFrames : frames
+
+  const filteredNotes = workFrames.map(x => ({ note:x.filteredNote, weight:x.weight }))
+  const runs = buildStableRuns(filteredNotes)
+  const weighted = {}
+  filteredNotes.forEach(f => weighted[f.note] = (weighted[f.note] || 0) + f.weight)
+  runs.forEach(run => {
+    weighted[run.note] = (weighted[run.note] || 0) + run.weight * 0.65 + run.count * 0.12
+  })
+  const ranked = Object.entries(weighted).sort((a,b) => b[1] - a[1]).map(x => x[0])
+
+  if(shortSegment){
+    const bestRun = runs.sort((a,b)=> (b.weight + b.count*0.4) - (a.weight + a.count*0.4))[0]
+    const best = bestRun ? bestRun.note : ranked[0]
+    return { sequence:[best], dominantNote:best, confidence:1 }
+  }
+
+  let seq = compressNoteSequence(
+    runs.filter(run => run.count >= 2 || run.weight >= 0.03).map(run => run.note)
+  )
+  if(!seq.length) seq = [ranked[0]]
+  seq = seq.filter(n => ranked.includes(n))
+  seq = compressNoteSequence(seq)
+
+  if(midSegment){
+    seq = seq.slice(0, 2)
+    if(!seq.length) seq = [ranked[0]]
+  }else{
+    seq = seq.slice(0, 3)
+    if(!seq.length) seq = [ranked[0]]
+  }
+
+  const dominantNote = ranked[0] || seq[0]
+  const totalWeight = Object.values(weighted).reduce((a,b)=>a+b,0) || 1
+  const confidence = dominantNote ? (weighted[dominantNote] || 0) / totalWeight : 0
+  return { sequence: seq, dominantNote, confidence }
+}
+function analyzeSelectedSegmentNote(){
+  if(loadedIndex === -1){
+    alert("Önce bir segment seç.")
+    return
+  }
+  const result = analyzeSegmentPitchSequence(loadedIndex)
+  if(!result){
+    analysisText.textContent = "Analiz: nota bulunamadı"
+    analysisText.className = "pill red"
+    return
+  }
+  const seqString = compressNoteSequence(result.sequence).join(" ")
+  notaInput.value = seqString
+  heceler[loadedIndex].note = seqString
+
+  const percent = Math.round(result.confidence * 100)
+  analysisText.textContent = "Analiz: " + seqString + " | baskın: " + result.dominantNote + " (%" + percent + ")"
+  analysisText.className = "pill green"
+  renderKaraoke()
+  statusText.textContent = "Nota önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
+}
+function analyzeAllSegmentsNotes(){
+  const targets = heceler
+    .map((seg, idx) => ({ seg, idx }))
+    .filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null)
+
+  if(!targets.length){
+    alert("Önce zamanlanmış segmentler olmalı.")
+    return
+  }
+  let updated = 0
+  targets.forEach(item => {
+    const result = analyzeSegmentPitchSequence(item.idx)
+    if(result){
+      heceler[item.idx].note = compressNoteSequence(result.sequence).join(" ")
+      updated += 1
+    }
+  })
+
+  renderAll()
+  analysisText.textContent = "Analiz: " + updated + " segment güncellendi"
+  analysisText.className = "pill green"
+  statusText.textContent = "Tümüne nota önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
+}
+function renderKaraoke(){
+  const sorted = heceler
+    .map((seg, idx) => ({seg, idx}))
+    .filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null)
+    .sort((a,b)=>a.seg.start-b.seg.start)
+
+  if(sorted.length === 0){
+    karaoke.innerHTML = '<div class="karaokeBox" style="width:100%;cursor:default;">Henüz zamanlanmış karaoke kutusu oluşmadı.</div>'
+    return
+  }
+
+  karaoke.innerHTML = ""
+  const intro = heceler.find(h => h.isIntro)
+  if(intro && intro.end !== null && intro.end > 0){
+    const introBox = document.createElement("div")
+    introBox.className = "karaokeBox intro"
+    introBox.id = "karaoke-intro"
+    introBox.innerHTML = `<div class="fill"></div><div class="label">Intro ${intro.end.toFixed(2)} sn</div>`
+    introBox.onclick = () => hasAudioLoaded() && ws.play(0, intro.end)
+    karaoke.appendChild(introBox)
+    const br = document.createElement("div")
+    br.className = "lineBreak"
+    karaoke.appendChild(br)
+  }
+
+  let lastLine = null
+  sorted.forEach((item, sortedIndex) => {
+    if(lastLine !== null && item.seg.line !== lastLine){
+      const br = document.createElement("div")
+      br.className = "lineBreak"
+      karaoke.appendChild(br)
+    }
+
+    const btn = document.createElement("div")
+    btn.className = "karaokeBox" + (selectedSegmentIndexes.includes(item.idx) ? " selected" : "")
+    btn.id = "karaoke-box-" + sortedIndex
+    btn.dataset.realIndex = item.idx
+    const noteSmall = item.seg.note ? ` <span style="opacity:.72;font-size:12px;">(${escapeHtml(item.seg.note)})</span>` : ""
+    btn.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(item.seg.text)}${noteSmall}</div>`
+
+    btn.onclick = () => {
+      if(karaokeSelectionState && karaokeSelectionState.moved) return
+      playSingleKaraokeSegment(item.idx)
+    }
+
+    karaoke.appendChild(btn)
+    lastLine = item.seg.line
+  })
+}
+function refreshKaraokeSelectionClasses(){
+  document.querySelectorAll(".karaokeBox").forEach(el => {
+    const realIndex = el.dataset.realIndex
+    if(!realIndex) return
+    const idx = Number(realIndex)
+    el.classList.toggle("selected", selectedSegmentIndexes.includes(idx))
+  })
+}
+function scheduleKaraokeSelectionUpdate(){
+  if(karaokeSelectionRaf) return
+  karaokeSelectionRaf = requestAnimationFrame(() => {
+    karaokeSelectionRaf = null
+    refreshKaraokeSelectionClasses()
+  })
+}
+function clearSelection(){
+  selectedSegmentIndexes = []
+  refreshKaraokeSelectionClasses()
+}
+function selectWholeLine(lineNo){
+  selectedSegmentIndexes = heceler
+    .map((seg, idx) => ({seg, idx}))
+    .filter(x => !x.seg.isIntro && x.seg.line === lineNo && x.seg.start !== null && x.seg.end !== null)
+    .map(x => x.idx)
+  refreshKaraokeSelectionClasses()
+}
+function getSegmentIndexFromElement(el){
+  if(!el) return null
+  const box = el.closest(".karaokeBox")
+  if(!box) return null
+  if(!box.dataset.realIndex) return null
+  return Number(box.dataset.realIndex)
+}
+function playSingleKaraokeSegment(index){
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null || !hasAudioLoaded()) return
+  selectedSegmentIndexes = [index]
+  refreshKaraokeSelectionClasses()
+  seekToSegment(index, true)
+}
+function startKaraokeTouchSelection(e){
+  const idx = getSegmentIndexFromElement(e.target)
+  if(idx === null) return
+  karaokeSelectionState = { pointerId:e.pointerId, moved:false, startIndex:idx, indexes:new Set([idx]) }
+  selectedSegmentIndexes = [idx]
+  refreshKaraokeSelectionClasses()
+  try{ karaoke.setPointerCapture(e.pointerId) }catch(err){}
+}
+function moveKaraokeTouchSelection(e){
+  if(!karaokeSelectionState) return
+  const el = document.elementFromPoint(e.clientX, e.clientY)
+  const idx = getSegmentIndexFromElement(el)
+  if(idx === null) return
+  if(idx !== karaokeSelectionState.startIndex) karaokeSelectionState.moved = true
+  karaokeSelectionState.indexes.add(idx)
+  selectedSegmentIndexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
+  scheduleKaraokeSelectionUpdate()
+}
+function endKaraokeTouchSelection(){
+  if(!karaokeSelectionState) return
+  const moved = karaokeSelectionState.moved
+  const indexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
+  karaokeSelectionState = null
+  if(!indexes.length) return
+  if(moved && indexes.length > 1) playSegmentsSequentially(indexes)
+  else playSingleKaraokeSegment(indexes[0])
+}
+async function playSegmentsSequentially(indexes){
+  if(!hasAudioLoaded() || !indexes.length) return
+  sequenceStopRequested = false
+  isSequencePlaying = true
+
+  const ordered = indexes
+    .map(i => ({ i, seg: heceler[i] }))
+    .filter(x => x.seg && x.seg.start !== null && x.seg.end !== null)
+    .sort((a,b)=>a.seg.start - b.seg.start)
+
+  for(const item of ordered){
+    if(sequenceStopRequested) break
+    selectedSegmentIndexes = [item.i]
+    refreshKaraokeSelectionClasses()
+    seekToSegment(item.i, false)
+    ws.play(item.seg.start, item.seg.end)
+    await new Promise(resolve => {
+      const ms = Math.max(40, ((item.seg.end - item.seg.start) * 1000) + 50)
+      setTimeout(resolve, ms)
+    })
+  }
+  isSequencePlaying = false
+}
+function playSelectedLine(){
+  if(!selectedSegmentIndexes.length){
+    alert("Önce bir kelime seç.")
+    return
+  }
+  const first = heceler[selectedSegmentIndexes[0]]
+  if(!first) return
+  selectWholeLine(first.line)
+  playSegmentsSequentially(selectedSegmentIndexes)
+}
+function resetKaraokeClasses(){
+  document.querySelectorAll(".karaokeBox").forEach(el => {
+    el.classList.remove("active","ok","bad")
+    const fill = el.querySelector(".fill")
+    if(fill) fill.style.width = "0%"
+  })
+}
+function evaluateTargetVsDetected(seg){
+  const targets = parseTargetNotes(seg.note)
+  const actual = compressNoteSequence(seg.detectedNotesRaw || [])
+  if(targets.length === 0 || actual.length === 0) return null
+  const matched = arraysUniqueIntersectionCount(targets, actual)
+  const ratio = matched / targets.length
+  return { matched, total: targets.length, ratio, success: ratio >= (2/3) }
+}
+function karaokePlaybackUpdate(time){
+  const sorted = heceler
+    .map((seg, idx) => ({seg, idx}))
+    .filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null)
+    .sort((a,b)=>a.seg.start-b.seg.start)
+  if(sorted.length === 0) return
+
+  resetKaraokeClasses()
+  const intro = heceler.find(h => h.isIntro)
+  if(intro && intro.end !== null && intro.end > 0){
+    const introEl = document.getElementById("karaoke-intro")
+    if(introEl){
+      const fill = introEl.querySelector(".fill")
+      if(time <= intro.end){
+        introEl.classList.add("active")
+        fill.style.width = Math.max(0, Math.min(100, (time / intro.end) * 100)) + "%"
+        if(lastScrolledActiveId !== introEl.id){
+          lastScrolledActiveId = introEl.id
+          scrollKaraokeToActive(introEl)
+        }
+      }else{
+        fill.style.width = "100%"
+      }
+    }
+  }
+
+  const currentDetected = getCurrentDetectedNote()
+  const detectedSemi = currentDetected ? noteToSemitone(currentDetected) : null
+
+  sorted.forEach((item, i) => {
+    const el = document.getElementById("karaoke-box-" + i)
+    if(!el) return
+    const fill = el.querySelector(".fill")
+    const h = item.seg
+    if(!Array.isArray(h.detectedSemis)) h.detectedSemis = []
+    if(!Array.isArray(h.detectedNotesRaw)) h.detectedNotesRaw = []
+
+    if(time >= h.start && time <= h.end){
+      el.classList.add("active")
+      if(lastScrolledActiveId !== el.id){
+        lastScrolledActiveId = el.id
+        scrollKaraokeToActive(el)
+      }
+      fill.style.width = Math.max(0, Math.min(100, ((time - h.start) / (h.end - h.start)) * 100)) + "%"
+      if(detectedSemi !== null && !h.detectedSemis.includes(detectedSemi)) h.detectedSemis.push(detectedSemi)
+      if(currentDetected){
+        const nearest = semitoneToNearestScaleNote(noteToSemitone(currentDetected), getScaleNotes())
+        h.detectedNotesRaw.push(nearest)
+      }
+    }else if(time > h.end){
+      fill.style.width = "100%"
+      const evalResult = evaluateTargetVsDetected(h)
+      if(evalResult) el.classList.add(evalResult.success ? "ok" : "bad")
+    }
+
+    if(selectedSegmentIndexes.includes(item.idx)) el.classList.add("selected")
+  })
+}
+function resetEvaluationFlags(){
+  heceler.forEach(h => {
+    h.detectedSemis = []
+    h.detectedNotesRaw = []
+  })
+}
+function buildProjectPayload(){
+  return {
+    version: 20.4,
+    title: titleInput.value.trim(),
+    intro: getIntroValue(),
+    difficulty: difficultySelect.value,
+    key: keySelect.value,
+    lyrics: lyricsInput.value,
+    audioName: currentAudioName,
+    selectedSegmentIndexes,
+    heceler: heceler.map(h => ({
+      text:h.text || "",
+      note:h.note || "",
+      start:h.start ?? null,
+      end:h.end ?? null,
+      line:h.line ?? 0,
+      isIntro:!!h.isIntro
+    })),
+    cursorTime
+  }
+}
+function applyProjectPayload(parsed){
+  titleInput.value = parsed.title || ""
+  introInput.value = Number(parsed.intro || 0).toFixed(2)
+  difficultySelect.value = parsed.difficulty || "orta"
+  keySelect.value = parsed.key || "Sol Majör"
+  lyricsInput.value = parsed.lyrics || ""
+  currentAudioName = parsed.audioName || "audio.mp3"
+  selectedSegmentIndexes = Array.isArray(parsed.selectedSegmentIndexes) ? parsed.selectedSegmentIndexes : []
+  heceler = Array.isArray(parsed.heceler) ? parsed.heceler.map(h => ({
+    text:h.text || "",
+    note:h.note || "",
+    start:h.start ?? null,
+    end:h.end ?? null,
+    line:h.line ?? 0,
+    detectedSemis:[],
+    detectedNotesRaw:[],
+    isIntro:!!h.isIntro
+  })) : []
+  cursorTime = parsed.cursorTime || 0
+  loadedIndex = -1
+  normalizeIntroSegment()
+  lastIntroValue = getIntroValue()
+  renderAll()
+  setCursorTime(cursorTime)
+  if(hasAudioLoaded()) scrollToTime(cursorTime)
+}
+function saveProject(){
+  const payload = buildProjectPayload()
+  localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(payload))
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  const safeTitle = (payload.title || "vocaly_proje").replace(/[^\w\u00C0-\u024F-]+/g, "_")
+  a.href = url
+  a.download = safeTitle + ".json"
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+  statusText.textContent = "Proje kaydedildi ve indirildi"
+  statusText.className = "pill green"
+}
+function autoSaveProject(){
+  localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(buildProjectPayload()))
+}
+function loadProject(){
+  const raw = localStorage.getItem(PROJECT_AUTOSAVE_KEY)
+  if(!raw) return
+  try{
+    applyProjectPayload(JSON.parse(raw))
+    statusText.textContent = "Son otomatik kayıt yüklendi"
+    statusText.className = "pill green"
+  }catch(err){
+    console.error(err)
+  }
+}
+function importProjectFromJsonText(text){
+  try{
+    const parsed = JSON.parse(text)
+    applyProjectPayload(parsed)
+    autoSaveProject()
+    statusText.textContent = "JSON proje yüklendi"
+    statusText.className = "pill green"
+  }catch(err){
+    console.error(err)
+    alert("JSON okunamadı.")
+  }
+}
+function renderAll(){
+  normalizeIntroSegment()
+  renderRuler()
+  renderStrip()
+  renderKaraoke()
+  scheduleOverlaySync()
+}
+initWave()
+renderAll()
+setCursorTime(0)
+lastIntroValue = getIntroValue()
+loadProject()
+
+karaoke.addEventListener("pointerdown", startKaraokeTouchSelection)
+karaoke.addEventListener("pointermove", moveKaraokeTouchSelection)
+karaoke.addEventListener("pointerup", endKaraokeTouchSelection)
+karaoke.addEventListener("pointercancel", endKaraokeTouchSelection)
+karaoke.addEventListener("lostpointercapture", endKaraokeTouchSelection)
+
+audioFile.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  currentAudioName = file.name
+  if(objectUrlRef) URL.revokeObjectURL(objectUrlRef)
+  objectUrlRef = URL.createObjectURL(file)
+  statusText.textContent = "Yükleniyor: " + file.name
+  statusText.className = "pill purple"
+  ws.load(objectUrlRef)
+})
+
+playBtn.addEventListener("click", () => {
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  hasAudioLoaded() && ws.playPause()
+})
+zoom.addEventListener("input", () => {
+  if(!hasAudioLoaded()) return
+  ws.zoom(Number(zoom.value))
+  setTimeout(() => {
+    renderAll()
+    scheduleOverlaySync()
+  }, 20)
+})
+rateSelect.addEventListener("change", () => hasAudioLoaded() && ws.setPlaybackRate(Number(rateSelect.value)))
+
+introInput.addEventListener("change", function(){
+  const newIntro = getIntroValue()
+  const diff = round2(newIntro - lastIntroValue)
+  normalizeIntroSegment()
+
+  const hasTimedNonIntro = heceler.some(h => !h.isIntro && h.start !== null && h.end !== null)
+  if(hasTimedNonIntro && diff !== 0){
+    shiftAllNonIntroBy(diff)
+    alignFirstSegmentToIntro()
+  }
+
+  renderAll()
+  if(hasAudioLoaded()){
+    seekToTime(newIntro)
+    scrollToTime(newIntro)
+  }else{
+    setCursorTime(newIntro)
+  }
+  lastIntroValue = newIntro
+  statusText.textContent = "Intro otomatik güncellendi"
+  statusText.className = "pill green"
+  autoSaveProject()
+})
+splitWordsBtn.addEventListener("click", function(){
+  parseLyricsToSegmentsPreserve()
+  loadedIndex = -1
+  renderAll()
+  const intro = getIntroValue()
+  if(hasAudioLoaded()){
+    seekToTime(intro)
+    scrollToTime(intro)
+  }else{
+    setCursorTime(intro)
+  }
+  lastIntroValue = intro
+  statusText.textContent = "Kelimeler güncellendi"
+  statusText.className = "pill purple"
+  autoSaveProject()
+})
+autoTimingBtn.addEventListener("click", autoTimingFromAudio)
+saveProjectBtn.addEventListener("click", saveProject)
+loadProjectBtn.addEventListener("click", loadProject)
+importJsonBtn.addEventListener("click", () => importJsonInput.click())
+importJsonInput.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  const reader = new FileReader()
+  reader.onload = () => importProjectFromJsonText(reader.result)
+  reader.readAsText(file, "utf-8")
+  importJsonInput.value = ""
+})
+resetTimingBtn.addEventListener("click", function(){
+  normalizeIntroSegment()
+  heceler.forEach(h => {
+    if(h.isIntro){
+      h.start = 0
+      h.end = getIntroValue()
+    }else{
+      h.start = null
+      h.end = null
+      h.detectedSemis = []
+      h.detectedNotesRaw = []
+    }
+  })
+  loadedIndex = -1
+  selectedSegmentIndexes = []
+  renderAll()
+  statusText.textContent = "Timing sıfırlandı"
+  statusText.className = "pill red"
+  autoSaveProject()
+})
+saveBtn.addEventListener("click", function(){
+  const text = heceInput.value.trim()
+  const note = notaInput.value.trim()
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+  const line = Number(satirInput.value || 1)
+
+  if(!text){
+    alert("Kelime / öbek gir.")
+    return
+  }
+  if(!isNaN(start) && !isNaN(end) && end <= start){
+    alert("End, start’tan büyük olmalı.")
+    return
+  }
+
+  const obj = {
+    text,
+    note,
+    start:isNaN(start) ? null : round2(start),
+    end:isNaN(end) ? null : round2(end),
+    line,
+    detectedSemis:[],
+    detectedNotesRaw:[],
+    isIntro:false
+  }
+
+  if(loadedIndex > -1){
+    const wasIntro = !!heceler[loadedIndex]?.isIntro
+    heceler[loadedIndex] = {...obj, isIntro:wasIntro}
+    loadedIndex = -1
+  }else{
+    heceler.push(obj)
+  }
+
+  normalizeIntroSegment()
+  renderAll()
+  statusText.textContent = "Kayıt eklendi / güncellendi"
+  statusText.className = "pill purple"
+  autoSaveProject()
+})
+updateBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){
+    alert("Önce bir segment seç.")
+    return
+  }
+  const seg = heceler[loadedIndex]
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+  if(isNaN(start) || isNaN(end) || end <= start){
+    alert("Geçerli bir start/end gir.")
+    return
+  }
+
+  const oldEnd = seg.end
+  seg.text = heceInput.value.trim()
+  seg.note = notaInput.value.trim()
+  seg.start = round2(start)
+  seg.end = round2(end)
+  seg.line = Number(satirInput.value || seg.line || 1)
+
+  if(seg.isIntro){
+    seg.text = "INTRO"
+    seg.start = 0
+    introInput.value = seg.end.toFixed(2)
+  }
+
+  const diff = round2(seg.end - oldEnd)
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+  if(pos !== -1 && diff !== 0){
+    for(let i = pos + 1; i < ordered.length; i++){
+      const cur = ordered[i].s
+      const len = Math.max(0.03, round2(cur.end - cur.start))
+      cur.start = round2(cur.start + diff)
+      cur.end = round2(cur.start + len)
+    }
+    for(let i = pos + 1; i < ordered.length; i++){
+      const prev = ordered[i - 1].s
+      const cur = ordered[i].s
+      const len = Math.max(0.03, round2(cur.end - cur.start))
+      cur.start = round2(prev.end)
+      cur.end = round2(cur.start + len)
+    }
+  }
+
+  renderAll()
+  seekToSegment(loadedIndex, false)
+  statusText.textContent = "Segment güncellendi"
+  statusText.className = "pill green"
+  autoSaveProject()
+})
+deleteLoadedBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){
+    alert("Önce bir segment seç.")
+    return
+  }
+  if(heceler[loadedIndex] && heceler[loadedIndex].isIntro){
+    alert("Intro segmenti silinmez. Süresini değiştirmen yeterli.")
+    return
+  }
+  const removedIndex = loadedIndex
+  heceler.splice(removedIndex, 1)
+  loadedIndex = -1
+  selectedSegmentIndexes = selectedSegmentIndexes.filter(i => i !== removedIndex).map(i => i > removedIndex ? i - 1 : i)
+  renderAll()
+  statusText.textContent = "Seçili segment silindi"
+  statusText.className = "pill red"
+  autoSaveProject()
+})
+minusStartBtn.addEventListener("click", () => nudgeSegmentBoundary("start", -1))
+plusStartBtn.addEventListener("click", () => nudgeSegmentBoundary("start", 1))
+minusEndBtn.addEventListener("click", () => nudgeSegmentBoundary("end", -1))
+plusEndBtn.addEventListener("click", () => nudgeSegmentBoundary("end", 1))
+shiftLeftBtn.addEventListener("click", () => shiftWholeSegment(-1))
+shiftRightBtn.addEventListener("click", () => shiftWholeSegment(1))
+analyzeNoteBtn.addEventListener("click", analyzeSelectedSegmentNote)
+analyzeAllBtn.addEventListener("click", analyzeAllSegmentsNotes)
+previewSelectedBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){
+    alert("Önce bir segment seç.")
+    return
+  }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null || !hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  ws.play(seg.start, seg.end)
+  statusText.textContent = "Seçili segment dinleniyor"
+  statusText.className = "pill amber"
+})
+previewPlayBtn.addEventListener("click", function(){
+  if(!hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  resetEvaluationFlags()
+  previewPlaying = true
+  ws.stop()
+  ws.play(0)
+  statusText.textContent = "Karaoke önizleme oynuyor"
+  statusText.className = "pill purple"
+})
+previewStopBtn.addEventListener("click", function(){
+  if(!hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  previewPlaying = false
+  ws.pause()
+  lastScrolledActiveId = null
+  statusText.textContent = "Karaoke önizleme durdu"
+  statusText.className = "pill amber"
+})
+micBtn.addEventListener("click", setupMic)
+clearSelectionBtn.addEventListener("click", clearSelection)
+playLineBtn.addEventListener("click", playSelectedLine)
+
+document.addEventListener("keydown", function(e){
+  const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : ""
+  const inInput = tag === "input" || tag === "textarea" || tag === "select"
+  if(inInput) return
+
+  if(e.code === "Space"){
+    e.preventDefault()
+    if(hasAudioLoaded()) ws.playPause()
+    return
+  }
+  if(e.code === "Escape"){
+    loadedIndex = -1
+    selectedSegmentIndexes = []
+    refreshKaraokeSelectionClasses()
+    updateActiveSegmentLabel(-1)
+    return
+  }
+  if(e.code === "ArrowRight"){
+    e.preventDefault()
+    if(loadedIndex !== -1) selectAdjacentSegment(1)
+    else moveWaveCursorBy(0.20)
+    return
+  }
+  if(e.code === "ArrowLeft"){
+    e.preventDefault()
+    if(loadedIndex !== -1) selectAdjacentSegment(-1)
+    else moveWaveCursorBy(-0.20)
+    return
+  }
+})
+
+window.addEventListener("resize", () => {
+  setTimeout(() => {
+    renderAll()
+    scheduleOverlaySync()
+  }, 50)
+})
+
+/* =========================
+   INIT APP
+========================= */
+loadLibrary()
+renderLibrary()
+updateSelectedProjectText()
+renderPractice()
+renderAssessment()
+</script>
 </body>
 </html>
