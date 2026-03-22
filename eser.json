@@ -1,0 +1,391 @@
+{
+  "version": 20.4,
+  "title": "Neşeli Günler",
+  "intro": 5.11,
+  "difficulty": "orta",
+  "key": "Do Majör",
+  "lyrics": "Do Bir külah dondurma\nRe Masmavi bir dere\nMi Denizde bir gemi\nFa Gemide bir tayfa\nSol Papatyalı bir yol\nLa Güneşten bir damla\nSi Ayşe’nin kedisi\nVe yine şimdi tekrar sol mi re\ndo re mi fa sol la si do\ndo sol do ",
+  "audioName": "Neşeli Günler.mp3",
+  "selectedSegmentIndexes": [
+    45
+  ],
+  "heceler": [
+    {
+      "text": "INTRO",
+      "note": "",
+      "start": 0,
+      "end": 5.11,
+      "line": 0,
+      "isIntro": true
+    },
+    {
+      "text": "Do",
+      "note": "do",
+      "start": 5.11,
+      "end": 5.73,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Bir",
+      "note": "re",
+      "start": 5.73,
+      "end": 6.17,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "külah",
+      "note": "mi do",
+      "start": 6.17,
+      "end": 7.14,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "dondurma",
+      "note": "mi do mi",
+      "start": 7.14,
+      "end": 9.21,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Re",
+      "note": "re",
+      "start": 9.21,
+      "end": 10.03,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Masmavi",
+      "note": "mi fa fa",
+      "start": 10.03,
+      "end": 10.83,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "bir",
+      "note": "mi",
+      "start": 10.83,
+      "end": 11.02,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "dere",
+      "note": "re fa",
+      "start": 11.06,
+      "end": 13.66,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Mi",
+      "note": "mi",
+      "start": 13.66,
+      "end": 14.43,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "Denizde",
+      "note": "fa sol mi",
+      "start": 14.43,
+      "end": 15.81,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "bir",
+      "note": "sol",
+      "start": 15.81,
+      "end": 16.21,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "gemi",
+      "note": "mi sol",
+      "start": 16.21,
+      "end": 17.97,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "Fa",
+      "note": "fa",
+      "start": 17.97,
+      "end": 18.6,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Gemide",
+      "note": "sol la la",
+      "start": 18.6,
+      "end": 19.6,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "bir",
+      "note": "sol",
+      "start": 19.6,
+      "end": 19.78,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "tayfa",
+      "note": "fa la",
+      "start": 19.83,
+      "end": 22.26,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Sol",
+      "note": "sol",
+      "start": 22.26,
+      "end": 23.18,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "Papatyalı",
+      "note": "do re mi fa",
+      "start": 23.18,
+      "end": 24.17,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "bir",
+      "note": "sol",
+      "start": 24.17,
+      "end": 24.33,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "yol",
+      "note": "la",
+      "start": 24.33,
+      "end": 26.34,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "La",
+      "note": "la",
+      "start": 26.34,
+      "end": 27.37,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "Güneşten",
+      "note": "re mi fa",
+      "start": 27.37,
+      "end": 28.1,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "bir",
+      "note": "sol",
+      "start": 28.1,
+      "end": 28.37,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "damla",
+      "note": "la si",
+      "start": 28.37,
+      "end": 30.91,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "Si",
+      "note": "si",
+      "start": 30.91,
+      "end": 31.64,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "Ayşe’nin",
+      "note": "mi fa sol",
+      "start": 31.64,
+      "end": 32.49,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "kedisi",
+      "note": "la si do",
+      "start": 32.49,
+      "end": 34.65,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "Ve",
+      "note": "do",
+      "start": 34.65,
+      "end": 34.91,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "yine",
+      "note": "si la",
+      "start": 34.91,
+      "end": 35.78,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "şimdi",
+      "note": "fa si",
+      "start": 35.78,
+      "end": 36.86,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "tekrar",
+      "note": "sol do",
+      "start": 36.86,
+      "end": 37.78,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "sol",
+      "note": "sol",
+      "start": 37.78,
+      "end": 38.39,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "mi",
+      "note": "mi",
+      "start": 38.39,
+      "end": 38.94,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "re",
+      "note": "re",
+      "start": 38.94,
+      "end": 39.46,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "do",
+      "note": "do",
+      "start": 39.46,
+      "end": 39.77,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "re",
+      "note": "re",
+      "start": 39.77,
+      "end": 40.03,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "mi",
+      "note": "mi",
+      "start": 40.03,
+      "end": 40.31,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "fa",
+      "note": "fa",
+      "start": 40.31,
+      "end": 40.47,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "sol",
+      "note": "sol",
+      "start": 40.57,
+      "end": 40.83,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "la",
+      "note": "la",
+      "start": 40.83,
+      "end": 41.06,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "si",
+      "note": "si",
+      "start": 41.06,
+      "end": 41.35,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "do",
+      "note": "do",
+      "start": 41.35,
+      "end": 41.56,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "do",
+      "note": "do",
+      "start": 41.66,
+      "end": 42.04,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "sol",
+      "note": "sol",
+      "start": 42.04,
+      "end": 42.75,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "do",
+      "note": "do",
+      "start": 42.75,
+      "end": 43.69,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "damla",
+      "note": "la si",
+      "start": 28.37,
+      "end": 30.91,
+      "line": 6,
+      "isIntro": false
+    }
+  ],
+  "cursorTime": 43.69
+}
