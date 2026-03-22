@@ -752,6 +752,27 @@ function loadLibrary(){
     appLibrary = []
   }
 }
+
+async function loadLibraryFromRepo(){
+  try{
+    const res = await fetch("./eser.json", { cache: "no-store" })
+    if(!res.ok) throw new Error("eser.json okunamadı")
+    const parsed = await res.json()
+
+    if(Array.isArray(parsed)){
+      appLibrary = parsed
+    }else if(parsed && parsed.heceler){
+      appLibrary = [parsed]
+    }else{
+      throw new Error("Geçersiz JSON yapısı")
+    }
+
+    saveLibrary()
+    refreshLibraryList()
+  }catch(err){
+    console.error("Repo kütüphanesi yüklenemedi:", err)
+  }
+}
 function getSelectedSong(){
   if(currentLibraryIndex < 0 || currentLibraryIndex >= appLibrary.length) return null
   return appLibrary[currentLibraryIndex]
@@ -2768,6 +2789,9 @@ setCursorTime(0)
 lastIntroValue = getIntroValue()
 loadLibrary()
 refreshLibraryList()
+if(!appLibrary.length){
+  loadLibraryFromRepo()
+}
 renderWarmupPanel()
 refreshPracticePanel()
 refreshMeasurePanel()
