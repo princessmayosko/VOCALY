@@ -237,6 +237,33 @@ kbd{
   #waveform{height:240px}
   #overlayViewport{height:104px}
 }
+
+@media (max-width:600px){
+  #measureView .karaokeWrap{
+    gap:4px;
+    padding:6px;
+    max-height:220px;
+  }
+
+  #measureView .karaokeBox{
+    min-width:34px;
+    padding:6px 7px;
+    font-size:11px;
+    border-radius:8px;
+  }
+
+  #measureView .karaokeBox .label{
+    font-size:11px;
+    line-height:1.1;
+  }
+
+  #measureView .lineBreak{
+    flex-basis:100%;
+    height:0;
+    width:0;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -463,11 +490,7 @@ kbd{
 
         <div class="card">
           <h2>Karaoke Ölçme</h2>
-          <p class="sub">Editördeki nota hedefleri varsa yeşil/kırmızı değerlendirme çalışır.</p>
-          <div class="row">
-            <button class="btn-purple" id="measurePreviewBtn">Önizlemeyi Oynat</button>
-            <button class="btn-aqua" id="measureStopPreviewBtn">Durdur</button>
-          </div>
+          <p class="sub">Editördeki nota hedefleri varsa kutular doğrudan yeşil/kırmızı değerlendirme yapar.</p>
           <div id="measureKaraoke" class="karaokeWrap"></div>
         </div>
       </div>
@@ -750,38 +773,6 @@ function loadLibrary(){
     appLibrary = raw ? JSON.parse(raw) : []
   }catch(err){
     appLibrary = []
-  }
-}
-
-async function loadLibraryFromRepo(){
-  try{
-    const res = await fetch("./eser.json", { cache: "no-store" })
-    if(!res.ok) throw new Error("eser.json okunamadı")
-    const parsed = await res.json()
-
-    const normalizeRepoSong = (song)=>{
-      if(!song || !song.heceler) return song
-      const copy = JSON.parse(JSON.stringify(song))
-      const hasEmbeddedAudio = !!copy.audioDataUrl
-      const declaredAudioName = copy.audioName || copy.audioFile || "audio.mp3"
-      const declaredAudioPath = copy.audioPath || copy.audioUrl || (hasEmbeddedAudio ? "" : `./${declaredAudioName}`)
-      copy.audioName = declaredAudioName
-      copy.audioPath = declaredAudioPath
-      return copy
-    }
-
-    if(Array.isArray(parsed)){
-      appLibrary = parsed.map(normalizeRepoSong)
-    }else if(parsed && parsed.heceler){
-      appLibrary = [normalizeRepoSong(parsed)]
-    }else{
-      throw new Error("Geçersiz JSON yapısı")
-    }
-
-    saveLibrary()
-    refreshLibraryList()
-  }catch(err){
-    console.error("Repo kütüphanesi yüklenemedi:", err)
   }
 }
 function getSelectedSong(){
@@ -1346,8 +1337,6 @@ const measureTunerNeedle = document.getElementById("measureTunerNeedle")
 const measureScore = document.getElementById("measureScore")
 const measureStatusText = document.getElementById("measureStatusText")
 const measureAccuracyText = document.getElementById("measureAccuracyText")
-const measurePreviewBtn = document.getElementById("measurePreviewBtn")
-const measureStopPreviewBtn = document.getElementById("measureStopPreviewBtn")
 const measureKaraoke = document.getElementById("measureKaraoke")
 const measureToleranceSelect = document.getElementById("measureToleranceSelect")
 
@@ -2292,7 +2281,7 @@ function buildProjectPayload(){
     cursorTime
   }
 }
-function applyProjectPayload(parsed){
+async function applyProjectPayload(parsed){
   titleInput.value = parsed.title || ""
   introInput.value = Number(parsed.intro || 0).toFixed(2)
   difficultySelect.value = parsed.difficulty || "orta"
@@ -2300,9 +2289,8 @@ function applyProjectPayload(parsed){
   practiceKeySelect.value = parsed.key || "Sol Majör"
   renderWarmupPanel()
   lyricsInput.value = parsed.lyrics || ""
-  currentAudioName = parsed.audioName || parsed.audioFile || "audio.mp3"
+  currentAudioName = parsed.audioName || parsed.audioFile || parsed.audioPath || parsed.audioUrl || "audio.mp3"
   currentAudioDataUrl = parsed.audioDataUrl || ""
-  const currentAudioPath = parsed.audioPath || parsed.audioUrl || (!currentAudioDataUrl && currentAudioName ? `./${currentAudioName}` : "")
   selectedSegmentIndexes = Array.isArray(parsed.selectedSegmentIndexes) ? parsed.selectedSegmentIndexes : []
   heceler = Array.isArray(parsed.heceler) ? parsed.heceler.map(h => ({
     text:h.text || "", note:h.note || "", start:h.start ?? null, end:h.end ?? null, line:h.line ?? 0,
@@ -2314,14 +2302,17 @@ function applyProjectPayload(parsed){
   lastIntroValue = getIntroValue()
   renderAll()
   setCursorTime(cursorTime)
+
   if(currentAudioDataUrl){
-    currentAudioName = parsed.audioName || currentAudioName
     ws.load(currentAudioDataUrl)
-  }else if(currentAudioPath){
-    ws.load(currentAudioPath)
-  }else if(hasAudioLoaded()){
-    scrollToTime(cursorTime)
+  }else{
+    const loaded = await resolveAndLoadRepoAudio(parsed)
+    if(!loaded){
+      statusText.textContent = "Ses dosyası bulunamadı"
+      statusText.className = "pill red"
+    }
   }
+
   refreshPracticePanel()
   refreshMeasurePanel()
 }
@@ -2344,19 +2335,19 @@ function saveProject(){
 function autoSaveProject(){
   localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(buildProjectPayload()))
 }
-function loadProject(){
+async function loadProject(){
   const raw = localStorage.getItem(PROJECT_AUTOSAVE_KEY)
   if(!raw) return
   try{
-    applyProjectPayload(JSON.parse(raw))
+    await applyProjectPayload(JSON.parse(raw))
     statusText.textContent = "Son otomatik kayıt yüklendi"
     statusText.className = "pill green"
   }catch(err){ console.error(err) }
 }
-function importProjectFromJsonText(text){
+async function importProjectFromJsonText(text){
   try{
     const parsed = JSON.parse(text)
-    applyProjectPayload(parsed)
+    await applyProjectPayload(parsed)
     autoSaveProject()
     statusText.textContent = "JSON proje yüklendi"
     statusText.className = "pill green"
@@ -2606,10 +2597,23 @@ function clearContainerLocks(container){
   container.querySelectorAll('.karaokeBox').forEach(clearBoxLockState)
 }
 function playSnippetOnWs(start, end){
-  if(!hasAudioLoaded()) return
+  if(!hasAudioLoaded()) {
+    statusText.textContent = "Ses henüz yüklenmedi"
+    statusText.className = "pill red"
+    return
+  }
   stopWarmupAudio()
-  if(audioContext && audioContext.state === "suspended") audioContext.resume().catch(()=>{})
+  if(audioContext && audioContext.state === "suspended"){
+    audioContext.resume().catch(()=>{})
+  }
+  sequenceStopRequested = true
+  isSequencePlaying = false
   blockInternalFeedback(120)
+  ws.stop()
+  seekToTime(start)
+  scrollToTime(start)
+  statusText.textContent = `Çalıyor: ${start.toFixed(2)} - ${end.toFixed(2)}`
+  statusText.className = "pill green"
   ws.play(start, end)
 }
 function refreshPracticePanel(){
@@ -2682,6 +2686,7 @@ function refreshMeasurePanel(){
         refreshAuxSelections()
         clearContainerLocks(measureKaraoke)
         measureTargetNoteEl.textContent = seg.note || "-"
+        measureStatusText.textContent = "Ölçüm aktif"
         playSnippetOnWs(seg.start, seg.end)
       }
       measureKaraoke.appendChild(box)
@@ -2708,11 +2713,14 @@ function runMeasureTick(){
     const targets = parseTargetNotes(target)
     const hit = hitWithinTolerance(det, targets, 'measure')
     const centDiff = targets.length ? Math.min(...targets.map(t => centDistanceToTarget(det, t))) : Infinity
+
     measureChecks += 1
     if(hit) measureHits += 1
+
     const pct = measureChecks ? Math.round((measureHits / measureChecks) * 100) : 0
-    measureScore.textContent = String(measureHits)
+    measureScore.textContent = String(pct)
     measureAccuracyText.textContent = "%" + pct
+
     const tol = getToleranceCents('measure')
     measureStatusText.textContent = hit ? `Doğru (±${tol})` : `Yanlış (${Math.round(centDiff)}c)`
   }
@@ -2733,10 +2741,12 @@ function refreshLibraryList(){
       <div class="songTitle">${escapeHtml(item.song.title || "İsimsiz eser")}</div>
       <div class="songSub">${(item.song.heceler || []).filter(h => !h.isIntro).length} segment • ${item.song.key || "-"}</div>
     `
-    el.onclick = ()=>{
+    el.onclick = async ()=>{
       currentLibraryIndex = item.idx
       refreshLibraryList()
       refreshLibraryPreviewOnly()
+      const song = getSelectedSong()
+      if(song) await applyProjectPayload(song)
     }
     songList.appendChild(el)
   })
@@ -2757,16 +2767,18 @@ function refreshLibraryPreviewOnly(){
   librarySongTitle.textContent = song.title || "İsimsiz eser"
   librarySongDesc.textContent = "Kütüphanede kayıtlı eser"
   librarySegCount.textContent = segs.length + " segment"
-  libraryAudioInfo.textContent = "Audio: " + ((song.audioDataUrl || song.audioPath || song.audioUrl || song.audioName) ? "var" : "yok")
+  libraryAudioInfo.textContent = "Audio: " + (song.audioDataUrl ? "var" : "yok")
   libraryKeyInfo.textContent = "Ton: " + (song.key || "-")
   librarySegments.innerHTML = ""
   segs.forEach(seg=>{
     const chip = document.createElement("div")
     chip.className = "miniChip"
     chip.textContent = seg.text
-    chip.onclick = ()=>{
-      applyProjectPayload(song)
-      if(seg.start !== null && seg.end !== null && hasAudioLoaded()) ws.play(seg.start, seg.end)
+    chip.onclick = async ()=>{
+      await applyProjectPayload(song)
+      if(seg.start !== null && seg.end !== null){
+        setTimeout(()=>playSnippetOnWs(seg.start, seg.end), 120)
+      }
     }
     librarySegments.appendChild(chip)
   })
@@ -2804,10 +2816,9 @@ renderAll()
 setCursorTime(0)
 lastIntroValue = getIntroValue()
 loadLibrary()
+if(currentLibraryIndex === -1 && appLibrary.length) currentLibraryIndex = 0
 refreshLibraryList()
-if(!appLibrary.length){
-  loadLibraryFromRepo()
-}
+if(!appLibrary.length) loadLibraryFromRepo()
 renderWarmupPanel()
 refreshPracticePanel()
 refreshMeasurePanel()
@@ -3052,14 +3063,6 @@ measureStartBtn.addEventListener("click", ()=>{
   measureTargetNoteEl.textContent = firstNoted ? (parseTargetNotes(firstNoted.note)[0] || "-") : "-"
   measureStatusText.textContent = "Ölçüm başladı"
 })
-measurePreviewBtn.addEventListener("click", ()=>{
-  if(!hasAudioLoaded()) return
-  resetEvaluationFlags()
-  ws.stop()
-  blockInternalFeedback(Math.max(1200, ((ws.getDuration ? ws.getDuration() : 0) * 1000) + 500))
-  ws.play(0)
-})
-measureStopPreviewBtn.addEventListener("click", ()=>{ if(hasAudioLoaded()) ws.pause() })
 measureToleranceSelect.addEventListener('change', ()=>{ measureStatusText.textContent = 'Tolerans: ±' + measureToleranceSelect.value + ' cent' })
 
 /* library events */
@@ -3080,22 +3083,22 @@ deleteSongBtn.addEventListener("click", ()=>{
   saveLibrary()
   refreshLibraryList()
 })
-openPracticeBtn.addEventListener("click", ()=>{
+openPracticeBtn.addEventListener("click", async ()=>{
   const song = getSelectedSong()
   if(!song) return
-  applyProjectPayload(song)
+  await applyProjectPayload(song)
   showView("practiceView")
 })
-openMeasureBtn.addEventListener("click", ()=>{
+openMeasureBtn.addEventListener("click", async ()=>{
   const song = getSelectedSong()
   if(!song) return
-  applyProjectPayload(song)
+  await applyProjectPayload(song)
   showView("measureView")
 })
-openEditorBtn.addEventListener("click", ()=>{
+openEditorBtn.addEventListener("click", async ()=>{
   const song = getSelectedSong()
   if(!song) return
-  applyProjectPayload(song)
+  await applyProjectPayload(song)
   showView("editorView")
 })
 
