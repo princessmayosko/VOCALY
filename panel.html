@@ -759,10 +759,21 @@ async function loadLibraryFromRepo(){
     if(!res.ok) throw new Error("eser.json okunamadı")
     const parsed = await res.json()
 
+    const normalizeRepoSong = (song)=>{
+      if(!song || !song.heceler) return song
+      const copy = JSON.parse(JSON.stringify(song))
+      const hasEmbeddedAudio = !!copy.audioDataUrl
+      const declaredAudioName = copy.audioName || copy.audioFile || "audio.mp3"
+      const declaredAudioPath = copy.audioPath || copy.audioUrl || (hasEmbeddedAudio ? "" : `./${declaredAudioName}`)
+      copy.audioName = declaredAudioName
+      copy.audioPath = declaredAudioPath
+      return copy
+    }
+
     if(Array.isArray(parsed)){
-      appLibrary = parsed
+      appLibrary = parsed.map(normalizeRepoSong)
     }else if(parsed && parsed.heceler){
-      appLibrary = [parsed]
+      appLibrary = [normalizeRepoSong(parsed)]
     }else{
       throw new Error("Geçersiz JSON yapısı")
     }
@@ -2289,8 +2300,9 @@ function applyProjectPayload(parsed){
   practiceKeySelect.value = parsed.key || "Sol Majör"
   renderWarmupPanel()
   lyricsInput.value = parsed.lyrics || ""
-  currentAudioName = parsed.audioName || "audio.mp3"
+  currentAudioName = parsed.audioName || parsed.audioFile || "audio.mp3"
   currentAudioDataUrl = parsed.audioDataUrl || ""
+  const currentAudioPath = parsed.audioPath || parsed.audioUrl || (!currentAudioDataUrl && currentAudioName ? `./${currentAudioName}` : "")
   selectedSegmentIndexes = Array.isArray(parsed.selectedSegmentIndexes) ? parsed.selectedSegmentIndexes : []
   heceler = Array.isArray(parsed.heceler) ? parsed.heceler.map(h => ({
     text:h.text || "", note:h.note || "", start:h.start ?? null, end:h.end ?? null, line:h.line ?? 0,
@@ -2305,7 +2317,11 @@ function applyProjectPayload(parsed){
   if(currentAudioDataUrl){
     currentAudioName = parsed.audioName || currentAudioName
     ws.load(currentAudioDataUrl)
-  }else if(hasAudioLoaded()) scrollToTime(cursorTime)
+  }else if(currentAudioPath){
+    ws.load(currentAudioPath)
+  }else if(hasAudioLoaded()){
+    scrollToTime(cursorTime)
+  }
   refreshPracticePanel()
   refreshMeasurePanel()
 }
@@ -2741,7 +2757,7 @@ function refreshLibraryPreviewOnly(){
   librarySongTitle.textContent = song.title || "İsimsiz eser"
   librarySongDesc.textContent = "Kütüphanede kayıtlı eser"
   librarySegCount.textContent = segs.length + " segment"
-  libraryAudioInfo.textContent = "Audio: " + (song.audioDataUrl ? "var" : "yok")
+  libraryAudioInfo.textContent = "Audio: " + ((song.audioDataUrl || song.audioPath || song.audioUrl || song.audioName) ? "var" : "yok")
   libraryKeyInfo.textContent = "Ton: " + (song.key || "-")
   librarySegments.innerHTML = ""
   segs.forEach(seg=>{
