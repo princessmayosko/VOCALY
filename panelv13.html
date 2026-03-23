@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOCALY CORE</title>
+
+<script src="https://unpkg.com/wavesurfer.js@6"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#0b1020;color:white;}
+#logo{position:fixed;top:8px;left:10px;width:90px;z-index:10;}
+#waveform{margin-top:60px;height:120px;}
+#timeline{position:absolute;top:60px;left:0;width:100%;height:45px;display:flex;overflow-x:auto;background:rgba(0,0,0,0.6);}
+.seg{position:relative;min-width:70px;margin:4px;padding:6px;background:#222;border-radius:6px;text-align:center;cursor:pointer;overflow:hidden;}
+.seg.active{background:#FFD400;color:black;}
+.seg.selected{outline:2px solid #00e5ff;}
+.fill{position:absolute;left:0;top:0;height:100%;width:0%;background:#FFD400;opacity:0.3;transition:width 0.05s linear;}
+.controls{padding:10px;}
+button{padding:10px;margin:5px;border:none;border-radius:8px;background:#FFD400;font-weight:bold;}
+</style>
+</head>
+
+<body>
+
+<svg id="logo" viewBox="0 0 220 80">
+  <text x="0" y="55" font-size="48" font-weight="700" fill="#FFD400">vo</text>
+  <text x="80" y="55" font-size="48" font-weight="700" fill="#FFD400">c</text>
+  <path d="M110 40 A10 10 0 0 1 110 60" stroke="#FFD400" stroke-width="3"/>
+  <path d="M120 36 A15 15 0 0 1 120 64" stroke="#FFD400" stroke-width="3" opacity="0.7"/>
+  <text x="135" y="55" font-size="48" font-weight="700" fill="#FFD400">aly</text>
+</svg>
+
+<div id="waveform"></div>
+<div id="timeline"></div>
+
+<div class="controls">
+  <button onclick="playAll()">Baştan Oynat</button>
+</div>
+
+<script>
+const ws = WaveSurfer.create({
+  container:'#waveform',
+  waveColor:'#555',
+  progressColor:'#FFD400',
+  height:120,
+  scrollParent:true
+});
+
+ws.load('audio.mp3');
+
+const data = [
+  {t:"Intro",s:0,e:2},
+  {t:"Ne",s:2,e:2.5},
+  {t:"şe",s:2.5,e:3},
+  {t:"li",s:3,e:3.5},
+  {t:"gün",s:3.5,e:4},
+  {t:"ler",s:4,e:4.5}
+];
+
+const timeline = document.getElementById("timeline");
+
+let segs=[];
+let selected=[];
+let dragging=false;
+
+data.forEach((d)=>{
+  const el=document.createElement("div");
+  el.className="seg";
+  el.dataset.start=d.s;
+  el.dataset.end=d.e;
+  el.innerHTML='<div class="fill"></div>'+d.t;
+
+  el.onclick=()=>playOne(el);
+
+  el.onmousedown=()=>{
+    dragging=true;
+    selected=[];
+    segs.forEach(s=>s.classList.remove("selected"));
+    el.classList.add("selected");
+    selected.push(el);
+  };
+
+  el.onmouseover=()=>{
+    if(dragging){
+      el.classList.add("selected");
+      if(!selected.includes(el)) selected.push(el);
+    }
+  };
+
+  timeline.appendChild(el);
+  segs.push(el);
+});
+
+document.onmouseup=()=>dragging=false;
+
+function playOne(el){
+  const s=parseFloat(el.dataset.start);
+  const e=parseFloat(el.dataset.end);
+  ws.play(s,e);
+  fillOne(el,s,e);
+}
+
+function fillOne(el,s,e){
+  const dur=(e-s)*1000;
+  const start=performance.now();
+
+  function loop(){
+    const t=performance.now()-start;
+    const p=(t/dur)*100;
+    el.querySelector(".fill").style.width=p+"%";
+    if(t<dur) requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+function playAll(){
+  ws.play(0);
+
+  function update(){
+    const t=ws.getCurrentTime();
+    segs.forEach(el=>{
+      const s=parseFloat(el.dataset.start);
+      const e=parseFloat(el.dataset.end);
+      let p=0;
+      if(t<s) p=0;
+      else if(t>e) p=100;
+      else p=((t-s)/(e-s))*100;
+      el.querySelector(".fill").style.width=p+"%";
+    });
+    requestAnimationFrame(update);
+  }
+  update();
+}
+</script>
+
+</body>
+</html>
