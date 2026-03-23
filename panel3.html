@@ -1,0 +1,4448 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VOCALY</title>
+<script src="https://unpkg.com/wavesurfer.js@6"></script>
+<style>
+:root{
+  --bg:#0b1020;
+  --bg2:#0f172a;
+  --panel:#121a31;
+  --panel2:#17213f;
+  --card:#1b2747;
+  --line:#2a3762;
+  --text:#eef4ff;
+  --muted:#9fb0d8;
+  --yellow:#facc15;
+  --yellow-soft:rgba(250,204,21,.16);
+  --purple:#8b5cf6;
+  --purple-soft:rgba(139,92,246,.16);
+  --aqua:#67e8f9;
+  --aqua-soft:rgba(103,232,249,.18);
+  --green:#22c55e;
+  --green-soft:rgba(34,197,94,.16);
+  --red:#ef4444;
+  --red-soft:rgba(239,68,68,.16);
+  --amber:#f59e0b;
+  --amber-soft:rgba(245,158,11,.16);
+  --shadow:0 14px 38px rgba(0,0,0,.28);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;
+  font-family:Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(103,232,249,.10), transparent 30%),
+    radial-gradient(circle at top right, rgba(139,92,246,.10), transparent 30%),
+    linear-gradient(180deg,#08101f 0%, #0b1224 100%);
+}
+body{padding:16px}
+.wrap{max-width:1450px;margin:0 auto}
+.pageBrand{
+  position:fixed;left:12px;top:8px;z-index:120;display:flex;align-items:center;gap:8px;margin:0;pointer-events:none;
+}
+.wrap{padding-top:52px}
+.pageLogo{
+  width:min(260px,55vw);height:auto;display:block;flex:0 1 auto;
+  filter:drop-shadow(0 10px 20px rgba(0,0,0,.28));
+}
+.pageLogoWrap{display:flex;align-items:center;justify-content:flex-start;max-width:100%;background:transparent !important;}
+.pageBrandText{display:none}
+.pageBrandTitle{font-size:30px;font-weight:800;letter-spacing:.4px;color:#fef3c7}
+.pageBrandSub{margin-top:4px;font-size:14px;color:var(--muted)}
+
+.librarySimple{
+  max-width:820px;
+  margin:0 auto;
+}
+.librarySimpleHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:8px;
+  padding:14px 16px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:18px;
+  background:#111a33;
+}
+.librarySimpleTitle{font-size:18px;font-weight:800}
+.librarySimpleSub{font-size:13px;color:var(--muted);margin-top:4px}
+.libraryArrow{
+  min-height:auto;
+  width:42px;height:42px;padding:0;
+  border-radius:12px;
+  background:#16213c;color:#dce8ff;border:1px solid rgba(255,255,255,.08);
+  font-size:22px;font-weight:800;cursor:pointer;pointer-events:auto;
+}
+.librarySimpleBody{margin-top:12px}
+.librarySimpleList{max-height:none;padding-right:0}
+.librarySimpleList .songItem{
+  background:#10192f;
+  border:1px solid #26385f;
+  border-radius:18px;
+  padding:14px 16px;
+}
+.librarySimpleList .songItem.active{
+  border-color:rgba(250,204,21,.45);
+  background:#162344;
+}
+.shell{
+  background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.tabs{
+  display:flex;gap:8px;flex-wrap:wrap;
+  padding:12px;background:rgba(255,255,255,.03);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.tab{
+  padding:10px 16px;border-radius:14px;cursor:pointer;
+  background:#16213c;color:#dce8ff;border:1px solid rgba(255,255,255,.08);
+  font-weight:800;user-select:none;white-space:nowrap;
+}
+.tab.active{background:linear-gradient(180deg,#ffd95f,#facc15);color:#2c2100}
+.view{display:none;padding:16px}
+.view.active{display:block}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:24px;
+  padding:18px;margin-bottom:16px;box-shadow:var(--shadow);
+}
+.sectionTop{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+}
+h2,h3,h4{margin:0 0 10px}
+.sub{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.toolbar{
+  display:grid;grid-template-columns:repeat(12,1fr);gap:10px;align-items:end;margin-top:14px;
+}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:700;color:#dbe6ff}
+.g12{grid-column:span 12}.g9{grid-column:span 9}.g6{grid-column:span 6}.g4{grid-column:span 4}.g3{grid-column:span 3}.g2{grid-column:span 2}
+input,select,textarea{
+  width:100%;padding:11px 12px;border-radius:14px;border:1px solid #334267;
+  font-size:14px;background:#0f1830;color:#edf4ff;
+}
+textarea{resize:vertical;min-height:120px;line-height:1.5}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#a78bfa;box-shadow:0 0 0 4px rgba(139,92,246,.12)}
+button{
+  padding:10px 14px;border-radius:14px;border:none;cursor:pointer;font-weight:800;min-height:42px;
+}
+button:disabled{opacity:.6;cursor:not-allowed}
+.btn-purple{background:linear-gradient(180deg,#9b6bff,#7c3aed);color:#fff}
+.btn-aqua{background:#0f2a36;color:#baf7ff;border:1px solid #1b5266}
+.btn-soft{background:#13203d;color:#dce8ff;border:1px solid #304264}
+.btn-red{background:#311319;color:#ffc7cf;border:1px solid #6c2430}
+.btn-amber{background:#33220b;color:#ffd8a1;border:1px solid #6f4b16}
+.btn-yellow{background:#332b06;color:#ffe58a;border:1px solid #7a6510}
+.status{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.pill{
+  padding:8px 12px;border-radius:999px;font-size:13px;font-weight:800;
+  border:1px solid rgba(255,255,255,.07);background:#101a31;color:#d9e7ff;
+}
+.pill.purple{background:var(--purple-soft);color:#eadcff;border-color:rgba(139,92,246,.35)}
+.pill.aqua{background:var(--aqua-soft);color:#c4f7ff;border-color:rgba(103,232,249,.35)}
+.pill.green{background:var(--green-soft);color:#d4ffe0;border-color:rgba(34,197,94,.35)}
+.pill.red{background:var(--red-soft);color:#ffd8dc;border-color:rgba(239,68,68,.35)}
+.pill.amber{background:var(--amber-soft);color:#ffe3bd;border-color:rgba(245,158,11,.35)}
+.hidden{display:none !important}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:360px minmax(0,1fr);gap:16px}
+.gridLib{display:grid;grid-template-columns:350px minmax(0,1fr);gap:16px}
+.list{
+  display:flex;flex-direction:column;gap:10px;max-height:560px;overflow:auto;padding-right:4px;
+}
+.songItem{
+  padding:12px;border-radius:16px;background:#111b33;border:1px solid rgba(255,255,255,.07);cursor:pointer;
+}
+.songItem.active{border-color:rgba(250,204,21,.35);background:#19284d}
+.songTitle{font-weight:800}.songSub{font-size:13px;color:var(--muted);margin-top:4px}
+.previewSegments,.karaokeWrap{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;
+  line-height:2;margin-top:16px;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;
+  padding:14px;max-height:320px;border:1px dashed #2d3d65;border-radius:18px;background:#0d162c;touch-action:none;
+}
+.karaokeBox,.miniChip{
+  position:relative;overflow:hidden;min-width:78px;padding:12px 14px;border-radius:14px;
+  background:#1c2a4f;border:1px solid #2f4475;font-weight:700;cursor:pointer;user-select:none;transition:.15s ease;flex:0 0 auto;
+}
+.karaokeBox .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(139,92,246,.18);pointer-events:none;transition:width .05s linear}
+.karaokeBox .label{position:relative;z-index:1}
+.karaokeBox.active{border-color:#c4b5fd;box-shadow:0 0 0 4px rgba(139,92,246,.12);transform:scale(1.05)}
+.karaokeBox.ok{background:var(--green-soft);border-color:rgba(34,197,94,.4);color:#d5ffe4}
+.karaokeBox.bad{background:var(--red-soft);border-color:rgba(239,68,68,.4);color:#ffdbe0}
+.karaokeBox.intro{background:#342d0d;border-color:#7f6b13;color:#ffe18d}
+.karaokeBox.selected{box-shadow:0 0 0 4px rgba(37,99,235,.16);border-color:#60a5fa}
+.lineBreak{flex-basis:100%;height:0;width:0}
+.hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.55}
+#waveArea{
+  position:relative;margin-top:16px;border:1px solid #2b3d69;border-radius:18px;background:#0f1830;overflow:hidden;
+}
+#waveform{
+  position:relative;z-index:1;width:100%;height:320px;overflow-x:auto !important;overflow-y:hidden !important;cursor:grab;
+}
+#waveform:active{cursor:grabbing}
+#waveform > wave{overflow-x:auto !important;overflow-y:hidden !important}
+#overlayViewport{
+  position:absolute;top:0;left:0;right:0;height:112px;overflow:hidden;z-index:8;pointer-events:none;
+  background:linear-gradient(180deg, rgba(10,17,33,.96) 0%, rgba(10,17,33,.90) 68%, rgba(10,17,33,0) 100%);
+}
+#overlayContent{position:absolute;left:0;top:0;height:112px}
+#ruler{
+  position:absolute;left:0;top:0;height:40px;border-bottom:1px solid #24355a;
+  background:linear-gradient(180deg,rgba(13,22,44,.98) 0%, rgba(13,22,44,.92) 100%);pointer-events:auto;
+}
+.ruler-tick{position:absolute;bottom:0;width:1px;background:#4a5f8e}
+.ruler-tick.major{height:28px;background:#9fb0d8}
+.ruler-tick.medium{height:18px;background:#6f84b4}
+.ruler-tick.minor{height:10px;background:#43577f}
+.ruler-label{
+  position:absolute;top:4px;transform:translateX(-50%);font-size:11px;color:#dce8ff;white-space:nowrap;font-weight:700;
+}
+#segmentStrip{position:absolute;left:0;top:40px;height:54px;pointer-events:auto}
+.strip-block{
+  position:absolute;top:8px;height:34px;border-radius:10px;background:#1c2b52;border:1px solid #3c57a1;
+  box-shadow:0 4px 12px rgba(0,0,0,.18);color:#e8efff;min-width:34px;overflow:hidden;touch-action:none;
+}
+.strip-block.intro{background:#3a3011;border-color:#8f7614;color:#ffe18a}
+.strip-block.active{box-shadow:0 0 0 4px rgba(139,92,246,.12);border-color:#bba6ff}
+.strip-block .body{
+  position:absolute;left:8px;right:8px;top:50%;transform:translateY(-50%);
+  font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
+}
+.strip-block .handle{position:absolute;top:0;bottom:0;width:12px;z-index:2}
+.strip-block .handle.left{left:0;cursor:ew-resize}
+.strip-block .handle.right{right:0;cursor:ew-resize}
+.strip-block .drag{position:absolute;left:12px;right:12px;top:0;bottom:0;cursor:grab}
+#stripCursor{position:absolute;top:0;bottom:0;width:2px;background:#facc15;opacity:.95;pointer-events:none;z-index:20}
+.libraryHero{
+  display:grid;grid-template-columns:1fr;gap:16px;
+}
+.heroBox{
+  min-height:220px;display:flex;flex-direction:column;justify-content:space-between;
+}
+.tunerWrap{
+  background:#0f1830;border:1px solid #2c3a62;border-radius:18px;padding:14px;
+}
+.tunerBar{
+  position:relative;height:22px;border-radius:999px;background:#0a1122;overflow:hidden;border:1px solid #273556;
+}
+.tunerCenter{
+  position:absolute;left:50%;top:0;bottom:0;width:4px;background:#facc15;transform:translateX(-50%);
+}
+.tunerNeedle{
+  position:absolute;top:0;bottom:0;width:8px;background:#22c55e;border-radius:999px;left:50%;transform:translateX(-50%);
+  transition:left .05s linear;
+}
+.bigNote{
+  font-size:44px;font-weight:900;letter-spacing:.5px;
+}
+.smallMuted{font-size:13px;color:var(--muted)}
+.warmupGrid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+}
+.exerciseCard{
+  background:#10192f;border:1px solid #26385f;border-radius:18px;padding:14px;
+}
+.measureGrid{
+  display:grid;grid-template-columns:1fr;gap:16px;
+}
+.scoreBox{
+  font-size:44px;font-weight:900;color:#ffe8a3;
+}
+kbd{
+  background:#13203d;border:1px solid #32466f;border-radius:8px;padding:2px 8px;font-size:12px;color:#e7efff
+}
+@media (max-width:1100px){
+  .grid2,.gridLib,.libraryHero,.measureGrid,.warmupGrid{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+  body{padding:10px}
+  .g9,.g6,.g4,.g3,.g2{grid-column:span 12}
+  #waveform{height:240px}
+  #overlayViewport{height:104px}
+}
+
+@media (max-width:600px){
+  #practiceView .karaokeWrap,
+  #measureView .karaokeWrap{
+    gap:4px;
+    padding:6px;
+    max-height:220px;
+  }
+  #practiceView .karaokeBox,
+  #measureView .karaokeBox{
+    min-width:34px;
+    padding:6px 7px;
+    font-size:11px;
+    border-radius:8px;
+  }
+  #practiceView .karaokeBox .label,
+  #measureView .karaokeBox .label{
+    font-size:11px;
+    line-height:1.1;
+  }
+}
+
+@media (max-width:600px){
+  #measureView .karaokeWrap{gap:4px;padding:6px;max-height:220px}
+  #measureView .karaokeBox{min-width:34px;padding:6px 7px;font-size:11px;border-radius:8px}
+  #measureView .karaokeBox .label{font-size:11px;line-height:1.1}
+  #measureView .lineBreak{flex-basis:100%;height:0;width:0}
+}
+
+.measureActionRow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px;align-items:center}
+.measureActionRow .compactBtn{width:100%;min-height:40px;padding:8px 10px;font-size:13px;border-radius:12px}
+.measureActionRow .compactBtn.iconOnly,.practiceActionRow .compactBtn.iconOnly,.warmupActionRow .compactBtn.iconOnly{font-size:20px;padding:6px 0}
+.practiceActionRow{display:grid;grid-template-columns:56px 1fr 1fr 1fr;gap:8px;margin-top:12px;align-items:center}
+.practiceActionRow .compactBtn{width:100%;min-height:40px;padding:8px 10px;font-size:13px;border-radius:12px}
+.warmupActionRow{display:grid;grid-template-columns:56px 1fr 1fr 1fr;gap:8px;margin-top:12px;align-items:center}
+.warmupActionRow .compactBtn{width:100%;min-height:40px;padding:8px 10px;font-size:13px;border-radius:12px}
+@media (max-width:600px){
+  .tabs{flex-wrap:nowrap;gap:6px;overflow:hidden}
+  .tab{flex:1 1 0;min-width:0;padding:8px 4px;font-size:11px;text-align:center}
+  .measureActionRow{grid-template-columns:56px 1fr 1fr 1fr 1fr;gap:6px}
+  .measureActionRow .compactBtn,.practiceActionRow .compactBtn,.warmupActionRow .compactBtn{min-height:34px;padding:6px 8px;font-size:12px;border-radius:10px}
+  .measureActionRow .compactBtn.iconOnly,.practiceActionRow .compactBtn.iconOnly,.warmupActionRow .compactBtn.iconOnly{font-size:18px}
+  .practiceActionRow,.warmupActionRow{grid-template-columns:44px 1fr 1fr 1fr;gap:6px}
+  #measureView .toolbar{grid-template-columns:1fr;gap:6px}
+  #measureView .field.g4{grid-column:span 1 !important}
+  #measureView .toolbar.measureToolbarTop{display:block}
+  #measureView .karaokeWrap{gap:4px;padding:8px;max-height:240px}
+  #measureView .karaokeBox{min-width:34px;padding:6px 7px;font-size:11px;border-radius:8px}
+  #measureView .karaokeBox .label{font-size:11px;line-height:1.1}
+}
+
+
+/* OVERRIDE: compact control rows + shared box fill */
+.measureActionRow,.practiceActionRow,.warmupActionRow{align-items:center}
+.measureActionRow .compactBtn,.practiceActionRow .compactBtn,.warmupActionRow .compactBtn{min-height:36px;padding:7px 10px;font-size:12px}
+.measureActionRow .compactBtn.iconOnly,.practiceActionRow .compactBtn.iconOnly,.warmupActionRow .compactBtn.iconOnly{display:flex;align-items:center;justify-content:center;padding:0}
+@media (max-width:600px){
+  .warmupActionRow,.practiceActionRow{grid-template-columns:38px 1fr .95fr .95fr !important;gap:5px !important;margin-top:10px}
+  .measureActionRow{grid-template-columns:38px .9fr .9fr .9fr 1fr !important;gap:5px !important;margin-top:10px}
+  .measureActionRow .compactBtn,.practiceActionRow .compactBtn,.warmupActionRow .compactBtn{min-height:30px !important;padding:4px 6px !important;font-size:11px !important;border-radius:9px !important}
+  .measureActionRow .compactBtn.iconOnly,.practiceActionRow .compactBtn.iconOnly,.warmupActionRow .compactBtn.iconOnly{font-size:16px !important}
+  .warmupActionRow select.compactBtn,.practiceActionRow select.compactBtn,.measureActionRow select.compactBtn{padding-right:22px !important}
+}
+
+@media (max-width:600px){
+  .pageBrand{left:8px;top:6px}
+  .wrap{padding-top:40px}
+  .pageLogo{width:160px}
+  .librarySimpleHead{padding:12px 14px;border-radius:16px}
+  .libraryArrow{width:38px;height:38px;font-size:20px}
+}
+
+
+/* PATCH: internal scroll for practice/measure rows */
+#practiceView .karaokeWrap,
+#measureView .karaokeWrap{
+  min-height:180px;
+  max-height:260px !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  align-content:flex-start;
+}
+@media (max-width:600px){
+  #practiceView .karaokeWrap,
+  #measureView .karaokeWrap{
+    min-height:160px;
+    max-height:240px !important;
+  }
+}
+
+</style>
+
+<style id="manual-scroll-patch">
+#practiceView .karaokeWrap,
+#measureView .karaokeWrap{
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  -webkit-overflow-scrolling:touch !important;
+  touch-action:pan-y !important;
+  overscroll-behavior:contain;
+}
+#practiceView .karaokeBox,
+#measureView .karaokeBox{
+  touch-action:manipulation !important;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  
+  <div class="pageBrand">
+    <div class="pageLogoWrap" aria-label="Vocaly logo">
+      <svg class="pageLogo" viewBox="0 0 520 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="vocGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffd54a"/>
+            <stop offset="55%" stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
+          </linearGradient>
+          <linearGradient id="micGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#facc15"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(0,10)">
+          <rect x="4" y="10" rx="34" ry="34" width="124" height="124" fill="#111a33" stroke="#22325e" stroke-width="3"/>
+          <path d="M36 84 Q52 70 50 46 Q49 32 58 25 Q68 18 82 22" fill="none" stroke="#facc15" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="33" cy="89" r="8" fill="#facc15"/>
+          <rect x="58" y="30" width="24" height="48" rx="12" fill="url(#micGrad)"/>
+          <path d="M50 58 Q50 86 70 86 Q90 86 90 58" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round"/>
+          <path d="M70 86 L70 102" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round"/>
+          <path d="M56 108 Q70 114 84 108" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round"/>
+          <path d="M103 43 Q117 58 103 74" fill="none" stroke="#f59e0b" stroke-width="7" stroke-linecap="round"/>
+          <path d="M113 34 Q131 58 113 84" fill="none" stroke="#8b5cf6" stroke-width="7" stroke-linecap="round"/>
+        </g>
+        <text x="150" y="98" font-family="Arial, sans-serif" font-size="88" font-weight="800" fill="url(#vocGrad)">vocaly</text>
+      </svg>
+    </div>
+  </div>
+<div class="shell">
+    <div class="tabs">
+      <div class="tab active" data-view="libraryView">Kütüphane</div>
+      <div class="tab" data-view="practiceView">Çalışma</div>
+      <div class="tab" data-view="measureView">Ölçme</div>
+      <div class="tab" data-view="editorView">Editör</div>
+    </div>
+
+    <!-- LIBRARY -->
+
+    <section class="view active" id="libraryView">
+      <div class="librarySimple card">
+        <div class="sectionTop">
+          <div>
+            <h2>Kütüphane</h2>
+            <p class="sub">Kayıtlı eserler. Şimdilik sade liste görünümü açık.</p>
+          </div>
+        </div>
+
+        <div class="librarySimpleHead" id="libraryAccordionBtn">
+          <div>
+            <div class="librarySimpleTitle">Eserler</div>
+            <div class="librarySimpleSub">Aşağıdan eseri seç.</div>
+          </div>
+          <button class="libraryArrow" type="button" id="libraryArrowBtn" aria-label="Kütüphaneyi aç kapa">▾</button>
+        </div>
+
+        <div class="librarySimpleBody" id="libraryAccordionBody">
+          <div class="field g12">
+            <label for="librarySearch">Ara</label>
+            <input id="librarySearch" type="text" placeholder="Eser adı..." />
+          </div>
+          <div class="list librarySimpleList" id="songList"></div>
+        </div>
+
+        <div class="hidden">
+          <button class="btn-soft" id="libraryImportBtn">JSON Eser Aç</button>
+          <input id="libraryImportInput" class="hidden" type="file" accept=".json,application/json">
+          <button class="btn-red" id="deleteSongBtn">Seçili Eseri Sil</button>
+          <button class="btn-purple" id="openPracticeBtn">Çalışmada Aç</button>
+          <button class="btn-aqua" id="openMeasureBtn">Ölçmede Aç</button>
+          <button class="btn-yellow" id="openEditorBtn">Editörde Aç</button>
+          <div id="librarySongTitle">Boş</div>
+          <div id="librarySongDesc">Henüz eser seçili değil.</div>
+          <div id="librarySegCount">0 segment</div>
+          <div id="libraryAudioInfo">Audio: yok</div>
+          <div id="libraryKeyInfo">Ton: -</div>
+          <div id="librarySegments"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRACTICE -->
+    <section class="view" id="practiceView">
+      <div class="measureGrid">
+        <div class="card">
+          <h2>Vokal Isınma</h2>
+          <p class="sub">Ton seç, çıkıcı / inici diziler, 2’li 3’lü 4’lü 5’li aralıklar ve 3 sesli motif çalış.</p>
+
+          <div class="warmupActionRow">
+            <button class="btn-purple compactBtn iconOnly" id="micBtnPractice" title="Tuner / Mikrofon Aç">🎤</button>
+            <button class="btn-soft compactBtn" id="stopWarmupBtn">Durdur</button>
+            <select id="practiceKeySelect" class="compactBtn" title="Ton">
+              <option value="Do Majör">Do Majör</option>
+              <option value="Sol Majör" selected>Sol Majör</option>
+              <option value="Re Majör">Re Majör</option>
+              <option value="La Majör">La Majör</option>
+              <option value="Mi Majör">Mi Majör</option>
+              <option value="Fa Majör">Fa Majör</option>
+              <option value="Sib Majör">Sib Majör</option>
+              <option value="La Minör">La Minör</option>
+              <option value="Mi Minör">Mi Minör</option>
+              <option value="Si Minör">Si Minör</option>
+              <option value="Fa# Minör">Fa# Minör</option>
+              <option value="Re Minör">Re Minör</option>
+              <option value="Sol Minör">Sol Minör</option>
+            </select>
+            <select id="practiceToleranceSelect" class="compactBtn" title="Tolerans">
+              <option value="10">±10 cent</option>
+              <option value="20" selected>±20 cent</option>
+              <option value="30">±30 cent</option>
+            </select>
+          </div>
+
+          <div class="tunerWrap" style="margin-top:12px">
+            <div class="row" style="justify-content:space-between">
+              <div class="bigNote" id="practiceDetectedNote">-</div>
+              <div>
+                <div class="smallMuted">Hedef</div>
+                <div style="font-weight:800;font-size:20px" id="practiceTargetNote">-</div>
+              </div>
+              <div>
+                <div class="smallMuted">Durum</div>
+                <div style="font-weight:800;font-size:18px" id="practiceTunerText">Hazır</div>
+              </div>
+            </div>
+            <div class="tunerBar" style="margin-top:12px">
+              <div class="tunerCenter"></div>
+              <div class="tunerNeedle" id="practiceTunerNeedle"></div>
+            </div>
+          </div>
+
+          <div class="warmupGrid" style="margin-top:14px">
+            <div class="exerciseCard" style="grid-column:1/-1">
+              <h4>Isınma Kutuları</h4>
+              <p class="sub" style="margin-bottom:10px">Burada artık 2’li, 3’lü gibi başlıklar yerine gerçek nota adları görünür. Tek dokununca çalar, sürükleyince sırayla çalar, tuner açıksa aktif seçimlerde doğru nota yeşil yanlış nota kırmızı yanar.</p>
+              <div id="warmupNotes" class="karaokeWrap"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Eser Çalışma</h2>
+          <p class="sub">Tek tıkla hece dinle. Mikrofon açıksa tuner de aynı panelde açık kalır.</p>
+          <div class="status">
+            <div class="pill purple" id="practiceSongTitle">Eser: -</div>
+            <div class="pill aqua" id="practiceSongMeta">Segment: 0</div>
+          </div>
+          <div class="practiceActionRow">
+            <button class="btn-purple compactBtn" id="practicePlayAllBtn">Baştan Oynat</button>
+            <button class="btn-aqua compactBtn" id="practiceStopBtn">Durdur</button>
+            <select id="globalRateSelect" class="compactBtn" title="Hız"><option value="0.5">0.50x</option><option value="0.75">0.75x</option><option value="1" selected>1.00x</option><option value="1.25">1.25x</option></select>
+          </div>
+          <div id="practiceKaraoke" class="karaokeWrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEASURE -->
+    <section class="view" id="measureView">
+      <div class="measureGrid">
+        <div class="card">
+          <h2>Tuner Ölçme</h2>
+          <p class="sub">Hedef nota ile sesini karşılaştır. Merkeze yakınsa doğruya yaklaşır.</p>
+
+          <div class="toolbar measureToolbarTop">
+            <div class="field g12">
+              <div class="measureActionRow">
+                <button class="btn-purple compactBtn iconOnly" id="micBtnMeasure" title="Mikrofon Aç">🎤</button>
+                <button class="btn-soft compactBtn" id="measureResetBtn">Sıfırla</button>
+                <button class="btn-aqua compactBtn" id="measureStartBtn">Başlat</button>
+                <button class="btn-red compactBtn" id="measureStopBtn">Durdur</button>
+                <select id="measureToleranceSelect" class="compactBtn" title="Tolerans">
+                  <option value="10">±10 cent</option>
+                  <option value="20" selected>±20 cent</option>
+                  <option value="30">±30 cent</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="tunerWrap" style="margin-top:12px">
+            <div class="row" style="justify-content:space-between">
+              <div class="bigNote" id="measureDetectedNote">-</div>
+              <div>
+                <div class="smallMuted">Hedef</div>
+                <div style="font-weight:800;font-size:20px" id="measureTargetNote">-</div>
+              </div>
+              <div>
+                <div class="smallMuted">Skor</div>
+                <div class="scoreBox" id="measureScore">0</div>
+              </div>
+            </div>
+            <div class="tunerBar" style="margin-top:12px">
+              <div class="tunerCenter"></div>
+              <div class="tunerNeedle" id="measureTunerNeedle"></div>
+            </div>
+            <div class="status" style="margin-top:12px">
+              <div class="pill amber" id="measureStatusText">Hazır</div>
+              <div class="pill green" id="measureAccuracyText">%0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Karaoke Ölçme</h2>
+          <p class="sub">Editördeki nota hedefleri varsa yeşil/kırmızı değerlendirme çalışır.</p>
+          <div id="measureKaraoke" class="karaokeWrap"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDITOR -->
+    <section class="view" id="editorView">
+      <div class="card">
+        <h2>Waveform & Kontroller</h2>
+        <p class="sub">Bu panel, senin v20.3 editör mantığını koruyarak tek uygulamaya yerleştirildi. JSON yapısı `heceler` temelli kalır. </p>
+
+        <div class="toolbar">
+          <div class="field g3">
+            <label for="titleInput">Eser Başlığı</label>
+            <input id="titleInput" type="text" placeholder="Eser başlığı">
+          </div>
+
+          <div class="field g3">
+            <label for="audioFile">MP3 Yükle</label>
+            <input id="audioFile" type="file" accept="audio/*">
+          </div>
+
+          <div class="field g2">
+            <label for="intro">Intro Süresi (sn)</label>
+            <input id="intro" type="number" step="0.01" min="0" value="0.00">
+          </div>
+
+          <div class="field g2">
+            <label for="difficultySelect">Zorluk</label>
+            <select id="difficultySelect">
+              <option value="çok kolay">Çok Kolay</option>
+              <option value="kolay">Kolay</option>
+              <option value="orta" selected>Orta</option>
+              <option value="zor">Zor</option>
+              <option value="çok zor">Çok Zor</option>
+            </select>
+          </div>
+
+          <div class="field g2">
+            <label for="keySelect">Ton</label>
+            <select id="keySelect">
+              <option value="Do Majör">Do Majör</option>
+              <option value="Sol Majör" selected>Sol Majör</option>
+              <option value="Re Majör">Re Majör</option>
+              <option value="La Majör">La Majör</option>
+              <option value="Mi Majör">Mi Majör</option>
+              <option value="Fa Majör">Fa Majör</option>
+              <option value="Sib Majör">Sib Majör</option>
+              <option value="La Minör">La Minör</option>
+              <option value="Mi Minör">Mi Minör</option>
+              <option value="Si Minör">Si Minör</option>
+              <option value="Fa# Minör">Fa# Minör</option>
+              <option value="Re Minör">Re Minör</option>
+              <option value="Sol Minör">Sol Minör</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="field g2">
+            <label>&nbsp;</label>
+            <button class="btn-purple" id="playBtn">Play / Pause</button>
+          </div>
+
+          <div class="field g2">
+            <label for="zoom">Zoom</label>
+            <input id="zoom" type="range" min="20" max="420" step="1" value="140">
+          </div>
+
+          <div class="field g2">
+            <label for="rateSelect">Hız</label>
+            <select id="rateSelect">
+              <option value="1">1.00x</option>
+              <option value="0.75">0.75x</option>
+              <option value="0.50">0.50x</option>
+              <option value="1.25">1.25x</option>
+            </select>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-aqua" id="autoTimingBtn">Otomatik Timing Öner</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-yellow" id="saveProjectBtn">Kaydet / JSON İndir</button>
+          </div>
+        </div>
+
+        <div class="status">
+          <div class="pill purple" id="statusText">Hazır</div>
+          <div class="pill aqua" id="timeText">0.00 sn</div>
+          <div class="pill aqua" id="cursorText">Cursor: 0.00 sn</div>
+          <div class="pill" id="micText">Mikrofon kapalı</div>
+          <div class="pill" id="noteText">Nota: -</div>
+          <div class="pill aqua" id="activeSegmentText">Aktif segment: -</div>
+          <div class="pill amber" id="analysisText">Analiz: -</div>
+        </div>
+
+        <div id="waveArea">
+          <div id="waveform"></div>
+
+          <div id="overlayViewport">
+            <div id="overlayContent">
+              <div id="ruler"></div>
+              <div id="segmentStrip"></div>
+            </div>
+            <div id="stripCursor"></div>
+          </div>
+        </div>
+
+        <div class="hint">
+          Ok tuşları: segment seçili değilse cursor ilerler/geriler. Segment seçiliyse komşu segmentlere geçer.
+          <kbd>Escape</kbd> ile seçimden çıkılır.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sectionTop">
+          <div>
+            <h2>Canlı Karaoke Önizleme</h2>
+            <p class="sub">Tek tıkla tek kutu çalar. Basılı tutup sürükleyerek seçilen kutular bırakınca grup halinde sırayla çalar.</p>
+          </div>
+          <div class="row">
+            <button class="btn-purple" id="previewPlayBtn">Önizlemeyi Oynat</button>
+            <button class="btn-soft" id="previewStopBtn">Durdur</button>
+            <button class="btn-aqua" id="micBtn">Tuner / Mikrofon Aç</button>
+            <button class="btn-soft" id="clearSelectionBtn">Seçimi Temizle</button>
+            <button class="btn-amber" id="playLineBtn">Seçili Satırı Çal</button>
+          </div>
+        </div>
+        <div id="karaoke" class="karaokeWrap"></div>
+      </div>
+
+      <div class="card">
+        <h2>Söz Girişi</h2>
+        <div class="toolbar">
+          <div class="field g12">
+            <label for="lyricsInput">Sözler</label>
+            <textarea id="lyricsInput" placeholder="Sözleri satır satır yapıştır..."></textarea>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-purple" id="splitWordsBtn">Kelimelere Böl</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="loadProjectBtn">Son Kaydı Yükle</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="importJsonBtn">JSON Aç</button>
+            <input id="importJsonInput" class="hidden" type="file" accept=".json,application/json">
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-red" id="resetTimingBtn">Timing Sıfırla</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Segment Bilgisi</h2>
+        <div class="toolbar">
+          <div class="field g2">
+            <label for="start">Start</label>
+            <input id="start" type="number" step="0.01">
+          </div>
+          <div class="field g2">
+            <label for="end">End</label>
+            <input id="end" type="number" step="0.01">
+          </div>
+          <div class="field g3">
+            <label for="hece">Kelime / Öbek</label>
+            <input id="hece" type="text">
+          </div>
+          <div class="field g3">
+            <label for="nota">Hedef Nota / Nota Dizisi</label>
+            <input id="nota" type="text" placeholder="Örn: la veya fa# mi re">
+          </div>
+          <div class="field g2">
+            <label for="satir">Satır No</label>
+            <input id="satir" type="number" min="0" step="1">
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-purple" id="saveBtn">Kaydet / Ekle</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="updateBtn">Seçileni Güncelle</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-red" id="deleteLoadedBtn">Seçileni Sil</button>
+          </div>
+
+          <div class="field g3">
+            <label for="nudgeAmount">Kaydırma Miktarı</label>
+            <select id="nudgeAmount">
+              <option value="0.01">0.01 sn</option>
+              <option value="0.02">0.02 sn</option>
+              <option value="0.05" selected>0.05 sn</option>
+              <option value="0.10">0.10 sn</option>
+              <option value="0.25">0.25 sn</option>
+            </select>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="minusStartBtn">Start -</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="plusStartBtn">Start +</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="minusEndBtn">End -</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="plusEndBtn">End +</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-amber" id="shiftLeftBtn">Tüm Segmenti Sola Kaydır</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-amber" id="shiftRightBtn">Tüm Segmenti Sağa Kaydır</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-aqua" id="analyzeNoteBtn">Nota Öner</button>
+          </div>
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-aqua" id="analyzeAllBtn">Tümüne Nota Öner</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-soft" id="previewSelectedBtn">Seçili Segmenti Dinle</button>
+          </div>
+
+          <div class="field g3">
+            <label>&nbsp;</label>
+            <button class="btn-yellow" id="saveToLibraryBtn">Kütüphaneye Kaydet</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ---------------- GLOBAL APP ---------------- */
+const APP_LIBRARY_KEY = "vocaly_multi_library_v1"
+const PROJECT_AUTOSAVE_KEY = "vocaly_editor_v20_3_autosave"
+
+let appLibrary = []
+let currentLibraryIndex = -1
+let activeSongPayload = null
+let waveReady = false
+let pendingWaveReadyResolvers = []
+let pendingSnippet = null
+let currentResolvedAudioPath = ""
+
+function saveLibrary(){
+  localStorage.setItem(APP_LIBRARY_KEY, JSON.stringify(appLibrary))
+}
+function loadLibrary(){
+  try{
+    const raw = localStorage.getItem(APP_LIBRARY_KEY)
+    appLibrary = raw ? JSON.parse(raw) : []
+  }catch(err){
+    appLibrary = []
+  }
+}
+
+async function loadLibraryFromRepo(){
+  try{
+    const res = await fetch("./eser.json", { cache: "no-store" })
+    if(!res.ok) throw new Error("eser.json okunamadı")
+    const parsed = await res.json()
+
+    const normalizeRepoSong = (song)=>{
+      if(!song || !song.heceler) return song
+      const copy = JSON.parse(JSON.stringify(song))
+      const hasEmbeddedAudio = !!copy.audioDataUrl
+      const declaredAudioName = copy.audioName || copy.audioFile || "audio.mp3"
+      const declaredAudioPath = copy.audioPath || copy.audioUrl || (hasEmbeddedAudio ? "" : `./${declaredAudioName}`)
+      copy.audioName = declaredAudioName
+      copy.audioPath = declaredAudioPath
+      return copy
+    }
+
+    if(Array.isArray(parsed)){
+      appLibrary = parsed.map(normalizeRepoSong)
+    }else if(parsed && parsed.heceler){
+      appLibrary = [normalizeRepoSong(parsed)]
+    }else{
+      throw new Error("Geçersiz JSON yapısı")
+    }
+
+    saveLibrary()
+    if(appLibrary.length && currentLibraryIndex === -1) currentLibraryIndex = 0
+    refreshLibraryList()
+  }catch(err){
+    console.error("Repo kütüphanesi yüklenemedi:", err)
+  }
+}
+
+function getRepoAudioCandidates(payload){
+  if(!payload) return []
+  const raw = [payload.audioPath, payload.audioUrl, payload.audioName, payload.audioFile, 'audio.mp3']
+    .filter(Boolean)
+    .map(x => String(x).trim())
+    .filter(Boolean)
+  const out = []
+  raw.forEach(path=>{
+    if(path.startsWith('data:')){
+      out.push(path)
+      return
+    }
+    out.push(path)
+    if(!path.startsWith('./') && !path.startsWith('/') && !path.startsWith('http')) out.push('./' + path)
+  })
+  return [...new Set(out)]
+}
+async function resolveExistingAudioPath(payload){
+  const candidates = getRepoAudioCandidates(payload)
+  for(const candidate of candidates){
+    if(candidate.startsWith('data:')) return candidate
+    try{
+      const res = await fetch(candidate, { method:'HEAD', cache:'no-store' })
+      if(res.ok) return candidate
+    }catch(err){}
+    try{
+      const res = await fetch(candidate, { method:'GET', cache:'no-store' })
+      if(res.ok) return candidate
+    }catch(err){}
+  }
+  return ''
+}
+function waitForWaveReady(timeoutMs=8000){
+  if(waveReady && hasAudioLoaded()) return Promise.resolve(true)
+  return new Promise(resolve=>{
+    const timer = setTimeout(()=>resolve(false), timeoutMs)
+    pendingWaveReadyResolvers.push((ok)=>{
+      clearTimeout(timer)
+      resolve(ok)
+    })
+  })
+}
+async function ensureSongAudioLoaded(payload){
+  if(!payload) return false
+  activeSongPayload = payload
+  waveReady = false
+  if(payload.audioDataUrl){
+    currentAudioDataUrl = payload.audioDataUrl
+    currentResolvedAudioPath = ''
+    ws.load(payload.audioDataUrl)
+    return await waitForWaveReady()
+  }
+  const resolved = await resolveExistingAudioPath(payload)
+  if(!resolved){
+    statusText.textContent = 'Ses dosyası bulunamadı'
+    statusText.className = 'pill red'
+    return false
+  }
+  currentAudioDataUrl = ''
+  currentResolvedAudioPath = resolved
+  currentAudioName = resolved.split('/').pop() || currentAudioName || 'audio.mp3'
+  ws.load(resolved)
+  return await waitForWaveReady()
+}
+async function ensurePlayableAudio(){
+  if(hasAudioLoaded() && waveReady) return true
+  if(activeSongPayload){
+    const ok = await ensureSongAudioLoaded(activeSongPayload)
+    if(!ok) return false
+  }
+  return hasAudioLoaded() && waveReady
+}
+async function playWsFromStart(){
+  const ok = await ensurePlayableAudio()
+  if(!ok) return false
+  ws.stop()
+  seekToTime(0)
+  scrollToTime(0)
+  try{
+    await ws.play(0)
+  }catch(err){
+    try{ ws.play() }catch(e){}
+  }
+  return true
+}
+async function setActiveSongFromLibrary(index, targetView='practiceView'){
+  if(index < 0 || index >= appLibrary.length) return false
+  currentLibraryIndex = index
+  const song = appLibrary[index]
+  applyProjectPayload(song)
+  refreshLibraryList()
+  refreshLibraryPreviewOnly()
+  const ok = await ensureSongAudioLoaded(song)
+  if(targetView) showView(targetView)
+  return ok
+}
+
+function getSelectedSong(){
+  if(currentLibraryIndex < 0 || currentLibraryIndex >= appLibrary.length) return null
+  return appLibrary[currentLibraryIndex]
+}
+function deepClone(obj){
+  return JSON.parse(JSON.stringify(obj))
+}
+function showView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"))
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
+  document.getElementById(id).classList.add("active")
+  document.querySelector(`.tab[data-view="${id}"]`).classList.add("active")
+}
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>showView(tab.dataset.view))
+})
+
+/* ---------------- MUSIC / NOTES ---------------- */
+const NOTE_NAMES = ["do","do#","re","re#","mi","fa","fa#","sol","sol#","la","la#","si"]
+const SCALE_MAP = {
+  "Do Majör":["do","re","mi","fa","sol","la","si"],
+  "Sol Majör":["sol","la","si","do","re","mi","fa#"],
+  "Re Majör":["re","mi","fa#","sol","la","si","do#"],
+  "La Majör":["la","si","do#","re","mi","fa#","sol#"],
+  "Mi Majör":["mi","fa#","sol#","la","si","do#","re#"],
+  "Fa Majör":["fa","sol","la","sib","do","re","mi"],
+  "Sib Majör":["sib","do","re","mib","fa","sol","la"],
+  "La Minör":["la","si","do","re","mi","fa","sol"],
+  "Mi Minör":["mi","fa#","sol","la","si","do","re"],
+  "Si Minör":["si","do#","re","mi","fa#","sol","la"],
+  "Fa# Minör":["fa#","sol#","la","si","do#","re","mi"],
+  "Re Minör":["re","mi","fa","sol","la","sib","do"],
+  "Sol Minör":["sol","la","sib","do","re","mib","fa"]
+}
+const MIDI_MAP = {"do":60,"do#":61,"reb":61,"re":62,"re#":63,"mib":63,"mi":64,"fa":65,"fa#":66,"solb":66,"sol":67,"sol#":68,"lab":68,"la":69,"la#":70,"sib":70,"si":71}
+function escapeHtml(str){
+  return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")
+}
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)) }
+function round2(v){ return Number((v || 0).toFixed(2)) }
+function normalizeNoteName(name){
+  return String(name || "").trim().toLowerCase().replaceAll("♯","#").replaceAll("diyez","#").replaceAll("♭","b").replace(/\s+/g,"")
+    .replace("sib","la#").replace("mib","re#").replace("lab","sol#").replace("reb","do#").replace("solb","fa#")
+}
+function noteToSemitone(name){
+  const map = {"do":0,"do#":1,"reb":1,"re":2,"re#":3,"mib":3,"mi":4,"fa":5,"fa#":6,"solb":6,"sol":7,"sol#":8,"lab":8,"la":9,"la#":10,"sib":10,"si":11}
+  return map[normalizeNoteName(name)]
+}
+function freqToMidi(freq){ return Math.round(69 + 12 * Math.log2(freq / 440)) }
+function midiToNoteName(midi){ return NOTE_NAMES[((midi % 12) + 12) % 12] }
+function semitoneToNearestScaleNote(semitone, scaleNotes){
+  let bestNote = scaleNotes[0], bestDist = Infinity
+  scaleNotes.forEach(note=>{
+    const s = noteToSemitone(note)
+    let d = Math.abs(s - semitone)
+    d = Math.min(d, 12 - d)
+    if(d < bestDist){ bestDist = d; bestNote = note }
+  })
+  return bestNote
+}
+function getScaleNotesByKey(key){ return SCALE_MAP[key] || SCALE_MAP["Sol Majör"] }
+function autoCorrelate(buffer, sampleRate){
+  const size = buffer.length
+  let rms = 0
+  for(let i=0;i<size;i++) rms += buffer[i] * buffer[i]
+  rms = Math.sqrt(rms / size)
+  if(rms < 0.0022) return -1
+
+  let bestOffset = -1
+  let bestCorrelation = 0
+  let foundGoodCorrelation = false
+  const correlations = new Array(size).fill(0)
+  const maxSamples = Math.floor(size / 2)
+  const minSamples = Math.floor(sampleRate / 1200)
+  const maxOffset = Math.min(maxSamples, Math.floor(sampleRate / 60))
+  let lastCorrelation = 1
+
+  for(let offset = minSamples; offset < maxOffset; offset++){
+    let correlation = 0
+    for(let i=0;i<maxSamples;i++) correlation += Math.abs(buffer[i] - buffer[i + offset])
+    correlation = 1 - (correlation / maxSamples)
+    correlations[offset] = correlation
+
+    if(correlation > 0.9 && correlation > lastCorrelation){
+      foundGoodCorrelation = true
+      if(correlation > bestCorrelation){
+        bestCorrelation = correlation
+        bestOffset = offset
+      }
+    }else if(foundGoodCorrelation){
+      const prev = correlations[bestOffset - 1] || correlations[bestOffset]
+      const cur = correlations[bestOffset] || correlation
+      const nextVal = correlations[bestOffset + 1] || correlation
+      const shift = (nextVal - prev) / Math.max(0.0001, cur)
+      return sampleRate / (bestOffset + 0.5 * shift)
+    }
+    lastCorrelation = correlation
+  }
+
+  if(bestCorrelation > 0.92 && bestOffset > 0) return sampleRate / bestOffset
+  return -1
+}
+function compressNoteSequence(seq){
+  const normalized = seq.map(normalizeNoteName).filter(Boolean)
+  const out = []
+  let last = null
+  for(const n of normalized){
+    if(n !== last){ out.push(n); last = n }
+  }
+  return out
+}
+function parseTargetNotes(noteString){
+  return compressNoteSequence(String(noteString || "").split(/\s+/))
+}
+function arraysUniqueIntersectionCount(a, b){
+  const setB = new Set(b.map(normalizeNoteName))
+  let count = 0
+  a.map(normalizeNoteName).forEach(item => { if(setB.has(item)) count += 1 })
+  return count
+}
+function splitWordsFromText(text){
+  const lines = String(text || "").split(/\n/).map(line => line.trim())
+  const words = []
+  lines.forEach((line, lineIndex)=>{
+    if(!line) return
+    line.split(/\s+/).filter(Boolean).forEach(word=>{
+      words.push({ text:word, line: lineIndex + 1 })
+    })
+  })
+  return words
+}
+
+/* ---------------- MIC / TUNER ---------------- */
+let micReady = false
+let audioContext = null
+let analyser = null
+let micSource = null
+let micStream = null
+let pitchBuffer = null
+let latestDetected = { note:null, midi:null, freq:null, cents:0 }
+
+
+let tunerLoopRunning = false
+
+async function setupMicShared(){
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      micText.textContent = "Mikrofon desteklenmiyor"
+      micText.className = "pill red"
+      alert("Bu tarayıcı mikrofon erişimini desteklemiyor.")
+      return false
+    }
+
+    if(!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)()
+
+    // Kullanıcı tıklamasında doğrudan resume etmeye çalış
+    try{ if(audioContext.state === "suspended") await audioContext.resume() }catch(err){}
+
+    if(micReady && analyser){
+      try{ if(audioContext.state === "suspended") await audioContext.resume() }catch(err){}
+      if(!tunerLoopRunning){
+        tunerLoopRunning = true
+        requestAnimationFrame(runUnifiedTunerLoop)
+      }
+      micText.textContent = "Mikrofon açık"
+      micText.className = "pill green"
+      return true
+    }
+
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:false,
+        noiseSuppression:false,
+        autoGainControl:false,
+        channelCount:1,
+        googEchoCancellation:false,
+        googAutoGainControl:false,
+        googNoiseSuppression:false
+      }
+    })
+
+    analyser = audioContext.createAnalyser()
+    analyser.fftSize = 2048
+    analyser.minDecibels = -95
+    analyser.maxDecibels = -10
+    analyser.smoothingTimeConstant = 0.0
+    pitchBuffer = new Float32Array(analyser.fftSize)
+
+    micSource = audioContext.createMediaStreamSource(micStream)
+    micSource.connect(analyser)
+
+    try{ if(audioContext.state === "suspended") await audioContext.resume() }catch(err){}
+
+    micReady = true
+    tunerLoopRunning = true
+    micText.textContent = "Mikrofon açık"
+    micText.className = "pill green"
+    requestAnimationFrame(runUnifiedTunerLoop)
+    return true
+  }catch(err){
+    console.error(err)
+    micText.textContent = "Mikrofon açılamadı"
+    micText.className = "pill red"
+
+    if(err && err.name === "NotAllowedError"){
+      alert("Mikrofon izni verilmedi ya da tarayıcı bu sayfa için erişimi engelledi.")
+    }else if(err && err.name === "NotFoundError"){
+      alert("Cihazda kullanılabilir mikrofon bulunamadı.")
+    }else if(err && err.name === "NotReadableError"){
+      alert("Mikrofon başka bir uygulama tarafından kullanılıyor olabilir.")
+    }else{
+      alert("Mikrofon açılamadı: " + (err && err.name ? err.name : "bilinmeyen hata"))
+    }
+    return false
+  }
+}
+
+function getCurrentDetectedPitch(){
+  if(!micReady || !analyser || !audioContext || !pitchBuffer) return null
+
+  analyser.getFloatTimeDomainData(pitchBuffer)
+  const freq = autoCorrelate(pitchBuffer, audioContext.sampleRate)
+
+  if(freq === -1 || freq < 50 || freq > 1200){
+    latestDetected = { note:null, midi:null, freq:null, cents:0 }
+    return null
+  }
+
+  const midi = freqToMidi(freq)
+  const note = midiToNoteName(midi)
+  const ref = 440 * Math.pow(2, (midi - 69)/12)
+  const cents = 1200 * Math.log2(freq / ref)
+
+  latestDetected = { note, midi, freq, cents }
+  return latestDetected
+}
+
+function updateSharedTunerUI(targetNote, detectedEl, needleEl, targetEl, textEl){
+  const det = latestDetected && latestDetected.note ? latestDetected : null
+  const targetDisplay = targetNote || "-"
+  const firstTarget = parseTargetNotes(targetNote || "")[0] || normalizeDisplayNote(String(targetNote || "").split(/\s+/)[0] || "")
+  if(targetEl) targetEl.textContent = targetDisplay
+
+  if(!det){
+    if(detectedEl) detectedEl.textContent = "-"
+    if(needleEl){
+      needleEl.style.left = "50%"
+      needleEl.style.background = "var(--purple)"
+    }
+    if(textEl === practiceTunerText) textEl.textContent = "Ses bekleniyor"
+    noteText.textContent = "Nota: -"
+    return
+  }
+
+  if(detectedEl) detectedEl.textContent = normalizeDisplayNote(det.note)
+  noteText.textContent = "Nota: " + normalizeDisplayNote(det.note) + " (" + det.freq.toFixed(1) + " Hz)"
+
+  let cents = det.cents
+  if(firstTarget){
+    const targetSemi = noteToSemitone(firstTarget)
+    const detSemi = noteToSemitone(det.note)
+    if(targetSemi !== undefined && detSemi !== undefined){
+      let diffSemis = detSemi - targetSemi
+      if(diffSemis > 6) diffSemis -= 12
+      if(diffSemis < -6) diffSemis += 12
+      cents = diffSemis * 100 + det.cents
+    }
+  }
+
+  const clamped = clamp(cents, -50, 50)
+  const left = ((clamped + 50) / 100) * 100
+  const abs = Math.abs(clamped)
+  const targets = parseTargetNotes(targetNote || "")
+  const hit = !isInternalFeedbackBlocked() && det && targets.length ? hitWithinTolerance(det, targets, needleEl === measureTunerNeedle ? 'measure' : 'practice') : false
+
+  if(needleEl){
+    if(hit){
+      needleEl.style.left = "50%"
+      needleEl.style.background = "var(--green)"
+    }else{
+      needleEl.style.left = left + "%"
+      if(abs <= 5) needleEl.style.background = "var(--green)"
+      else if(abs <= 15) needleEl.style.background = "var(--amber)"
+      else needleEl.style.background = "var(--red)"
+    }
+  }
+
+  if(textEl === practiceTunerText || textEl === measureStatusText){
+    if(hit) textEl.textContent = "Kilitlendi"
+    else if(abs <= 5) textEl.textContent = "Doğru"
+    else if(abs <= 15) textEl.textContent = "Yakın"
+    else if(clamped < 0) textEl.textContent = "Pes"
+    else textEl.textContent = "Tiz"
+    if(textEl === measureStatusText) textEl.className = hit ? 'pill green' : (abs <= 15 ? 'pill amber' : 'pill red')
+  }
+}
+
+function runUnifiedTunerLoop(){
+  if(!tunerLoopRunning) return
+  if(audioContext && audioContext.state === "suspended"){
+    requestAnimationFrame(runUnifiedTunerLoop)
+    return
+  }
+
+  getCurrentDetectedPitch()
+  syncAuxActiveIndexesFromPlayback()
+  updateAuxPlaybackFills()
+  updateSharedTunerUI(practiceTargetNote, practiceDetectedNote, practiceTunerNeedle, practiceTargetNoteEl, practiceTunerText)
+  updateSharedTunerUI(measureTargetNoteEl.textContent.trim() === "-" ? "" : measureTargetNoteEl.textContent.trim(), measureDetectedNote, measureTunerNeedle, measureTargetNoteEl, measureStatusText)
+  updateContainerTunerFeedback(practiceKaraoke, practiceSelectedSongIndexes, currentPracticeSegmentIndex)
+  updateContainerTunerFeedback(measureKaraoke, measureSelectedIndexes, currentMeasureSegmentIndex)
+  updateContainerTunerFeedback(warmupNotes, practiceSelectedWarmupIndexes, -1)
+  runMeasureTick()
+
+  requestAnimationFrame(runUnifiedTunerLoop)
+}
+
+
+/* ---------------- PRACTICE AUDIO ---------------- */
+let practiceOscillators = []
+let practiceTargetNote = ""
+let practiceSelectedWarmupIndexes = []
+let practiceSelectedSongIndexes = []
+let measureSelectedIndexes = []
+let currentPracticeSegmentIndex = -1
+let currentMeasureSegmentIndex = -1
+let measureArmed = false
+let measureCurrentVisualIndex = -1
+let measureCurrentRealIndex = -1
+let measureBoxStartMs = 0
+let measureBoxLocked = false
+let measureBoxResult = null
+let measurePlaybackMode = false
+let measureWindowStarted = false
+let measureAutoMode = false
+let measureEvaluated = new Set()
+let measureStableSince = 0
+function stopWarmupAudio(){
+  practiceOscillators.forEach(o=>{
+    try{ o.osc1.stop() }catch(e){}
+    try{ o.osc2.stop() }catch(e){}
+    try{ o.osc3.stop() }catch(e){}
+    try{ o.master.disconnect() }catch(e){}
+  })
+  practiceOscillators = []
+}
+function noteNameToFreq(note){
+  const semi = MIDI_MAP[normalizeNoteName(note)]
+  const midi = semi !== undefined ? semi : 69
+  return 440 * Math.pow(2, (midi - 69)/12)
+}
+function triggerPianoLikeNote(note, startTime, duration=1.7){
+  const freq = noteNameToFreq(normalizeDisplayNote(note))
+  const master = audioContext.createGain()
+  const filter = audioContext.createBiquadFilter()
+  const osc1 = audioContext.createOscillator()
+  const osc2 = audioContext.createOscillator()
+  const osc3 = audioContext.createOscillator()
+  const gain1 = audioContext.createGain()
+  const gain2 = audioContext.createGain()
+  const gain3 = audioContext.createGain()
+
+  filter.type = "lowpass"
+  filter.frequency.setValueAtTime(2600, startTime)
+  filter.Q.value = 0.7
+
+  osc1.type = "triangle"
+  osc2.type = "triangle"
+  osc3.type = "sine"
+
+  osc1.frequency.setValueAtTime(freq, startTime)
+  osc2.frequency.setValueAtTime(freq * 2, startTime)
+  osc3.frequency.setValueAtTime(freq * 3, startTime)
+
+  gain1.gain.setValueAtTime(0.0001, startTime)
+  gain1.gain.linearRampToValueAtTime(0.20, startTime + 0.03)
+  gain1.gain.exponentialRampToValueAtTime(0.010, startTime + duration * 0.92)
+  gain1.gain.exponentialRampToValueAtTime(0.0001, startTime + duration + 0.80)
+
+  gain2.gain.setValueAtTime(0.0001, startTime)
+  gain2.gain.linearRampToValueAtTime(0.10, startTime + 0.03)
+  gain2.gain.exponentialRampToValueAtTime(0.008, startTime + duration * 0.86)
+  gain2.gain.exponentialRampToValueAtTime(0.0001, startTime + duration + 0.70)
+
+  gain3.gain.setValueAtTime(0.0001, startTime)
+  gain3.gain.linearRampToValueAtTime(0.055, startTime + 0.03)
+  gain3.gain.exponentialRampToValueAtTime(0.006, startTime + duration * 0.80)
+  gain3.gain.exponentialRampToValueAtTime(0.0001, startTime + duration + 0.60)
+
+  master.gain.setValueAtTime(0.0001, startTime)
+  master.gain.linearRampToValueAtTime(0.95, startTime + 0.04)
+  master.gain.exponentialRampToValueAtTime(0.022, startTime + duration * 0.95)
+  master.gain.exponentialRampToValueAtTime(0.0001, startTime + duration + 1.10)
+
+  osc1.connect(gain1).connect(filter)
+  osc2.connect(gain2).connect(filter)
+  osc3.connect(gain3).connect(filter)
+  filter.connect(master).connect(audioContext.destination)
+
+  osc1.start(startTime); osc2.start(startTime); osc3.start(startTime)
+  osc1.stop(startTime + duration + 1.20)
+  osc2.stop(startTime + duration + 1.20)
+  osc3.stop(startTime + duration + 1.20)
+
+  practiceOscillators.push({ osc1, osc2, osc3, master })
+}
+async function playToneSequence(noteNames, tempo=2200, noteDuration=2.8){
+  if(!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)()
+  if(audioContext.state === "suspended") await audioContext.resume()
+  stopWarmupAudio()
+  const totalMs = Math.max(800, ((Math.max(0, noteNames.length - 1) * tempo) + (noteDuration * 1000) + 700))
+  blockInternalFeedback(120)
+  noteNames.forEach((note, i)=>{
+    const startTime = audioContext.currentTime + i * (tempo / 1000)
+    triggerPianoLikeNote(note, startTime, noteDuration)
+  })
+  practiceTargetNote = noteNames.map(normalizeDisplayNote).join(" ")
+}
+function getPracticeScale(){
+  return getScaleNotesByKey(practiceKeySelect.value).map(normalizeDisplayNote)
+}
+function normalizeDisplayNote(note){
+  const n = normalizeNoteName(note || "")
+  const displayMap = {"la#":"sib","re#":"mib","sol#":"lab","do#":"do#","fa#":"fa#"}
+  return displayMap[n] || n
+}
+function buildWarmupItems(){
+  const scale = getPracticeScale()
+  const asc = scale.map((note, idx)=>({ label:note, notes:[note], group:'dizi', order:idx }))
+  const desc = [...scale].reverse().map((note, idx)=>({ label:note, notes:[note], group:'dizi', order:100+idx }))
+  const ikili = scale.slice(0,-1).map((note, idx)=>({ label:`${scale[idx]} ${scale[idx+1]}`, notes:[scale[idx], scale[idx+1]], group:'ikili', order:200+idx }))
+  const uclu = scale.slice(0,-2).map((note, idx)=>({ label:`${scale[idx]} ${scale[idx+2]}`, notes:[scale[idx], scale[idx+2]], group:'uclu', order:300+idx }))
+  const dortlu = scale.slice(0,-3).map((note, idx)=>({ label:`${scale[idx]} ${scale[idx+3]}`, notes:[scale[idx], scale[idx+3]], group:'dortlu', order:400+idx }))
+  const motifler = scale.slice(0,-2).flatMap((note, idx)=>[
+    { label:`${scale[idx]} ${scale[idx+1]} ${scale[idx+2]}`, notes:[scale[idx], scale[idx+1], scale[idx+2]], group:'motif', order:500+idx*3 },
+    { label:`${scale[idx+2]} ${scale[idx+1]} ${scale[idx]}`, notes:[scale[idx+2], scale[idx+1], scale[idx]], group:'motif', order:501+idx*3 },
+    { label:`${scale[idx]} ${scale[idx+2]} ${scale[idx+1]}`, notes:[scale[idx], scale[idx+2], scale[idx+1]], group:'motif', order:502+idx*3 }
+  ])
+  return [...asc, ...desc, ...ikili, ...uclu, ...dortlu, ...motifler]
+}
+function renderWarmupPanel(){
+  if(!warmupNotes) return
+  const items = buildWarmupItems()
+  warmupNotes.innerHTML = ''
+  items.forEach((item, idx)=>{
+    const box = document.createElement('div')
+    box.className = 'karaokeBox'
+    box.dataset.warmupIndex = String(idx)
+    box.dataset.targetNotes = item.notes.join(' ')
+    box.dataset.mode = 'warmup'
+    box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(item.label)}</div>`
+    box.onclick = ()=>{
+      if(warmupNotes?.dataset?.suppressClick === '1') return
+      practiceSelectedWarmupIndexes = [idx]
+      refreshAuxSelections()
+      clearContainerLocks(warmupNotes)
+      practiceTargetNote = normalizeDisplayNote(item.notes[item.notes.length - 1] || '')
+      practiceTargetNoteEl.textContent = item.label
+      const fastTempo = item.notes.length >= 2 ? 850 : 1700
+      const fastDur = item.notes.length >= 3 ? 0.95 : (item.notes.length === 2 ? 1.05 : 1.6)
+      armBoxPitchCheck(box, Math.max(900, ((Math.max(0, item.notes.length - 1) * fastTempo) + (fastDur * 1000) + 250)), 'practice')
+      playToneSequence(item.notes, fastTempo, fastDur)
+    }
+    warmupNotes.appendChild(box)
+  })
+}
+function playAscendingScale(){ playToneSequence(getPracticeScale(), 1700, 1.6) }
+function playDescendingScale(){ playToneSequence([...getPracticeScale()].reverse(), 1700, 1.6) }
+function playInterval(interval){
+  const scale = getPracticeScale()
+  const seq = []
+  for(let i=0;i<scale.length - (interval - 1);i++) seq.push(scale[i], scale[i + interval - 1])
+  playToneSequence(seq, 1000, 1.1)
+}
+function playMotif(type){
+  const scale = getPracticeScale()
+  let seq = []
+  if(type === "up") seq = [scale[0], scale[1], scale[2]]
+  if(type === "down") seq = [scale[2], scale[1], scale[0]]
+  if(type === "wave") seq = [scale[0], scale[2], scale[1]]
+  playToneSequence(seq, 850, 0.95)
+}
+
+/* ---------------- EDITOR CORE (v20.3 derived) ---------------- */
+let ws = null
+let heceler = []
+let loadedIndex = -1
+let currentAudioName = "audio.mp3"
+let currentAudioDataUrl = ""
+let cursorTime = 0
+let dragState = null
+let wrapperBound = false
+let objectUrlRef = null
+let dragPreviewRAF = null
+let dragPreviewTarget = null
+let overlaySyncScheduled = false
+let karaokeSelectionRaf = null
+let previewPlaying = false
+let lastIntroValue = 0
+let selectedSegmentIndexes = []
+let isSequencePlaying = false
+let sequenceStopRequested = false
+let karaokeSelectionState = null
+let lastScrolledActiveId = null
+let waveformDragState = null
+
+/* editor dom */
+const titleInput = document.getElementById("titleInput")
+const audioFile = document.getElementById("audioFile")
+const playBtn = document.getElementById("playBtn")
+const zoom = document.getElementById("zoom")
+const rateSelect = document.getElementById("rateSelect")
+const introInput = document.getElementById("intro")
+const difficultySelect = document.getElementById("difficultySelect")
+const keySelect = document.getElementById("keySelect")
+const startInput = document.getElementById("start")
+const endInput = document.getElementById("end")
+const heceInput = document.getElementById("hece")
+const notaInput = document.getElementById("nota")
+const satirInput = document.getElementById("satir")
+const autoTimingBtn = document.getElementById("autoTimingBtn")
+const saveProjectBtn = document.getElementById("saveProjectBtn")
+const splitWordsBtn = document.getElementById("splitWordsBtn")
+const loadProjectBtn = document.getElementById("loadProjectBtn")
+const resetTimingBtn = document.getElementById("resetTimingBtn")
+const saveBtn = document.getElementById("saveBtn")
+const updateBtn = document.getElementById("updateBtn")
+const deleteLoadedBtn = document.getElementById("deleteLoadedBtn")
+const lyricsInput = document.getElementById("lyricsInput")
+const importJsonBtn = document.getElementById("importJsonBtn")
+const importJsonInput = document.getElementById("importJsonInput")
+const nudgeAmount = document.getElementById("nudgeAmount")
+const minusStartBtn = document.getElementById("minusStartBtn")
+const plusStartBtn = document.getElementById("plusStartBtn")
+const minusEndBtn = document.getElementById("minusEndBtn")
+const plusEndBtn = document.getElementById("plusEndBtn")
+const shiftLeftBtn = document.getElementById("shiftLeftBtn")
+const shiftRightBtn = document.getElementById("shiftRightBtn")
+const analyzeNoteBtn = document.getElementById("analyzeNoteBtn")
+const analyzeAllBtn = document.getElementById("analyzeAllBtn")
+const previewSelectedBtn = document.getElementById("previewSelectedBtn")
+const previewPlayBtn = document.getElementById("previewPlayBtn")
+const previewStopBtn = document.getElementById("previewStopBtn")
+const micBtn = document.getElementById("micBtn")
+const clearSelectionBtn = document.getElementById("clearSelectionBtn")
+const playLineBtn = document.getElementById("playLineBtn")
+const statusText = document.getElementById("statusText")
+const timeText = document.getElementById("timeText")
+const cursorText = document.getElementById("cursorText")
+const micText = document.getElementById("micText")
+const noteText = document.getElementById("noteText")
+const activeSegmentText = document.getElementById("activeSegmentText")
+const analysisText = document.getElementById("analysisText")
+const overlayViewport = document.getElementById("overlayViewport")
+const overlayContent = document.getElementById("overlayContent")
+const ruler = document.getElementById("ruler")
+const segmentStrip = document.getElementById("segmentStrip")
+const stripCursor = document.getElementById("stripCursor")
+const karaoke = document.getElementById("karaoke")
+const waveformEl = document.getElementById("waveform")
+
+/* practice dom */
+const practiceKeySelect = document.getElementById("practiceKeySelect")
+const micBtnPractice = document.getElementById("micBtnPractice")
+const stopWarmupBtn = document.getElementById("stopWarmupBtn")
+const ascendingScaleBtn = document.getElementById("ascendingScaleBtn")
+const descendingScaleBtn = document.getElementById("descendingScaleBtn")
+const practiceDetectedNote = document.getElementById("practiceDetectedNote")
+const practiceTargetNoteEl = document.getElementById("practiceTargetNote")
+const practiceTunerText = document.getElementById("practiceTunerText")
+const practiceTunerNeedle = document.getElementById("practiceTunerNeedle")
+const practiceSongTitle = document.getElementById("practiceSongTitle")
+const practiceSongMeta = document.getElementById("practiceSongMeta")
+const practiceKaraoke = document.getElementById("practiceKaraoke")
+const warmupNotes = document.getElementById("warmupNotes")
+const globalRateSelect = document.getElementById("globalRateSelect")
+const practicePlayAllBtn = document.getElementById("practicePlayAllBtn")
+const practiceStopBtn = document.getElementById("practiceStopBtn")
+const practiceToleranceSelect = document.getElementById("practiceToleranceSelect")
+
+/* measure dom */
+const micBtnMeasure = document.getElementById("micBtnMeasure")
+const measureResetBtn = document.getElementById("measureResetBtn")
+const measureStartBtn = document.getElementById("measureStartBtn")
+const measureStopBtn = document.getElementById("measureStopBtn")
+const measureDetectedNote = document.getElementById("measureDetectedNote")
+const measureTargetNoteEl = document.getElementById("measureTargetNote")
+const measureTunerNeedle = document.getElementById("measureTunerNeedle")
+const measureScore = document.getElementById("measureScore")
+const measureStatusText = document.getElementById("measureStatusText")
+const measureAccuracyText = document.getElementById("measureAccuracyText")
+const measurePreviewBtn = null
+const measureStopPreviewBtn = null
+const measureKaraoke = document.getElementById("measureKaraoke")
+const measureToleranceSelect = document.getElementById("measureToleranceSelect")
+
+/* library dom */
+const librarySearch = document.getElementById("librarySearch")
+const libraryImportBtn = document.getElementById("libraryImportBtn")
+const libraryImportInput = document.getElementById("libraryImportInput")
+const deleteSongBtn = document.getElementById("deleteSongBtn")
+const songList = document.getElementById("songList")
+const librarySongTitle = document.getElementById("librarySongTitle")
+const librarySongDesc = document.getElementById("librarySongDesc")
+const librarySegCount = document.getElementById("librarySegCount")
+const libraryAudioInfo = document.getElementById("libraryAudioInfo")
+const libraryKeyInfo = document.getElementById("libraryKeyInfo")
+const librarySegments = document.getElementById("librarySegments")
+const openPracticeBtn = document.getElementById("openPracticeBtn")
+const openMeasureBtn = document.getElementById("openMeasureBtn")
+const openEditorBtn = document.getElementById("openEditorBtn")
+const saveToLibraryBtn = document.getElementById("saveToLibraryBtn")
+
+function getIntroValue(){
+  const val = parseFloat(introInput.value)
+  return isNaN(val) ? 0 : round2(val)
+}
+function getNudgeValue(){
+  const val = parseFloat(nudgeAmount.value)
+  return isNaN(val) ? 0.05 : val
+}
+function hasAudioLoaded(){ return !!(ws && ws.getDuration && ws.getDuration() > 0) }
+function getWaveWrapper(){ return ws && ws.drawer ? ws.drawer.wrapper : null }
+function getWaveInner(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return null
+  return wrapper.querySelector(".wavesurfer-wave") || wrapper.firstElementChild
+}
+function getScrollableWidth(){
+  const inner = getWaveInner()
+  if(inner && inner.scrollWidth) return inner.scrollWidth
+  const wrapper = getWaveWrapper()
+  if(wrapper && wrapper.scrollWidth) return wrapper.scrollWidth
+  return overlayViewport.clientWidth || 1
+}
+function getVisibleWidth(){
+  const wrapper = getWaveWrapper()
+  return wrapper ? wrapper.clientWidth : (overlayViewport.clientWidth || 1)
+}
+function getScrollLeft(){
+  const wrapper = getWaveWrapper()
+  return wrapper ? wrapper.scrollLeft : 0
+}
+function getDurationSafe(){ return hasAudioLoaded() ? ws.getDuration() : 1 }
+function getPxPerSec(){ return getScrollableWidth() / getDurationSafe() }
+function timeToPx(t){ return t * getPxPerSec() }
+function pxToTime(px){ return px / getPxPerSec() }
+function seekToTime(t){
+  if(!hasAudioLoaded()) return
+  const duration = ws.getDuration()
+  const clamped = clamp(t, 0, duration)
+  ws.seekTo(duration ? clamped / duration : 0)
+  setCursorTime(clamped)
+}
+function setCursorTime(t){
+  cursorTime = clamp(round2(t || 0), 0, hasAudioLoaded() ? ws.getDuration() : 999999)
+  cursorText.textContent = "Cursor: " + cursorTime.toFixed(2) + " sn"
+  updateStripCursor()
+}
+function scrollToTime(t){
+  const wrapper = getWaveWrapper()
+  if(!wrapper || !hasAudioLoaded()) return
+  const x = timeToPx(t)
+  const targetScroll = clamp(x - wrapper.clientWidth * 0.35, 0, wrapper.scrollWidth - wrapper.clientWidth)
+  wrapper.scrollLeft = targetScroll
+  scheduleOverlaySync()
+}
+function previewDragCursor(t){
+  dragPreviewTarget = t
+  if(dragPreviewRAF) return
+  dragPreviewRAF = requestAnimationFrame(() => {
+    if(dragPreviewTarget !== null){
+      seekToTime(dragPreviewTarget)
+      scrollToTime(dragPreviewTarget)
+    }
+    dragPreviewRAF = null
+  })
+}
+function scrollKaraokeToActive(el, container=karaoke){
+  if(!el || !container) return
+  const cRect = container.getBoundingClientRect()
+  const eRect = el.getBoundingClientRect()
+  const relativeTop = eRect.top - cRect.top
+  const targetTop = container.scrollTop + relativeTop - (container.clientHeight / 2) + (eRect.height / 2)
+  container.scrollTo({ top: Math.max(0, targetTop), behavior:"smooth" })
+}
+function syncOverlayPosition(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+  overlayContent.style.transform = `translateX(${-wrapper.scrollLeft}px)`
+  updateStripCursor()
+}
+function scheduleOverlaySync(){
+  if(overlaySyncScheduled) return
+  overlaySyncScheduled = true
+  requestAnimationFrame(()=>{
+    overlaySyncScheduled = false
+    syncOverlayPosition()
+  })
+}
+function moveWaveCursorBy(delta){
+  if(!hasAudioLoaded()) return
+  const now = ws.getCurrentTime()
+  const target = clamp(now + delta, 0, ws.getDuration())
+  seekToTime(target)
+  scrollToTime(target)
+}
+function selectAdjacentSegment(direction){
+  const ordered = heceler.map((seg, idx)=>({ seg, idx })).filter(x=>!x.seg.isIntro && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  if(!ordered.length) return
+  if(loadedIndex === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+  const pos = ordered.findIndex(x => x.idx === loadedIndex)
+  if(pos === -1){
+    const first = direction > 0 ? ordered[0] : ordered[ordered.length - 1]
+    seekToSegment(first.idx, false)
+    selectedSegmentIndexes = [first.idx]
+    refreshKaraokeSelectionClasses()
+    return
+  }
+  const nextPos = clamp(pos + direction, 0, ordered.length - 1)
+  const nextItem = ordered[nextPos]
+  seekToSegment(nextItem.idx, false)
+  selectedSegmentIndexes = [nextItem.idx]
+  refreshKaraokeSelectionClasses()
+}
+function bindWaveformDrag(){
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+
+  wrapper.addEventListener("pointerdown", (e)=>{
+    if(e.target.closest(".handle") || e.target.closest(".strip-block")) return
+    waveformDragState = { startX:e.clientX, startScroll:wrapper.scrollLeft, moved:false }
+    try{ wrapper.setPointerCapture(e.pointerId) }catch(err){}
+  })
+  wrapper.addEventListener("pointermove", (e)=>{
+    if(!waveformDragState) return
+    const dx = e.clientX - waveformDragState.startX
+    if(Math.abs(dx) > 2) waveformDragState.moved = true
+    wrapper.scrollLeft = waveformDragState.startScroll - dx
+    scheduleOverlaySync()
+  })
+  const end = ()=>{ waveformDragState = null }
+  wrapper.addEventListener("pointerup", end)
+  wrapper.addEventListener("pointercancel", end)
+  wrapper.addEventListener("lostpointercapture", end)
+}
+function bindWrapperEvents(){
+  if(wrapperBound) return
+  const wrapper = getWaveWrapper()
+  if(!wrapper) return
+  wrapper.addEventListener("scroll", scheduleOverlaySync, { passive:true })
+  bindWaveformDrag()
+  wrapperBound = true
+}
+function initWave(){
+  ws = WaveSurfer.create({
+    container:"#waveform",
+    waveColor:"#4a5f8e",
+    progressColor:"#facc15",
+    cursorColor:"#facc15",
+    height:320,
+    normalize:true,
+    responsive:true,
+    scrollParent:true,
+    minPxPerSec:Number(zoom.value)
+  })
+
+  ws.on("ready", function(){
+    waveReady = true
+    const resolvers = pendingWaveReadyResolvers.slice()
+    pendingWaveReadyResolvers = []
+    resolvers.forEach(fn=>{ try{ fn(true) }catch(err){} })
+    statusText.textContent = "Ses yüklendi"
+    statusText.className = "pill purple"
+    try{ if(ws.setVolume) ws.setVolume(1) }catch(e){}
+    ws.zoom(Number(zoom.value))
+    ws.setPlaybackRate(Number(rateSelect.value))
+    bindWrapperEvents()
+    setCursorTime(ws.getCurrentTime())
+    normalizeIntroSegment()
+    renderAll()
+    scheduleOverlaySync()
+    refreshLibraryPreviewOnly()
+    if(pendingSnippet && pendingSnippet.start !== undefined && pendingSnippet.end !== undefined){
+      const { start, end } = pendingSnippet
+      pendingSnippet = null
+      setTimeout(()=>{ playSnippetOnWs(start, end) }, 60)
+    }
+  })
+
+  ws.on("audioprocess", function(){
+    const now = ws.getCurrentTime()
+    timeText.textContent = now.toFixed(2) + " sn"
+    setCursorTime(now)
+    getCurrentDetectedPitch()
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+  ws.on("seek", function(progress){
+    const duration = ws.getDuration() || 0
+    const now = progress * duration
+    timeText.textContent = now.toFixed(2) + " sn"
+    setCursorTime(now)
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+  ws.on("pause", function(){
+    const now = ws.getCurrentTime()
+    lastScrolledActiveId = null
+    setCursorTime(now)
+    karaokePlaybackUpdate(now)
+    scheduleOverlaySync()
+  })
+  ws.on("finish", function(){
+    previewPlaying = false
+    isSequencePlaying = false
+    lastScrolledActiveId = null
+    karaokePlaybackUpdate(ws.getDuration())
+    if(measureRunning && measurePlaybackMode){
+      finalizeMeasureRun()
+      measureStatusText.textContent = 'Ölçme tamamlandı'
+      measureStatusText.className = 'pill green'
+    }
+  })
+  ws.on("zoom", function(){
+    renderAll()
+    scheduleOverlaySync()
+  })
+}
+function normalizeIntroSegment(){
+  const intro = getIntroValue()
+  const introIndex = heceler.findIndex(h => h.isIntro)
+  if(introIndex === -1){
+    heceler.unshift({
+      text:"INTRO", note:"", start:0, end:intro, line:0,
+      detectedSemis:[], detectedNotesRaw:[], isIntro:true
+    })
+  }else{
+    const seg = heceler[introIndex]
+    seg.text = "INTRO"; seg.start = 0; seg.end = intro; seg.line = 0; seg.isIntro = true
+    if(!Array.isArray(seg.detectedSemis)) seg.detectedSemis = []
+    if(!Array.isArray(seg.detectedNotesRaw)) seg.detectedNotesRaw = []
+  }
+}
+function shiftAllNonIntroBy(delta){
+  if(delta === 0) return
+  heceler.forEach(h=>{
+    if(h.isIntro) return
+    if(h.start !== null) h.start = round2(Math.max(0, h.start + delta))
+    if(h.end !== null) h.end = round2(Math.max(0.03, h.end + delta))
+  })
+}
+function alignFirstSegmentToIntro(){
+  const ordered = getOrderedTimedSegments().filter(x => !x.s.isIntro)
+  if(ordered.length === 0) return
+  const first = ordered[0].s
+  if(first.start === null || first.end === null) return
+  const len = Math.max(0.03, round2(first.end - first.start))
+  first.start = getIntroValue()
+  first.end = round2(first.start + len)
+  for(let i=1;i<ordered.length;i++){
+    const prev = ordered[i - 1].s
+    const cur = ordered[i].s
+    const curLen = Math.max(0.03, round2(cur.end - cur.start))
+    cur.start = round2(prev.end)
+    cur.end = round2(cur.start + curLen)
+  }
+}
+function parseLyricsToSegmentsPreserve(){
+  const parsedWords = splitWordsFromText(lyricsInput.value)
+  const oldWords = heceler.filter(h => !h.isIntro)
+  const introSeg = heceler.find(h => h.isIntro) || { text:"INTRO", note:"", start:0, end:getIntroValue(), line:0, detectedSemis:[], detectedNotesRaw:[], isIntro:true }
+
+  const next = [{
+    text:"INTRO", note:introSeg.note || "", start:0, end:getIntroValue(), line:0,
+    detectedSemis:[], detectedNotesRaw:[], isIntro:true
+  }]
+  parsedWords.forEach((w, i)=>{
+    const old = oldWords[i]
+    next.push({
+      text:w.text,
+      note: old ? (old.note || "") : "",
+      start: old ? old.start : null,
+      end: old ? old.end : null,
+      line:w.line,
+      detectedSemis:[], detectedNotesRaw:[], isIntro:false
+    })
+  })
+  heceler = next
+  selectedSegmentIndexes = []
+}
+function getOrderedTimedSegments(){
+  return heceler.map((s, i)=>({ s, i })).filter(x => x.s.start !== null && x.s.end !== null).sort((a,b)=>a.s.start - b.s.start)
+}
+function updateActiveSegmentLabel(index=-1){
+  if(index === -1 || !heceler[index]){ activeSegmentText.textContent = "Aktif segment: -"; return }
+  activeSegmentText.textContent = "Aktif segment: " + heceler[index].text
+}
+function seekToSegment(index, playSnippet=false){
+  const seg = heceler[index]
+  if(!seg) return
+  loadedIndex = index
+  updateActiveSegmentLabel(index)
+  heceInput.value = seg.text
+  notaInput.value = seg.note || ""
+  satirInput.value = seg.line || ""
+  startInput.value = seg.start !== null ? Number(seg.start).toFixed(2) : ""
+  endInput.value = seg.end !== null ? Number(seg.end).toFixed(2) : ""
+
+  if(seg.start !== null && hasAudioLoaded()){ seekToTime(seg.start); scrollToTime(seg.start) }
+  renderStrip()
+  if(playSnippet && hasAudioLoaded() && seg.start !== null && seg.end !== null){ ws.play(seg.start, seg.end) }
+}
+function getRulerPrecisionConfig(){
+  const z = Number(zoom.value || 100)
+  if(z >= 420) return { minor:0.05, medium:0.10, major:0.50, decimals:2 }
+  if(z >= 300) return { minor:0.05, medium:0.25, major:1.00, decimals:2 }
+  if(z >= 200) return { minor:0.10, medium:0.50, major:1.00, decimals:1 }
+  if(z >= 120) return { minor:0.25, medium:0.50, major:1.00, decimals:1 }
+  if(z >= 70) return { minor:0.50, medium:1.00, major:2.00, decimals:1 }
+  return { minor:1.00, medium:2.00, major:5.00, decimals:0 }
+}
+function isMultipleOf(value, step){
+  if(step <= 0) return false
+  const ratio = value / step
+  return Math.abs(ratio - Math.round(ratio)) < 0.0001
+}
+function renderRuler(){
+  ruler.innerHTML = ""
+  const duration = getDurationSafe()
+  const totalWidth = Math.max(getScrollableWidth(), getVisibleWidth())
+  const { minor, medium, major, decimals } = getRulerPrecisionConfig()
+  ruler.style.width = totalWidth + "px"
+  segmentStrip.style.width = totalWidth + "px"
+  overlayContent.style.width = totalWidth + "px"
+
+  for(let t=0;t<=duration + 0.0001;t+=minor){
+    const tFixed = round2(t)
+    const x = timeToPx(tFixed)
+    const tick = document.createElement("div")
+    tick.className = "ruler-tick"
+    const isMajor = isMultipleOf(tFixed, major)
+    const isMedium = !isMajor && isMultipleOf(tFixed, medium)
+    if(isMajor) tick.classList.add("major")
+    else if(isMedium) tick.classList.add("medium")
+    else tick.classList.add("minor")
+    tick.style.left = x + "px"
+    ruler.appendChild(tick)
+    if(isMajor){
+      const label = document.createElement("div")
+      label.className = "ruler-label"
+      label.style.left = x + "px"
+      label.textContent = tFixed.toFixed(decimals) + "s"
+      ruler.appendChild(label)
+    }
+  }
+  ruler.onclick = function(e){
+    if(!hasAudioLoaded()) return
+    const rect = ruler.getBoundingClientRect()
+    const localX = e.clientX - rect.left
+    const absoluteX = localX + getScrollLeft()
+    seekToTime(pxToTime(absoluteX))
+  }
+}
+function renderStrip(){
+  segmentStrip.innerHTML = ""
+  if(heceler.length === 0) return
+  const ordered = heceler.map((seg, idx)=>({ seg, idx })).filter(x => x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start - b.seg.start)
+  ordered.forEach(item=>{
+    const seg = item.seg
+    const left = timeToPx(seg.start)
+    const width = Math.max(34, timeToPx(seg.end) - timeToPx(seg.start))
+    const block = document.createElement("div")
+    block.className = "strip-block" + (seg.isIntro ? " intro" : "") + (item.idx === loadedIndex ? " active" : "")
+    block.style.left = left + "px"
+    block.style.width = width + "px"
+    block.dataset.index = item.idx
+    block.innerHTML = `
+      <div class="handle left"></div>
+      <div class="drag"></div>
+      <div class="handle right"></div>
+      <div class="body">${escapeHtml(seg.text)}</div>
+    `
+    block.addEventListener("click", (e)=>{ e.stopPropagation(); if(!dragState) seekToSegment(item.idx, true) })
+    block.querySelector(".drag").addEventListener("pointerdown", e => startDrag(e, item.idx, "move"))
+    block.querySelector(".handle.left").addEventListener("pointerdown", e => startDrag(e, item.idx, "resize-left"))
+    block.querySelector(".handle.right").addEventListener("pointerdown", e => startDrag(e, item.idx, "resize-right"))
+    segmentStrip.appendChild(block)
+  })
+  segmentStrip.onclick = function(e){
+    if(!hasAudioLoaded()) return
+    const rect = segmentStrip.getBoundingClientRect()
+    const localX = e.clientX - rect.left
+    const absoluteX = localX + getScrollLeft()
+    seekToTime(pxToTime(absoluteX))
+  }
+  updateStripCursor()
+}
+function updateStripCursor(){
+  if(!hasAudioLoaded()){ stripCursor.style.left = "0px"; return }
+  stripCursor.style.left = (timeToPx(cursorTime) - getScrollLeft()) + "px"
+}
+function startDrag(e, index, mode){
+  e.preventDefault(); e.stopPropagation()
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null) return
+  dragState = { index, mode, pointerId:e.pointerId, startX:e.clientX, origStart:seg.start, origEnd:seg.end }
+  try{ e.target.setPointerCapture(e.pointerId) }catch(err){}
+  document.addEventListener("pointermove", onDragMove, { passive:false })
+  document.addEventListener("pointerup", endDrag)
+  document.addEventListener("pointercancel", endDrag)
+}
+function onDragMove(e){
+  if(!dragState) return
+  e.preventDefault()
+  const seg = heceler[dragState.index]
+  const deltaPx = e.clientX - dragState.startX
+  const deltaTime = pxToTime(deltaPx)
+  const minLen = 0.03
+  const duration = hasAudioLoaded() ? ws.getDuration() : Infinity
+
+  if(dragState.mode === "move"){
+    if(seg.isIntro) return
+    const len = dragState.origEnd - dragState.origStart
+    let newStart = dragState.origStart + deltaTime
+    let newEnd = newStart + len
+    const sorted = getOrderedTimedSegments()
+    const pos = sorted.findIndex(x => x.i === dragState.index)
+    const prev = pos > 0 ? sorted[pos - 1].s : null
+    const next = pos < sorted.length - 1 ? sorted[pos + 1].s : null
+    if(prev && newStart < prev.end){ newStart = prev.end; newEnd = newStart + len }
+    if(next && newEnd > next.start){
+      newEnd = next.start; newStart = newEnd - len
+      if(prev && newStart < prev.end){ newStart = prev.end; newEnd = newStart + len }
+    }
+    if(newStart < 0){ newStart = 0; newEnd = len }
+    if(newEnd > duration){ newEnd = duration; newStart = newEnd - len; if(newStart < 0) newStart = 0 }
+    seg.start = round2(newStart); seg.end = round2(newEnd)
+    startInput.value = seg.start.toFixed(2); endInput.value = seg.end.toFixed(2)
+    previewDragCursor(seg.end); renderStrip(); return
+  }
+
+  if(dragState.mode === "resize-left"){
+    const sorted = getOrderedTimedSegments()
+    const pos = sorted.findIndex(x => x.i === dragState.index)
+    const prev = pos > 0 ? sorted[pos - 1].s : null
+    let newStart = dragState.origStart + deltaTime
+    if(seg.isIntro) newStart = 0
+    if(prev) newStart = Math.max(newStart, prev.end)
+    newStart = Math.max(0, newStart)
+    if(seg.end <= newStart + minLen) newStart = seg.end - minLen
+    seg.start = round2(newStart)
+    if(seg.isIntro) seg.start = 0
+    startInput.value = seg.start.toFixed(2)
+    previewDragCursor(seg.start); renderStrip(); return
+  }
+
+  if(dragState.mode === "resize-right"){
+    let newEnd = dragState.origEnd + deltaTime
+    newEnd = Math.max(seg.start + minLen, newEnd)
+    if(hasAudioLoaded()) newEnd = Math.min(newEnd, duration)
+    const diff = round2(newEnd - seg.end)
+    seg.end = round2(newEnd)
+    if(seg.isIntro) introInput.value = seg.end.toFixed(2)
+    const ordered = getOrderedTimedSegments()
+    const pos = ordered.findIndex(x => x.i === dragState.index)
+    if(pos !== -1){
+      for(let i=pos+1;i<ordered.length;i++){
+        const cur = ordered[i].s
+        const len = Math.max(minLen, round2(cur.end - cur.start))
+        cur.start = round2(cur.start + diff)
+        cur.end = round2(cur.start + len)
+        if(hasAudioLoaded() && cur.end > duration){
+          cur.end = round2(duration)
+          if(cur.end <= cur.start) cur.start = round2(Math.max(0, cur.end - minLen))
+        }
+      }
+      for(let i=pos+1;i<ordered.length;i++){
+        const prev = ordered[i - 1].s
+        const cur = ordered[i].s
+        const len = Math.max(minLen, round2(cur.end - cur.start))
+        cur.start = round2(prev.end)
+        cur.end = round2(cur.start + len)
+      }
+    }
+    endInput.value = seg.end.toFixed(2)
+    previewDragCursor(seg.end)
+    renderStrip()
+  }
+}
+function endDrag(){
+  if(!dragState) return
+  const idx = dragState.index
+  dragState = null
+  document.removeEventListener("pointermove", onDragMove)
+  document.removeEventListener("pointerup", endDrag)
+  document.removeEventListener("pointercancel", endDrag)
+  renderKaraoke()
+  seekToSegment(idx, false)
+  statusText.textContent = "Segment düzenlendi"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function nudgeSegmentBoundary(which, direction){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null) return
+  const amount = getNudgeValue()
+  const delta = direction * amount
+  const minLen = 0.03
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+
+  if(which === "start"){
+    const prev = pos > 0 ? ordered[pos - 1].s : null
+    let newStart = seg.start + delta
+    if(seg.isIntro) newStart = 0
+    if(prev) newStart = Math.max(newStart, prev.end)
+    newStart = Math.max(0, newStart)
+    if(seg.end <= newStart + minLen) newStart = seg.end - minLen
+    seg.start = round2(newStart)
+    if(seg.isIntro) seg.start = 0
+    startInput.value = seg.start.toFixed(2)
+    seekToTime(seg.start); scrollToTime(seg.start)
+  }
+
+  if(which === "end"){
+    let newEnd = seg.end + delta
+    newEnd = Math.max(seg.start + minLen, newEnd)
+    if(hasAudioLoaded()) newEnd = Math.min(newEnd, ws.getDuration())
+    const diff = round2(newEnd - seg.end)
+    seg.end = round2(newEnd)
+    if(seg.isIntro) introInput.value = seg.end.toFixed(2)
+
+    for(let i=pos+1;i<ordered.length;i++){
+      const cur = ordered[i].s
+      const len = Math.max(minLen, round2(cur.end - cur.start))
+      cur.start = round2(cur.start + diff)
+      cur.end = round2(cur.start + len)
+      if(hasAudioLoaded() && cur.end > ws.getDuration()){
+        cur.end = round2(ws.getDuration())
+        if(cur.end <= cur.start) cur.start = round2(Math.max(0, cur.end - minLen))
+      }
+    }
+    for(let i=pos+1;i<ordered.length;i++){
+      const prev = ordered[i - 1].s
+      const cur = ordered[i].s
+      const len = Math.max(minLen, round2(cur.end - cur.start))
+      cur.start = round2(prev.end)
+      cur.end = round2(cur.start + len)
+    }
+
+    endInput.value = seg.end.toFixed(2)
+    seekToTime(seg.end); scrollToTime(seg.end)
+  }
+  renderAll()
+  statusText.textContent = "Segment sınırı düzeltildi"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function shiftWholeSegment(direction){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null) return
+  if(seg.isIntro){ alert("Intro segmenti bu şekilde kaydırılamaz."); return }
+
+  const amount = getNudgeValue()
+  const delta = direction * amount
+  const len = seg.end - seg.start
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+  const prev = pos > 0 ? ordered[pos - 1].s : null
+  const next = pos < ordered.length - 1 ? ordered[pos + 1].s : null
+
+  let newStart = seg.start + delta
+  let newEnd = seg.end + delta
+  if(prev && newStart < prev.end){ newStart = prev.end; newEnd = newStart + len }
+  if(next && newEnd > next.start){ newEnd = next.start; newStart = newEnd - len }
+  if(newStart < 0){ newStart = 0; newEnd = len }
+  if(hasAudioLoaded() && newEnd > ws.getDuration()){
+    newEnd = ws.getDuration(); newStart = newEnd - len; if(newStart < 0) newStart = 0
+  }
+
+  seg.start = round2(newStart)
+  seg.end = round2(newEnd)
+  startInput.value = seg.start.toFixed(2)
+  endInput.value = seg.end.toFixed(2)
+  seekToTime(direction < 0 ? seg.start : seg.end)
+  scrollToTime(direction < 0 ? seg.start : seg.end)
+  renderAll()
+  statusText.textContent = "Segment kaydırıldı"
+  statusText.className = "pill amber"
+  autoSaveProject()
+}
+function getCentralWeight(progress){
+  const dist = Math.abs(progress - 0.5)
+  return 1.45 - dist * 2.1
+}
+function buildStableRuns(notes){
+  if(!notes.length) return []
+  const runs = []
+  let cur = { note:notes[0].note, weight:notes[0].weight, count:1 }
+  for(let i=1;i<notes.length;i++){
+    if(notes[i].note === cur.note){ cur.weight += notes[i].weight; cur.count += 1 }
+    else{ runs.push(cur); cur = { note:notes[i].note, weight:notes[i].weight, count:1 } }
+  }
+  runs.push(cur)
+  return runs
+}
+function analyzeSegmentPitchSequence(index){
+  if(index === -1 || !hasAudioLoaded()) return null
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null) return null
+  const segDur = seg.end - seg.start
+  if(segDur < 0.06) return null
+
+  const scaleNotes = getScaleNotesByKey(keySelect.value)
+  const buffer = ws.backend.buffer
+  const data = buffer.getChannelData(0)
+  const sampleRate = buffer.sampleRate
+  const startSample = Math.max(0, Math.floor(seg.start * sampleRate))
+  const endSample = Math.min(data.length, Math.floor(seg.end * sampleRate))
+  if(endSample - startSample <= 1024) return null
+
+  const shortSegment = segDur < 0.70
+  const midSegment = segDur < 1.60
+  const windowSize = 2048
+  const hopSize = 256
+  const frames = []
+
+  for(let i=startSample;i + windowSize < endSample;i += hopSize){
+    const slice = data.slice(i, i + windowSize)
+    let energy = 0
+    for(let k=0;k<slice.length;k++) energy += Math.abs(slice[k])
+    energy /= slice.length
+    if(energy < 0.008) continue
+    const freq = autoCorrelate(slice, sampleRate)
+    if(freq === -1 || freq < 70 || freq > 1200) continue
+
+    const midi = freqToMidi(freq)
+    const rawNote = midiToNoteName(midi)
+    const filteredNote = semitoneToNearestScaleNote(noteToSemitone(rawNote), scaleNotes)
+    const t = i / sampleRate
+    const progress = clamp((t - seg.start) / Math.max(0.001, segDur), 0, 1)
+    const centralWeight = getCentralWeight(progress)
+    const edgePenalty = (progress < 0.15 || progress > 0.85) ? 0.30 : 1
+    const totalWeight = energy * centralWeight * edgePenalty
+    frames.push({ rawNote, filteredNote, weight:totalWeight, progress })
+  }
+  if(!frames.length) return null
+  const focusedFrames = frames.filter(f => shortSegment ? (f.progress >= 0.22 && f.progress <= 0.78) : true)
+  const workFrames = focusedFrames.length ? focusedFrames : frames
+  const filteredNotes = workFrames.map(x => ({ note:x.filteredNote, weight:x.weight }))
+  const runs = buildStableRuns(filteredNotes)
+  const weighted = {}
+  filteredNotes.forEach(f => weighted[f.note] = (weighted[f.note] || 0) + f.weight)
+  runs.forEach(run => { weighted[run.note] = (weighted[run.note] || 0) + run.weight * 0.65 + run.count * 0.12 })
+  const ranked = Object.entries(weighted).sort((a,b)=>b[1]-a[1]).map(x=>x[0])
+
+  if(shortSegment){
+    const bestRun = runs.sort((a,b)=>(b.weight + b.count*0.4) - (a.weight + a.count*0.4))[0]
+    const best = bestRun ? bestRun.note : ranked[0]
+    return { sequence:[best], dominantNote:best, confidence:1 }
+  }
+
+  let seq = compressNoteSequence(runs.filter(run => run.count >= 2 || run.weight >= 0.03).map(run => run.note))
+  if(!seq.length) seq = [ranked[0]]
+  seq = seq.filter(n => ranked.includes(n))
+  seq = compressNoteSequence(seq)
+
+  if(midSegment){
+    seq = seq.slice(0, 2)
+    if(!seq.length) seq = [ranked[0]]
+  }else{
+    seq = seq.slice(0, 3)
+    if(!seq.length) seq = [ranked[0]]
+  }
+  const dominantNote = ranked[0] || seq[0]
+  const totalWeight = Object.values(weighted).reduce((a,b)=>a+b,0) || 1
+  const confidence = dominantNote ? (weighted[dominantNote] || 0) / totalWeight : 0
+  return { sequence:seq, dominantNote, confidence }
+}
+function analyzeSelectedSegmentNote(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const result = analyzeSegmentPitchSequence(loadedIndex)
+  if(!result){
+    analysisText.textContent = "Analiz: nota bulunamadı"
+    analysisText.className = "pill red"
+    return
+  }
+  const seqString = compressNoteSequence(result.sequence).join(" ")
+  notaInput.value = seqString
+  heceler[loadedIndex].note = seqString
+  const percent = Math.round(result.confidence * 100)
+  analysisText.textContent = "Analiz: " + seqString + " | baskın: " + result.dominantNote + " (%" + percent + ")"
+  analysisText.className = "pill green"
+  renderKaraoke(); refreshMeasurePanel(); refreshPracticePanel()
+  statusText.textContent = "Nota önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
+}
+function analyzeAllSegmentsNotes(){
+  const targets = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null)
+  if(!targets.length){ alert("Önce zamanlanmış segmentler olmalı."); return }
+  let updated = 0
+  targets.forEach(item=>{
+    const result = analyzeSegmentPitchSequence(item.idx)
+    if(result){ heceler[item.idx].note = compressNoteSequence(result.sequence).join(" "); updated += 1 }
+  })
+  renderAll(); refreshMeasurePanel(); refreshPracticePanel()
+  analysisText.textContent = "Analiz: " + updated + " segment güncellendi"
+  analysisText.className = "pill green"
+  statusText.textContent = "Tümüne nota önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
+}
+function renderKaraoke(){
+  const sorted = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  if(sorted.length === 0){
+    karaoke.innerHTML = '<div class="karaokeBox" style="width:100%;cursor:default;">Henüz zamanlanmış karaoke kutusu oluşmadı.</div>'
+    return
+  }
+  karaoke.innerHTML = ""
+  const intro = heceler.find(h => h.isIntro)
+  if(intro && intro.end !== null && intro.end > 0){
+    const introBox = document.createElement("div")
+    introBox.className = "karaokeBox intro"
+    introBox.id = "karaoke-intro"
+    introBox.innerHTML = `<div class="fill"></div><div class="label">Intro ${intro.end.toFixed(2)} sn</div>`
+    introBox.onclick = () => hasAudioLoaded() && ws.play(0, intro.end)
+    karaoke.appendChild(introBox)
+    const br = document.createElement("div"); br.className = "lineBreak"; karaoke.appendChild(br)
+  }
+  let lastLine = null
+  sorted.forEach((item, sortedIndex)=>{
+    if(lastLine !== null && item.seg.line !== lastLine){
+      const br = document.createElement("div"); br.className = "lineBreak"; karaoke.appendChild(br)
+    }
+    const btn = document.createElement("div")
+    btn.className = "karaokeBox" + (selectedSegmentIndexes.includes(item.idx) ? " selected" : "")
+    btn.id = "karaoke-box-" + sortedIndex
+    btn.dataset.realIndex = item.idx
+    const noteSmall = item.seg.note ? ` <span style="opacity:.72;font-size:12px;">(${escapeHtml(item.seg.note)})</span>` : ""
+    btn.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(item.seg.text)}${noteSmall}</div>`
+    btn.onclick = ()=>{ if(karaokeSelectionState && karaokeSelectionState.moved) return; playSingleKaraokeSegment(item.idx) }
+    karaoke.appendChild(btn)
+    lastLine = item.seg.line
+  })
+}
+function refreshKaraokeSelectionClasses(){
+  document.querySelectorAll(".karaokeBox").forEach(el=>{
+    const realIndex = el.dataset.realIndex
+    if(!realIndex) return
+    const idx = Number(realIndex)
+    el.classList.toggle("selected", selectedSegmentIndexes.includes(idx))
+  })
+}
+function scheduleKaraokeSelectionUpdate(){
+  if(karaokeSelectionRaf) return
+  karaokeSelectionRaf = requestAnimationFrame(()=>{
+    karaokeSelectionRaf = null
+    refreshKaraokeSelectionClasses()
+  })
+}
+function clearSelection(){ selectedSegmentIndexes = []; refreshKaraokeSelectionClasses() }
+function selectWholeLine(lineNo){
+  selectedSegmentIndexes = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.line === lineNo && x.seg.start !== null && x.seg.end !== null).map(x=>x.idx)
+  refreshKaraokeSelectionClasses()
+}
+function getSegmentIndexFromElement(el){
+  if(!el) return null
+  const box = el.closest(".karaokeBox")
+  if(!box) return null
+  if(!box.dataset.realIndex) return null
+  return Number(box.dataset.realIndex)
+}
+function playSingleKaraokeSegment(index){
+  const seg = heceler[index]
+  if(!seg || seg.start === null || seg.end === null || !hasAudioLoaded()) return
+  selectedSegmentIndexes = [index]
+  refreshKaraokeSelectionClasses()
+  seekToSegment(index, true)
+}
+function startKaraokeTouchSelection(e){
+  const idx = getSegmentIndexFromElement(e.target)
+  if(idx === null) return
+  karaokeSelectionState = { pointerId:e.pointerId, moved:false, startIndex:idx, indexes:new Set([idx]) }
+  selectedSegmentIndexes = [idx]
+  refreshKaraokeSelectionClasses()
+  try{ karaoke.setPointerCapture(e.pointerId) }catch(err){}
+}
+function moveKaraokeTouchSelection(e){
+  if(!karaokeSelectionState) return
+  const el = document.elementFromPoint(e.clientX, e.clientY)
+  const idx = getSegmentIndexFromElement(el)
+  if(idx === null) return
+  if(idx !== karaokeSelectionState.startIndex) karaokeSelectionState.moved = true
+  karaokeSelectionState.indexes.add(idx)
+  selectedSegmentIndexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
+  scheduleKaraokeSelectionUpdate()
+}
+function endKaraokeTouchSelection(){
+  if(!karaokeSelectionState) return
+  const moved = karaokeSelectionState.moved
+  const indexes = Array.from(karaokeSelectionState.indexes).sort((a,b)=>a-b)
+  karaokeSelectionState = null
+  if(!indexes.length) return
+  if(moved && indexes.length > 1) playSegmentsSequentially(indexes)
+  else playSingleKaraokeSegment(indexes[0])
+}
+async function playSegmentsSequentially(indexes){
+  if(!hasAudioLoaded() || !indexes.length) return
+  sequenceStopRequested = false
+  isSequencePlaying = true
+  const ordered = indexes.map(i => ({ i, seg:heceler[i] })).filter(x => x.seg && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  for(const item of ordered){
+    if(sequenceStopRequested) break
+    selectedSegmentIndexes = [item.i]
+    refreshKaraokeSelectionClasses()
+    seekToSegment(item.i, false)
+    ws.play(item.seg.start, item.seg.end)
+    await new Promise(resolve => {
+      const ms = Math.max(40, ((item.seg.end - item.seg.start) * 1000) + 50)
+      setTimeout(resolve, ms)
+    })
+  }
+  isSequencePlaying = false
+}
+function playSelectedLine(){
+  if(!selectedSegmentIndexes.length){ alert("Önce bir kelime seç."); return }
+  const first = heceler[selectedSegmentIndexes[0]]
+  if(!first) return
+  selectWholeLine(first.line)
+  playSegmentsSequentially(selectedSegmentIndexes)
+}
+function resetKaraokeClasses(){
+  document.querySelectorAll(".karaokeBox").forEach(el=>{
+    el.classList.remove("active")
+    const fill = el.querySelector(".fill")
+    if(fill) fill.style.width = "0%"
+  })
+}
+function evaluateTargetVsDetected(seg){
+  const targets = parseTargetNotes(seg.note)
+  const actual = compressNoteSequence(seg.detectedNotesRaw || [])
+  if(targets.length === 0) return null
+  if(actual.length === 0) return null
+  const matched = arraysUniqueIntersectionCount(targets, actual)
+  const ratio = matched / targets.length
+  return { matched, total:targets.length, ratio, success:matched >= 1 }
+}
+function karaokePlaybackUpdate(time){
+  const sorted = heceler.map((seg, idx)=>({ seg, idx })).filter(x => !x.seg.isIntro && x.seg.start !== null && x.seg.end !== null).sort((a,b)=>a.seg.start-b.seg.start)
+  if(sorted.length === 0) return
+
+  resetKaraokeClasses()
+  const intro = heceler.find(h => h.isIntro)
+  if(intro && intro.end !== null && intro.end > 0){
+    const introEl = document.getElementById("karaoke-intro")
+    if(introEl){
+      const fill = introEl.querySelector(".fill")
+      if(time <= intro.end){
+        introEl.classList.add("active")
+        fill.style.width = Math.max(0, Math.min(100, (time / intro.end) * 100)) + "%"
+        if(lastScrolledActiveId !== introEl.id){ lastScrolledActiveId = introEl.id; scrollKaraokeToActive(introEl) }
+      }else fill.style.width = "100%"
+    }
+  }
+
+  const currentDetected = getCurrentDetectedPitch()
+  const detectedSemi = currentDetected ? noteToSemitone(currentDetected.note) : null
+
+  sorted.forEach((item, i)=>{
+    const el = document.getElementById("karaoke-box-" + i)
+    if(!el) return
+    const fill = el.querySelector(".fill")
+    const h = item.seg
+    if(!Array.isArray(h.detectedSemis)) h.detectedSemis = []
+    if(!Array.isArray(h.detectedNotesRaw)) h.detectedNotesRaw = []
+
+    if(time >= h.start && time <= h.end){
+      el.classList.add("active")
+      if(lastScrolledActiveId !== el.id){ lastScrolledActiveId = el.id; scrollKaraokeToActive(el) }
+      fill.style.width = Math.max(0, Math.min(100, ((time - h.start) / (h.end - h.start)) * 100)) + "%"
+      if(detectedSemi !== null && !h.detectedSemis.includes(detectedSemi)) h.detectedSemis.push(detectedSemi)
+      if(currentDetected){
+        const nearest = semitoneToNearestScaleNote(noteToSemitone(currentDetected.note), getScaleNotesByKey(keySelect.value))
+        h.detectedNotesRaw.push(nearest)
+        const targets = parseTargetNotes(h.note)
+        const hit = targets.some(target=>{
+          const targetSemi = noteToSemitone(target)
+          const nearestSemi = noteToSemitone(nearest)
+          if(targetSemi === undefined || nearestSemi === undefined) return normalizeNoteName(target) === normalizeNoteName(nearest)
+          let diff = Math.abs(nearestSemi - targetSemi)
+          diff = Math.min(diff, 12 - diff)
+          return diff === 0
+        })
+        if(hit){
+          el.classList.add("ok")
+          el.classList.remove("bad")
+          el.dataset.lockState = "ok"
+        }else if(el.dataset.lockState !== "ok"){
+          el.classList.add("bad")
+          el.dataset.lockState = "bad"
+        }
+      }
+    }else if(time > h.end){
+      fill.style.width = "100%"
+      const evalResult = evaluateTargetVsDetected(h)
+      if(evalResult && evalResult.success){
+        el.classList.add("ok")
+        el.classList.remove("bad")
+        el.dataset.lockState = "ok"
+      }else if(el.dataset.lockState !== "ok"){
+        el.classList.add("bad")
+        el.dataset.lockState = "bad"
+      }
+    }
+    if(selectedSegmentIndexes.includes(item.idx)) el.classList.add("selected")
+  })
+}
+function resetEvaluationFlags(){
+  heceler.forEach(h => { h.detectedSemis = []; h.detectedNotesRaw = [] })
+}
+function buildProjectPayload(){
+  return {
+    version:20.3,
+    title:titleInput.value.trim(),
+    intro:getIntroValue(),
+    difficulty:difficultySelect.value,
+    key:keySelect.value,
+    lyrics:lyricsInput.value,
+    audioName:currentAudioName,
+    audioDataUrl:currentAudioDataUrl || "",
+    selectedSegmentIndexes,
+    heceler:heceler.map(h => ({
+      text:h.text || "",
+      note:h.note || "",
+      start:h.start ?? null,
+      end:h.end ?? null,
+      line:h.line ?? 0,
+      isIntro:!!h.isIntro
+    })),
+    cursorTime
+  }
+}
+function applyProjectPayload(parsed){
+  activeSongPayload = parsed || null
+  titleInput.value = parsed.title || ""
+  introInput.value = Number(parsed.intro || 0).toFixed(2)
+  difficultySelect.value = parsed.difficulty || "orta"
+  keySelect.value = parsed.key || "Sol Majör"
+  practiceKeySelect.value = parsed.key || "Sol Majör"
+  renderWarmupPanel()
+  lyricsInput.value = parsed.lyrics || ""
+  currentAudioName = parsed.audioName || parsed.audioFile || "audio.mp3"
+  currentAudioDataUrl = parsed.audioDataUrl || ""
+  selectedSegmentIndexes = Array.isArray(parsed.selectedSegmentIndexes) ? parsed.selectedSegmentIndexes : []
+  heceler = Array.isArray(parsed.heceler) ? parsed.heceler.map(h => ({
+    text:h.text || "", note:h.note || "", start:h.start ?? null, end:h.end ?? null, line:h.line ?? 0,
+    detectedSemis:[], detectedNotesRaw:[], isIntro:!!h.isIntro
+  })) : []
+  cursorTime = parsed.cursorTime || 0
+  loadedIndex = -1
+  normalizeIntroSegment()
+  lastIntroValue = getIntroValue()
+  renderAll()
+  setCursorTime(cursorTime)
+  refreshPracticePanel()
+  refreshMeasurePanel()
+}
+function saveProject(){
+  const payload = buildProjectPayload()
+  localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(payload))
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  const safeTitle = (payload.title || "vocaly_proje").replace(/[^\w\u00C0-\u024F-]+/g, "_")
+  a.href = url
+  a.download = safeTitle + ".json"
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+  statusText.textContent = "Proje kaydedildi ve indirildi"
+  statusText.className = "pill green"
+}
+function autoSaveProject(){
+  localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(buildProjectPayload()))
+}
+function loadProject(){
+  const raw = localStorage.getItem(PROJECT_AUTOSAVE_KEY)
+  if(!raw) return
+  try{
+    applyProjectPayload(JSON.parse(raw))
+    statusText.textContent = "Son otomatik kayıt yüklendi"
+    statusText.className = "pill green"
+  }catch(err){ console.error(err) }
+}
+function importProjectFromJsonText(text){
+  try{
+    const parsed = JSON.parse(text)
+    applyProjectPayload(parsed)
+    autoSaveProject()
+    statusText.textContent = "JSON proje yüklendi"
+    statusText.className = "pill green"
+  }catch(err){
+    console.error(err)
+    alert("JSON okunamadı.")
+  }
+}
+function renderAll(){
+  normalizeIntroSegment()
+  renderRuler()
+  renderStrip()
+  renderKaraoke()
+  scheduleOverlaySync()
+  refreshPracticePanel()
+  refreshMeasurePanel()
+}
+function autoTimingSuggest(){
+  const words = heceler.filter(h => !h.isIntro)
+  if(!words.length){ alert("Önce sözleri kelimelere böl."); return }
+  const intro = getIntroValue()
+  let duration = hasAudioLoaded() ? ws.getDuration() : 0
+  if(!duration || duration <= intro){
+    duration = intro + Math.max(8, words.length * 0.7)
+  }
+  const available = Math.max(0.6, duration - intro)
+  const totalChars = words.reduce((sum,w)=>sum + Math.max(1, (w.text || "").length), 0)
+
+  let cursor = intro
+  words.forEach(w=>{
+    const weight = Math.max(1, (w.text || "").length)
+    const segDur = Math.max(0.10, round2((weight / totalChars) * available))
+    w.start = round2(cursor)
+    w.end = round2(cursor + segDur)
+    cursor = w.end
+  })
+
+  if(words.length){
+    words[words.length - 1].end = round2(duration)
+  }
+  renderAll()
+  statusText.textContent = "Otomatik timing önerildi"
+  statusText.className = "pill green"
+  autoSaveProject()
+}
+
+
+function getToleranceCents(mode){
+  const raw = Number(mode === 'measure' ? (measureToleranceSelect?.value || 0) : (practiceToleranceSelect?.value || 0))
+  if(mode === 'measure') return Math.max(38, raw || 0)
+  return Math.max(45, raw || 0)
+}
+function centDistanceToTarget(det, target){
+  if(!det || !target) return Infinity
+  const targetSemi = noteToSemitone(target)
+  const detSemi = noteToSemitone(det.note)
+  if(targetSemi === undefined || detSemi === undefined) return Infinity
+  let diffSemis = detSemi - targetSemi
+  if(diffSemis > 6) diffSemis -= 12
+  if(diffSemis < -6) diffSemis += 12
+  return Math.abs(diffSemis * 100 + (det.cents || 0))
+}
+function hitWithinTolerance(det, targets, mode){
+  const tol = getToleranceCents(mode)
+  return (targets || []).some(target => centDistanceToTarget(det, target) <= tol)
+}
+function noteMatchesAnyTarget(detectedNote, targetString){
+  const detected = normalizeNoteName(detectedNote || '')
+  const detectedSemi = noteToSemitone(detected)
+  const targets = parseTargetNotes(targetString)
+  return targets.some(t => {
+    const norm = normalizeNoteName(t)
+    const targetSemi = noteToSemitone(norm)
+    if(detectedSemi === undefined || targetSemi === undefined) return norm === detected
+    let diff = Math.abs(detectedSemi - targetSemi)
+    diff = Math.min(diff, 12 - diff)
+    return diff === 0
+  })
+}
+function refreshAuxSelections(){
+  practiceKaraoke.querySelectorAll('.karaokeBox').forEach((el, idx)=> el.classList.toggle('selected', practiceSelectedSongIndexes.includes(idx)))
+  measureKaraoke.querySelectorAll('.karaokeBox').forEach((el, idx)=> el.classList.toggle('selected', measureSelectedIndexes.includes(idx)))
+  if(warmupNotes) warmupNotes.querySelectorAll('.karaokeBox').forEach((el, idx)=> el.classList.toggle('selected', practiceSelectedWarmupIndexes.includes(idx)))
+}
+function clearContainerEvalClasses(container){
+  if(!container) return
+  container.querySelectorAll('.karaokeBox').forEach(el=>{
+    el.classList.remove('ok','bad','active','selected')
+    delete el.dataset.lockState
+    const fill = el.querySelector('.fill')
+    if(fill) fill.style.width = '0%'
+  })
+}
+
+function animateBoxFill(box, durationMs){
+  if(!box) return
+  const fill = box.querySelector('.fill')
+  if(!fill) return
+  const start = performance.now()
+  const dur = Math.max(180, Number(durationMs) || 0)
+  function step(now){
+    const ratio = Math.max(0, Math.min(1, (now - start) / dur))
+    fill.style.width = (ratio * 100) + '%'
+    if(ratio < 1 && box.dataset.animatingFill === '1'){
+      requestAnimationFrame(step)
+    }
+  }
+  box.dataset.animatingFill = '1'
+  fill.style.width = '0%'
+  requestAnimationFrame(step)
+  setTimeout(()=>{
+    if(box.dataset.animatingFill === '1') box.dataset.animatingFill = '0'
+  }, dur + 30)
+}
+function stopBoxFill(box){
+  if(!box) return
+  box.dataset.animatingFill = '0'
+}
+function armBoxPitchCheck(box, durationMs, mode){
+  if(!box) return
+  const now = performance.now()
+  const dur = Math.max(450, Number(durationMs) || 1200)
+  clearBoxLockState(box)
+  box.dataset.mode = mode || box.dataset.mode || 'practice'
+  box.dataset.trackStart = String(now)
+  box.dataset.evalDeadline = String(now + dur)
+  delete box.dataset.hitSince
+  delete box.dataset.goodSeen
+  animateBoxFill(box, dur)
+}
+function clearBoxPitchCheck(box){
+  if(!box) return
+  delete box.dataset.evalDeadline
+  delete box.dataset.hitSince
+  delete box.dataset.goodSeen
+}
+function updateAuxPlaybackFills(){
+  if(!hasAudioLoaded()) return
+  const now = ws.getCurrentTime()
+  ;[practiceKaraoke, measureKaraoke].forEach(container=>{
+    if(!container) return
+    container.querySelectorAll('.karaokeBox[data-start][data-end]').forEach(el=>{
+      const start = Number(el.dataset.start || 0)
+      const end = Number(el.dataset.end || 0)
+      const fill = el.querySelector('.fill')
+      if(!fill) return
+      if(now <= start) fill.style.width = '0%'
+      else if(now >= end) fill.style.width = '100%'
+      else fill.style.width = Math.max(0, Math.min(100, ((now - start) / Math.max(0.001, end - start)) * 100)) + '%'
+    })
+  })
+}
+async function playBoxesSequentially(container, indexes){
+  if(!indexes || !indexes.length) return
+  sequenceStopRequested = false
+  isSequencePlaying = true
+  const boxes = indexes.map(i => container.querySelector(`.karaokeBox[data-box-index="${i}"]`) || container.querySelector(`.karaokeBox[data-warmup-index="${i}"]`)).filter(Boolean)
+  for(const box of boxes){
+    if(sequenceStopRequested) break
+    box.classList.add('selected')
+    const notes = parseTargetNotes(box.dataset.targetNotes || '')
+    if(box.dataset.start && box.dataset.end){
+      const start = Number(box.dataset.start), end = Number(box.dataset.end)
+      const durMs = Math.max(280, (end-start)*1000 + 120)
+      armBoxPitchCheck(box, Math.max(180, (end-start)*1000), box.dataset.mode || 'practice')
+      playSnippetOnWs(start, end)
+      await new Promise(r=>setTimeout(r, durMs))
+      stopBoxFill(box)
+    }else if(notes.length){
+      const tempo = notes.length >= 3 ? 700 : (notes.length === 2 ? 760 : 1200)
+      const dur = notes.length >= 3 ? 0.70 : (notes.length === 2 ? 0.78 : 1.2)
+      armBoxPitchCheck(box, Math.max(300, notes.length * tempo), box.dataset.mode || 'practice')
+      await playToneSequence(notes, tempo, dur)
+      await new Promise(r=>setTimeout(r, Math.max(420, notes.length * tempo)))
+      stopBoxFill(box)
+    }
+  }
+  isSequencePlaying = false
+}
+function enableUniversalDragSelection(container, mode){
+  if(!container) return
+  let state = null
+  container.addEventListener('pointerdown', e=>{
+    const box = e.target.closest('.karaokeBox')
+    if(!box) return
+    const idx = Number(box.dataset.boxIndex ?? box.dataset.warmupIndex)
+    if(Number.isNaN(idx)) return
+    state = { moved:false, indexes:new Set([idx]), pointerId:e.pointerId, startX:e.clientX, startY:e.clientY, dragStarted:false }
+    if(mode === 'practice') practiceSelectedSongIndexes = [idx]
+    if(mode === 'measure') measureSelectedIndexes = [idx]
+    if(mode === 'warmup') practiceSelectedWarmupIndexes = [idx]
+    refreshAuxSelections()
+    try{ container.setPointerCapture(e.pointerId) }catch(err){}
+  })
+  container.addEventListener('pointermove', e=>{
+    if(!state) return
+    const dx = Math.abs(e.clientX - state.startX)
+    const dy = Math.abs(e.clientY - state.startY)
+    if(dx > 8 || dy > 8){
+      state.moved = true
+      if(!state.dragStarted){
+        state.dragStarted = true
+        container.dataset.suppressClick = '1'
+      }
+    }
+    const el = document.elementFromPoint(e.clientX, e.clientY)?.closest('.karaokeBox')
+    if(!el || !container.contains(el)) return
+    const idx = Number(el.dataset.boxIndex ?? el.dataset.warmupIndex)
+    if(Number.isNaN(idx)) return
+    state.indexes.add(idx)
+    const arr = Array.from(state.indexes).sort((a,b)=>a-b)
+    if(mode === 'practice') practiceSelectedSongIndexes = arr
+    if(mode === 'measure') measureSelectedIndexes = arr
+    if(mode === 'warmup') practiceSelectedWarmupIndexes = arr
+    refreshAuxSelections()
+  })
+  const end=()=>{
+    if(!state) return
+    const arr = Array.from(state.indexes).sort((a,b)=>a-b)
+    const moved = state.moved && arr.length > 1
+    state = null
+    if(!arr.length) return
+    if(moved){
+      container.dataset.suppressClick = '1'
+      setTimeout(()=>{ delete container.dataset.suppressClick }, 500)
+      if(mode === 'practice') practiceSelectedSongIndexes = arr
+      if(mode === 'measure') measureSelectedIndexes = arr
+      if(mode === 'warmup') practiceSelectedWarmupIndexes = arr
+      refreshAuxSelections()
+      playBoxesSequentially(container, arr)
+    }else{
+      delete container.dataset.suppressClick
+      const first = container.querySelector(`.karaokeBox[data-box-index="${arr[0]}"]`) || container.querySelector(`.karaokeBox[data-warmup-index="${arr[0]}"]`)
+      if(first) first.click()
+    }
+  }
+  container.addEventListener('pointerup', end)
+  container.addEventListener('pointercancel', end)
+  container.addEventListener('lostpointercapture', end)
+}
+
+function updateContainerTunerFeedback(container, selectedIndexes, activeIndex){
+  if(!container || !micReady) return
+  if(container === measureKaraoke) return
+
+  const det = latestDetected && latestDetected.note ? latestDetected : null
+  const monitored = new Set([...(selectedIndexes || []), ...(activeIndex >= 0 ? [activeIndex] : [])])
+  const blocked = isInternalFeedbackBlocked()
+  const nowMs = performance.now()
+
+  container.querySelectorAll('.karaokeBox').forEach(el=>{
+    const idx = Number(el.dataset.boxIndex ?? el.dataset.warmupIndex)
+    const shouldTrack = monitored.has(idx)
+    el.classList.remove('active')
+
+    if(!shouldTrack){
+      clearBoxPitchCheck(el)
+      delete el.dataset.trackStart
+      return
+    }
+
+    el.classList.add('active')
+
+    if(blocked) return
+
+    const targets = parseTargetNotes(el.dataset.targetNotes || '')
+    if(!targets.length) return
+    if(!el.dataset.trackStart) el.dataset.trackStart = String(nowMs)
+    if(!el.dataset.evalDeadline){
+      el.dataset.evalDeadline = String(nowMs + 1400)
+    }
+
+    if(el.dataset.lockState === 'ok' || el.dataset.lockState === 'bad') return
+
+    const hit = det ? hitWithinTolerance(det, targets, 'practice') : false
+    if(hit){
+      el.classList.add('ok')
+      el.classList.remove('bad')
+      el.dataset.lockState = 'ok'
+      el.dataset.goodSeen = String(nowMs)
+      return
+    }
+
+    const deadline = Number(el.dataset.evalDeadline || (nowMs + 1400))
+    if(nowMs >= deadline){
+      el.classList.add('bad')
+      el.classList.remove('ok')
+      el.dataset.lockState = 'bad'
+    }else{
+      el.classList.remove('bad')
+    }
+  })
+}
+
+function getVisualSegmentIndexAtTime(container, time){
+  if(!container || !Number.isFinite(time)) return -1
+  const boxes = Array.from(container.querySelectorAll('.karaokeBox[data-start][data-end]'))
+  for(const box of boxes){
+    const start = Number(box.dataset.start)
+    const end = Number(box.dataset.end)
+    if(time >= start && time <= end) return Number(box.dataset.boxIndex)
+  }
+  return -1
+}
+function syncAuxActiveIndexesFromPlayback(){
+  currentPracticeSegmentIndex = -1
+  currentMeasureSegmentIndex = -1
+}
+
+/* ---------------- PRACTICE / MEASURE PANELS ---------------- */
+let measureRunning = false
+let measureHits = 0
+let measureChecks = 0
+let internalAudioFeedbackBlockedUntil = 0
+function blockInternalFeedback(ms){
+  internalAudioFeedbackBlockedUntil = Math.max(internalAudioFeedbackBlockedUntil, performance.now() + Math.max(0, ms || 0))
+}
+function isInternalFeedbackBlocked(){
+  return performance.now() < internalAudioFeedbackBlockedUntil
+}
+function clearBoxLockState(el){
+  if(!el) return
+  delete el.dataset.lockState
+  delete el.dataset.trackStart
+  delete el.dataset.lastSeen
+  el.classList.remove('ok','bad')
+}
+function clearContainerLocks(container){
+  if(!container) return
+  container.querySelectorAll('.karaokeBox').forEach(clearBoxLockState)
+}
+function playSnippetOnWs(start, end){
+  if(!hasAudioLoaded()) {
+    pendingSnippet = { start, end }
+    if(activeSongPayload){
+      statusText.textContent = "Ses yükleniyor..."
+      statusText.className = "pill amber"
+      ensureSongAudioLoaded(activeSongPayload)
+      return
+    }
+    statusText.textContent = "Ses henüz yüklenmedi"
+    statusText.className = "pill red"
+    return
+  }
+  stopWarmupAudio()
+  if(audioContext && audioContext.state === "suspended"){
+    audioContext.resume().catch(()=>{})
+  }
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  const blockMs = 180
+  blockInternalFeedback(blockMs)
+  try{ if(ws.setVolume) ws.setVolume(1) }catch(e){}
+  try{ if(ws.backend && ws.backend.media) ws.backend.media.volume = 1 }catch(e){}
+  ws.stop()
+  seekToTime(start)
+  scrollToTime(start)
+  statusText.textContent = `Çalıyor: ${start.toFixed(2)} - ${end.toFixed(2)}`
+  statusText.className = "pill green"
+  ws.play(start, end)
+}
+function refreshPracticePanel(){
+  const timed = heceler.map((h, idx)=>({ ...h, _idx:idx })).filter(h => !h.isIntro && h.start !== null && h.end !== null)
+  practiceSongTitle.textContent = "Eser: " + (titleInput.value.trim() || "-")
+  practiceSongMeta.textContent = "Segment: " + timed.length
+  practiceKaraoke.innerHTML = ""
+  if(!timed.length){
+    practiceKaraoke.innerHTML = '<div class="karaokeBox" style="width:100%;cursor:default;">Çalışılacak zamanlanmış segment yok.</div>'
+  }else{
+    let lastLine = null
+    timed.sort((a,b)=>a.start-b.start).forEach((seg, visualIndex)=>{
+      if(lastLine !== null && seg.line !== lastLine){
+        const br = document.createElement("div")
+        br.className = "lineBreak"
+        practiceKaraoke.appendChild(br)
+      }
+      const box = document.createElement("div")
+      box.className = "karaokeBox"
+      box.dataset.boxIndex = String(visualIndex)
+      box.dataset.realIndex = String(seg._idx)
+      box.dataset.start = String(seg.start)
+      box.dataset.end = String(seg.end)
+      box.dataset.targetNotes = seg.note || ''
+      box.dataset.mode = 'practice'
+      box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(seg.text)}</div>`
+      box.onclick = ()=>{
+        if(practiceKaraoke?.dataset?.suppressClick === '1') return
+        currentPracticeSegmentIndex = visualIndex
+        practiceSelectedSongIndexes = [visualIndex]
+        refreshAuxSelections()
+        clearContainerLocks(practiceKaraoke)
+        practiceTargetNote = seg.note || ""
+        practiceTargetNoteEl.textContent = seg.note || "-"
+        armBoxPitchCheck(box, Math.max(450, (seg.end - seg.start) * 1000), 'practice')
+        playSnippetOnWs(seg.start, seg.end)
+      }
+      practiceKaraoke.appendChild(box)
+      lastLine = seg.line
+    })
+  }
+  renderWarmupPanel()
+  if(!practiceKaraoke.dataset.dragReady){ enableUniversalDragSelection(practiceKaraoke, 'practice'); practiceKaraoke.dataset.dragReady = '1' }
+  if(warmupNotes && !warmupNotes.dataset.dragReady){ enableUniversalDragSelection(warmupNotes, 'warmup'); warmupNotes.dataset.dragReady = '1' }
+  refreshAuxSelections()
+}
+function refreshMeasurePanel(){
+  const introSeg = heceler.find((h, idx) => h.isIntro ? ((h._idx = idx), true) : false)
+  const timed = heceler.map((h, idx)=>({ ...h, _idx:idx })).filter(h => !h.isIntro && h.start !== null && h.end !== null)
+  measureKaraoke.innerHTML = ""
+
+  if(introSeg && introSeg.end !== null && introSeg.end > 0){
+    const introBox = document.createElement("div")
+    introBox.className = "karaokeBox intro"
+    introBox.dataset.boxIndex = "-99"
+    introBox.dataset.realIndex = String(introSeg._idx)
+    introBox.dataset.start = "0"
+    introBox.dataset.end = String(introSeg.end)
+    introBox.dataset.targetNotes = ""
+    introBox.dataset.mode = "measure"
+    introBox.innerHTML = `<div class="fill"></div><div class="label">Intro ${introSeg.end.toFixed(2)} sn</div>`
+    introBox.onclick = ()=>{
+      currentMeasureSegmentIndex = -1
+      measureCurrentVisualIndex = -99
+      measureCurrentRealIndex = introSeg._idx
+      measureSelectedIndexes = [-99]
+      refreshAuxSelections()
+      clearContainerLocks(measureKaraoke)
+      measureTargetNoteEl.textContent = "-"
+      animateBoxFill(introBox, Math.max(450, introSeg.end * 1000))
+      measureStatusText.textContent = "Intro seçildi"
+      measureStatusText.className = "pill amber"
+      measureArmed = false
+      measureRunning = false
+      measurePlaybackMode = false
+      measureWindowStarted = false
+      measureBoxLocked = false
+      measureBoxResult = null
+      playSnippetOnWs(0, introSeg.end)
+    }
+    measureKaraoke.appendChild(introBox)
+    const br = document.createElement("div")
+    br.className = "lineBreak"
+    measureKaraoke.appendChild(br)
+  }
+
+  if(!timed.length){
+    measureKaraoke.innerHTML += '<div class="karaokeBox" style="width:100%;cursor:default;">Ölçülecek zamanlanmış segment yok.</div>'
+  }else{
+    let lastLine = null
+    timed.sort((a,b)=>a.start-b.start).forEach((seg, visualIndex)=>{
+      if(lastLine !== null && seg.line !== lastLine){
+        const br = document.createElement("div")
+        br.className = "lineBreak"
+        measureKaraoke.appendChild(br)
+      }
+      const box = document.createElement("div")
+      box.className = "karaokeBox"
+      box.dataset.boxIndex = String(visualIndex)
+      box.dataset.realIndex = String(seg._idx)
+      box.dataset.start = String(seg.start)
+      box.dataset.end = String(seg.end)
+      box.dataset.targetNotes = seg.note || ''
+      box.dataset.mode = 'measure'
+      box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(seg.text)}</div>`
+      box.onclick = ()=>{
+        if(measureKaraoke?.dataset?.suppressClick === '1') return
+        currentMeasureSegmentIndex = visualIndex
+        measureCurrentVisualIndex = visualIndex
+        measureCurrentRealIndex = seg._idx
+        measureSelectedIndexes = [visualIndex]
+        refreshAuxSelections()
+        clearContainerLocks(measureKaraoke)
+        measureTargetNoteEl.textContent = seg.note || "-"
+        armBoxPitchCheck(box, Math.max(450, (seg.end - seg.start) * 1000), 'measure')
+        measureStatusText.textContent = "Kutu seçildi"
+        measureStatusText.className = "pill amber"
+        measureArmed = false
+        measureRunning = false
+        measurePlaybackMode = false
+        measureWindowStarted = false
+        measureBoxLocked = false
+        measureBoxResult = null
+        playSnippetOnWs(seg.start, seg.end)
+      }
+      measureKaraoke.appendChild(box)
+      lastLine = seg.line
+    })
+  }
+  if(!measureKaraoke.dataset.dragReady){ enableUniversalDragSelection(measureKaraoke, 'measure'); measureKaraoke.dataset.dragReady = '1' }
+  refreshAuxSelections()
+}
+function resetMeasureData(){
+  measureRunning = false
+  measureArmed = false
+  measureHits = 0
+  measureChecks = 0
+  measureCurrentVisualIndex = -1
+  measureCurrentRealIndex = -1
+  measureBoxStartMs = 0
+  measureBoxLocked = false
+  measureBoxResult = null
+  measureScore.textContent = "0"
+  measureAccuracyText.textContent = "%0"
+  measureStatusText.textContent = "Hazır"
+  measureStatusText.className = "pill amber"
+  measureTargetNoteEl.textContent = "-"
+  clearContainerLocks(measureKaraoke)
+  measureKaraoke.querySelectorAll('.karaokeBox').forEach(el=>{
+    el.classList.remove('ok','bad','selected','active')
+  })
+}
+function stopMeasurePlayback(){
+  measureRunning = false
+  measureArmed = false
+  measurePlaybackMode = false
+  measureWindowStarted = false
+  measureAutoMode = false
+  if(hasAudioLoaded()) ws.pause()
+  measureStatusText.textContent = 'Ölçme durdu'
+  measureStatusText.className = 'pill amber'
+}
+function finalizeMeasureRun(){
+  const boxes = Array.from(measureKaraoke.querySelectorAll('.karaokeBox[data-box-index]')).filter(el => Number(el.dataset.boxIndex) >= 0 && parseTargetNotes(el.dataset.targetNotes || '').length)
+  const total = boxes.length || 1
+  const okCount = boxes.filter(el => el.dataset.lockState === 'ok').length
+  const score = Math.round((okCount / total) * 100)
+  measureScore.textContent = String(score)
+  measureAccuracyText.textContent = '%' + score
+  measureRunning = false
+  measureArmed = false
+  measurePlaybackMode = false
+  measureWindowStarted = false
+  measureAutoMode = false
+}
+
+function runMeasureTick(){
+  if(!measureRunning || !micReady) return
+
+  const currentTime = hasAudioLoaded() ? ws.getCurrentTime() : 0
+  const det = latestDetected && latestDetected.note ? latestDetected : null
+  const allBoxes = Array.from(measureKaraoke.querySelectorAll('.karaokeBox[data-box-index]'))
+  allBoxes.forEach(el=>{
+    const start = Number(el.dataset.start || 0)
+    const end = Number(el.dataset.end || 0)
+    const fill = el.querySelector('.fill')
+    if(fill){
+      if(currentTime <= start) fill.style.width = '0%'
+      else if(currentTime >= end) fill.style.width = '100%'
+      else fill.style.width = Math.max(0, Math.min(100, ((currentTime - start) / Math.max(0.001, end - start)) * 100)) + '%'
+    }
+  })
+
+  const boxes = allBoxes.filter(el => Number(el.dataset.boxIndex) >= 0)
+  let activeBox = null
+
+  boxes.forEach(el=>{
+    const start = Number(el.dataset.start || 0)
+    const end = Number(el.dataset.end || 0)
+    if(currentTime >= start && currentTime <= end){
+      activeBox = el
+      el.classList.add('active')
+      if(!el.dataset.trackStart) el.dataset.trackStart = String(performance.now())
+    }else{
+      el.classList.remove('active')
+    }
+  })
+
+  boxes.forEach(el=>{
+    const idx = Number(el.dataset.boxIndex)
+    const end = Number(el.dataset.end || 0)
+    const targets = parseTargetNotes(el.dataset.targetNotes || '')
+    if(!targets.length || measureEvaluated.has(idx)) return
+    if(currentTime > end){
+      if(el.dataset.lockState !== 'ok'){
+        el.classList.remove('ok')
+        el.classList.add('bad')
+        el.dataset.lockState = 'bad'
+      }
+      measureEvaluated.add(idx)
+    }
+  })
+
+  if(activeBox){
+    const idx = Number(activeBox.dataset.boxIndex)
+    const targets = parseTargetNotes(activeBox.dataset.targetNotes || '')
+    measureCurrentVisualIndex = idx
+    measureTargetNoteEl.textContent = targets.join(' ') || '-'
+
+    if(targets.length){
+      const hit = det ? hitWithinTolerance(det, targets, 'measure') : false
+      if(hit){
+        activeBox.classList.remove('bad')
+        activeBox.classList.add('ok')
+        activeBox.dataset.lockState = 'ok'
+      }
+      measureStatusText.textContent = hit ? 'Kilitlendi' : 'Söyle'
+      measureStatusText.className = hit ? 'pill green' : 'pill amber'
+    }
+  }else if(hasAudioLoaded() && ws.isPlaying()){
+    measureStatusText.textContent = 'Sırası bekleniyor'
+    measureStatusText.className = 'pill amber'
+  }
+
+  const total = boxes.filter(el => parseTargetNotes(el.dataset.targetNotes || '').length).length || 1
+  const okCount = boxes.filter(el => el.dataset.lockState === 'ok').length
+  const score = Math.round((okCount / total) * 100)
+  measureScore.textContent = String(score)
+  measureAccuracyText.textContent = '%' + score
+
+  if(hasAudioLoaded() && !ws.isPlaying() && measurePlaybackMode){
+    finalizeMeasureRun()
+    measureStatusText.textContent = 'Ölçme tamamlandı'
+    measureStatusText.className = 'pill green'
+  }
+}
+
+/* ---------------- LIBRARY ---------------- */
+function refreshLibraryList(){
+  const q = librarySearch.value.trim().toLowerCase()
+  songList.innerHTML = ""
+  const filtered = appLibrary.map((song, idx)=>({ song, idx })).filter(x => !q || (x.song.title || "").toLowerCase().includes(q))
+  if(!filtered.length){
+    songList.innerHTML = '<div class="songItem">Kütüphane boş.</div>'
+  }
+  filtered.forEach(item=>{
+    const el = document.createElement("div")
+    el.className = "songItem" + (item.idx === currentLibraryIndex ? " active" : "")
+    el.innerHTML = `
+      <div class="songTitle">${escapeHtml(item.song.title || "İsimsiz eser")}</div>
+      <div class="songSub">${(item.song.heceler || []).filter(h => !h.isIntro).length} segment • ${item.song.key || "-"}</div>
+    `
+    el.onclick = async ()=>{
+      await setActiveSongFromLibrary(item.idx, 'practiceView')
+    }
+    songList.appendChild(el)
+  })
+  refreshLibraryPreviewOnly()
+}
+function refreshLibraryPreviewOnly(){
+  const song = getSelectedSong()
+  if(!song){
+    librarySongTitle.textContent = "Boş"
+    librarySongDesc.textContent = "Henüz eser seçili değil."
+    librarySegCount.textContent = "0 segment"
+    libraryAudioInfo.textContent = "Audio: yok"
+    libraryKeyInfo.textContent = "Ton: -"
+    librarySegments.innerHTML = ""
+    return
+  }
+  const segs = (song.heceler || []).filter(h => !h.isIntro)
+  librarySongTitle.textContent = song.title || "İsimsiz eser"
+  librarySongDesc.textContent = "Kütüphanede kayıtlı eser"
+  librarySegCount.textContent = segs.length + " segment"
+  libraryAudioInfo.textContent = "Audio: " + ((song.audioDataUrl || song.audioPath || song.audioUrl || song.audioName) ? "var" : "yok")
+  libraryKeyInfo.textContent = "Ton: " + (song.key || "-")
+  librarySegments.innerHTML = ""
+  segs.forEach(seg=>{
+    const chip = document.createElement("div")
+    chip.className = "miniChip"
+    chip.textContent = seg.text
+    chip.onclick = async ()=>{
+      await setActiveSongFromLibrary(currentLibraryIndex, 'practiceView')
+      if(seg.start !== null && seg.end !== null) playSnippetOnWs(seg.start, seg.end)
+    }
+    librarySegments.appendChild(chip)
+  })
+}
+function saveCurrentToLibrary(){
+  const payload = buildProjectPayload()
+  const copy = deepClone(payload)
+  const idx = appLibrary.findIndex(x => x.title === copy.title && x.title)
+  if(idx >= 0) appLibrary[idx] = copy
+  else{
+    appLibrary.push(copy)
+    currentLibraryIndex = appLibrary.length - 1
+  }
+  saveLibrary()
+  refreshLibraryList()
+  statusText.textContent = "Kütüphaneye kaydedildi"
+  statusText.className = "pill green"
+}
+function importSongToLibraryFromText(text){
+  try{
+    const parsed = JSON.parse(text)
+    if(!parsed.heceler) throw new Error("Geçersiz JSON")
+    appLibrary.push(parsed)
+    currentLibraryIndex = appLibrary.length - 1
+    saveLibrary()
+    refreshLibraryList()
+  }catch(err){
+    alert("JSON okunamadı.")
+  }
+}
+
+/* ---------------- INIT ---------------- */
+initWave()
+renderAll()
+setCursorTime(0)
+lastIntroValue = getIntroValue()
+loadLibrary()
+refreshLibraryList()
+;(async ()=>{
+  if(!appLibrary.length) await loadLibraryFromRepo()
+  if(appLibrary.length && currentLibraryIndex === -1){
+    await setActiveSongFromLibrary(0, null)
+  }
+})()
+renderWarmupPanel()
+refreshPracticePanel()
+refreshMeasurePanel()
+resetMeasureData()
+practiceTunerText.textContent = 'Tolerans: ±' + (practiceToleranceSelect?.value || 20) + ' cent'
+measureStatusText.textContent = 'Tolerans: ±' + (measureToleranceSelect?.value || 20) + ' cent'
+
+/* ---------------- EVENTS ---------------- */
+karaoke.addEventListener("pointerdown", startKaraokeTouchSelection)
+karaoke.addEventListener("pointermove", moveKaraokeTouchSelection)
+karaoke.addEventListener("pointerup", endKaraokeTouchSelection)
+karaoke.addEventListener("pointercancel", endKaraokeTouchSelection)
+karaoke.addEventListener("lostpointercapture", endKaraokeTouchSelection)
+
+audioFile.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  currentAudioName = file.name
+  const reader = new FileReader()
+  reader.onload = ()=>{
+    currentAudioDataUrl = reader.result
+    if(objectUrlRef) URL.revokeObjectURL(objectUrlRef)
+    objectUrlRef = URL.createObjectURL(file)
+    statusText.textContent = "Yükleniyor: " + file.name
+    statusText.className = "pill purple"
+    ws.load(objectUrlRef)
+    autoSaveProject()
+  }
+  reader.readAsDataURL(file)
+})
+
+playBtn.addEventListener("click", ()=>{ sequenceStopRequested = true; isSequencePlaying = false; hasAudioLoaded() && ws.playPause() })
+zoom.addEventListener("input", ()=>{
+  if(!hasAudioLoaded()) return
+  ws.zoom(Number(zoom.value))
+  setTimeout(()=>{ renderAll(); scheduleOverlaySync() }, 20)
+})
+rateSelect.addEventListener("change", ()=> hasAudioLoaded() && ws.setPlaybackRate(Number(rateSelect.value)))
+
+introInput.addEventListener("change", function(){
+  const newIntro = getIntroValue()
+  const diff = round2(newIntro - lastIntroValue)
+  normalizeIntroSegment()
+  const hasTimedNonIntro = heceler.some(h => !h.isIntro && h.start !== null && h.end !== null)
+  if(hasTimedNonIntro && diff !== 0){ shiftAllNonIntroBy(diff); alignFirstSegmentToIntro() }
+  renderAll()
+  if(hasAudioLoaded()){ seekToTime(newIntro); scrollToTime(newIntro) }
+  else setCursorTime(newIntro)
+  lastIntroValue = newIntro
+  statusText.textContent = "Intro otomatik güncellendi"
+  statusText.className = "pill green"
+  autoSaveProject()
+})
+
+splitWordsBtn.addEventListener("click", function(){
+  parseLyricsToSegmentsPreserve()
+  loadedIndex = -1
+  renderAll()
+  const intro = getIntroValue()
+  if(hasAudioLoaded()){ seekToTime(intro); scrollToTime(intro) }
+  else setCursorTime(intro)
+  lastIntroValue = intro
+  statusText.textContent = "Kelimeler güncellendi"
+  statusText.className = "pill purple"
+  autoSaveProject()
+})
+
+autoTimingBtn.addEventListener("click", autoTimingSuggest)
+saveProjectBtn.addEventListener("click", saveProject)
+loadProjectBtn.addEventListener("click", loadProject)
+importJsonBtn.addEventListener("click", ()=>importJsonInput.click())
+importJsonInput.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  const reader = new FileReader()
+  reader.onload = ()=>importProjectFromJsonText(reader.result)
+  reader.readAsText(file, "utf-8")
+  importJsonInput.value = ""
+})
+
+resetTimingBtn.addEventListener("click", function(){
+  normalizeIntroSegment()
+  heceler.forEach(h=>{
+    if(h.isIntro){ h.start = 0; h.end = getIntroValue() }
+    else{ h.start = null; h.end = null; h.detectedSemis = []; h.detectedNotesRaw = [] }
+  })
+  loadedIndex = -1
+  selectedSegmentIndexes = []
+  renderAll()
+  statusText.textContent = "Timing sıfırlandı"
+  statusText.className = "pill red"
+  autoSaveProject()
+})
+
+saveBtn.addEventListener("click", function(){
+  const text = heceInput.value.trim()
+  const note = notaInput.value.trim()
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+  const line = Number(satirInput.value || 1)
+  if(!text){ alert("Kelime / öbek gir."); return }
+  if(!isNaN(start) && !isNaN(end) && end <= start){ alert("End, start’tan büyük olmalı."); return }
+
+  const obj = {
+    text, note,
+    start:isNaN(start) ? null : round2(start),
+    end:isNaN(end) ? null : round2(end),
+    line, detectedSemis:[], detectedNotesRaw:[], isIntro:false
+  }
+  if(loadedIndex > -1){
+    const wasIntro = !!heceler[loadedIndex]?.isIntro
+    heceler[loadedIndex] = { ...obj, isIntro:wasIntro }
+    loadedIndex = -1
+  }else heceler.push(obj)
+  normalizeIntroSegment()
+  renderAll()
+  statusText.textContent = "Kayıt eklendi / güncellendi"
+  statusText.className = "pill purple"
+  autoSaveProject()
+})
+
+updateBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  const start = parseFloat(startInput.value)
+  const end = parseFloat(endInput.value)
+  if(isNaN(start) || isNaN(end) || end <= start){ alert("Geçerli bir start/end gir."); return }
+
+  const oldEnd = seg.end
+  seg.text = heceInput.value.trim()
+  seg.note = notaInput.value.trim()
+  seg.start = round2(start)
+  seg.end = round2(end)
+  seg.line = Number(satirInput.value || seg.line || 1)
+  if(seg.isIntro){ seg.text = "INTRO"; seg.start = 0; introInput.value = seg.end.toFixed(2) }
+
+  const diff = round2(seg.end - oldEnd)
+  const ordered = getOrderedTimedSegments()
+  const pos = ordered.findIndex(x => x.i === loadedIndex)
+  if(pos !== -1 && diff !== 0){
+    for(let i=pos+1;i<ordered.length;i++){
+      const cur = ordered[i].s
+      const len = Math.max(0.03, round2(cur.end - cur.start))
+      cur.start = round2(cur.start + diff)
+      cur.end = round2(cur.start + len)
+    }
+    for(let i=pos+1;i<ordered.length;i++){
+      const prev = ordered[i - 1].s
+      const cur = ordered[i].s
+      const len = Math.max(0.03, round2(cur.end - cur.start))
+      cur.start = round2(prev.end)
+      cur.end = round2(cur.start + len)
+    }
+  }
+  renderAll()
+  seekToSegment(loadedIndex, false)
+  statusText.textContent = "Segment güncellendi"
+  statusText.className = "pill green"
+  autoSaveProject()
+})
+
+deleteLoadedBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  if(heceler[loadedIndex] && heceler[loadedIndex].isIntro){ alert("Intro segmenti silinmez."); return }
+  const removedIndex = loadedIndex
+  heceler.splice(removedIndex, 1)
+  loadedIndex = -1
+  selectedSegmentIndexes = selectedSegmentIndexes.filter(i => i !== removedIndex).map(i => i > removedIndex ? i - 1 : i)
+  renderAll()
+  statusText.textContent = "Seçili segment silindi"
+  statusText.className = "pill red"
+  autoSaveProject()
+})
+
+minusStartBtn.addEventListener("click", ()=>nudgeSegmentBoundary("start", -1))
+plusStartBtn.addEventListener("click", ()=>nudgeSegmentBoundary("start", 1))
+minusEndBtn.addEventListener("click", ()=>nudgeSegmentBoundary("end", -1))
+plusEndBtn.addEventListener("click", ()=>nudgeSegmentBoundary("end", 1))
+shiftLeftBtn.addEventListener("click", ()=>shiftWholeSegment(-1))
+shiftRightBtn.addEventListener("click", ()=>shiftWholeSegment(1))
+analyzeNoteBtn.addEventListener("click", analyzeSelectedSegmentNote)
+analyzeAllBtn.addEventListener("click", analyzeAllSegmentsNotes)
+
+previewSelectedBtn.addEventListener("click", function(){
+  if(loadedIndex === -1){ alert("Önce bir segment seç."); return }
+  const seg = heceler[loadedIndex]
+  if(!seg || seg.start === null || seg.end === null || !hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  ws.play(seg.start, seg.end)
+  statusText.textContent = "Seçili segment dinleniyor"
+  statusText.className = "pill amber"
+})
+previewPlayBtn.addEventListener("click", function(){
+  if(!hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  resetEvaluationFlags()
+  previewPlaying = true
+  ws.stop()
+  blockInternalFeedback(Math.max(1200, ((ws.getDuration ? ws.getDuration() : 0) * 1000) + 500));
+  ws.play(0)
+  statusText.textContent = "Karaoke önizleme oynuyor"
+  statusText.className = "pill purple"
+})
+previewStopBtn.addEventListener("click", function(){
+  if(!hasAudioLoaded()) return
+  sequenceStopRequested = true
+  isSequencePlaying = false
+  previewPlaying = false
+  ws.pause()
+  lastScrolledActiveId = null
+  statusText.textContent = "Karaoke önizleme durdu"
+  statusText.className = "pill amber"
+})
+micBtn.addEventListener("click", setupMicShared)
+clearSelectionBtn.addEventListener("click", clearSelection)
+playLineBtn.addEventListener("click", playSelectedLine)
+saveToLibraryBtn.addEventListener("click", saveCurrentToLibrary)
+
+/* practice events */
+micBtnPractice.addEventListener("click", async ()=>{ 
+  const ok = await setupMicShared()
+  if(ok) practiceTunerText.textContent = "Mikrofon açık"
+})
+stopWarmupBtn.addEventListener("click", stopWarmupAudio)
+practiceKeySelect.addEventListener("change", ()=>{ renderWarmupPanel(); refreshPracticePanel() })
+if(ascendingScaleBtn) ascendingScaleBtn.addEventListener("click", ()=>{ const scale = getPracticeScale(); practiceTargetNote = scale.slice(-1)[0] || ""; practiceTargetNoteEl.textContent = scale.join(" "); playAscendingScale() })
+if(descendingScaleBtn) descendingScaleBtn.addEventListener("click", ()=>{ const scale = getPracticeScale(); practiceTargetNote = scale[0] || ""; practiceTargetNoteEl.textContent = [...scale].reverse().join(" "); playDescendingScale() })
+practicePlayAllBtn.addEventListener("click", async ()=>{
+  const ok = await playWsFromStart()
+  if(!ok){
+    statusText.textContent = "Baştan oynatma için ses hazır değil"
+    statusText.className = "pill red"
+  }
+})
+practiceStopBtn.addEventListener("click", ()=>{ if(hasAudioLoaded()) ws.pause() })
+globalRateSelect.addEventListener('change', ()=>{ if(hasAudioLoaded()) ws.setPlaybackRate(Number(globalRateSelect.value)); rateSelect.value = globalRateSelect.value })
+practiceToleranceSelect.addEventListener('change', ()=>{ practiceTunerText.textContent = 'Tolerans: ±' + practiceToleranceSelect.value + ' cent' })
+
+/* measure events */
+micBtnMeasure.addEventListener("click", async ()=>{ 
+  const ok = await setupMicShared()
+  if(ok){
+    measureStatusText.textContent = "Mikrofon açık"
+    measureStatusText.className = "pill green"
+  }
+})
+measureResetBtn.addEventListener("click", resetMeasureData)
+measureStopBtn.addEventListener("click", stopMeasurePlayback)
+measureStartBtn.addEventListener("click", async ()=>{
+  measureStatusText.textContent = "Başlatılıyor..."
+  measureStatusText.className = "pill amber"
+  const micOk = await setupMicShared()
+  if(!micOk) return
+
+  if(!hasAudioLoaded() && activeSongPayload){
+    const ok = await ensureSongAudioLoaded(activeSongPayload)
+    if(!ok) return
+  }
+  if(!hasAudioLoaded()){
+    measureStatusText.textContent = "Ses yüklenemedi"
+    measureStatusText.className = "pill red"
+    return
+  }
+
+  clearContainerLocks(measureKaraoke)
+  measureKaraoke.querySelectorAll('.karaokeBox').forEach(el=>{
+    el.classList.remove('ok','bad','active')
+    delete el.dataset.hitSince
+    delete el.dataset.lockState
+    const fill = el.querySelector('.fill')
+    if(fill) fill.style.width = '0%'
+  })
+
+  measureEvaluated = new Set()
+  measureRunning = true
+  measureArmed = true
+  measurePlaybackMode = true
+  measureWindowStarted = false
+  measureAutoMode = true
+  measureBoxLocked = false
+  measureBoxResult = null
+  measureBoxStartMs = 0
+  measureCurrentVisualIndex = -1
+  measureCurrentRealIndex = -1
+  measureScore.textContent = "0"
+  measureAccuracyText.textContent = "%0"
+  measureTargetNoteEl.textContent = "-"
+
+  const started = await playWsFromStart()
+  if(!started){
+    measureRunning = false
+    measurePlaybackMode = false
+    measureStatusText.textContent = "Ölçme başlatılamadı"
+    measureStatusText.className = "pill red"
+    return
+  }
+  measureStatusText.textContent = "Müzik başladı"
+  measureStatusText.className = "pill amber"
+})
+measureToleranceSelect.addEventListener('change', ()=>{ measureStatusText.textContent = 'Tolerans: ±' + measureToleranceSelect.value + ' cent' })
+
+/* library events */
+librarySearch.addEventListener("input", refreshLibraryList)
+libraryImportBtn.addEventListener("click", ()=>libraryImportInput.click())
+libraryImportInput.addEventListener("change", function(e){
+  const file = e.target.files[0]
+  if(!file) return
+  const reader = new FileReader()
+  reader.onload = ()=>importSongToLibraryFromText(reader.result)
+  reader.readAsText(file, "utf-8")
+  libraryImportInput.value = ""
+})
+deleteSongBtn.addEventListener("click", ()=>{
+  if(currentLibraryIndex === -1){ alert("Önce bir eser seç."); return }
+  appLibrary.splice(currentLibraryIndex, 1)
+  currentLibraryIndex = appLibrary.length ? 0 : -1
+  saveLibrary()
+  refreshLibraryList()
+})
+openPracticeBtn.addEventListener("click", async ()=>{
+  const song = getSelectedSong()
+  if(!song) return
+  await setActiveSongFromLibrary(currentLibraryIndex, "practiceView")
+})
+openMeasureBtn.addEventListener("click", async ()=>{
+  const song = getSelectedSong()
+  if(!song) return
+  await setActiveSongFromLibrary(currentLibraryIndex, "measureView")
+})
+openEditorBtn.addEventListener("click", async ()=>{
+  const song = getSelectedSong()
+  if(!song) return
+  await setActiveSongFromLibrary(currentLibraryIndex, "editorView")
+})
+
+/* shared live tuner loop now runs with requestAnimationFrame from setupMicShared */
+document.addEventListener("keydown", function(e){
+  const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : ""
+  const inInput = tag === "input" || tag === "textarea" || tag === "select"
+  if(inInput) return
+
+  if(e.code === "Space"){
+    e.preventDefault()
+    if(hasAudioLoaded()) ws.playPause()
+    return
+  }
+  if(e.code === "Escape"){
+    loadedIndex = -1
+    selectedSegmentIndexes = []
+    refreshKaraokeSelectionClasses()
+    updateActiveSegmentLabel(-1)
+    return
+  }
+  if(e.code === "ArrowRight"){
+    e.preventDefault()
+    if(loadedIndex !== -1) selectAdjacentSegment(1)
+    else moveWaveCursorBy(0.20)
+    return
+  }
+  if(e.code === "ArrowLeft"){
+    e.preventDefault()
+    if(loadedIndex !== -1) selectAdjacentSegment(-1)
+    else moveWaveCursorBy(-0.20)
+    return
+  }
+})
+window.addEventListener("resize", ()=>{
+  setTimeout(()=>{ renderAll(); scheduleOverlaySync() }, 50)
+})
+
+
+/* ===== OVERRIDE PATCH: shared karaoke fill behavior ===== */
+let sharedFillTicker = 0
+function getBoxFill(el){ return el ? el.querySelector('.fill') : null }
+function resetContainerFills(container){
+  if(!container) return
+  container.querySelectorAll('.karaokeBox').forEach(el=>{
+    const fill = getBoxFill(el)
+    if(fill) fill.style.width = '0%'
+    el.classList.remove('active')
+  })
+}
+function updateContainerTimelineFill(container, now){
+  if(!container) return
+  let activeFound = false
+  container.querySelectorAll('.karaokeBox[data-start][data-end]').forEach(el=>{
+    const start = Number(el.dataset.start || 0)
+    const end = Number(el.dataset.end || 0)
+    const fill = getBoxFill(el)
+    if(!fill) return
+    if(now <= start){
+      fill.style.width = '0%'
+      el.classList.remove('active')
+    }else if(now >= end){
+      fill.style.width = '100%'
+      el.classList.remove('active')
+    }else{
+      const pct = ((now - start) / Math.max(0.001, end - start)) * 100
+      fill.style.width = Math.max(0, Math.min(100, pct)) + '%'
+      el.classList.add('active')
+      activeFound = true
+    }
+  })
+  return activeFound
+}
+function stopBoxFill(box, keepFull=false){
+  if(!box) return
+  box.dataset.animatingFill = '0'
+  const fill = getBoxFill(box)
+  if(fill && keepFull) fill.style.width = '100%'
+}
+function animateBoxFill(box, durationMs){
+  if(!box) return
+  const fill = getBoxFill(box)
+  if(!fill) return
+  const started = performance.now()
+  const dur = Math.max(120, Number(durationMs) || 0)
+  box.dataset.animatingFill = '1'
+  fill.style.width = '0%'
+  box.classList.add('active')
+  function tick(now){
+    if(box.dataset.animatingFill !== '1') return
+    const pct = ((now - started) / dur) * 100
+    fill.style.width = Math.max(0, Math.min(100, pct)) + '%'
+    if(pct < 100) requestAnimationFrame(tick)
+    else {
+      box.dataset.animatingFill = '0'
+      box.classList.remove('active')
+      fill.style.width = '100%'
+    }
+  }
+  requestAnimationFrame(tick)
+}
+function updateAuxPlaybackFills(){
+  if(!hasAudioLoaded()) return
+  const now = ws.getCurrentTime()
+  updateContainerTimelineFill(practiceKaraoke, now)
+  updateContainerTimelineFill(measureKaraoke, now)
+}
+async function playToneSequence(noteNames, tempo=2200, noteDuration=2.8){
+  if(!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)()
+  if(audioContext.state === 'suspended') await audioContext.resume()
+  stopWarmupAudio()
+  const totalMs = Math.max(800, ((Math.max(0, noteNames.length - 1) * tempo) + (noteDuration * 1000) + 700))
+  blockInternalFeedback(120)
+  noteNames.forEach((note, i)=>{
+    const startTime = audioContext.currentTime + i * (tempo / 1000)
+    triggerPianoLikeNote(note, startTime, noteDuration)
+  })
+  practiceTargetNote = noteNames.map(normalizeDisplayNote).join(' ')
+  return totalMs
+}
+function renderWarmupPanel(){
+  if(!warmupNotes) return
+  const items = buildWarmupItems()
+  warmupNotes.innerHTML = ''
+  items.forEach((item, idx)=>{
+    const box = document.createElement('div')
+    box.className = 'karaokeBox'
+    box.dataset.warmupIndex = String(idx)
+    box.dataset.targetNotes = item.notes.join(' ')
+    box.dataset.mode = 'warmup'
+    box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(item.label)}</div>`
+    box.onclick = async ()=>{
+      if(warmupNotes?.dataset?.suppressClick === '1') return
+      practiceSelectedWarmupIndexes = [idx]
+      refreshAuxSelections()
+      clearContainerLocks(warmupNotes)
+      resetContainerFills(warmupNotes)
+      practiceTargetNote = normalizeDisplayNote(item.notes[item.notes.length - 1] || '')
+      practiceTargetNoteEl.textContent = item.label
+      const fastTempo = item.notes.length >= 3 ? 620 : (item.notes.length === 2 ? 700 : 1250)
+      const fastDur = item.notes.length >= 3 ? 0.58 : (item.notes.length === 2 ? 0.68 : 1.15)
+      const totalMs = await playToneSequence(item.notes, fastTempo, fastDur)
+      animateBoxFill(box, totalMs - 150)
+    }
+    warmupNotes.appendChild(box)
+  })
+}
+function refreshPracticePanel(){
+  const timed = heceler.map((h, idx)=>({ ...h, _idx:idx })).filter(h => !h.isIntro && h.start !== null && h.end !== null)
+  practiceSongTitle.textContent = 'Eser: ' + (titleInput.value.trim() || '-')
+  practiceSongMeta.textContent = 'Segment: ' + timed.length
+  practiceKaraoke.innerHTML = ''
+  if(!timed.length){
+    practiceKaraoke.innerHTML = '<div class="karaokeBox" style="width:100%;cursor:default;">Çalışılacak zamanlanmış segment yok.</div>'
+  }else{
+    let lastLine = null
+    timed.sort((a,b)=>a.start-b.start).forEach((seg, visualIndex)=>{
+      if(lastLine !== null && seg.line !== lastLine){
+        const br = document.createElement('div')
+        br.className = 'lineBreak'
+        practiceKaraoke.appendChild(br)
+      }
+      const box = document.createElement('div')
+      box.className = 'karaokeBox'
+      box.dataset.boxIndex = String(visualIndex)
+      box.dataset.realIndex = String(seg._idx)
+      box.dataset.start = String(seg.start)
+      box.dataset.end = String(seg.end)
+      box.dataset.targetNotes = seg.note || ''
+      box.dataset.mode = 'practice'
+      box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(seg.text)}</div>`
+      box.onclick = ()=>{
+        if(practiceKaraoke?.dataset?.suppressClick === '1') return
+        currentPracticeSegmentIndex = visualIndex
+        practiceSelectedSongIndexes = [visualIndex]
+        refreshAuxSelections()
+        clearContainerLocks(practiceKaraoke)
+        resetContainerFills(practiceKaraoke)
+        practiceTargetNote = seg.note || ''
+        practiceTargetNoteEl.textContent = 'Seçildi'
+        playSnippetOnWs(seg.start, seg.end)
+      }
+      practiceKaraoke.appendChild(box)
+      lastLine = seg.line
+    })
+  }
+  renderWarmupPanel()
+  if(!practiceKaraoke.dataset.dragReady){ enableUniversalDragSelection(practiceKaraoke, 'practice'); practiceKaraoke.dataset.dragReady = '1' }
+  if(warmupNotes && !warmupNotes.dataset.dragReady){ enableUniversalDragSelection(warmupNotes, 'warmup'); warmupNotes.dataset.dragReady = '1' }
+  refreshAuxSelections()
+}
+function refreshMeasurePanel(){
+  const introSeg = heceler.find((h, idx) => h.isIntro ? ((h._idx = idx), true) : false)
+  const timed = heceler.map((h, idx)=>({ ...h, _idx:idx })).filter(h => !h.isIntro && h.start !== null && h.end !== null)
+  measureKaraoke.innerHTML = ''
+  if(introSeg && introSeg.end !== null && introSeg.end > 0){
+    const introBox = document.createElement('div')
+    introBox.className = 'karaokeBox intro'
+    introBox.dataset.boxIndex = '-99'
+    introBox.dataset.realIndex = String(introSeg._idx)
+    introBox.dataset.start = '0'
+    introBox.dataset.end = String(introSeg.end)
+    introBox.dataset.targetNotes = ''
+    introBox.dataset.mode = 'measure'
+    introBox.innerHTML = `<div class="fill"></div><div class="label">Intro ${introSeg.end.toFixed(2)} sn</div>`
+    introBox.onclick = ()=>{
+      if(measureKaraoke?.dataset?.suppressClick === '1') return
+      currentMeasureSegmentIndex = -1
+      measureCurrentVisualIndex = -99
+      measureCurrentRealIndex = introSeg._idx
+      measureSelectedIndexes = [-99]
+      refreshAuxSelections()
+      clearContainerLocks(measureKaraoke)
+      resetContainerFills(measureKaraoke)
+      measureTargetNoteEl.textContent = '-'
+      measureStatusText.textContent = 'Intro seçildi'
+      measureStatusText.className = 'pill amber'
+      playSnippetOnWs(0, introSeg.end)
+    }
+    measureKaraoke.appendChild(introBox)
+    const br = document.createElement('div')
+    br.className = 'lineBreak'
+    measureKaraoke.appendChild(br)
+  }
+  if(!timed.length){
+    measureKaraoke.innerHTML += '<div class="karaokeBox" style="width:100%;cursor:default;">Ölçülecek zamanlanmış segment yok.</div>'
+  }else{
+    let lastLine = null
+    timed.sort((a,b)=>a.start-b.start).forEach((seg, visualIndex)=>{
+      if(lastLine !== null && seg.line !== lastLine){
+        const br = document.createElement('div')
+        br.className = 'lineBreak'
+        measureKaraoke.appendChild(br)
+      }
+      const box = document.createElement('div')
+      box.className = 'karaokeBox'
+      box.dataset.boxIndex = String(visualIndex)
+      box.dataset.realIndex = String(seg._idx)
+      box.dataset.start = String(seg.start)
+      box.dataset.end = String(seg.end)
+      box.dataset.targetNotes = seg.note || ''
+      box.dataset.mode = 'measure'
+      box.innerHTML = `<div class="fill"></div><div class="label">${escapeHtml(seg.text)}</div>`
+      box.onclick = ()=>{
+        if(measureKaraoke?.dataset?.suppressClick === '1') return
+        currentMeasureSegmentIndex = visualIndex
+        measureCurrentVisualIndex = visualIndex
+        measureCurrentRealIndex = seg._idx
+        measureSelectedIndexes = [visualIndex]
+        refreshAuxSelections()
+        clearContainerLocks(measureKaraoke)
+        resetContainerFills(measureKaraoke)
+        measureTargetNoteEl.textContent = seg.note || '-'
+        measureStatusText.textContent = 'Kutu seçildi'
+        measureStatusText.className = 'pill amber'
+        playSnippetOnWs(seg.start, seg.end)
+      }
+      measureKaraoke.appendChild(box)
+      lastLine = seg.line
+    })
+  }
+  if(!measureKaraoke.dataset.dragReady){ enableUniversalDragSelection(measureKaraoke, 'measure'); measureKaraoke.dataset.dragReady = '1' }
+  refreshAuxSelections()
+}
+async function playBoxesSequentially(container, indexes){
+  if(!indexes || !indexes.length) return
+  sequenceStopRequested = false
+  isSequencePlaying = true
+  resetContainerFills(container)
+  const boxes = indexes.map(i => container.querySelector(`.karaokeBox[data-box-index="${i}"]`) || container.querySelector(`.karaokeBox[data-warmup-index="${i}"]`)).filter(Boolean)
+  for(const box of boxes){
+    if(sequenceStopRequested) break
+    box.classList.add('selected')
+    const notes = parseTargetNotes(box.dataset.targetNotes || '')
+    if(box.dataset.start && box.dataset.end){
+      const start = Number(box.dataset.start)
+      const end = Number(box.dataset.end)
+      animateBoxFill(box, Math.max(180, (end - start) * 1000))
+      playSnippetOnWs(start, end)
+      await new Promise(r=>setTimeout(r, Math.max(260, ((end - start) * 1000) + 100)))
+      stopBoxFill(box, true)
+    }else if(notes.length){
+      const tempo = notes.length >= 3 ? 620 : (notes.length === 2 ? 700 : 1250)
+      const dur = notes.length >= 3 ? 0.58 : (notes.length === 2 ? 0.68 : 1.15)
+      const totalMs = await playToneSequence(notes, tempo, dur)
+      animateBoxFill(box, totalMs - 120)
+      await new Promise(r=>setTimeout(r, totalMs))
+      stopBoxFill(box, true)
+    }
+  }
+  isSequencePlaying = false
+}
+function enableUniversalDragSelection(container, mode){
+  if(!container) return
+  let state = null
+  container.style.touchAction = 'none'
+  container.oncontextmenu = e => e.preventDefault()
+  container.addEventListener('pointerdown', e=>{
+    const box = e.target.closest('.karaokeBox')
+    if(!box) return
+    const idx = Number(box.dataset.boxIndex ?? box.dataset.warmupIndex)
+    if(Number.isNaN(idx)) return
+    state = { pointerId:e.pointerId, startX:e.clientX, startY:e.clientY, lastIdx:idx, indexes:new Set([idx]), moved:false }
+    if(mode === 'practice') practiceSelectedSongIndexes = [idx]
+    if(mode === 'measure') measureSelectedIndexes = [idx]
+    if(mode === 'warmup') practiceSelectedWarmupIndexes = [idx]
+    refreshAuxSelections()
+    try{ container.setPointerCapture(e.pointerId) }catch(err){}
+  }, {passive:true})
+  container.addEventListener('pointermove', e=>{
+    if(!state) return
+    const dx = Math.abs(e.clientX - state.startX)
+    const dy = Math.abs(e.clientY - state.startY)
+    const el = document.elementFromPoint(e.clientX, e.clientY)?.closest('.karaokeBox')
+    const idx = el ? Number(el.dataset.boxIndex ?? el.dataset.warmupIndex) : NaN
+    if(!Number.isNaN(idx) && idx !== state.lastIdx){
+      state.lastIdx = idx
+      state.indexes.add(idx)
+      state.moved = true
+      container.dataset.suppressClick = '1'
+    }else if(dx > 6 || dy > 6){
+      state.moved = state.moved || state.indexes.size > 1
+    }
+    const arr = Array.from(state.indexes).sort((a,b)=>a-b)
+    if(mode === 'practice') practiceSelectedSongIndexes = arr
+    if(mode === 'measure') measureSelectedIndexes = arr
+    if(mode === 'warmup') practiceSelectedWarmupIndexes = arr
+    refreshAuxSelections()
+  }, {passive:true})
+  const finish = ()=>{
+    if(!state) return
+    const arr = Array.from(state.indexes).sort((a,b)=>a-b)
+    const moved = state.moved && arr.length > 1
+    state = null
+    if(!arr.length) return
+    if(moved){
+      container.dataset.suppressClick = '1'
+      setTimeout(()=>{ delete container.dataset.suppressClick }, 650)
+      playBoxesSequentially(container, arr)
+    }else{
+      delete container.dataset.suppressClick
+      const first = container.querySelector(`.karaokeBox[data-box-index="${arr[0]}"]`) || container.querySelector(`.karaokeBox[data-warmup-index="${arr[0]}"]`)
+      if(first) first.click()
+    }
+  }
+  container.addEventListener('pointerup', finish)
+  container.addEventListener('pointercancel', finish)
+  container.addEventListener('lostpointercapture', finish)
+}
+</script>
+
+<script>
+(function(){
+  function updateAllTimelineFills(now){
+    [window.practiceKaraoke, window.measureKaraoke].forEach(container=>{
+      if(!container) return;
+      container.querySelectorAll('.karaokeBox[data-start][data-end]').forEach(el=>{
+        const fill = el.querySelector('.fill');
+        if(!fill) return;
+        const start = Number(el.dataset.start||0), end = Number(el.dataset.end||0);
+        if(end <= start){ fill.style.width='0%'; return; }
+        if(now <= start) fill.style.width='0%';
+        else if(now >= end) fill.style.width='100%';
+        else fill.style.width=((now-start)/(end-start)*100).toFixed(3)+'%';
+      });
+    });
+  }
+  const oldPlaySnippet = window.playSnippetOnWs;
+  if(oldPlaySnippet){
+    window.playSnippetOnWs = function(start,end){
+      oldPlaySnippet(start,end);
+      try{
+        const dur=Math.max(120,(Number(end)-Number(start))*1000);
+        let target=null;
+        [window.practiceKaraoke, window.measureKaraoke].forEach(container=>{
+          if(target||!container) return;
+          target=[...container.querySelectorAll('.karaokeBox[data-start][data-end]')].find(el=>Math.abs(Number(el.dataset.start)-Number(start))<0.02 && Math.abs(Number(el.dataset.end)-Number(end))<0.02);
+        });
+        if(target && window.animateBoxFill) window.animateBoxFill(target,dur);
+      }catch(e){}
+    }
+  }
+  function addIntroToPractice(){
+    if(!window.practiceKaraoke || !window.heceler) return;
+    const intro = window.heceler.find(h=>h && h.isIntro && h.end!==null && h.end>0);
+    if(!intro) return;
+    if(window.practiceKaraoke.querySelector('.karaokeBox.intro')) return;
+    const introBox=document.createElement('div');
+    introBox.className='karaokeBox intro';
+    introBox.dataset.boxIndex='-98';
+    introBox.dataset.realIndex='-98';
+    introBox.dataset.start='0';
+    introBox.dataset.end=String(intro.end);
+    introBox.innerHTML=`<div class="fill"></div><div class="label">Intro ${Number(intro.end).toFixed(2)} sn</div>`;
+    introBox.onclick=()=>window.playSnippetOnWs && window.playSnippetOnWs(0, Number(intro.end));
+    const br=document.createElement('div'); br.className='lineBreak';
+    window.practiceKaraoke.prepend(br); window.practiceKaraoke.prepend(introBox);
+  }
+  const oldRefreshPractice = window.refreshPracticePanel;
+  if(oldRefreshPractice){
+    window.refreshPracticePanel = function(){ oldRefreshPractice(); addIntroToPractice(); }
+  }
+  document.addEventListener('DOMContentLoaded',()=>{ if(window.refreshPracticePanel) window.refreshPracticePanel(); });
+  if(window.ws && window.ws.on){
+    window.ws.on('audioprocess', function(){ updateAllTimelineFills(window.ws.getCurrentTime()); });
+    window.ws.on('seek', function(progress){ const d=window.ws.getDuration()||0; updateAllTimelineFills(progress*d); });
+    window.ws.on('pause', function(){ updateAllTimelineFills(window.ws.getCurrentTime()); });
+    window.ws.on('finish', function(){ updateAllTimelineFills(window.ws.getDuration()||0); });
+  } else {
+    const timer=setInterval(()=>{
+      if(window.ws && window.ws.on){
+        clearInterval(timer);
+        window.ws.on('audioprocess', function(){ updateAllTimelineFills(window.ws.getCurrentTime()); });
+        window.ws.on('seek', function(progress){ const d=window.ws.getDuration()||0; updateAllTimelineFills(progress*d); });
+        window.ws.on('pause', function(){ updateAllTimelineFills(window.ws.getCurrentTime()); });
+        window.ws.on('finish', function(){ updateAllTimelineFills(window.ws.getDuration()||0); });
+      }
+    },300);
+  }
+  // stronger play buttons
+  setTimeout(()=>{
+    if(window.practicePlayAllBtn){
+      window.practicePlayAllBtn.onclick = function(){
+        if(!window.hasAudioLoaded || !window.hasAudioLoaded()) return;
+        if(window.resetContainerFills) window.resetContainerFills(window.practiceKaraoke);
+        if(window.ws){ window.ws.stop(); window.ws.play(0); }
+      };
+    }
+    if(window.measureStartBtn){
+      window.measureStartBtn.onclick = async function(){
+        if(!window.hasAudioLoaded || !window.hasAudioLoaded()) return;
+        if(window.setupMicShared){ const ok = await window.setupMicShared(); if(!ok) return; }
+        window.measureRunning = true; window.measureArmed = true; window.measurePlaybackMode = true; window.measureWindowStarted = false; window.measureAutoMode = true;
+        if(window.resetContainerFills) window.resetContainerFills(window.measureKaraoke);
+        if(window.ws){ window.ws.stop(); window.ws.play(0); }
+        if(window.measureStatusText){ window.measureStatusText.textContent='Ölçüm başladı'; window.measureStatusText.className='pill amber'; }
+      };
+    }
+  }, 800);
+})();
+</script>
+
+
+<script>
+/* PATCH: keep playback volume fixed and prevent sudden dips as much as browser allows */
+window.APP_FIXED_VOLUME = 1.0;
+function enforceFixedPlaybackVolume(){
+  try{ if(window.ws && window.ws.setVolume) window.ws.setVolume(window.APP_FIXED_VOLUME); }catch(e){}
+  try{
+    const media = window.ws && window.ws.backend && window.ws.backend.media;
+    if(media){ media.volume = window.APP_FIXED_VOLUME; media.muted = false; }
+  }catch(e){}
+}
+if(window.ws && window.ws.on){
+  try{ window.ws.on('ready', enforceFixedPlaybackVolume); }catch(e){}
+  try{ window.ws.on('play', enforceFixedPlaybackVolume); }catch(e){}
+  try{ window.ws.on('pause', enforceFixedPlaybackVolume); }catch(e){}
+  try{ window.ws.on('seek', enforceFixedPlaybackVolume); }catch(e){}
+}
+setTimeout(enforceFixedPlaybackVolume, 50);
+
+/* practice/measure single taps should always animate fill */
+window.animateBoxFill = window.animateBoxFill || function(el,dur){
+  if(!el) return;
+  const fill = el.querySelector('.fill');
+  if(!fill) return;
+  const start = performance.now();
+  const ms = Math.max(120, Number(dur)||120);
+  fill.style.width = '0%';
+  function tick(now){
+    const p = Math.max(0, Math.min(100, ((now-start)/ms)*100));
+    fill.style.width = p + '%';
+    if(p < 100) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+};
+
+/* harden snippet/full playback volume */
+(function(){
+  const oldPlaySnippet = window.playSnippetOnWs;
+  if(oldPlaySnippet){
+    window.playSnippetOnWs = function(start,end){
+      enforceFixedPlaybackVolume();
+      oldPlaySnippet(start,end);
+      setTimeout(enforceFixedPlaybackVolume, 0);
+      setTimeout(enforceFixedPlaybackVolume, 120);
+      setTimeout(enforceFixedPlaybackVolume, 400);
+    }
+  }
+  const oldPlayFromStart = window.playWsFromStart;
+  if(oldPlayFromStart){
+    window.playWsFromStart = async function(){
+      enforceFixedPlaybackVolume();
+      const ok = await oldPlayFromStart();
+      setTimeout(enforceFixedPlaybackVolume, 0);
+      setTimeout(enforceFixedPlaybackVolume, 120);
+      setTimeout(enforceFixedPlaybackVolume, 400);
+      return ok;
+    }
+  }
+})();
+
+/* note: a phone cannot be perfectly deaf to its own speaker without headphones;
+   the page already blocks internal playback from being scored during snippet/full playback. */
+</script>
+
+
+<script id="manual-scroll-script">
+(function(){
+  function patchContainer(container, mode){
+    if(!container) return;
+    container.style.touchAction='pan-y';
+    let state=null;
+    const onDown=(e)=>{
+      const box=e.target.closest('.karaokeBox');
+      if(!box) return;
+      const idx=Number(box.dataset.boxIndex ?? box.dataset.warmupIndex);
+      if(Number.isNaN(idx)) return;
+      state={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,lastIdx:idx,indexes:new Set([idx]),moved:false,vertical:false};
+    };
+    const onMove=(e)=>{
+      if(!state) return;
+      const dx=e.clientX-state.startX;
+      const dy=e.clientY-state.startY;
+      if(!state.vertical && Math.abs(dy)>12 && Math.abs(dy)>Math.abs(dx)+6){
+        state.vertical=true;
+        state=null;
+        return;
+      }
+      if(!state) return;
+      if(Math.abs(dx)<8 && Math.abs(dy)<8) return;
+      const el=document.elementFromPoint(e.clientX,e.clientY)?.closest('.karaokeBox');
+      const idx=el ? Number(el.dataset.boxIndex ?? el.dataset.warmupIndex) : NaN;
+      if(!Number.isNaN(idx) && idx!==state.lastIdx){
+        state.lastIdx=idx;
+        state.indexes.add(idx);
+        state.moved=true;
+        container.dataset.suppressClick='1';
+      }
+      const arr=Array.from(state.indexes).sort((a,b)=>a-b);
+      if(mode==='practice') window.practiceSelectedSongIndexes=arr;
+      if(mode==='measure') window.measureSelectedIndexes=arr;
+      if(mode==='warmup') window.practiceSelectedWarmupIndexes=arr;
+      if(window.refreshAuxSelections) refreshAuxSelections();
+      e.preventDefault();
+    };
+    const onUp=()=>{
+      if(!state) return;
+      const arr=Array.from(state.indexes).sort((a,b)=>a-b);
+      const moved=state.moved && arr.length>1;
+      state=null;
+      if(!arr.length) return;
+      if(moved){
+        container.dataset.suppressClick='1';
+        setTimeout(()=>{ delete container.dataset.suppressClick },650);
+        if(window.playBoxesSequentially) playBoxesSequentially(container,arr);
+      }
+    };
+    container.addEventListener('pointerdown', onDown, {passive:true});
+    container.addEventListener('pointermove', onMove, {passive:false});
+    container.addEventListener('pointerup', onUp, {passive:true});
+    container.addEventListener('pointercancel', onUp, {passive:true});
+  }
+  function apply(){
+    patchContainer(document.getElementById('practiceKaraoke'),'practice');
+    patchContainer(document.getElementById('measureKaraoke'),'measure');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',apply); else apply();
+})();
+</script>
+
+<script id="tuner-false-positive-fix">
+(function(){
+  const NOISE_RMS_MIN = 0.0105;
+  const STABLE_FRAMES_REQUIRED = 3;
+  const STABLE_FREQ_DRIFT_CENTS = 28;
+  const PRACTICE_TOL = 24;
+  const MEASURE_TOL = 22;
+
+  window.__pitchGate = {
+    lastFreq: null,
+    stableFrames: 0,
+    lastNote: null,
+    lastGoodTs: 0
+  };
+
+  const oldAutoCorrelate = window.autoCorrelate;
+  if(oldAutoCorrelate){
+    window.autoCorrelate = function(buffer, sampleRate){
+      let rms = 0;
+      for(let i=0;i<buffer.length;i++) rms += buffer[i] * buffer[i];
+      rms = Math.sqrt(rms / buffer.length);
+      if(rms < NOISE_RMS_MIN) return -1;
+      return oldAutoCorrelate(buffer, sampleRate);
+    };
+  }
+
+  function centsBetweenFreqs(a, b){
+    if(!a || !b || a <= 0 || b <= 0) return Infinity;
+    return Math.abs(1200 * Math.log2(a / b));
+  }
+
+  const oldGetCurrentDetectedPitch = window.getCurrentDetectedPitch;
+  if(oldGetCurrentDetectedPitch){
+    window.getCurrentDetectedPitch = function(){
+      const det = oldGetCurrentDetectedPitch();
+      if(!det || !det.freq || !det.note){
+        window.__pitchGate.lastFreq = null;
+        window.__pitchGate.stableFrames = 0;
+        window.__pitchGate.lastNote = null;
+        return null;
+      }
+
+      const gate = window.__pitchGate;
+      if(gate.lastFreq && centsBetweenFreqs(det.freq, gate.lastFreq) <= STABLE_FREQ_DRIFT_CENTS){
+        gate.stableFrames += 1;
+      }else{
+        gate.stableFrames = 1;
+      }
+      gate.lastFreq = det.freq;
+      gate.lastNote = det.note;
+
+      if(gate.stableFrames < STABLE_FRAMES_REQUIRED){
+        return null;
+      }
+
+      gate.lastGoodTs = performance.now();
+      return det;
+    };
+  }
+
+  window.getToleranceCents = function(mode){
+    return mode === 'measure' ? MEASURE_TOL : PRACTICE_TOL;
+  };
+
+  const oldHitWithinTolerance = window.hitWithinTolerance;
+  window.hitWithinTolerance = function(det, targets, mode){
+    if(!det || !det.note || !det.freq) return false;
+    if(!Array.isArray(targets) || !targets.length) return false;
+
+    const gate = window.__pitchGate || {};
+    if((gate.stableFrames || 0) < STABLE_FRAMES_REQUIRED) return false;
+
+    const tol = mode === 'measure' ? MEASURE_TOL : PRACTICE_TOL;
+    return targets.some(target => {
+      const dist = typeof window.centDistanceToTarget === 'function'
+        ? centDistanceToTarget(det, target)
+        : Infinity;
+      return Number.isFinite(dist) && dist <= tol;
+    });
+  };
+
+  const oldUpdateContainerTunerFeedback = window.updateContainerTunerFeedback;
+  window.updateContainerTunerFeedback = function(container, selectedIndexes, activeIndex){
+    if(!container || !window.micReady) return;
+    if(container === window.measureKaraoke) return;
+
+    const det = window.latestDetected && latestDetected.note ? latestDetected : null;
+    const monitored = new Set([...(selectedIndexes || []), ...(activeIndex >= 0 ? [activeIndex] : [])]);
+    const blocked = typeof window.isInternalFeedbackBlocked === 'function' ? isInternalFeedbackBlocked() : false;
+    const nowMs = performance.now();
+
+    container.querySelectorAll('.karaokeBox').forEach(el=>{
+      const idx = Number(el.dataset.boxIndex ?? el.dataset.warmupIndex);
+      const shouldTrack = monitored.has(idx);
+      el.classList.remove('active');
+
+      if(!shouldTrack){
+        if(typeof window.clearBoxPitchCheck === 'function') clearBoxPitchCheck(el);
+        delete el.dataset.trackStart;
+        return;
+      }
+
+      el.classList.add('active');
+      if(blocked) return;
+
+      const targets = typeof window.parseTargetNotes === 'function' ? parseTargetNotes(el.dataset.targetNotes || '') : [];
+      if(!targets.length) return;
+
+      if(!el.dataset.trackStart) el.dataset.trackStart = String(nowMs);
+      if(!el.dataset.evalDeadline) el.dataset.evalDeadline = String(nowMs + 1400);
+      if(el.dataset.lockState === 'ok' || el.dataset.lockState === 'bad') return;
+
+      const hit = det ? window.hitWithinTolerance(det, targets, 'practice') : false;
+      if(hit){
+        el.classList.add('ok');
+        el.classList.remove('bad');
+        el.dataset.lockState = 'ok';
+        return;
+      }
+
+      const deadline = Number(el.dataset.evalDeadline || (nowMs + 1400));
+      if(nowMs >= deadline){
+        el.classList.add('bad');
+        el.classList.remove('ok');
+        el.dataset.lockState = 'bad';
+      }else{
+        el.classList.remove('bad');
+      }
+    });
+  };
+
+  window.runMeasureTick = function(){
+    if(!window.measureRunning || !window.micReady) return;
+
+    const currentTime = window.hasAudioLoaded && hasAudioLoaded() ? ws.getCurrentTime() : 0;
+    const det = window.latestDetected && latestDetected.note ? latestDetected : null;
+    const allBoxes = Array.from(measureKaraoke.querySelectorAll('.karaokeBox[data-box-index]'));
+
+    allBoxes.forEach(el=>{
+      const start = Number(el.dataset.start || 0);
+      const end = Number(el.dataset.end || 0);
+      const fill = el.querySelector('.fill');
+      if(fill){
+        if(currentTime <= start) fill.style.width = '0%';
+        else if(currentTime >= end) fill.style.width = '100%';
+        else fill.style.width = Math.max(0, Math.min(100, ((currentTime - start) / Math.max(0.001, end - start)) * 100)) + '%';
+      }
+    });
+
+    const boxes = allBoxes.filter(el => Number(el.dataset.boxIndex) >= 0);
+    let activeBox = null;
+
+    boxes.forEach(el=>{
+      const start = Number(el.dataset.start || 0);
+      const end = Number(el.dataset.end || 0);
+      if(currentTime >= start && currentTime <= end){
+        activeBox = el;
+        el.classList.add('active');
+      }else{
+        el.classList.remove('active');
+      }
+    });
+
+    boxes.forEach(el=>{
+      const idx = Number(el.dataset.boxIndex);
+      const end = Number(el.dataset.end || 0);
+      const targets = parseTargetNotes(el.dataset.targetNotes || '');
+      if(!targets.length || measureEvaluated.has(idx)) return;
+      if(currentTime > end){
+        if(el.dataset.lockState !== 'ok'){
+          el.classList.remove('ok');
+          el.classList.add('bad');
+          el.dataset.lockState = 'bad';
+        }
+        measureEvaluated.add(idx);
+      }
+    });
+
+    if(activeBox){
+      const idx = Number(activeBox.dataset.boxIndex);
+      const targets = parseTargetNotes(activeBox.dataset.targetNotes || '');
+      measureCurrentVisualIndex = idx;
+      measureTargetNoteEl.textContent = targets.join(' ') || '-';
+
+      if(targets.length){
+        const hit = det ? window.hitWithinTolerance(det, targets, 'measure') : false;
+        if(hit){
+          activeBox.classList.remove('bad');
+          activeBox.classList.add('ok');
+          activeBox.dataset.lockState = 'ok';
+        }
+        measureStatusText.textContent = hit ? 'Kilitlendi' : 'Söyle';
+        measureStatusText.className = hit ? 'pill green' : 'pill amber';
+      }
+    }else if(window.hasAudioLoaded && hasAudioLoaded() && ws.isPlaying()){
+      measureStatusText.textContent = 'Sırası bekleniyor';
+      measureStatusText.className = 'pill amber';
+    }
+
+    const total = boxes.filter(el => parseTargetNotes(el.dataset.targetNotes || '').length).length || 1;
+    const okCount = boxes.filter(el => el.dataset.lockState === 'ok').length;
+    const score = Math.round((okCount / total) * 100);
+    measureScore.textContent = String(score);
+    measureAccuracyText.textContent = '%' + score;
+
+    if(window.hasAudioLoaded && hasAudioLoaded() && !ws.isPlaying() && window.measurePlaybackMode){
+      finalizeMeasureRun();
+      measureStatusText.textContent = 'Ölçme tamamlandı';
+      measureStatusText.className = 'pill green';
+    }
+  };
+})();
+</script>
+
+</body>
+</html>
