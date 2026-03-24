@@ -5534,13 +5534,16 @@ window.animateBoxFill = window.animateBoxFill || function(el,dur){
 
   function getRms(){
     try{
-      if(!window.analyser || !window.pitchBuffer) return 0;
-      analyser.getFloatTimeDomainData(pitchBuffer);
+      // window.analyser yerine doğrudan global scope'tan al
+      const _analyser = window.analyser || (typeof analyser !== 'undefined' ? analyser : null);
+      const _buf = window.pitchBuffer || (typeof pitchBuffer !== 'undefined' ? pitchBuffer : null);
+      if(!_analyser || !_buf) return 0.01; // buffer yoksa geç sayılsın
+      _analyser.getFloatTimeDomainData(_buf);
       let sum = 0;
-      for(let i=0;i<pitchBuffer.length;i++) sum += pitchBuffer[i] * pitchBuffer[i];
-      return Math.sqrt(sum / pitchBuffer.length);
+      for(let i=0;i<_buf.length;i++) sum += _buf[i] * _buf[i];
+      return Math.sqrt(sum / _buf.length);
     }catch(e){
-      return 0;
+      return 0.01;
     }
   }
 
@@ -5634,19 +5637,36 @@ window.animateBoxFill = window.animateBoxFill || function(el,dur){
     if(!Array.isArray(indexes) || !indexes.length) return;
     const idx = indexes[0];
     const box = container.querySelector('.karaokeBox[data-warmup-index="' + idx + '"]');
-    if(!box || box.dataset.lockState === 'ok') return;
+    if(!box) return;
 
-    const det = (window.latestDetected && latestDetected.note) ? latestDetected : null;
+    // Zaten kilitliyse geç
+    if(box.dataset.lockState === 'ok' || box.dataset.lockState === 'bad') return;
+
+    // armBoxPitchCheck çağrılmadıysa (deadline yok) henüz değerlendirme
+    if(!box.dataset.evalDeadline) return;
+
+    const nowPerf = performance.now();
+    const deadline = Number(box.dataset.evalDeadline);
+    const _latest = window.latestDetected || (typeof latestDetected !== 'undefined' ? latestDetected : null);
+    const det = (_latest && _latest.note) ? _latest : null;
     const blocked = (typeof window.isInternalFeedbackBlocked === 'function') ? isInternalFeedbackBlocked() : false;
     const targets = (typeof window.parseTargetNotes === 'function')
       ? parseTargetNotes(box.dataset.targetNotes || '')
       : [];
     if(!targets.length) return;
 
-    const nowPerf = performance.now();
     const hit = (!blocked && det) ? directHit(det, targets, 'practice') : false;
     const held = tickHold(box, hit, nowPerf);
-    if(hit && held >= 120) setBoxState(box, 'ok');
+
+    if(hit && held >= 100){
+      setBoxState(box, 'ok');
+      return;
+    }
+
+    // Süre doldu ve yeşil olmadıysa kırmızı
+    if(nowPerf > deadline){
+      setBoxState(box, 'bad');
+    }
   }
 
   function loopBridge(){
