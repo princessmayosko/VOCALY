@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Vocaly Cetveli v4</title>
+<style>
+:root{
+  --bg1:#06122d;
+  --bg2:#091735;
+  --panel-border:rgba(255,255,255,0.08);
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --thin-line:rgba(255,255,255,0.17);
+
+  --do:#ff5a5f;
+  --re:#ff9d2e;
+  --mi:#ffd43b;
+  --fa:#32d583;
+  --sol:#4ea1ff;
+  --la:#a970ff;
+  --si:#ff5db1;
+
+  --ok:#22c55e;
+  --fail:#ef4444;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.05), transparent 28%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+  overflow:hidden;
+}
+
+.app{
+  position:relative;
+  width:100%;
+  height:100%;
+}
+
+/* ÜST BAR */
+.topbar{
+  position:absolute;
+  top:10px;
+  left:12px;
+  right:12px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:20;
+}
+.iconBtn{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  background:rgba(255,255,255,0.08);
+  box-shadow:0 8px 20px rgba(0,0,0,0.22);
+  font-size:20px;
+}
+.brand{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+
+/* SOL PANEL */
+.railToggle{
+  position:absolute;
+  top:96px;
+  left:10px;
+  width:34px;
+  height:120px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:25;
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 24px rgba(0,0,0,0.22);
+}
+.railToggle span{
+  transform:rotate(90deg);
+  display:block;
+  font-size:18px;
+}
+
+.leftPanel{
+  position:absolute;
+  top:72px;
+  bottom:24px;
+  left:0;
+  width:96px;
+  transform:translateX(-76px);
+  transition:transform .28s ease;
+  z-index:15;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+.leftPanel.open{
+  transform:translateX(0);
+}
+.leftPanelInner{
+  width:86px;
+  height:100%;
+  border-right:1px solid var(--panel-border);
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  backdrop-filter:blur(12px);
+  border-top-right-radius:24px;
+  border-bottom-right-radius:24px;
+  box-shadow:0 18px 34px rgba(0,0,0,0.28);
+  position:relative;
+  padding-top:12px;
+}
+.leftPanelLabel{
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  position:absolute;
+  left:26px;
+  top:74px;
+  color:rgba(255,255,255,0.72);
+  font-size:14px;
+  letter-spacing:.3px;
+}
+.micCard{
+  position:absolute;
+  left:10px;
+  bottom:86px;
+  width:66px;
+  padding:12px 10px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 18px 30px rgba(0,0,0,0.22);
+  text-align:center;
+}
+.micCard .micEmoji{
+  font-size:20px;
+  margin-bottom:10px;
+}
+.micBars{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:4px;
+  height:48px;
+}
+.micBars i{
+  display:block;
+  width:8px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.28);
+  transition:height .12s ease, background .12s ease;
+}
+.micBars i:nth-child(1){height:18px}
+.micBars i:nth-child(2){height:32px}
+.micBars i:nth-child(3){height:42px}
+.micBars i:nth-child(4){height:28px}
+.micBars i:nth-child(5){height:20px}
+
+/* ANA ALAN */
+.main{
+  position:absolute;
+  inset:72px 0 88px 0;
+  display:flex;
+  align-items:stretch;
+}
+
+/* CETVEL */
+.rulerWrap{
+  position:relative;
+  width:170px;
+  min-width:170px;
+  margin-left:42px;
+  display:flex;
+  justify-content:center;
+}
+.rulerCore{
+  position:relative;
+  width:162px;
+  height:100%;
+}
+
+.axis{
+  position:absolute;
+  left:70px;
+  top:20px;
+  bottom:20px;
+  width:2px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08));
+  border-radius:2px;
+}
+
+.ticks{
+  position:absolute;
+  left:74px;
+  top:20px;
+  bottom:20px;
+  width:34px;
+}
+.tick{
+  position:absolute;
+  right:0;
+  height:2px;
+  border-radius:2px;
+  background:var(--thin-line);
+}
+.tick.major{ width:28px; opacity:.9; }
+.tick.mid{ width:18px; opacity:.65; }
+.tick.small{ width:10px; opacity:.45; }
+
+.noteRow{
+  position:absolute;
+  left:0;
+  width:162px;
+  height:54px;
+  transform:translateY(-27px);
+  opacity:.9;
+  transition:opacity .12s ease;
+}
+.noteLine{
+  position:absolute;
+  left:0;
+  top:26px;
+  width:84px;
+  height:4px;
+  border-radius:999px;
+  opacity:.45;
+  transition:height .12s ease, opacity .12s ease, box-shadow .12s ease, transform .12s ease;
+}
+.noteLabel{
+  position:absolute;
+  left:96px;
+  top:4px;
+  font-size:18px;
+  font-weight:700;
+  opacity:.74;
+  transition:opacity .12s ease, transform .12s ease;
+  text-shadow:0 0 12px rgba(0,0,0,0.3);
+}
+.handSlot{
+  position:absolute;
+  left:132px;
+  top:2px;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 4px 10px rgba(0,0,0,0.12);
+  transition:transform .12s ease, opacity .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.handSign{
+  width:22px;
+  height:22px;
+  object-fit:contain;
+  opacity:.95;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,0.08));
+}
+
+/* Hedef notanın sakin glow'u */
+.noteRow.target .targetHalo{
+  position:absolute;
+  left:34px;
+  right:8px;
+  top:1px;
+  bottom:1px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.05);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    0 0 22px rgba(255,255,255,0.05);
+}
+.noteRow.target .noteLabel{
+  color:#fff;
+}
+
+/* AKTİF BLOK */
+.noteRow.active{
+  opacity:1;
+}
+.noteRow.active .noteLine{
+  height:10px;
+  opacity:1;
+  transform:translateX(2px);
+}
+.noteRow.active .noteLabel{
+  opacity:1;
+  transform:scale(1.05);
+}
+.noteRow.active .handSlot{
+  transform:scale(1.08);
+  opacity:1;
+}
+
+/* SAĞ ALAN */
+.wordZone{
+  flex:1;
+  min-width:0;
+  position:relative;
+  padding:24px 18px 18px 10px;
+}
+.words{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  align-content:flex-start;
+  padding:10px 8px;
+}
+.word{
+  min-width:76px;
+  padding:14px 18px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.06);
+  box-shadow:0 10px 18px rgba(0,0,0,0.18);
+  font-size:18px;
+  color:#fff;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
+}
+.word:hover{
+  transform:translateY(-1px);
+}
+.word.active{
+  background:rgba(255,255,255,0.14);
+  border-color:rgba(255,255,255,0.12);
+}
+.word.ok{
+  background:var(--ok);
+  border-color:transparent;
+}
+.word.fail{
+  background:var(--fail);
+  border-color:transparent;
+}
+.word small{
+  display:block;
+  margin-top:6px;
+  font-size:12px;
+  color:rgba(255,255,255,0.7);
+}
+.word.ok small,
+.word.fail small{
+  color:rgba(255,255,255,0.9);
+}
+
+.wordHint{
+  position:absolute;
+  right:26px;
+  top:8px;
+  font-size:14px;
+  color:rgba(255,255,255,0.45);
+}
+
+/* ALT BAR */
+.bottomBar{
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:12px;
+  height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:20;
+}
+.playBtn{
+  width:52px;
+  height:52px;
+  border:none;
+  border-radius:18px;
+  color:#fff;
+  font-size:20px;
+  background:rgba(255,255,255,0.08);
+  box-shadow:0 10px 22px rgba(0,0,0,0.26);
+}
+.phonemeGroup{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.phonemeLabel{
+  font-size:14px;
+  color:rgba(255,255,255,0.7);
+}
+.pill{
+  min-width:62px;
+  height:42px;
+  padding:0 16px;
+  border:none;
+  border-radius:16px;
+  color:#fff;
+  background:rgba(255,255,255,0.06);
+  box-shadow:0 10px 18px rgba(0,0,0,0.20);
+  font-size:18px;
+}
+.pill.active{
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.10);
+}
+
+.statusText{
+  position:absolute;
+  left:74px;
+  bottom:82px;
+  font-size:14px;
+  color:rgba(255,255,255,0.7);
+}
+
+@media (max-width:430px){
+  .rulerWrap{
+    width:164px;
+    min-width:164px;
+    margin-left:34px;
+  }
+  .rulerCore{ width:156px; }
+  .noteLine{ width:78px; }
+  .noteLabel{ left:90px; }
+  .handSlot{ left:126px; }
+  .word{
+    min-width:68px;
+    font-size:17px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <button class="iconBtn" id="menuBtn">☰</button>
+    <div class="brand">Vocaly</div>
+    <button class="iconBtn" style="visibility:hidden">⋮</button>
+  </div>
+
+  <button class="railToggle" id="railToggle" aria-label="Cetveli aç kapa"><span>›</span></button>
+
+  <div class="leftPanel" id="leftPanel">
+    <div class="leftPanelInner">
+      <div class="leftPanelLabel">Vocaly Cetveli</div>
+      <div class="micCard">
+        <div class="micEmoji">🎤</div>
+        <div class="micBars" id="micBars"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="rulerWrap">
+      <div class="rulerCore" id="rulerCore">
+        <div class="axis"></div>
+        <div class="ticks" id="ticks"></div>
+      </div>
+    </div>
+
+    <div class="wordZone">
+      <div class="wordHint">Kelime / hece kutuları</div>
+      <div class="words" id="words"></div>
+    </div>
+  </div>
+
+  <div class="statusText" id="statusText">Bir kutuya tıkla, sonra sesi başlat.</div>
+
+  <div class="bottomBar">
+    <button class="playBtn" id="micBtn">▶</button>
+    <div class="phonemeGroup">
+      <div class="phonemeLabel">Fonem</div>
+      <button class="pill active">MA</button>
+      <button class="pill">NA</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- VERİLER ---------- */
+
+const NOTE_ROWS = [
+  { name:"Do",  color:"var(--do)",  pitchClass:0,  hand:"assets/do.svg" },
+  { name:"Si",  color:"var(--si)",  pitchClass:11, hand:"assets/si.svg" },
+  { name:"La",  color:"var(--la)",  pitchClass:9,  hand:"assets/la.svg" },
+  { name:"Sol", color:"var(--sol)", pitchClass:7,  hand:"assets/sol.svg" },
+  { name:"Fa",  color:"var(--fa)",  pitchClass:5,  hand:"assets/fa.svg" },
+  { name:"Mi",  color:"var(--mi)",  pitchClass:4,  hand:"assets/mi.svg" },
+  { name:"Re",  color:"var(--re)",  pitchClass:2,  hand:"assets/re.svg" },
+  { name:"Do",  color:"var(--do)",  pitchClass:0,  hand:"assets/do.svg" }
+];
+
+const NOTE_MAP = {
+  "Do":0,
+  "Re":2,
+  "Mi":4,
+  "Fa":5,
+  "Sol":7,
+  "La":9,
+  "Si":11
+};
+
+const LYRICS = [
+  { text:"Kork", note:"Sol" },
+  { text:"ma", note:"La" },
+  { text:"sön", note:"Sol" },
+  { text:"mez", note:"Fa" },
+  { text:"bu", note:"Sol" },
+  { text:"şa", note:"La" },
+  { text:"fak", note:"Sol" }
+];
+
+/* ---------- ELEMENTLER ---------- */
+
+const rulerCore = document.getElementById("rulerCore");
+const ticksEl = document.getElementById("ticks");
+const leftPanel = document.getElementById("leftPanel");
+const railToggle = document.getElementById("railToggle");
+const micBtn = document.getElementById("micBtn");
+const wordsEl = document.getElementById("words");
+const statusText = document.getElementById("statusText");
+const micBars = document.getElementById("micBars");
+
+/* ---------- STATE ---------- */
+
+let audioContext = null;
+let analyser = null;
+let sourceNode = null;
+let timeData = null;
+let started = false;
+let smoothMidi = null;
+
+let activePitchClass = null;
+let pitchHistory = [];
+const HISTORY_SIZE = 6;
+
+let currentWordIndex = -1;
+let targetPitchClass = null;
+let wordTimer = null;
+const WORD_TIMEOUT_MS = 1600;
+
+/* ---------- PANEL ---------- */
+
+function togglePanel(){
+  leftPanel.classList.toggle("open");
+  railToggle.querySelector("span").textContent = leftPanel.classList.contains("open") ? "‹" : "›";
+}
+railToggle.addEventListener("click", togglePanel);
+document.getElementById("menuBtn").addEventListener("click", togglePanel);
+
+/* ---------- CETVEL ÇİZİMİ ---------- */
+
+function getUsableTopBottom(){
+  const coreH = rulerCore.clientHeight;
+  return { top:26, bottom:coreH - 26, height:coreH - 52 };
+}
+
+function buildTicks(){
+  ticksEl.innerHTML = "";
+  const {top, height} = getUsableTopBottom();
+
+  for(let i=0; i<=36; i++){
+    const y = top + (i/36) * height;
+    const div = document.createElement("div");
+    div.className = "tick " + (i % 6 === 0 ? "major" : i % 3 === 0 ? "mid" : "small");
+    div.style.top = `${y}px`;
+    ticksEl.appendChild(div);
+  }
+}
+
+function buildNotes(){
+  [...rulerCore.querySelectorAll(".noteRow")].forEach(el => el.remove());
+
+  const {top, height} = getUsableTopBottom();
+
+  NOTE_ROWS.forEach((note, i) => {
+    const y = top + (i / (NOTE_ROWS.length - 1)) * height;
+    const row = document.createElement("div");
+    row.className = "noteRow";
+    row.dataset.pitchClass = String(note.pitchClass);
+    row.dataset.noteName = note.name;
+    row.style.top = `${y}px`;
+
+    const line = document.createElement("div");
+    line.className = "noteLine";
+    line.style.background = note.color;
+    line.style.boxShadow = `0 0 8px ${note.color}`;
+    row.appendChild(line);
+
+    const label = document.createElement("div");
+    label.className = "noteLabel";
+    label.textContent = note.name;
+    row.appendChild(label);
+
+    const handWrap = document.createElement("div");
+    handWrap.className = "handSlot";
+
+    const handImg = document.createElement("img");
+    handImg.className = "handSign";
+    handImg.src = note.hand;
+    handImg.alt = `${note.name} hand sign`;
+    handImg.onerror = function(){
+      this.style.display = "none";
+      handWrap.style.background = "rgba(255,255,255,0.03)";
+    };
+
+    handWrap.appendChild(handImg);
+    row.appendChild(handWrap);
+
+    rulerCore.appendChild(row);
+  });
+
+  renderTargetHighlight();
+  renderActiveBlock();
+}
+
+function renderTargetHighlight(){
+  document.querySelectorAll(".noteRow .targetHalo").forEach(el => el.remove());
+  document.querySelectorAll(".noteRow").forEach(row => row.classList.remove("target"));
+
+  if(targetPitchClass == null) return;
+
+  const rows = [...document.querySelectorAll(".noteRow")];
+  const targetRow = rows.find(row => Number(row.dataset.pitchClass) === targetPitchClass);
+  if(!targetRow) return;
+
+  targetRow.classList.add("target");
+  const halo = document.createElement("div");
+  halo.className = "targetHalo";
+  targetRow.prepend(halo);
+}
+
+function renderActiveBlock(){
+  document.querySelectorAll(".noteRow").forEach(row => row.classList.remove("active"));
+
+  if(activePitchClass == null) return;
+
+  const rows = [...document.querySelectorAll(".noteRow")];
+  const activeRow = rows.find(row => Number(row.dataset.pitchClass) === activePitchClass);
+  if(activeRow){
+    activeRow.classList.add("active");
+  }
+}
+
+/* ---------- KELİME KUTULARI ---------- */
+
+function buildWords(){
+  wordsEl.innerHTML = "";
+
+  LYRICS.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.className = "word";
+    div.dataset.index = String(i);
+    div.innerHTML = `${item.text}<small>${item.note}</small>`;
+
+    div.addEventListener("click", () => {
+      selectWord(i);
+    });
+
+    wordsEl.appendChild(div);
+  });
+}
+
+function clearWordStates(){
+  document.querySelectorAll(".word").forEach(w => {
+    w.classList.remove("active", "ok", "fail");
+  });
+}
+
+function selectWord(index){
+  clearTimeout(wordTimer);
+
+  currentWordIndex = index;
+  targetPitchClass = NOTE_MAP[LYRICS[index].note];
+
+  document.querySelectorAll(".word").forEach(w => w.classList.remove("active"));
+  const wordEl = document.querySelector(`.word[data-index="${index}"]`);
+  if(wordEl) wordEl.classList.add("active");
+
+  renderTargetHighlight();
+
+  statusText.textContent = `"${LYRICS[index].text}" için hedef nota: ${LYRICS[index].note}`;
+
+  wordTimer = setTimeout(() => {
+    const currentEl = document.querySelector(`.word[data-index="${currentWordIndex}"]`);
+    if(currentEl && !currentEl.classList.contains("ok")){
+      currentEl.classList.remove("active");
+      currentEl.classList.add("fail");
+      statusText.textContent = `"${LYRICS[index].text}" kaçtı. Başka kutuya tıklayabilirsin.`;
+    }
+  }, WORD_TIMEOUT_MS);
+}
+
+function markCurrentWordOk(){
+  if(currentWordIndex === -1) return;
+
+  const wordEl = document.querySelector(`.word[data-index="${currentWordIndex}"]`);
+  if(!wordEl || wordEl.classList.contains("ok")) return;
+
+  clearTimeout(wordTimer);
+  wordEl.classList.remove("active", "fail");
+  wordEl.classList.add("ok");
+  statusText.textContent = `"${LYRICS[currentWordIndex].text}" doğru.`;
+
+  const nextIndex = currentWordIndex + 1;
+  if(nextIndex < LYRICS.length){
+    setTimeout(() => selectWord(nextIndex), 380);
+  } else {
+    currentWordIndex = -1;
+    targetPitchClass = null;
+    renderTargetHighlight();
+    statusText.textContent = "Satır tamamlandı.";
+  }
+}
+
+/* ---------- MİKROFON / PITCH ---------- */
+
+async function startMic(){
+  if(started) return;
+
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:true,
+        autoGainControl:true
+      }
+    });
+
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    sourceNode = audioContext.createMediaStreamSource(stream);
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.82;
+    sourceNode.connect(analyser);
+    timeData = new Float32Array(analyser.fftSize);
+
+    started = true;
+    micBtn.textContent = "⏸";
+
+    if(!leftPanel.classList.contains("open")) togglePanel();
+    statusText.textContent = "Mikrofon açık. Nota blokları yanıyor.";
+
+    loop();
+  }catch(err){
+    alert("Mikrofon izni verilmedi ya da açılamadı.");
+    console.error(err);
+  }
+}
+
+function autoCorrelate(buf, sampleRate){
+  const SIZE = buf.length;
+  let rms = 0;
+  for(let i=0;i<SIZE;i++) rms += buf[i] * buf[i];
+  rms = Math.sqrt(rms / SIZE);
+  if(rms < 0.01) return null;
+
+  let r1 = 0, r2 = SIZE - 1, threshold = 0.2;
+  for(let i=0;i<SIZE/2;i++){
+    if(Math.abs(buf[i]) < threshold){ r1 = i; break; }
+  }
+  for(let i=1;i<SIZE/2;i++){
+    if(Math.abs(buf[SIZE-i]) < threshold){ r2 = SIZE-i; break; }
+  }
+
+  buf = buf.slice(r1, r2);
+  const newSize = buf.length;
+  const c = new Array(newSize).fill(0);
+
+  for(let i=0;i<newSize;i++){
+    for(let j=0;j<newSize-i;j++){
+      c[i] += buf[j] * buf[j+i];
+    }
+  }
+
+  let d = 0;
+  while(c[d] > c[d+1]) d++;
+
+  let maxval = -1;
+  let maxpos = -1;
+  for(let i=d;i<newSize;i++){
+    if(c[i] > maxval){
+      maxval = c[i];
+      maxpos = i;
+    }
+  }
+
+  const T0 = maxpos;
+  if(T0 <= 0) return null;
+
+  return sampleRate / T0;
+}
+
+function freqToMidi(freq){
+  return 69 + 12 * Math.log2(freq / 440);
+}
+
+function pushPitchClass(pc){
+  pitchHistory.push(pc);
+  if(pitchHistory.length > HISTORY_SIZE) pitchHistory.shift();
+}
+
+function getStablePitchClass(){
+  if(pitchHistory.length === 0) return null;
+
+  const counts = {};
+  for(const p of pitchHistory){
+    counts[p] = (counts[p] || 0) + 1;
+  }
+
+  let best = null;
+  let bestCount = -1;
+  for(const key in counts){
+    if(counts[key] > bestCount){
+      bestCount = counts[key];
+      best = Number(key);
+    }
+  }
+  return best;
+}
+
+function updateMicBars(freq){
+  if(!freq){
+    [...micBars.children].forEach((bar, i) => {
+      bar.style.height = `${16 + i*3}px`;
+      bar.style.background = "rgba(255,255,255,0.28)";
+    });
+    return;
+  }
+
+  const normalized = Math.max(0, Math.min(1, (freq - 80) / 500));
+  [...micBars.children].forEach((bar, i) => {
+    const factor = Math.max(0.2, normalized * (0.7 + i * 0.1));
+    const h = 14 + factor * (24 + i*4);
+    bar.style.height = `${h}px`;
+    bar.style.background = i >= 1 && i <= 3 ? "rgba(52,211,153,.9)" : "rgba(255,255,255,0.35)";
+  });
+}
+
+function loop(){
+  if(!started || !analyser) return;
+  requestAnimationFrame(loop);
+
+  analyser.getFloatTimeDomainData(timeData);
+  const freq = autoCorrelate(timeData, audioContext.sampleRate);
+
+  if(!freq || freq < 70 || freq > 1000){
+    updateMicBars(null);
+    return;
+  }
+
+  updateMicBars(freq);
+
+  const midi = freqToMidi(freq);
+  smoothMidi = smoothMidi == null ? midi : smoothMidi * 0.78 + midi * 0.22;
+
+  // Oktav bağımsız + her nota kendi bölgesine yuvarlanır
+  const pitchClass = ((Math.round(smoothMidi) % 12) + 12) % 12;
+
+  pushPitchClass(pitchClass);
+  const stablePitch = getStablePitchClass();
+
+  if(stablePitch !== activePitchClass){
+    activePitchClass = stablePitch;
+    renderActiveBlock();
+  }
+
+  if(targetPitchClass != null && stablePitch === targetPitchClass){
+    markCurrentWordOk();
+  }
+}
+
+/* ---------- INIT ---------- */
+
+function init(){
+  buildTicks();
+  buildNotes();
+  buildWords();
+}
+
+window.addEventListener("resize", init);
+
+micBtn.addEventListener("click", startMic);
+
+document.body.addEventListener("click", async () => {
+  if(audioContext && audioContext.state === "suspended"){
+    await audioContext.resume();
+  }
+}, { passive:true });
+
+init();
+</script>
+</body>
+</html>
