@@ -1,248 +1,711 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vocaly Cetveli</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Vocaly Cetveli v2</title>
 <style>
+:root{
+  --bg1:#06122d;
+  --bg2:#091735;
+  --panel:rgba(10,18,40,0.92);
+  --panel-border:rgba(255,255,255,0.08);
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --soft-line:rgba(255,255,255,0.10);
+  --thin-line:rgba(255,255,255,0.17);
+
+  --do:#ff5a5f;
+  --re:#ff9d2e;
+  --mi:#ffd43b;
+  --fa:#32d583;
+  --sol:#4ea1ff;
+  --la:#a970ff;
+  --si:#ff5db1;
+
+  --ok:#34d399;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
-  background:#0f172a;
-  font-family:Arial;
-  color:white;
+  font-family:Arial, Helvetica, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.05), transparent 28%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
   overflow:hidden;
 }
 
-/* PANEL */
-.panel{
-  position:fixed;
-  left:-120px;
-  top:0;
-  width:120px;
+.app{
+  position:relative;
+  width:100%;
   height:100%;
-  background:#111827;
-  border-right:1px solid #1f2937;
-  transition:0.3s;
+}
+
+/* ÜST BAR */
+.topbar{
+  position:absolute;
+  top:10px;
+  left:12px;
+  right:12px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:20;
+}
+.iconBtn{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  background:rgba(255,255,255,0.08);
+  box-shadow:0 8px 20px rgba(0,0,0,0.22);
+  font-size:20px;
+}
+.brand{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+
+/* SOL PANEL */
+.railToggle{
+  position:absolute;
+  top:96px;
+  left:10px;
+  width:34px;
+  height:120px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:25;
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 24px rgba(0,0,0,0.22);
+}
+.railToggle span{
+  transform:rotate(90deg);
+  display:block;
+  font-size:18px;
+}
+
+.leftPanel{
+  position:absolute;
+  top:72px;
+  bottom:24px;
+  left:0;
+  width:96px;
+  transform:translateX(-76px);
+  transition:transform .28s ease;
+  z-index:15;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+.leftPanel.open{
+  transform:translateX(0);
+}
+.leftPanelInner{
+  width:86px;
+  height:100%;
+  border-right:1px solid var(--panel-border);
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  backdrop-filter:blur(12px);
+  border-top-right-radius:24px;
+  border-bottom-right-radius:24px;
+  box-shadow:0 18px 34px rgba(0,0,0,0.28);
+  position:relative;
+  padding-top:12px;
+}
+.leftPanelLabel{
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  position:absolute;
+  left:26px;
+  top:74px;
+  color:rgba(255,255,255,0.72);
+  font-size:14px;
+  letter-spacing:.3px;
+}
+.micCard{
+  position:absolute;
+  left:10px;
+  bottom:86px;
+  width:66px;
+  padding:12px 10px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 18px 30px rgba(0,0,0,0.22);
+  text-align:center;
+}
+.micCard .micEmoji{
+  font-size:20px;
+  margin-bottom:10px;
+}
+.micBars{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:4px;
+  height:48px;
+}
+.micBars i{
+  display:block;
+  width:8px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.28);
+}
+.micBars i:nth-child(1){height:18px}
+.micBars i:nth-child(2){height:32px;background:rgba(52,211,153,.9)}
+.micBars i:nth-child(3){height:42px;background:rgba(52,211,153,.95)}
+.micBars i:nth-child(4){height:28px;background:rgba(52,211,153,.8)}
+.micBars i:nth-child(5){height:20px}
+
+/* ANA ALAN */
+.main{
+  position:absolute;
+  inset:72px 0 88px 0;
+  display:flex;
+  align-items:stretch;
+}
+
+/* CETVEL SÜTUNU */
+.rulerWrap{
+  position:relative;
+  width:138px;
+  min-width:138px;
+  margin-left:42px;
   display:flex;
   justify-content:center;
 }
-
-.panel.open{
-  left:0;
-}
-
-/* TOGGLE */
-.toggle{
-  position:fixed;
-  left:10px;
-  top:50%;
-  transform:translateY(-50%);
-  background:#1f2937;
-  padding:10px;
-  border-radius:8px;
-  cursor:pointer;
-  z-index:10;
-}
-
-/* CETVEL */
-.ruler{
+.rulerCore{
   position:relative;
-  width:60px;
+  width:130px;
   height:100%;
-  margin-top:40px;
 }
 
-.line{
-  position:absolute;
-  width:100%;
-  height:2px;
-  left:0;
-}
-
-.note{
+/* Orta ana çizgi */
+.axis{
   position:absolute;
   left:70px;
-  transform:translateY(-50%);
-  font-size:14px;
+  top:20px;
+  bottom:20px;
+  width:2px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08));
+  border-radius:2px;
 }
 
-/* RENKLER */
-.do{background:#ef4444;}
-.re{background:#f97316;}
-.mi{background:#eab308;}
-.fa{background:#22c55e;}
-.sol{background:#3b82f6;}
-.la{background:#a855f7;}
-.si{background:#ec4899;}
-
-/* HEDEF */
-.target{
-  box-shadow:0 0 15px #22c55e;
-}
-
-/* SES NOKTASI */
-.dot{
+/* İnce cetvel çizgileri */
+.ticks{
   position:absolute;
-  left:25px;
-  width:14px;
-  height:14px;
-  border-radius:50%;
-  background:white;
-  box-shadow:0 0 10px white;
-  transition:0.1s;
+  left:74px;
+  top:20px;
+  bottom:20px;
+  width:34px;
 }
-.dot.green{
-  background:#22c55e;
-  box-shadow:0 0 20px #22c55e;
+.tick{
+  position:absolute;
+  right:0;
+  height:2px;
+  border-radius:2px;
+  background:var(--thin-line);
+}
+.tick.major{ width:28px; opacity:.9; }
+.tick.mid{ width:18px; opacity:.65; }
+.tick.small{ width:10px; opacity:.45; }
+
+/* Nota satırı */
+.noteRow{
+  position:absolute;
+  left:0;
+  width:130px;
+  height:54px;
+  transform:translateY(-27px);
+}
+.noteLine{
+  position:absolute;
+  left:0;
+  top:26px;
+  width:84px;
+  height:4px;
+  border-radius:999px;
+}
+.noteLabel{
+  position:absolute;
+  left:96px;
+  top:4px;
+  font-size:18px;
+  font-weight:700;
+  text-shadow:0 0 12px rgba(0,0,0,0.3);
 }
 
+.noteRow.target .targetHalo{
+  position:absolute;
+  left:34px;
+  right:-8px;
+  top:1px;
+  bottom:1px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03) inset,
+    0 0 24px rgba(52,211,153,0.18),
+    0 0 40px rgba(52,211,153,0.12);
+}
+.noteRow.target .noteLabel{
+  color:#fff;
+}
+.noteRow.target .hand{
+  color:#86efac;
+  text-shadow:0 0 12px rgba(52,211,153,0.28);
+}
+
+/* Hand sign yer tutucu */
+.hand{
+  position:absolute;
+  left:138px;
+  top:0;
+  font-size:24px;
+  opacity:.92;
+}
+
+/* Hareketli ses noktası */
+.voiceDot{
+  position:absolute;
+  left:47px;
+  width:24px;
+  height:24px;
+  margin-top:-12px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:
+    0 0 16px rgba(255,255,255,0.9),
+    0 0 32px rgba(255,255,255,0.45);
+  transition:top .08s linear, background .12s ease, box-shadow .12s ease;
+  z-index:5;
+}
+.voiceDot::after{
+  content:"";
+  position:absolute;
+  inset:-8px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  filter:blur(8px);
+}
+.voiceDot.ok{
+  background:#d1fae5;
+  box-shadow:
+    0 0 16px rgba(209,250,229,.95),
+    0 0 34px rgba(52,211,153,.55),
+    0 0 52px rgba(52,211,153,.26);
+}
+
+/* SAĞ ALAN: kelime kutularına ayrılmış boş alan */
+.wordZone{
+  flex:1;
+  min-width:0;
+  position:relative;
+  padding:26px 18px 18px 16px;
+}
+.wordPlaceholder{
+  position:absolute;
+  inset:24px 18px 12px 12px;
+  border-radius:28px;
+  border:1px dashed rgba(255,255,255,0.08);
+  background:linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.01));
+}
+.wordHint{
+  position:absolute;
+  right:26px;
+  top:26px;
+  font-size:14px;
+  color:rgba(255,255,255,0.45);
+}
+
+/* ALT BAR */
+.bottomBar{
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:12px;
+  height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  z-index:20;
+}
+.playBtn{
+  width:52px;
+  height:52px;
+  border:none;
+  border-radius:18px;
+  color:#fff;
+  font-size:20px;
+  background:rgba(255,255,255,0.08);
+  box-shadow:0 10px 22px rgba(0,0,0,0.26);
+}
+.phonemeGroup{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.phonemeLabel{
+  font-size:14px;
+  color:rgba(255,255,255,0.7);
+}
+.pill{
+  min-width:62px;
+  height:42px;
+  padding:0 16px;
+  border:none;
+  border-radius:16px;
+  color:#fff;
+  background:rgba(255,255,255,0.06);
+  box-shadow:0 10px 18px rgba(0,0,0,0.20);
+  font-size:18px;
+}
+.pill.active{
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.10);
+}
+
+/* Mobil incelik */
+@media (max-width:430px){
+  .rulerWrap{
+    width:128px;
+    min-width:128px;
+    margin-left:34px;
+  }
+  .rulerCore{ width:122px; }
+  .noteLine{ width:78px; }
+  .noteLabel{ left:90px; }
+  .hand{ left:128px; font-size:22px; }
+}
 </style>
 </head>
-
 <body>
+<div class="app">
+  <div class="topbar">
+    <button class="iconBtn" id="menuBtn">☰</button>
+    <div class="brand">Vocaly</div>
+    <button class="iconBtn">⋮</button>
+  </div>
 
-<div class="toggle" onclick="togglePanel()">🎤</div>
+  <button class="railToggle" id="railToggle" aria-label="Cetveli aç kapa"><span>›</span></button>
 
-<div id="panel" class="panel">
-  <div class="ruler" id="ruler"></div>
+  <div class="leftPanel" id="leftPanel">
+    <div class="leftPanelInner">
+      <div class="leftPanelLabel">Vocaly Cetveli</div>
+      <div class="micCard">
+        <div class="micEmoji">🎤</div>
+        <div class="micBars"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="rulerWrap">
+      <div class="rulerCore" id="rulerCore">
+        <div class="axis"></div>
+        <div class="ticks" id="ticks"></div>
+        <div class="voiceDot" id="voiceDot"></div>
+      </div>
+    </div>
+
+    <div class="wordZone">
+      <div class="wordPlaceholder"></div>
+      <div class="wordHint">Kelime / hece kutuları buraya gelecek</div>
+    </div>
+  </div>
+
+  <div class="bottomBar">
+    <button class="playBtn" id="micBtn">▶</button>
+    <div class="phonemeGroup">
+      <div class="phonemeLabel">Fonem</div>
+      <button class="pill active">MA</button>
+      <button class="pill">NA</button>
+    </div>
+  </div>
 </div>
 
 <script>
-
-// ===== NOTALAR =====
-const NOTES = [
-  {name:"Do", class:"do", midi:0},
-  {name:"Si", class:"si", midi:11},
-  {name:"La", class:"la", midi:9},
-  {name:"Sol", class:"sol", midi:7},
-  {name:"Fa", class:"fa", midi:5},
-  {name:"Mi", class:"mi", midi:4},
-  {name:"Re", class:"re", midi:2},
-  {name:"Do", class:"do", midi:0}
+const NOTE_ROWS = [
+  { name:"Do",  color:"var(--do)",  pitchClass:0,  hand:"✊" }, // üst do
+  { name:"Si",  color:"var(--si)",  pitchClass:11, hand:"🫳" },
+  { name:"La",  color:"var(--la)",  pitchClass:9,  hand:"🫱" },
+  { name:"Sol", color:"var(--sol)", pitchClass:7,  hand:"🖐" },
+  { name:"Fa",  color:"var(--fa)",  pitchClass:5,  hand:"👎" },
+  { name:"Mi",  color:"var(--mi)",  pitchClass:4,  hand:"✋" },
+  { name:"Re",  color:"var(--re)",  pitchClass:2,  hand:"🤚" },
+  { name:"Do",  color:"var(--do)",  pitchClass:0,  hand:"✊" }  // alt do
 ];
 
-// hedef nota
-const TARGET = 7; // Sol
+const TARGET_PITCH_CLASS = 7; // Sol
+const rulerCore = document.getElementById("rulerCore");
+const ticksEl = document.getElementById("ticks");
+const voiceDot = document.getElementById("voiceDot");
+const leftPanel = document.getElementById("leftPanel");
+const railToggle = document.getElementById("railToggle");
+const micBtn = document.getElementById("micBtn");
 
-// ===== CETVEL OLUŞTUR =====
-const ruler = document.getElementById("ruler");
-const height = window.innerHeight;
+let audioContext, analyser, sourceNode, timeData;
+let started = false;
+let smoothMidi = null;
 
-NOTES.forEach((n, i)=>{
-  let y = (i/(NOTES.length-1))*height;
-
-  let line = document.createElement("div");
-  line.className = "line "+n.class;
-  line.style.top = y+"px";
-
-  if(n.midi===TARGET){
-    line.classList.add("target");
-  }
-
-  let label = document.createElement("div");
-  label.className = "note";
-  label.innerText = n.name;
-  label.style.top = y+"px";
-
-  ruler.appendChild(line);
-  ruler.appendChild(label);
-});
-
-// ===== SES NOKTASI =====
-const dot = document.createElement("div");
-dot.className="dot";
-ruler.appendChild(dot);
-
-// ===== PANEL =====
 function togglePanel(){
-  document.getElementById("panel").classList.toggle("open");
+  leftPanel.classList.toggle("open");
+  railToggle.querySelector("span").textContent = leftPanel.classList.contains("open") ? "‹" : "›";
+}
+railToggle.addEventListener("click", togglePanel);
+document.getElementById("menuBtn").addEventListener("click", togglePanel);
+
+function getUsableTopBottom(){
+  const coreH = rulerCore.clientHeight;
+  return { top:26, bottom:coreH - 26, height:coreH - 52 };
 }
 
-// ===== AUDIO =====
-let audioContext;
-let analyser;
-let dataArray;
+function buildTicks(){
+  ticksEl.innerHTML = "";
+  const {top, height} = getUsableTopBottom();
+
+  // 0..36 arası küçük bölümler: daha cetvelsi görünüm
+  for(let i=0; i<=36; i++){
+    const y = top + (i/36) * height;
+    const div = document.createElement("div");
+    div.className = "tick " + (i % 6 === 0 ? "major" : i % 3 === 0 ? "mid" : "small");
+    div.style.top = `${y}px`;
+    ticksEl.appendChild(div);
+  }
+}
+
+function buildNotes(){
+  // eski satırları temizle
+  [...rulerCore.querySelectorAll(".noteRow")].forEach(el => el.remove());
+
+  const {top, height} = getUsableTopBottom();
+
+  NOTE_ROWS.forEach((note, i) => {
+    const y = top + (i / (NOTE_ROWS.length - 1)) * height;
+    const row = document.createElement("div");
+    row.className = "noteRow" + (note.pitchClass === TARGET_PITCH_CLASS && note.name === "Sol" ? " target" : "");
+    row.style.top = `${y}px`;
+
+    if (row.classList.contains("target")) {
+      const halo = document.createElement("div");
+      halo.className = "targetHalo";
+      row.appendChild(halo);
+    }
+
+    const line = document.createElement("div");
+    line.className = "noteLine";
+    line.style.background = note.color;
+    line.style.boxShadow = `0 0 10px ${note.color}`;
+    row.appendChild(line);
+
+    const label = document.createElement("div");
+    label.className = "noteLabel";
+    label.textContent = note.name;
+    row.appendChild(label);
+
+    const hand = document.createElement("div");
+    hand.className = "hand";
+    hand.textContent = note.hand;
+    row.appendChild(hand);
+
+    rulerCore.appendChild(row);
+  });
+}
+
+function pitchClassToVisualIndex(pc){
+  // yukarıdan aşağı: Do, Si, La, Sol, Fa, Mi, Re, Do
+  // bu düzende pitch class eşlemesi
+  const map = {
+    0: 1.0,   // Do ailesi: görselde üst ve alt do arasında bağ kurmak için,
+              // ses noktasını tek oktav içinde göstereceğimiz için ayrı mantık kullanacağız
+    11: 0.857,
+    9: 0.714,
+    7: 0.571,
+    5: 0.428,
+    4: 0.285,
+    2: 0.142
+  };
+  return map[pc];
+}
+
+function midiToVisualY(midi){
+  const {top, bottom, height} = getUsableTopBottom();
+
+  // Oktav bağımsız: note class + ince konum
+  let rounded = Math.round(midi);
+  let pc = ((rounded % 12) + 12) % 12;
+
+  // Desteklenen ana notalar dışında kalanları en yakın ana notaya yaklaştır
+  const anchors = [0,2,4,5,7,9,11];
+  let nearest = anchors[0];
+  let minDist = 99;
+  for(const a of anchors){
+    let d = Math.abs(a - pc);
+    d = Math.min(d, 12 - d);
+    if(d < minDist){ minDist = d; nearest = a; }
+  }
+
+  // Tek oktavı alta doğru kuruyoruz: alt Do = 0, üst Do = 1
+  const baseMap = {
+    0: 0.0,
+    2: 1/7,
+    4: 2/7,
+    5: 3/7,
+    7: 4/7,
+    9: 5/7,
+    11: 6/7
+  };
+
+  let val = baseMap[nearest];
+
+  // cent benzeri ince hareket
+  const diff = midi - Math.round(midi);
+  val += diff * 0.06;
+
+  val = Math.max(0, Math.min(1, val));
+
+  // ekranda yukarı ince, aşağı kalın
+  return bottom - (val * height);
+}
+
+function updateDotByMidi(midi, isOk){
+  const y = midiToVisualY(midi);
+  voiceDot.style.top = `${y}px`;
+  voiceDot.classList.toggle("ok", isOk);
+}
 
 async function startMic(){
-  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-  audioContext = new AudioContext();
-  const source = audioContext.createMediaStreamSource(stream);
+  if(started) return;
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:true,
+        noiseSuppression:true,
+        autoGainControl:true
+      }
+    });
 
-  analyser = audioContext.createAnalyser();
-  analyser.fftSize = 2048;
-
-  source.connect(analyser);
-  dataArray = new Float32Array(analyser.fftSize);
-
-  update();
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    sourceNode = audioContext.createMediaStreamSource(stream);
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.82;
+    sourceNode.connect(analyser);
+    timeData = new Float32Array(analyser.fftSize);
+    started = true;
+    micBtn.textContent = "⏸";
+    if(!leftPanel.classList.contains("open")) togglePanel();
+    loop();
+  }catch(err){
+    alert("Mikrofon izni verilmedi ya da açılamadı.");
+    console.error(err);
+  }
 }
 
-// ===== AUTOCORRELATION =====
-function getPitch(){
-  analyser.getFloatTimeDomainData(dataArray);
+function autoCorrelate(buf, sampleRate){
+  const SIZE = buf.length;
+  let rms = 0;
+  for(let i=0;i<SIZE;i++) rms += buf[i] * buf[i];
+  rms = Math.sqrt(rms / SIZE);
+  if(rms < 0.01) return null;
 
-  let SIZE = dataArray.length;
-  let bestOffset = -1;
-  let bestCorrelation = 0;
+  let r1 = 0, r2 = SIZE - 1, threshold = 0.2;
+  for(let i=0;i<SIZE/2;i++){
+    if(Math.abs(buf[i]) < threshold){ r1 = i; break; }
+  }
+  for(let i=1;i<SIZE/2;i++){
+    if(Math.abs(buf[SIZE-i]) < threshold){ r2 = SIZE-i; break; }
+  }
 
-  for(let offset=8; offset<1000; offset++){
-    let correlation = 0;
+  buf = buf.slice(r1, r2);
+  const newSize = buf.length;
+  const c = new Array(newSize).fill(0);
 
-    for(let i=0; i<SIZE-offset; i++){
-      correlation += dataArray[i]*dataArray[i+offset];
-    }
-
-    correlation = correlation/(SIZE-offset);
-
-    if(correlation>bestCorrelation){
-      bestCorrelation = correlation;
-      bestOffset = offset;
+  for(let i=0;i<newSize;i++){
+    for(let j=0;j<newSize-i;j++){
+      c[i] += buf[j] * buf[j+i];
     }
   }
 
-  if(bestOffset>0){
-    return audioContext.sampleRate / bestOffset;
+  let d = 0;
+  while(c[d] > c[d+1]) d++;
+  let maxval = -1;
+  let maxpos = -1;
+  for(let i=d;i<newSize;i++){
+    if(c[i] > maxval){
+      maxval = c[i];
+      maxpos = i;
+    }
   }
 
-  return null;
+  let T0 = maxpos;
+  if(T0 <= 0) return null;
+  return sampleRate / T0;
 }
 
-// ===== FREKANS → MIDI =====
 function freqToMidi(freq){
   return 69 + 12 * Math.log2(freq / 440);
 }
 
-// ===== UPDATE LOOP =====
-function update(){
-  requestAnimationFrame(update);
-
-  const freq = getPitch();
-  if(!freq) return;
-
-  let midi = freqToMidi(freq);
-
-  // oktav bağımsız
-  let pitchClass = ((Math.round(midi)%12)+12)%12;
-
-  // konum
-  let pos = (pitchClass / 12);
-  let y = height * (1-pos);
-
-  dot.style.top = y+"px";
-
-  // hedef kontrol
-  if(Math.abs(pitchClass - TARGET) < 1){
-    dot.classList.add("green");
-  }else{
-    dot.classList.remove("green");
-  }
+function getPitchClassName(pc){
+  const map = {
+    0:"Do", 1:"Do#", 2:"Re", 3:"Re#", 4:"Mi", 5:"Fa",
+    6:"Fa#", 7:"Sol", 8:"Sol#", 9:"La", 10:"La#", 11:"Si"
+  };
+  return map[pc] || "";
 }
 
-// ===== BAŞLAT =====
-document.body.addEventListener("click", startMic);
+function isTargetMatch(pc, targetPc){
+  if(pc === targetPc) return true;
+  return false;
+}
 
+function loop(){
+  if(!started || !analyser) return;
+  requestAnimationFrame(loop);
+
+  analyser.getFloatTimeDomainData(timeData);
+  const freq = autoCorrelate(timeData, audioContext.sampleRate);
+  if(!freq || freq < 70 || freq > 1000) return;
+
+  let midi = freqToMidi(freq);
+  smoothMidi = smoothMidi == null ? midi : smoothMidi * 0.78 + midi * 0.22;
+
+  const pc = ((Math.round(smoothMidi) % 12) + 12) % 12;
+  const ok = isTargetMatch(pc, TARGET_PITCH_CLASS);
+
+  updateDotByMidi(smoothMidi, ok);
+}
+
+function init(){
+  buildTicks();
+  buildNotes();
+
+  // başlangıçta dot alt-re civarında dursun
+  updateDotByMidi(62, false);
+}
+window.addEventListener("resize", init);
+micBtn.addEventListener("click", startMic);
+document.body.addEventListener("click", async () => {
+  if(audioContext && audioContext.state === "suspended"){
+    await audioContext.resume();
+  }
+}, {passive:true});
+
+init();
 </script>
-
 </body>
 </html>
