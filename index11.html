@@ -298,9 +298,14 @@ function renderLibrary(){
 }
 
 function openSong(id){
-  heceStates = [];
   selectedSong = library.find(x => x.id === id) || null;
-  if(selectedSong) heceStates = selectedSong.lyrics.map(()=>null);
+
+  if(selectedSong && Array.isArray(selectedSong.lyrics)){
+    heceStates = selectedSong.lyrics.map(() => null);
+  } else {
+    heceStates = [];
+  }
+
   activeHeceIndex = 0;
   stopMeasure(true);
   renderMeasure();
