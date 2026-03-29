@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VOCALY</title>
+<style>
+:root{
+  --bg:#08111f;
+  --bg2:#0f1b2d;
+  --panel:rgba(12,22,39,.92);
+  --panel2:rgba(18,31,52,.92);
+  --line:rgba(255,255,255,.09);
+  --text:#eef4ff;
+  --muted:#9fb0c9;
+  --yellow:#facc15;
+  --purple:#8b5cf6;
+  --green:#22c55e;
+  --red:#ef4444;
+  --cyan:#22d3ee;
+  --shadow:0 12px 36px rgba(0,0,0,.32);
+
+  --do:#ef4444;
+  --re:#fb923c;
+  --mi:#facc15;
+  --fa:#22c55e;
+  --sol:#22d3ee;
+  --la:#8b5cf6;
+  --si:#ec4899;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:Arial,sans-serif}
+body{min-height:100vh}
+button,input,select{font:inherit}
+.hidden{display:none!important}
+.app{max-width:1200px;margin:0 auto;padding:14px 14px 90px}
+.topbar{
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+  background:linear-gradient(180deg,rgba(8,17,31,.95),rgba(8,17,31,.72));
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{max-width:1200px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px}
+.logo{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);
+  color:#111827;font-weight:900;box-shadow:0 8px 24px rgba(250,204,21,.22)
+}
+.brand span{font-size:20px;color:var(--yellow)}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.navBtn,.smallBtn,.primaryBtn,.ghostBtn{
+  border:none;border-radius:14px;padding:11px 14px;cursor:pointer;
+  color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--line)
+}
+.navBtn.active{background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.45)}
+.primaryBtn{background:linear-gradient(135deg,var(--purple),#6d28d9);border:none;font-weight:700}
+.ghostBtn{background:rgba(255,255,255,.04)}
+.smallBtn{padding:9px 11px;font-size:14px}
+.hero{
+  margin-top:18px;background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(34,211,238,.09));
+  border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)
+}
+.hero h1{margin:0 0 8px;font-size:28px;line-height:1.08}
+.hero p{margin:0;color:var(--muted);line-height:1.5}
+.quickActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.panel{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:16px}
+.sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sectionTitle h2{margin:0;font-size:20px}
+.sectionTitle p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.libraryGrid{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:700px){.libraryGrid{grid-template-columns:repeat(2,1fr)}}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.03));
+  border:1px solid var(--line);border-radius:20px;padding:14px
+}
+.cardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.cardTitle{font-size:18px;font-weight:800;margin:0 0 6px}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{padding:6px 9px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--muted)}
+.card p{margin:8px 0 0;color:var(--muted);line-height:1.45}
+.cardActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.workspaceGrid{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:900px){.workspaceGrid{grid-template-columns:1.1fr .9fr}}
+.lyricsBox{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;min-height:120px}
+.hece{
+  position:relative;padding:13px 14px;border-radius:16px;border:1px solid var(--line);
+  background:rgba(255,255,255,.05);font-weight:700;transition:.15s ease
+}
+.hece.active{outline:2px solid rgba(34,211,238,.42);background:rgba(34,211,238,.12)}
+.hece.correct{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.45)}
+.hece.wrong{background:rgba(239,68,68,.14);border-color:rgba(239,68,68,.45)}
+.subtext{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.45}
+.infoList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.infoItem{padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.infoItem .k{font-size:12px;color:var(--muted);margin-bottom:6px}
+.infoItem .v{font-size:22px;font-weight:800}
+.placeholder{
+  display:grid;place-items:center;min-height:240px;text-align:center;color:var(--muted);
+  border:1px dashed rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.03);padding:20px
+}
+.footerNote{margin-top:14px;color:var(--muted);font-size:13px;line-height:1.45}
+
+/* Sol tuner panel */
+.tunerHandle{
+  position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:120;
+  width:26px;height:134px;border-top-right-radius:14px;border-bottom-right-radius:14px;
+  background:rgba(255,255,255,.09);border:1px solid var(--line);border-left:none;
+  display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;letter-spacing:.8px;
+  font-size:12px;font-weight:800;cursor:pointer;user-select:none
+}
+.tunerPanel{
+  position:fixed;left:-152px;top:0;width:152px;height:100dvh;z-index:119;
+  background:rgba(8,17,31,.98);border-right:1px solid var(--line);transition:left .25s ease;
+  display:flex;flex-direction:column;align-items:center;padding:14px 10px 12px;box-shadow:var(--shadow)
+}
+.tunerPanel.open{left:0}
+.tunerTop{width:100%;display:flex;flex-direction:column;gap:8px;align-items:center}
+.tunerLabel{font-size:12px;color:var(--muted)}
+.tunerTarget{font-size:24px;font-weight:900}
+.tunerCurrent{font-size:15px;font-weight:700;min-height:18px}
+.tunerScale{
+  margin-top:12px;flex:1;width:100%;display:flex;flex-direction:column;justify-content:space-between;align-items:stretch
+}
+.noteRow{
+  position:relative;display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:44px;border-radius:14px;border:1px solid transparent;opacity:.35;transition:.14s ease;font-weight:900
+}
+.noteRow.active{opacity:1;transform:scale(1.03);filter:drop-shadow(0 0 10px currentColor);background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
+.noteRow.targetMark::after{
+  content:'•';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#fff;opacity:.75;font-size:18px
+}
+.note-do{color:var(--do)} .note-re{color:var(--re)} .note-mi{color:var(--mi)} .note-fa{color:var(--fa)}
+.note-sol{color:var(--sol)} .note-la{color:var(--la)} .note-si{color:var(--si)}
+.tunerBottom{width:100%;display:grid;gap:8px;margin-top:12px}
+.pill{padding:10px 8px;border-radius:14px;text-align:center;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:13px}
+.pill.good{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.35)}
+.pill.bad{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3)}
+
+@media (max-width:640px){
+  .hero h1{font-size:24px}
+  .topbar-inner{align-items:flex-start;flex-direction:column}
+  .nav{width:100%}
+  .navBtn{flex:1}
+  .infoList{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><div class="logo">V</div><span>VOCALY</span></div>
+      <div class="nav">
+        <button class="navBtn active" data-view="library">Kütüphane</button>
+        <button class="navBtn" data-view="practice">Çalışma</button>
+        <button class="navBtn" data-view="measure">Ölçme</button>
+        <button class="navBtn" data-view="editor">Editör</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tunerHandle" id="tunerHandle">TUNER</div>
+  <aside class="tunerPanel" id="tunerPanel">
+    <div class="tunerTop">
+      <div class="tunerLabel">Hedef</div>
+      <div class="tunerTarget" id="tunerTarget">—</div>
+      <div class="tunerCurrent" id="tunerCurrent">Mikrofon kapalı</div>
+    </div>
+
+    <div class="tunerScale" id="tunerScale">
+      <div class="noteRow note-do" data-note="Do">Do</div>
+      <div class="noteRow note-re" data-note="Re">Re</div>
+      <div class="noteRow note-mi" data-note="Mi">Mi</div>
+      <div class="noteRow note-fa" data-note="Fa">Fa</div>
+      <div class="noteRow note-sol" data-note="Sol">Sol</div>
+      <div class="noteRow note-la" data-note="La">La</div>
+      <div class="noteRow note-si" data-note="Si">Si</div>
+    </div>
+
+    <div class="tunerBottom">
+      <div class="pill" id="micPill">🎤 Mikrofon kapalı</div>
+      <div class="pill" id="statusPill">Hazır</div>
+      <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
+      <button class="smallBtn" id="refBtn">Hedef Sesi Ver</button>
+    </div>
+  </aside>
+
+  <div class="app">
+    <section class="hero">
+      <h1>Kütüphane ile başla, sonra çalışma ve ölçmeye geç.</h1>
+      <p>Bu sürüm temiz bir başlangıç index’idir. Soldan açılan tuner paneli çalışır. Kütüphaneden eser seçince çalışma alanı yüklenir. Ölçme ve editör için giriş kapıları hazırdır.</p>
+      <div class="quickActions">
+        <button class="primaryBtn" id="heroOpenLibrary">Kütüphaneye Git</button>
+        <button class="ghostBtn" id="heroOpenPractice">Seçili Eseri Aç</button>
+      </div>
+    </section>
+
+    <section class="panel view" id="view-library">
+      <div class="sectionTitle">
+        <div>
+          <h2>Kütüphane</h2>
+          <p>Eser seç, çalışma alanını doldur.</p>
+        </div>
+        <div class="badges">
+          <span class="badge">Telefon uyumlu</span>
+          <span class="badge">Tuner hazır</span>
+        </div>
+      </div>
+      <div class="libraryGrid" id="libraryGrid"></div>
+      <div class="footerNote">Kütüphaneden seçilen eser çalışma ekranına aktarılır. Editör ve ölçme sonraki aşamada buna bağlanacaktır.</div>
+    </section>
+
+    <section class="panel view hidden" id="view-practice">
+      <div class="sectionTitle">
+        <div>
+          <h2>Çalışma</h2>
+          <p id="practiceSongMeta">Henüz eser seçilmedi.</p>
+        </div>
+        <div class="cardActions">
+          <button class="smallBtn" id="playRefBtn">Referans Nota</button>
+          <button class="smallBtn" id="nextHeceBtn">Sonraki Hece</button>
+        </div>
+      </div>
+
+      <div class="workspaceGrid">
+        <div class="card">
+          <div class="cardTitle">Hece Alanı</div>
+          <div class="lyricsBox" id="lyricsBox"></div>
+          <div class="subtext" id="practiceHint">Bir eser seçtiğinde heceler burada görünecek.</div>
+        </div>
+
+        <div class="card">
+          <div class="cardTitle">Aktif Durum</div>
+          <div class="infoList">
+            <div class="infoItem"><div class="k">Aktif hece</div><div class="v" id="activeHeceText">—</div></div>
+            <div class="infoItem"><div class="k">Hedef nota</div><div class="v" id="activeTargetText">—</div></div>
+            <div class="infoItem"><div class="k">Algılanan</div><div class="v" id="detectedText">—</div></div>
+            <div class="infoItem"><div class="k">Durum</div><div class="v" id="matchStateText">Hazır</div></div>
+          </div>
+          <div class="footerNote">Bu sürümde hedef notaya girdiğinde aktif hece yeşil olur. Yanlış notadaysan hece kırmızı olmaz, sadece bekler. Böylece motivasyon kırılmaz.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel view hidden" id="view-measure">
+      <div class="sectionTitle">
+        <div>
+          <h2>Ölçme</h2>
+          <p>Kapı hazır. Bir sonraki adımda çalışma motorunu buraya bağlayacağız.</p>
+        </div>
+      </div>
+      <div class="placeholder">
+        <div>
+          <h3 style="margin-top:0;color:var(--text)">Ölçme paneli sonraki adımda eklenecek</h3>
+          <p>Buraya skor, rozet, otomatik ilerleme ve süre mantığı bağlanacak.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel view hidden" id="view-editor">
+      <div class="sectionTitle">
+        <div>
+          <h2>Editör</h2>
+          <p>Kapı hazır. Sonraki aşamada waveform ve zamanlama editörü buraya bağlanacak.</p>
+        </div>
+      </div>
+      <div class="placeholder">
+        <div>
+          <h3 style="margin-top:0;color:var(--text)">Editör giriş ekranı</h3>
+          <p>Buraya daha sonra mp3, JSON, hece zamanlama ve karaoke önizleme gelecek.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+const library = [
+  {
+    id:'neseli-gunler',
+    title:'Neşeli Günler',
+    level:'Kolay',
+    mode:'Eser Çalışma',
+    desc:'Kütüphane başlangıç eseri. Telefon ekranında temiz görünmesi için kısa bir çalışma dizisiyle geliyor.',
+    lyrics:[
+      { text:'Ne', note:'Sol' },
+      { text:'şe', note:'La' },
+      { text:'li', note:'Sol' },
+      { text:'gün', note:'Fa' },
+      { text:'ler', note:'Sol' }
+    ]
+  }
+];
+
+const noteFreq = { Do:261.63, Re:293.66, Mi:329.63, Fa:349.23, Sol:392.00, La:440.00, Si:493.88 };
+const pitchClassMap = {
+  0:'Do', 1:'Do', 2:'Re', 3:'Re', 4:'Mi', 5:'Fa', 6:'Fa', 7:'Sol', 8:'Sol', 9:'La', 10:'La', 11:'Si'
+};
+
+let selectedSong = null;
+let activeHeceIndex = 0;
+let currentDetected = null;
+let audioCtx = null;
+let analyser = null;
+let mediaStream = null;
+let sourceNode = null;
+let buffer = null;
+let rafId = null;
+let micReady = false;
+
+const views = document.querySelectorAll('.view');
+const navBtns = document.querySelectorAll('.navBtn');
+const libraryGrid = document.getElementById('libraryGrid');
+const lyricsBox = document.getElementById('lyricsBox');
+const practiceSongMeta = document.getElementById('practiceSongMeta');
+const activeHeceText = document.getElementById('activeHeceText');
+const activeTargetText = document.getElementById('activeTargetText');
+const detectedText = document.getElementById('detectedText');
+const matchStateText = document.getElementById('matchStateText');
+const practiceHint = document.getElementById('practiceHint');
+
+const tunerPanel = document.getElementById('tunerPanel');
+const tunerHandle = document.getElementById('tunerHandle');
+const tunerTarget = document.getElementById('tunerTarget');
+const tunerCurrent = document.getElementById('tunerCurrent');
+const micPill = document.getElementById('micPill');
+const statusPill = document.getElementById('statusPill');
+const micBtn = document.getElementById('micBtn');
+const refBtn = document.getElementById('refBtn');
+
+function renderLibrary(){
+  libraryGrid.innerHTML = '';
+  library.forEach(song => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="cardTop">
+        <div>
+          <div class="cardTitle">${song.title}</div>
+          <div class="badges">
+            <span class="badge">${song.level}</span>
+            <span class="badge">${song.mode}</span>
+          </div>
+        </div>
+      </div>
+      <p>${song.desc}</p>
+      <div class="cardActions">
+        <button class="primaryBtn" data-open-song="${song.id}">Aç</button>
+        <button class="ghostBtn" data-open-practice="${song.id}">Çalışmaya Geç</button>
+      </div>
+    `;
+    libraryGrid.appendChild(card);
+  });
+
+  document.querySelectorAll('[data-open-song]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openSong(btn.dataset.openSong);
+      showView('library');
+    });
+  });
+
+  document.querySelectorAll('[data-open-practice]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openSong(btn.dataset.openPractice);
+      showView('practice');
+    });
+  });
+}
+
+function openSong(id){
+  selectedSong = library.find(x => x.id === id) || null;
+  activeHeceIndex = 0;
+  renderPractice();
+}
+
+function renderPractice(){
+  lyricsBox.innerHTML = '';
+  if(!selectedSong){
+    practiceSongMeta.textContent = 'Henüz eser seçilmedi.';
+    practiceHint.textContent = 'Bir eser seçtiğinde heceler burada görünecek.';
+    activeHeceText.textContent = '—';
+    activeTargetText.textContent = '—';
+    tunerTarget.textContent = '—';
+    updateTargetMarks(null);
+    return;
+  }
+
+  practiceSongMeta.textContent = `${selectedSong.title} · ${selectedSong.lyrics.length} hece`;
+  practiceHint.textContent = 'Heceye dokunursan onu aktif yaparsın. Doğru nota sınıfına girdiğinde yeşil olur.';
+
+  selectedSong.lyrics.forEach((item, index) => {
+    const h = document.createElement('button');
+    h.className = 'hece';
+    h.textContent = item.text;
+    h.dataset.index = index;
+    if(index === activeHeceIndex) h.classList.add('active');
+    h.addEventListener('click', () => {
+      activeHeceIndex = index;
+      renderPractice();
+      evaluateCurrent();
+    });
+    lyricsBox.appendChild(h);
+  });
+
+  const active = selectedSong.lyrics[activeHeceIndex];
+  activeHeceText.textContent = active?.text || '—';
+  activeTargetText.textContent = active?.note || '—';
+  tunerTarget.textContent = active?.note || '—';
+  updateTargetMarks(active?.note || null);
+  evaluateCurrent();
+}
+
+function showView(name){
+  views.forEach(v => v.classList.add('hidden'));
+  document.getElementById(`view-${name}`).classList.remove('hidden');
+  navBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.view === name));
+}
+
+navBtns.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
+document.getElementById('heroOpenLibrary').addEventListener('click', () => showView('library'));
+document.getElementById('heroOpenPractice').addEventListener('click', () => showView('practice'));
+
+tunerHandle.addEventListener('click', () => tunerPanel.classList.toggle('open'));
+
+function updateTargetMarks(note){
+  document.querySelectorAll('.noteRow').forEach(el => {
+    el.classList.toggle('targetMark', el.dataset.note === note);
+  });
+}
+
+function highlightDetected(note){
+  document.querySelectorAll('.noteRow').forEach(el => {
+    el.classList.toggle('active', el.dataset.note === note);
+  });
+  tunerCurrent.textContent = note ? `Algılanan: ${note}` : 'Ses bekleniyor';
+  detectedText.textContent = note || '—';
+}
+
+function evaluateCurrent(){
+  const active = selectedSong?.lyrics?.[activeHeceIndex];
+  if(!active){
+    matchStateText.textContent = 'Hazır';
+    statusPill.textContent = 'Hazır';
+    statusPill.className = 'pill';
+    return;
+  }
+
+  const target = active.note;
+  const heceler = [...lyricsBox.querySelectorAll('.hece')];
+  heceler.forEach((h,i) => {
+    h.classList.toggle('active', i === activeHeceIndex);
+  });
+
+  if(currentDetected && currentDetected === target){
+    matchStateText.textContent = 'Doğru';
+    statusPill.textContent = 'Doğru nota';
+    statusPill.className = 'pill good';
+    heceler[activeHeceIndex]?.classList.add('correct');
+    heceler[activeHeceIndex]?.classList.remove('wrong');
+  } else {
+    matchStateText.textContent = micReady ? 'Bekleniyor' : 'Mikrofon kapalı';
+    statusPill.textContent = micReady ? 'Hedef notayı bekliyor' : 'Hazır';
+    statusPill.className = 'pill';
+    heceler[activeHeceIndex]?.classList.remove('wrong');
+  }
+}
+
+function nextHece(){
+  if(!selectedSong) return;
+  activeHeceIndex = Math.min(activeHeceIndex + 1, selectedSong.lyrics.length - 1);
+  renderPractice();
+}
+document.getElementById('nextHeceBtn').addEventListener('click', nextHece);
+
+function playReferenceNote(){
+  const active = selectedSong?.lyrics?.[activeHeceIndex];
+  if(!active) return;
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const freq = noteFreq[active.note];
+  if(!freq) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = 0.0001;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const now = audioCtx.currentTime;
+  gain.gain.exponentialRampToValueAtTime(0.14, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+  osc.start(now);
+  osc.stop(now + 0.72);
+}
+document.getElementById('playRefBtn').addEventListener('click', playReferenceNote);
+refBtn.addEventListener('click', playReferenceNote);
+
+function autoCorr(buf, sampleRate){
+  let rms = 0;
+  for(let i=0;i<buf.length;i++) rms += buf[i] * buf[i];
+  rms = Math.sqrt(rms / buf.length);
+  if(rms < 0.01) return -1;
+
+  let bestOffset = -1;
+  let bestCorr = 0;
+  for(let offset = 20; offset < 1000; offset++){
+    let corr = 0;
+    for(let i=0; i<buf.length-offset; i++) corr += buf[i] * buf[i+offset];
+    if(corr > bestCorr){
+      bestCorr = corr;
+      bestOffset = offset;
+    }
+  }
+  if(bestOffset === -1) return -1;
+  return sampleRate / bestOffset;
+}
+
+function freqToMidi(freq){
+  return Math.round(69 + 12 * Math.log2(freq / 440));
+}
+
+function freqToNoteClass(freq){
+  if(!freq || freq <= 0) return null;
+  const midi = freqToMidi(freq);
+  const pitchClass = ((midi % 12) + 12) % 12;
+  return pitchClassMap[pitchClass] || null;
+}
+
+async function initMic(){
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      micPill.textContent = 'Mikrofon desteklenmiyor';
+      micPill.className = 'pill bad';
+      return;
+    }
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false }
+    });
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') await audioCtx.resume();
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    sourceNode = audioCtx.createMediaStreamSource(mediaStream);
+    sourceNode.connect(analyser);
+    buffer = new Float32Array(analyser.fftSize);
+    micReady = true;
+    micPill.textContent = '🎤 Mikrofon açık';
+    micPill.className = 'pill good';
+    if(!tunerPanel.classList.contains('open')) tunerPanel.classList.add('open');
+    startPitchLoop();
+    evaluateCurrent();
+  }catch(err){
+    micReady = false;
+    micPill.textContent = 'Mikrofon izni yok';
+    micPill.className = 'pill bad';
+  }
+}
+micBtn.addEventListener('click', initMic);
+
+function startPitchLoop(){
+  if(rafId) cancelAnimationFrame(rafId);
+  const loop = () => {
+    if(analyser && buffer){
+      analyser.getFloatTimeDomainData(buffer);
+      const freq = autoCorr(buffer, analyser.context.sampleRate);
+      currentDetected = freq > 0 ? freqToNoteClass(freq) : null;
+      highlightDetected(currentDetected);
+      evaluateCurrent();
+    }
+    rafId = requestAnimationFrame(loop);
+  };
+  loop();
+}
+
+renderLibrary();
+openSong('neseli-gunler');
+renderPractice();
+showView('library');
+</script>
+</body>
+</html>
