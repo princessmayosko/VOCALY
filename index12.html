@@ -9,7 +9,6 @@
   --bg:#08111f;
   --bg2:#0f1b2d;
   --panel:rgba(12,22,39,.92);
-  --panel2:rgba(18,31,52,.92);
   --line:rgba(255,255,255,.09);
   --text:#eef4ff;
   --muted:#9fb0c9;
@@ -17,7 +16,6 @@
   --purple:#8b5cf6;
   --green:#22c55e;
   --red:#ef4444;
-  --cyan:#22d3ee;
   --shadow:0 12px 36px rgba(0,0,0,.32);
 
   --do:#ef4444;
@@ -36,79 +34,69 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:Arial,sans-serif}
 body{min-height:100vh}
-button,input,select{font:inherit}
+button{font:inherit}
 .hidden{display:none!important}
 .app{max-width:1200px;margin:0 auto;padding:14px 14px 90px}
-.topbar{
-  position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
-  background:linear-gradient(180deg,rgba(8,17,31,.95),rgba(8,17,31,.72));
-  border-bottom:1px solid var(--line);
-}
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:linear-gradient(180deg,rgba(8,17,31,.95),rgba(8,17,31,.72));border-bottom:1px solid var(--line)}
 .topbar-inner{max-width:1200px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;gap:10px;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px}
-.logo{
-  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
-  background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);
-  color:#111827;font-weight:900;box-shadow:0 8px 24px rgba(250,204,21,.22)
-}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);color:#111827;font-weight:900;box-shadow:0 8px 24px rgba(250,204,21,.22)}
 .brand span{font-size:20px;color:var(--yellow)}
 .nav{display:flex;gap:8px;flex-wrap:wrap}
-.navBtn,.smallBtn,.primaryBtn,.ghostBtn{
-  border:none;border-radius:14px;padding:11px 14px;cursor:pointer;
-  color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--line)
-}
+.navBtn,.primaryBtn,.ghostBtn,.smallBtn,.fileBtn{border:none;border-radius:14px;padding:11px 14px;cursor:pointer;color:var(--text);background:rgba(255,255,255,.06);border:1px solid var(--line)}
 .navBtn.active{background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.45)}
 .primaryBtn{background:linear-gradient(135deg,var(--purple),#6d28d9);border:none;font-weight:700}
 .ghostBtn{background:rgba(255,255,255,.04)}
 .smallBtn{padding:9px 11px;font-size:14px}
-.hero{
-  margin-top:18px;background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(34,211,238,.09));
-  border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)
-}
-.hero h1{margin:0 0 8px;font-size:28px;line-height:1.08}
-.hero p{margin:0;color:var(--muted);line-height:1.5}
+.fileBtn{display:inline-flex;align-items:center;justify-content:center}
+.hero{margin-top:18px;background:linear-gradient(135deg,rgba(139,92,246,.16),rgba(34,211,238,.09));border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
+.hero h1{margin:0;font-size:28px;line-height:1.08}
 .quickActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .panel{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:16px}
 .sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .sectionTitle h2{margin:0;font-size:20px}
-.sectionTitle p{margin:4px 0 0;color:var(--muted);font-size:14px}
 .libraryGrid{display:grid;grid-template-columns:1fr;gap:12px}
 @media (min-width:700px){.libraryGrid{grid-template-columns:repeat(2,1fr)}}
-.card{
-  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.03));
-  border:1px solid var(--line);border-radius:20px;padding:14px
-}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:20px;padding:14px}
 .cardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .cardTitle{font-size:18px;font-weight:800;margin:0 0 6px}
 .badges{display:flex;gap:6px;flex-wrap:wrap}
 .badge{padding:6px 9px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--muted)}
-.card p{margin:8px 0 0;color:var(--muted);line-height:1.45}
 .cardActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .workspaceGrid{display:grid;grid-template-columns:1fr;gap:16px}
 @media (min-width:900px){.workspaceGrid{grid-template-columns:1.1fr .9fr}}
 .lyricsBox{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;min-height:140px}
-.hece{
-  position:relative;padding:14px 16px;border-radius:18px;border:1px solid var(--line);
-  background:rgba(255,255,255,.05);font-weight:700;transition:.18s ease;overflow:hidden
-}
+.hece{position:relative;padding:14px 16px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-weight:700;transition:.18s ease;overflow:hidden}
 .hece.active{outline:2px solid rgba(34,211,238,.42);background:rgba(34,211,238,.12)}
 .hece.correct{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.5)}
 .hece.wrong{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.48)}
 .heceLabel{position:relative;z-index:2}
 .heceSmall{display:block;margin-top:6px;font-size:12px;color:rgba(255,255,255,.7);position:relative;z-index:2}
 .heceFill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,rgba(250,204,21,.08),rgba(250,204,21,.28));z-index:1;transition:none}
-.subtext{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.45}
 .infoList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .infoItem{padding:12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
 .infoItem .k{font-size:12px;color:var(--muted);margin-bottom:6px}
 .infoItem .v{font-size:22px;font-weight:800}
-.placeholder{display:grid;place-items:center;min-height:240px;text-align:center;color:var(--muted);border:1px dashed rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.03);padding:20px}
-.footerNote{margin-top:14px;color:var(--muted);font-size:13px;line-height:1.45}
+.placeholder{min-height:240px;border:1px dashed rgba(255,255,255,.12);border-radius:22px;background:rgba(255,255,255,.03);padding:20px}
+.editorBar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.editorMeta{color:var(--muted);font-size:14px;line-height:1.45;margin-top:10px}
 .tunerHandle{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:120;width:26px;height:134px;border-top-right-radius:14px;border-bottom-right-radius:14px;background:rgba(255,255,255,.09);border:1px solid var(--line);border-left:none;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;letter-spacing:.8px;font-size:12px;font-weight:800;cursor:pointer;user-select:none}
-.tunerPanel{position:fixed;left:-164px;top:0;width:164px;height:100dvh;z-index:119;background:rgba(8,17,31,.98);border-right:1px solid var(--line);transition:left .25s ease;display:flex;flex-direction:column;align-items:center;padding:14px 10px 12px;box-shadow:var(--shadow)}
+.tunerPanel{position:fixed;left:-172px;top:0;width:172px;height:100dvh;z-index:119;background:rgba(8,17,31,.98);border-right:1px solid var(--line);transition:left .25s ease;display:flex;flex-direction:column;align-items:center;padding:14px 10px 12px;box-shadow:var(--shadow)}
 .tunerPanel.open{left:0}
-.tunerTop{width:100%;display:flex;flex-direction:column;gap:8px;align-items:center}
-.<span>VOCALY</span></div>
+.tunerScale{margin-top:6px;flex:1;width:100%;display:grid;grid-template-rows:repeat(13,1fr);gap:1px;background:rgba(255,255,255,.05);padding:2px;border-radius:16px;border:1px solid rgba(255,255,255,.08)}
+.noteCell{position:relative;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;text-align:center;opacity:.35;transition:.16s ease;font-weight:900;background:rgba(255,255,255,.04);font-size:15px;min-height:42px}
+.noteCell.chromatic{font-size:11px;opacity:.24;transform:scaleY(.78);transform-origin:center;min-height:24px}
+.noteCell.active{opacity:1;transform:scale(1.04);box-shadow:0 0 14px currentColor inset,0 0 10px currentColor}
+.noteCell.targetMark::after{content:'•';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#fff;opacity:.85;font-size:18px}
+.note-do{color:var(--do)} .note-dosharp{color:var(--dosharp)} .note-re{color:var(--re)} .note-resharp{color:var(--resharp)} .note-mi{color:var(--mi)} .note-fa{color:var(--fa)} .note-fasharp{color:var(--fasharp)} .note-sol{color:var(--sol)} .note-solsharp{color:var(--solsharp)} .note-la{color:var(--la)} .note-lasharp{color:var(--lasharp)} .note-si{color:var(--si)}
+@keyframes fillBar{from{width:0%}to{width:100%}}
+@media (max-width:640px){.hero h1{font-size:24px}.topbar-inner{align-items:flex-start;flex-direction:column}.nav{width:100%}.navBtn{flex:1}.infoList{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><div class="logo">V</div><span>VOCALY</span></div>
       <div class="nav">
         <button class="navBtn active" data-view="library">Kütüphane</button>
         <button class="navBtn" data-view="measure">Karaoke/Ölçme</button>
@@ -119,12 +107,6 @@ button,input,select{font:inherit}
 
   <div class="tunerHandle" id="tunerHandle">CETVEL</div>
   <aside class="tunerPanel" id="tunerPanel">
-    <div class="tunerTop">
-      <div class="tunerLabel">Hedef</div>
-      <div class="tunerTarget" id="tunerTarget">—</div>
-      <div class="
-    </div>
-
     <div class="tunerScale" id="tunerScale">
       <div class="noteCell note-do" data-note="Do">Do</div>
       <div class="noteCell note-si" data-note="Si">Si</div>
@@ -140,18 +122,6 @@ button,input,select{font:inherit}
       <div class="noteCell chromatic note-dosharp" data-note="Do#">Do# / Reb</div>
       <div class="noteCell note-do" data-note="Do-top">Do</div>
     </div>
-
-    
-      <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
-    </div>
-      <div class="pill" id="micPill"></div>
-      <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
-    </div>
-      <div class="pill" id="micPill">🎤 </div>
-      <div class="pill" id="micPill"></div>
-      <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
-      <button class="smallBtn" id="refBtn">Hedef Sesi Ver</button>
-    </div>
   </aside>
 
   <div class="app">
@@ -164,75 +134,62 @@ button,input,select{font:inherit}
     </section>
 
     <section class="panel view" id="view-library">
-      <div class="sectionTitle">
-        <div>
-          <h2>Kütüphane</h2>
-        </div>
-      </div>
+      <div class="sectionTitle"><div><h2>Kütüphane</h2></div></div>
       <div class="libraryGrid" id="libraryGrid"></div>
     </section>
 
-    
-
     <section class="panel view hidden" id="view-measure">
       <div class="sectionTitle">
-        <div>
-          <h2>Karaoke/Ölçme</h2>
-        </div>
+        <div><h2>Karaoke/Ölçme</h2></div>
         <div class="cardActions">
           <button class="smallBtn" id="nextHeceBtn">Sonraki Hece</button>
           <button class="smallBtn" id="startMeasureBtn">Başlat</button>
         </div>
       </div>
-
       <div class="workspaceGrid">
-        <div class="card">
-          <div class="lyricsBox" id="lyricsBox"></div>
-        </div>
-
+        <div class="card"><div class="lyricsBox" id="lyricsBox"></div></div>
         <div class="card">
           <div class="infoList">
             <div class="infoItem"><div class="k">Aktif</div><div class="v" id="activeHeceText">—</div></div>
             <div class="infoItem"><div class="k">Hedef</div><div class="v" id="activeTargetText">—</div></div>
             <div class="infoItem"><div class="k">Algılanan</div><div class="v" id="detectedText">—</div></div>
-            <div class="infoItem"><div class="k">Durum</div><div class="v" id="matchStateText"></div></div>
+            <div class="infoItem"><div class="k">Durum</div><div class="v" id="matchStateText">—</div></div>
           </div>
         </div>
       </div>
     </section>
 
     <section class="panel view hidden" id="view-editor">
-      <div class="sectionTitle">
-        <div>
-          <h2>Editör</h2>
+      <div class="sectionTitle"><div><h2>Editör</h2></div></div>
+      <div class="placeholder">
+        <div class="editorBar">
+          <label class="fileBtn">JSON Yükle<input type="file" id="jsonInput" accept=".json,application/json" hidden></label>
+          <label class="fileBtn">MP3 Yükle<input type="file" id="mp3Input" accept="audio/mpeg,.mp3,audio/*" hidden></label>
         </div>
+        <div id="editorStatus"></div>
+        <div class="editorMeta" id="editorMeta"></div>
       </div>
-      <div class="placeholder" id="editorPlaceholder"></div>
     </section>
   </div>
 
 <script>
-const library = [
-  {
-    id:'neseli-gunler',
-    title:'Neşeli Günler',
-    level:'Kolay',
-    mode:'Eser',
-    desc:'',
-    lyrics:[
-      { text:'Ne', note:'Do' },
-      { text:'şe', note:'Re' },
-      { text:'li', note:'Mi' },
-      { text:'gün', note:'Fa' },
-      { text:'ler', note:'Sol' }
-    ]
-  }
-];
-
-const noteFreq = { Do:261.63, Re:293.66, Mi:329.63, Fa:349.23, Sol:392.00, La:440.00, Si:493.88 };
-const pitchClassMap = { 0:'Do', 1:'Do#', 2:'Re', 3:'Re#', 4:'Mi', 5:'Fa', 6:'Fa#', 7:'Sol', 8:'Sol#', 9:'La', 10:'La#', 11:'Si' };
-const targetClassMap = { Do:0, Re:2, Mi:4, Fa:5, Sol:7, La:9, Si:11 };
-const MEASURE_DURATION = 2000;
+const library = [{
+  id:'neseli-gunler',
+  title:'Neşeli Günler',
+  level:'Kolay',
+  mode:'Eser',
+  audio:'',
+  lyrics:[
+    { text:'Ne', note:'Do', start:0, end:0.8 },
+    { text:'şe', note:'Re', start:0.8, end:1.6 },
+    { text:'li', note:'Mi', start:1.6, end:2.4 },
+    { text:'gün', note:'Fa', start:2.4, end:3.2 },
+    { text:'ler', note:'Sol', start:3.2, end:4.0 }
+  ]
+}];
+const pitchClassMap = {0:'Do',1:'Do#',2:'Re',3:'Re#',4:'Mi',5:'Fa',6:'Fa#',7:'Sol',8:'Sol#',9:'La',10:'La#',11:'Si'};
+const targetClassMap = {Do:0, Re:2, Mi:4, Fa:5, Sol:7, La:9, Si:11};
+const DEFAULT_MEASURE_DURATION = 2000;
 const DETECT_TOLERANCE_CENTS = 45;
 
 let selectedSong = null;
@@ -260,14 +217,21 @@ const detectedText = document.getElementById('detectedText');
 const matchStateText = document.getElementById('matchStateText');
 const tunerPanel = document.getElementById('tunerPanel');
 const tunerHandle = document.getElementById('tunerHandle');
-const tunerTarget = document.getElementById('tunerTarget');
-const tunerCurrent = document.getElementById('tunerCurrent');
 const heroOpenLibrary = document.getElementById('heroOpenLibrary');
 const heroOpenMeasure = document.getElementById('heroOpenMeasure');
-const editorPlaceholder = document.getElementById('editorPlaceholder');
+const jsonInput = document.getElementById('jsonInput');
+const mp3Input = document.getElementById('mp3Input');
+const editorStatus = document.getElementById('editorStatus');
+const editorMeta = document.getElementById('editorMeta');
+
+function showView(name){
+  views.forEach(v => v.classList.add('hidden'));
+  const view = document.getElementById(`view-${name}`);
+  if(view) view.classList.remove('hidden');
+  navBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.view === name));
+}
 
 function renderLibrary(){
-  if(!libraryGrid) return;
   libraryGrid.innerHTML = '';
   library.forEach(song => {
     const card = document.createElement('div');
@@ -275,20 +239,19 @@ function renderLibrary(){
     card.innerHTML = `
       <div class="cardTop">
         <div>
-          <div class="cardTitle">${song.title}</div>
+          <div class="cardTitle">${song.title || 'Adsız Eser'}</div>
           <div class="badges">
-            <span class="badge">${song.level}</span>
-            <span class="badge">${song.mode}</span>
+            <span class="badge">${song.level || '—'}</span>
+            <span class="badge">${song.mode || 'Eser'}</span>
+            <span class="badge">${song.lyrics?.length || 0} hece</span>
           </div>
         </div>
       </div>
       <div class="cardActions">
         <button class="primaryBtn" data-open-measure="${song.id}">Aç</button>
-      </div>
-    `;
+      </div>`;
     libraryGrid.appendChild(card);
   });
-
   document.querySelectorAll('[data-open-measure]').forEach(btn => {
     btn.addEventListener('click', () => {
       openSong(btn.dataset.openMeasure);
@@ -299,13 +262,7 @@ function renderLibrary(){
 
 function openSong(id){
   selectedSong = library.find(x => x.id === id) || null;
-
-  if(selectedSong && Array.isArray(selectedSong.lyrics)){
-    heceStates = selectedSong.lyrics.map(() => null);
-  } else {
-    heceStates = [];
-  }
-
+  heceStates = selectedSong && Array.isArray(selectedSong.lyrics) ? selectedSong.lyrics.map(() => null) : [];
   activeHeceIndex = 0;
   stopMeasure(true);
   renderMeasure();
@@ -314,47 +271,35 @@ function openSong(id){
 function renderMeasure(){
   if(!lyricsBox) return;
   lyricsBox.innerHTML = '';
-  if(!selectedSong){
-    if(activeHeceText) activeHeceText.textContent = '—';
-    if(activeTargetText) activeTargetText.textContent = '—';
-    if(tunerTarget) tunerTarget.textContent = '—';
+  if(!selectedSong || !Array.isArray(selectedSong.lyrics)){
+    activeHeceText.textContent = '—';
+    activeTargetText.textContent = '—';
+    detectedText.textContent = currentDetected || '—';
+    matchStateText.textContent = '—';
     updateTargetMarks(null);
     return;
   }
-
   selectedSong.lyrics.forEach((item, index) => {
     const h = document.createElement('button');
     h.className = 'hece';
     h.dataset.index = String(index);
     h.innerHTML = `<span class="heceFill"></span><span class="heceLabel">${item.text}</span><small class="heceSmall">${item.note}</small>`;
-
     if(heceStates[index] === 'correct') h.classList.add('correct');
     if(heceStates[index] === 'wrong') h.classList.add('wrong');
     if(index === activeHeceIndex) h.classList.add('active');
-
     h.addEventListener('click', () => {
       activeHeceIndex = index;
       stopMeasure(true);
       renderMeasure();
       evaluatePassiveState();
     });
-
     lyricsBox.appendChild(h);
   });
-
   const active = selectedSong.lyrics[activeHeceIndex];
-  if(activeHeceText) activeHeceText.textContent = active?.text || '—';
-  if(activeTargetText) activeTargetText.textContent = active?.note || '—';
-  if(tunerTarget) tunerTarget.textContent = active?.note || '—';
+  activeHeceText.textContent = active?.text || '—';
+  activeTargetText.textContent = active?.note || '—';
   updateTargetMarks(active?.note || null);
   evaluatePassiveState();
-}
-
-function showView(name){
-  views.forEach(v => v.classList.add('hidden'));
-  const view = document.getElementById(`view-${name}`);
-  if(view) view.classList.remove('hidden');
-  navBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.view === name));
 }
 
 function updateTargetMarks(note){
@@ -375,8 +320,7 @@ function highlightDetected(note){
     if(note === 'Do') el.classList.toggle('active', isBottomDo || isTopDo);
     else el.classList.toggle('active', el.dataset.note === note);
   });
-  if(tunerCurrent) tunerCurrent.textContent = note ? `Algılanan: ${note}` : 'Ses bekleniyor';
-  if(detectedText) detectedText.textContent = note || '—';
+  detectedText.textContent = note || '—';
 }
 
 function getActiveHeceEl(){
@@ -385,30 +329,38 @@ function getActiveHeceEl(){
 
 function resetHeceVisual(el){
   if(!el) return;
-  el.classList.remove('correct','wrong');
+  if(heceStates[activeHeceIndex] !== 'correct' && heceStates[activeHeceIndex] !== 'wrong'){
+    el.classList.remove('correct','wrong');
+  }
   const fill = el.querySelector('.heceFill');
   if(fill){ fill.style.animation = 'none'; fill.style.width = '0%'; }
 }
 
-function startHeceLoading(el){
+function getCurrentDuration(){
+  if(!selectedSong || !selectedSong.lyrics?.[activeHeceIndex]) return DEFAULT_MEASURE_DURATION;
+  const item = selectedSong.lyrics[activeHeceIndex];
+  if(typeof item.start === 'number' && typeof item.end === 'number' && item.end > item.start){
+    return Math.max(120, (item.end - item.start) * 1000);
+  }
+  return DEFAULT_MEASURE_DURATION;
+}
+
+function startHeceLoading(el, duration){
   if(!el) return;
   const fill = el.querySelector('.heceFill');
   if(fill){
     fill.style.animation = 'none';
     fill.style.width = '0%';
     void fill.offsetWidth;
-    fill.style.animation = `fillBar ${MEASURE_DURATION}ms linear forwards`;
+    fill.style.animation = `fillBar ${duration}ms linear forwards`;
   }
 }
 
 function evaluatePassiveState(){
-  if(!selectedSong){
-    if(matchStateText) matchStateText.textContent = '';
-    return;
-  }
+  if(!selectedSong){ matchStateText.textContent = '—'; return; }
   const heceler = [...document.querySelectorAll('.hece')];
   heceler.forEach((h,i) => h.classList.toggle('active', i === activeHeceIndex));
-  if(matchStateText) matchStateText.textContent = micReady ? 'Beklemede' : '';
+  matchStateText.textContent = micReady ? 'Beklemede' : 'Kapalı';
 }
 
 function lockCurrentHeceSuccess(){
@@ -416,12 +368,10 @@ function lockCurrentHeceSuccess(){
   if(!el || measureLocked) return;
   measureLocked = true;
   clearTimeout(measureTimer);
-
   heceStates[activeHeceIndex] = 'correct';
-
   el.classList.remove('active','wrong');
   el.classList.add('correct');
-  if(matchStateText) matchStateText.textContent = 'Doğru';
+  matchStateText.textContent = 'Doğru';
   setTimeout(() => {
     if(!selectedSong) return;
     if(activeHeceIndex < selectedSong.lyrics.length - 1){
@@ -430,7 +380,7 @@ function lockCurrentHeceSuccess(){
       startMeasureForActiveHece();
     } else {
       stopMeasure(true);
-      if(matchStateText) matchStateText.textContent = 'Bitti';
+      matchStateText.textContent = 'Bitti';
     }
   }, 350);
 }
@@ -439,12 +389,10 @@ function lockCurrentHeceFail(){
   const el = getActiveHeceEl();
   if(!el || measureLocked) return;
   measureLocked = true;
-
   heceStates[activeHeceIndex] = 'wrong';
-
   el.classList.remove('active','correct');
   el.classList.add('wrong');
-  if(matchStateText) matchStateText.textContent = 'Yanlış';
+  matchStateText.textContent = 'Yanlış';
 }
 
 function stopMeasure(silent=false){
@@ -460,21 +408,21 @@ function startMeasureForActiveHece(){
   measureRunning = true;
   measureLocked = false;
   const active = selectedSong.lyrics[activeHeceIndex];
-  if(tunerTarget) tunerTarget.textContent = active.note;
-  if(activeHeceText) activeHeceText.textContent = active.text;
-  if(activeTargetText) activeTargetText.textContent = active.note;
+  activeHeceText.textContent = active.text;
+  activeTargetText.textContent = active.note;
   updateTargetMarks(active.note);
+  const duration = getCurrentDuration();
   const heceler = [...document.querySelectorAll('.hece')];
   heceler.forEach((h,i) => {
     h.classList.toggle('active', i === activeHeceIndex);
     if(i === activeHeceIndex) resetHeceVisual(h);
   });
   const el = getActiveHeceEl();
-  startHeceLoading(el);
-  if(matchStateText) matchStateText.textContent = 'Dinleniyor';
+  startHeceLoading(el, duration);
+  matchStateText.textContent = 'Dinleniyor';
   measureTimer = setTimeout(() => {
     if(!measureLocked) lockCurrentHeceFail();
-  }, MEASURE_DURATION);
+  }, duration);
 }
 
 function nextHece(){
@@ -500,9 +448,7 @@ function autoCorr(buf, sampleRate){
   return sampleRate / bestOffset;
 }
 
-function freqToMidiFloat(freq){
-  return 69 + 12 * Math.log2(freq / 440);
-}
+function freqToMidiFloat(freq){ return 69 + 12 * Math.log2(freq / 440); }
 
 function centsDistanceToPitchClass(freq, targetPitchClass){
   const midiFloat = freqToMidiFloat(freq);
@@ -546,7 +492,7 @@ async function initMic(){
 }
 
 function openTunerPanel(){
-  if(tunerPanel) tunerPanel.classList.add('open');
+  tunerPanel.classList.add('open');
   initMic();
 }
 
@@ -560,8 +506,7 @@ function startPitchLoop(){
       highlightDetected(currentDetected);
       if(measureRunning && !measureLocked && selectedSong){
         const active = selectedSong.lyrics[activeHeceIndex];
-        const targetName = active?.note;
-        const targetPitchClass = targetClassMap[targetName];
+        const targetPitchClass = targetClassMap[active?.note];
         if(active && freq > 0 && targetPitchClass !== undefined){
           const cents = centsDistanceToPitchClass(freq, targetPitchClass);
           if(cents <= DETECT_TOLERANCE_CENTS) lockCurrentHeceSuccess();
@@ -573,25 +518,64 @@ function startPitchLoop(){
   loop();
 }
 
+function handleJsonFile(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      const song = {
+        id: `song-${Date.now()}`,
+        title: data.title || file.name.replace(/\.json$/i,''),
+        level: data.level || 'Özel',
+        mode: 'Eser',
+        audio: data.audio || '',
+        lyrics: Array.isArray(data.lyrics) ? data.lyrics : []
+      };
+      if(!song.lyrics.length) throw new Error('lyrics boş');
+      library.unshift(song);
+      renderLibrary();
+      openSong(song.id);
+      showView('library');
+      editorStatus.textContent = 'JSON yüklendi';
+      editorMeta.textContent = `${song.title} · ${song.lyrics.length} hece`;
+    }catch(err){
+      editorStatus.textContent = 'JSON okunamadı';
+      editorMeta.textContent = String(err.message || err);
+    }
+  };
+  reader.readAsText(file,'utf-8');
+}
+
+function handleMp3File(file){
+  if(!selectedSong){
+    editorStatus.textContent = 'Önce JSON yükle';
+    return;
+  }
+  const url = URL.createObjectURL(file);
+  selectedSong.audio = url;
+  editorStatus.textContent = 'MP3 yüklendi';
+  editorMeta.textContent = `${selectedSong.title} · ${file.name}`;
+  renderLibrary();
+}
+
 navBtns.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
-if(heroOpenLibrary) heroOpenLibrary.addEventListener('click', () => showView('library'));
-if(heroOpenMeasure) heroOpenMeasure.addEventListener('click', () => showView('measure'));
-if(tunerHandle) tunerHandle.addEventListener('click', () => {
+heroOpenLibrary.addEventListener('click', () => showView('library'));
+heroOpenMeasure.addEventListener('click', () => showView('measure'));
+tunerHandle.addEventListener('click', () => {
   if(tunerPanel.classList.contains('open')) tunerPanel.classList.remove('open');
   else openTunerPanel();
 });
-
 document.addEventListener('click', (e) => {
   const t = e.target;
   if(t && t.id === 'nextHeceBtn') nextHece();
   if(t && t.id === 'startMeasureBtn') startMeasureForActiveHece();
 });
-
 document.body.addEventListener('click', async () => {
   if(audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
 }, { passive:true });
+if(jsonInput) jsonInput.addEventListener('change', e => { const f = e.target.files?.[0]; if(f) handleJsonFile(f); });
+if(mp3Input) mp3Input.addEventListener('change', e => { const f = e.target.files?.[0]; if(f) handleMp3File(f); });
 
-if(editorPlaceholder) editorPlaceholder.innerHTML = '';
 openTunerPanel();
 renderLibrary();
 openSong('neseli-gunler');
