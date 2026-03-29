@@ -108,27 +108,7 @@ button,input,select{font:inherit}
 .tunerPanel{position:fixed;left:-164px;top:0;width:164px;height:100dvh;z-index:119;background:rgba(8,17,31,.98);border-right:1px solid var(--line);transition:left .25s ease;display:flex;flex-direction:column;align-items:center;padding:14px 10px 12px;box-shadow:var(--shadow)}
 .tunerPanel.open{left:0}
 .tunerTop{width:100%;display:flex;flex-direction:column;gap:8px;align-items:center}
-.tunerLabel{font-size:12px;color:var(--muted)}
-.tunerTarget{font-size:24px;font-weight:900}
-.tunerCurrent{font-size:15px;font-weight:700;min-height:18px;text-align:center}
-.tunerScale{margin-top:12px;flex:1;width:100%;display:grid;grid-template-rows:repeat(13,1fr);gap:1px;background:rgba(255,255,255,.05);padding:2px;border-radius:16px;border:1px solid rgba(255,255,255,.08)}
-.noteCell{position:relative;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;text-align:center;opacity:.35;transition:.16s ease;font-weight:900;background:rgba(255,255,255,.04);font-size:15px;min-height:42px}
-.noteCell.chromatic{font-size:11px;opacity:.24;transform:scaleY(.78);transform-origin:center;min-height:24px}
-.noteCell.active{opacity:1;transform:scale(1.04);box-shadow:0 0 14px currentColor inset,0 0 10px currentColor}
-.noteCell.targetMark::after{content:'•';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#fff;opacity:.85;font-size:18px}
-.note-do{color:var(--do)} .note-dosharp{color:var(--dosharp)} .note-re{color:var(--re)} .note-resharp{color:var(--resharp)} .note-mi{color:var(--mi)} .note-fa{color:var(--fa)} .note-fasharp{color:var(--fasharp)} .note-sol{color:var(--sol)} .note-solsharp{color:var(--solsharp)} .note-la{color:var(--la)} .note-lasharp{color:var(--lasharp)} .note-si{color:var(--si)}
-.tunerBottom{width:100%;display:grid;gap:8px;margin-top:12px}
-.pill{padding:10px 8px;border-radius:14px;text-align:center;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:13px}
-.pill.good{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.35)}
-.pill.bad{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3)}
-@keyframes fillBar{from{width:0%}to{width:100%}}
-@media (max-width:640px){.hero h1{font-size:24px}.topbar-inner{align-items:flex-start;flex-direction:column}.nav{width:100%}.navBtn{flex:1}.infoList{grid-template-columns:1fr 1fr}}
-</style>
-</head>
-<body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand"><div class="logo">V</div><span>VOCALY</span></div>
+.<span>VOCALY</span></div>
       <div class="nav">
         <button class="navBtn active" data-view="library">Kütüphane</button>
         <button class="navBtn" data-view="measure">Karaoke/Ölçme</button>
@@ -137,12 +117,12 @@ button,input,select{font:inherit}
     </div>
   </div>
 
-  <div class="tunerHandle" id="tunerHandle">TUNER</div>
+  <div class="tunerHandle" id="tunerHandle">CETVEL</div>
   <aside class="tunerPanel" id="tunerPanel">
     <div class="tunerTop">
       <div class="tunerLabel">Hedef</div>
       <div class="tunerTarget" id="tunerTarget">—</div>
-      <div class="tunerCurrent" id="tunerCurrent">Mikrofon kapalı</div>
+      <div class="
     </div>
 
     <div class="tunerScale" id="tunerScale">
@@ -164,11 +144,11 @@ button,input,select{font:inherit}
     
       <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
     </div>
-      <div class="pill" id="micPill">Hazır</div>
+      <div class="pill" id="micPill"></div>
       <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
     </div>
-      <div class="pill" id="micPill">🎤 Mikrofon kapalı</div>
-      <div class="pill" id="micPill">Hazır</div>
+      <div class="pill" id="micPill">🎤 </div>
+      <div class="pill" id="micPill"></div>
       <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
       <button class="smallBtn" id="refBtn">Hedef Sesi Ver</button>
     </div>
@@ -215,7 +195,7 @@ button,input,select{font:inherit}
             <div class="infoItem"><div class="k">Aktif</div><div class="v" id="activeHeceText">—</div></div>
             <div class="infoItem"><div class="k">Hedef</div><div class="v" id="activeTargetText">—</div></div>
             <div class="infoItem"><div class="k">Algılanan</div><div class="v" id="detectedText">—</div></div>
-            <div class="infoItem"><div class="k">Durum</div><div class="v" id="matchStateText">Hazır</div></div>
+            <div class="infoItem"><div class="k">Durum</div><div class="v" id="matchStateText"></div></div>
           </div>
         </div>
       </div>
@@ -268,6 +248,7 @@ let micReady = false;
 let measureTimer = null;
 let measureRunning = false;
 let measureLocked = false;
+let heceStates = [];
 
 const views = document.querySelectorAll('.view');
 const navBtns = document.querySelectorAll('.navBtn');
@@ -317,7 +298,9 @@ function renderLibrary(){
 }
 
 function openSong(id){
+  heceStates = [];
   selectedSong = library.find(x => x.id === id) || null;
+  if(selectedSong) heceStates = selectedSong.lyrics.map(()=>null);
   activeHeceIndex = 0;
   stopMeasure(true);
   renderMeasure();
@@ -339,13 +322,18 @@ function renderMeasure(){
     h.className = 'hece';
     h.dataset.index = String(index);
     h.innerHTML = `<span class="heceFill"></span><span class="heceLabel">${item.text}</span><small class="heceSmall">${item.note}</small>`;
+
+    if(heceStates[index] === 'correct') h.classList.add('correct');
+    if(heceStates[index] === 'wrong') h.classList.add('wrong');
     if(index === activeHeceIndex) h.classList.add('active');
+
     h.addEventListener('click', () => {
       activeHeceIndex = index;
       stopMeasure(true);
       renderMeasure();
       evaluatePassiveState();
     });
+
     lyricsBox.appendChild(h);
   });
 
@@ -410,12 +398,12 @@ function startHeceLoading(el){
 
 function evaluatePassiveState(){
   if(!selectedSong){
-    if(matchStateText) matchStateText.textContent = 'Hazır';
+    if(matchStateText) matchStateText.textContent = '';
     return;
   }
   const heceler = [...document.querySelectorAll('.hece')];
   heceler.forEach((h,i) => h.classList.toggle('active', i === activeHeceIndex));
-  if(matchStateText) matchStateText.textContent = micReady ? 'Beklemede' : 'Mikrofon kapalı';
+  if(matchStateText) matchStateText.textContent = micReady ? 'Beklemede' : '';
 }
 
 function lockCurrentHeceSuccess(){
@@ -423,6 +411,9 @@ function lockCurrentHeceSuccess(){
   if(!el || measureLocked) return;
   measureLocked = true;
   clearTimeout(measureTimer);
+
+  heceStates[activeHeceIndex] = 'correct';
+
   el.classList.remove('active','wrong');
   el.classList.add('correct');
   if(matchStateText) matchStateText.textContent = 'Doğru';
@@ -443,6 +434,9 @@ function lockCurrentHeceFail(){
   const el = getActiveHeceEl();
   if(!el || measureLocked) return;
   measureLocked = true;
+
+  heceStates[activeHeceIndex] = 'wrong';
+
   el.classList.remove('active','correct');
   el.classList.add('wrong');
   if(matchStateText) matchStateText.textContent = 'Yanlış';
