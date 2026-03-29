@@ -164,11 +164,13 @@ button,input,select{font:inherit}
 
     <div class="tunerBottom">
       <div class="pill" id="micPill">🎤 Mikrofon kapalı</div>
-      <div class="pill" id="statusPill">Hazır</div>
+      <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
+    </div>
+      <div class="pill" id="micPill">Hazır</div>
       <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
     </div>
       <div class="pill" id="micPill">🎤 Mikrofon kapalı</div>
-      <div class="pill" id="statusPill">Hazır</div>
+      <div class="pill" id="micPill">Hazır</div>
       <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
       <button class="smallBtn" id="refBtn">Hedef Sesi Ver</button>
     </div>
@@ -319,9 +321,9 @@ const tunerHandle = document.getElementById('tunerHandle');
 const tunerTarget = document.getElementById('tunerTarget');
 const tunerCurrent = document.getElementById('tunerCurrent');
 const micPill = document.getElementById('micPill');
-const statusPill = document.getElementById('statusPill');
+const micPill = document.getElementById('micPill');
 const micBtn = document.getElementById('micBtn');
-const refBtn = null;
+// reference kaldırıldı
 
 function renderLibrary(){
   libraryGrid.innerHTML = '';
@@ -476,16 +478,16 @@ function evaluatePassiveState(){
   const active = selectedSong?.lyrics?.[activeHeceIndex];
   if(!active){
     matchStateText.textContent = 'Hazır';
-    statusPill.textContent = 'Hazır';
-    statusPill.className = 'pill';
+    micPill.textContent = 'Hazır';
+    micPill.className = 'pill';
     return;
   }
 
   const heceler = [...lyricsBox.querySelectorAll('.hece')];
   heceler.forEach((h,i) => h.classList.toggle('active', i === activeHeceIndex));
   matchStateText.textContent = micReady ? 'Beklemede' : 'Mikrofon kapalı';
-  statusPill.textContent = micReady ? 'Ölçme bekliyor' : 'Hazır';
-  statusPill.className = 'pill';
+  micPill.textContent = micReady ? 'Ölçme bekliyor' : 'Hazır';
+  micPill.className = 'pill';
 }
 
 function lockCurrentHeceSuccess(){
@@ -496,8 +498,8 @@ function lockCurrentHeceSuccess(){
   el.classList.remove('active','wrong');
   el.classList.add('correct');
   matchStateText.textContent = 'Doğru';
-  statusPill.textContent = 'Yeşil kilitlendi';
-  statusPill.className = 'pill good';
+  micPill.textContent = 'Yeşil kilitlendi';
+  micPill.className = 'pill good';
 
   setTimeout(() => {
     if(!selectedSong) return;
@@ -508,8 +510,8 @@ function lockCurrentHeceSuccess(){
     }else{
       stopMeasure(true);
       matchStateText.textContent = 'Satır bitti';
-      statusPill.textContent = 'Tamamlandı';
-      statusPill.className = 'pill good';
+      micPill.textContent = 'Tamamlandı';
+      micPill.className = 'pill good';
     }
   }, 350);
 }
@@ -521,8 +523,8 @@ function lockCurrentHeceFail(){
   el.classList.remove('active','correct');
   el.classList.add('wrong');
   matchStateText.textContent = 'Yanlış';
-  statusPill.textContent = 'Kırmızı kilitlendi';
-  statusPill.className = 'pill bad';
+  micPill.textContent = 'Kırmızı kilitlendi';
+  micPill.className = 'pill bad';
 }
 
 function stopMeasure(finished=false){
@@ -554,8 +556,8 @@ function startMeasureForActiveHece(){
   const el = getActiveHeceEl();
   startHeceLoading(el);
   matchStateText.textContent = 'Dinleniyor';
-  statusPill.textContent = '2 sn ölçülüyor';
-  statusPill.className = 'pill';
+  micPill.textContent = '2 sn ölçülüyor';
+  micPill.className = 'pill';
 
   measureTimer = setTimeout(() => {
     if(!measureLocked) lockCurrentHeceFail();
