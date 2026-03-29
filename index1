@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VOCALY Motor v2</title>
+<style>
+:root{
+  --bg1:#0f172a;
+  --bg2:#1e293b;
+  --card:rgba(255,255,255,0.10);
+  --cardBorder:rgba(255,255,255,0.14);
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --green:#22c55e;
+  --greenSoft:rgba(34,197,94,0.18);
+  --red:#ef4444;
+  --redSoft:rgba(239,68,68,0.18);
+  --purple:#8b5cf6;
+  --cyan:#22d3ee;
+  --yellow:#facc15;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;
+  padding:0;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+body{min-height:100vh;padding:18px}
+.wrap{max-width:920px;margin:0 auto}
+.card{
+  background:var(--card);
+  border:1px solid var(--cardBorder);
+  backdrop-filter:blur(12px);
+  border-radius:24px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.22);
+}
+h1{margin:0 0 10px;font-size:30px}
+.sub{color:var(--muted);margin-bottom:18px;line-height:1.5}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{
+  border:none;border-radius:16px;padding:12px 16px;font-weight:700;cursor:pointer;
+  color:#fff;background:linear-gradient(135deg,#8b5cf6,#6d28d9);min-height:46px
+}
+.btn.secondary{background:linear-gradient(135deg,#0ea5e9,#0284c7)}
+.btn.warn{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+select{
+  background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);
+  border-radius:14px;padding:12px 14px;min-height:46px;font-size:16px
+}
+.label{color:var(--muted);font-size:14px;margin-bottom:8px}
+.testBox{
+  margin-top:14px;min-height:150px;border-radius:22px;border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;padding:18px;transition:.12s ease
+}
+.testBox.active{outline:3px solid rgba(34,211,238,.45);box-shadow:0 0 0 8px rgba(34,211,238,.10)}
+.testBox.success{background:var(--greenSoft);border-color:rgba(34,197,94,.42)}
+.testBox.fail{background:var(--redSoft);border-color:rgba(239,68,68,.42)}
+.big{font-size:40px;font-weight:800;line-height:1}
+.mid{font-size:18px;font-weight:700}
+.small{font-size:14px;color:var(--muted);text-align:center}
+.statusPill{
+  display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 14px;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);font-weight:700
+}
+.dot{width:10px;height:10px;border-radius:50%;background:#94a3b8}
+.dot.green{background:var(--green)}
+.dot.red{background:var(--red)}
+.dot.cyan{background:var(--cyan)}
+.tunerWrap{margin-top:14px}
+.tunerScale{
+  position:relative;height:66px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(to right,
+  rgba(239,68,68,.22) 0%, rgba(239,68,68,.14) 18%, rgba(250,204,21,.15) 34%,
+  rgba(34,197,94,.20) 50%, rgba(250,204,21,.15) 66%, rgba(239,68,68,.14) 82%, rgba(239,68,68,.22) 100%)
+}
+.centerLine{
+  position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;transform:translateX(-50%)
+}
+.needle{
+  position:absolute;top:8px;bottom:8px;width:4px;background:var(--cyan);border-radius:999px;
+  left:50%;transform:translateX(-50%);box-shadow:0 0 16px rgba(34,211,238,.75);transition:left .05s linear
+}
+.zone{
+  position:absolute;top:0;bottom:0;left:calc(50% - 5%);width:10%;
+  border-left:2px dashed rgba(255,255,255,.40);border-right:2px dashed rgba(255,255,255,.40);
+  background:rgba(255,255,255,.06)
+}
+.scaleLabels{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--muted)}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.readout{
+  border-radius:16px;padding:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)
+}
+.readout .k{font-size:13px;color:var(--muted);margin-bottom:6px}
+.readout .v{font-size:24px;font-weight:800}
+.log{
+  margin-top:12px;min-height:42px;border-radius:16px;padding:12px 14px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);color:#e2e8f0;line-height:1.45
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>VOCALY Motor v2</h1>
+  <div class="sub">
+    Bu sürümde süre hemen başlamaz. Önce sesin duyulması beklenir. İlk anlamlı ses geldikten sonra 0.7 saniyelik pencere açılır.
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content:space-between;align-items:flex-end;">
+      <div style="flex:1;min-width:220px;">
+        <div class="label">Hedef nota</div>
+        <select id="targetSelect">
+          <option value="C4">Do4</option>
+          <option value="C#4">Do#4</option>
+          <option value="D4">Re4</option>
+          <option value="D#4">Re#4</option>
+          <option value="E4">Mi4</option>
+          <option value="F4">Fa4</option>
+          <option value="F#4">Fa#4</option>
+          <option value="G4">Sol4</option>
+          <option value="G#4">Sol#4</option>
+          <option value="A4" selected>La4</option>
+          <option value="A#4">La#4</option>
+          <option value="B4">Si4</option>
+          <option value="C5">Do5</option>
+        </select>
+      </div>
+
+      <button id="micBtn" class="btn secondary">🎤 Mikrofonu Aç</button>
+      <button id="testBtn" class="btn" disabled>▶ Testi Başlat</button>
+      <button id="resetBtn" class="btn warn">↺ Sıfırla</button>
+    </div>
+
+    <div class="testBox" id="testBox">
+      <div class="big" id="targetLabel">La4</div>
+      <div class="mid" id="boxState">Hazır</div>
+      <div class="small" id="boxHint">Önce mikrofonu aç. Sonra testi başlat. Süre, sesi duyunca başlar.</div>
+    </div>
+
+    <div class="row" style="margin-top:14px;justify-content:space-between;">
+      <div class="statusPill"><span class="dot" id="micDot"></span><span id="micState">Mikrofon kapalı</span></div>
+      <div class="statusPill"><span class="dot cyan"></span><span id="soundState">Ses bekleniyor</span></div>
+    </div>
+
+    <div class="tunerWrap">
+      <div class="label">Canlı tuner</div>
+      <div class="tunerScale">
+        <div class="zone"></div>
+        <div class="centerLine"></div>
+        <div class="needle" id="needle"></div>
+      </div>
+      <div class="scaleLabels">
+        <span>PES</span><span>-50</span><span>-25</span><span>0</span><span>+25</span><span>+50</span><span>TİZ</span>
+      </div>
+    </div>
+
+    <div class="readouts">
+      <div class="readout"><div class="k">Duyulan nota</div><div class="v" id="detectedNote">-</div></div>
+      <div class="readout"><div class="k">Sapma</div><div class="v" id="centsReadout">0 cent</div></div>
+      <div class="readout"><div class="k">Frekans</div><div class="v" id="freqReadout">0 Hz</div></div>
+      <div class="readout"><div class="k">Ses seviyesi</div><div class="v" id="rmsReadout">0.000</div></div>
+    </div>
+
+    <div class="log" id="log">Sistem bekliyor.</div>
+  </div>
+</div>
+
+<script>
+const TOLERANCE_CENTS = 25;
+const FAIL_TIMEOUT_MS = 700;
+const MIN_RMS = 0.004;
+const NOTE_NAMES_TR = ['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'];
+
+const noteToMidiMap = {
+  'C4':60,'C#4':61,'D4':62,'D#4':63,'E4':64,'F4':65,'F#4':66,
+  'G4':67,'G#4':68,'A4':69,'A#4':70,'B4':71,'C5':72
+};
+
+let audioContext = null;
+let analyser = null;
+let mediaStream = null;
+let sourceNode = null;
+let zeroGain = null;
+let dataBuffer = null;
+let rafId = null;
+
+let targetMidi = 69;
+let testRunning = false;
+let testResolved = false;
+let voiceDetected = false;
+let voiceStartTime = 0;
+
+const micBtn = document.getElementById('micBtn');
+const testBtn = document.getElementById('testBtn');
+const resetBtn = document.getElementById('resetBtn');
+const targetSelect = document.getElementById('targetSelect');
+const testBox = document.getElementById('testBox');
+const targetLabel = document.getElementById('targetLabel');
+const boxState = document.getElementById('boxState');
+const boxHint = document.getElementById('boxHint');
+const micDot = document.getElementById('micDot');
+const micState = document.getElementById('micState');
+const soundState = document.getElementById('soundState');
+const needle = document.getElementById('needle');
+const detectedNote = document.getElementById('detectedNote');
+const centsReadout = document.getElementById('centsReadout');
+const freqReadout = document.getElementById('freqReadout');
+const rmsReadout = document.getElementById('rmsReadout');
+const logEl = document.getElementById('log');
+
+function setLog(msg){ logEl.textContent = msg; }
+function midiToFreq(midi){ return 440 * Math.pow(2, (midi - 69) / 12); }
+function centsOff(freq, midi){ return 1200 * Math.log2(freq / midiToFreq(midi)); }
+function freqToNearestMidiFloat(freq){ return 69 + 12 * Math.log2(freq / 440); }
+function midiToTrName(midi){
+  const noteIndex = ((midi % 12) + 12) % 12;
+  const octave = Math.floor(midi / 12) - 1;
+  return NOTE_NAMES_TR[noteIndex] + octave;
+}
+function updateTarget(){
+  targetMidi = noteToMidiMap[targetSelect.value];
+  targetLabel.textContent = midiToTrName(targetMidi);
+}
+updateTarget();
+targetSelect.addEventListener('change', updateTarget);
+
+function resetVisuals(){
+  testRunning = false;
+  testResolved = false;
+  voiceDetected = false;
+  voiceStartTime = 0;
+  testBox.className = 'testBox';
+  boxState.textContent = 'Hazır';
+  boxHint.textContent = 'Önce mikrofonu aç. Sonra testi başlat. Süre, sesi duyunca başlar.';
+  detectedNote.textContent = '-';
+  centsReadout.textContent = '0 cent';
+  freqReadout.textContent = '0 Hz';
+  rmsReadout.textContent = '0.000';
+  needle.style.left = '50%';
+  soundState.textContent = 'Ses bekleniyor';
+  setLog('Sistem bekliyor.');
+}
+resetBtn.addEventListener('click', resetVisuals);
+
+async function initMic(){
+  try{
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+      }
+    });
+
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioContext.state === 'suspended') await audioContext.resume();
+
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.05;
+
+    sourceNode = audioContext.createMediaStreamSource(mediaStream);
+    zeroGain = audioContext.createGain();
+    zeroGain.gain.value = 0;
+
+    sourceNode.connect(analyser);
+    analyser.connect(zeroGain);
+    zeroGain.connect(audioContext.destination);
+
+    dataBuffer = new Float32Array(analyser.fftSize);
+
+    micDot.className = 'dot green';
+    micState.textContent = 'Mikrofon açık';
+    micBtn.textContent = '✅ Mikrofon Hazır';
+    testBtn.disabled = false;
+
+    setLog('Mikrofon açıldı. Test başlatılabilir.');
+    startLoop();
+  }catch(err){
+    console.error(err);
+    micDot.className = 'dot red';
+    micState.textContent = 'Mikrofon hatası';
+    setLog('Mikrofon izni alınamadı.');
+  }
+}
+micBtn.addEventListener('click', initMic);
+
+testBtn.addEventListener('click', () => {
+  if(!analyser) return;
+  resetVisuals();
+  testRunning = true;
+  testBox.classList.add('active');
+  boxState.textContent = 'Ses bekleniyor...';
+  boxHint.textContent = 'Önce sesi duyacağım. Sonra 0.7 saniyelik pencere açılacak.';
+  setLog('Test başladı. Şimdi hedef notayı söyle.');
+});
+
+function succeed(freq, cents, midi){
+  if(testResolved) return;
+  testResolved = true;
+  testRunning = false;
+  testBox.className = 'testBox success';
+  boxState.textContent = 'DOĞRU';
+  boxHint.textContent = `Hedef ${midiToTrName(targetMidi)} yakalandı.`;
+  setLog(`Başarılı. ${midiToTrName(midi)} / ${freq.toFixed(1)} Hz / ${cents.toFixed(1)} cent`);
+}
+
+function fail(){
+  if(testResolved) return;
+  testResolved = true;
+  testRunning = false;
+  testBox.className = 'testBox fail';
+  boxState.textContent = 'YANLIŞ';
+  boxHint.textContent = 'Ses başladıktan sonra 0.7 saniye içinde hedef bulunamadı.';
+  setLog('Başarısız. Süre doldu.');
+}
+
+function autoCorrelate(buffer, sampleRate){
+  const size = buffer.length;
+  let rms = 0;
+  for(let i=0;i<size;i++) rms += buffer[i] * buffer[i];
+  rms = Math.sqrt(rms / size);
+  rmsReadout.textContent = rms.toFixed(3);
+
+  if(rms < MIN_RMS) return { freq:null, rms };
+
+  let r1 = 0, r2 = size - 1, threshold = 0.01;
+  for(let i=0;i<size/2;i++){
+    if(Math.abs(buffer[i]) < threshold){ r1 = i; break; }
+  }
+  for(let i=1;i<size/2;i++){
+    if(Math.abs(buffer[size-i]) < threshold){ r2 = size-i; break; }
+  }
+
+  const trimmed = buffer.slice(r1, r2);
+  const trimmedSize = trimmed.length;
+  if(trimmedSize < 32) return { freq:null, rms };
+
+  const c = new Array(trimmedSize).fill(0);
+  for(let i=0;i<trimmedSize;i++){
+    for(let j=0;j<trimmedSize-i;j++){
+      c[i] += trimmed[j] * trimmed[j+i];
+    }
+  }
+
+  let d = 0;
+  while(d + 1 < trimmedSize && c[d] > c[d+1]) d++;
+
+  let maxPos = -1, maxVal = -1;
+  for(let i=d;i<trimmedSize;i++){
+    if(c[i] > maxVal){
+      maxVal = c[i];
+      maxPos = i;
+    }
+  }
+  if(maxPos <= 0) return { freq:null, rms };
+
+  let T0 = maxPos;
+  const x1 = c[T0 - 1] || c[T0];
+  const x2 = c[T0];
+  const x3 = c[T0 + 1] || c[T0];
+  const a = (x1 + x3 - 2*x2) / 2;
+  const b = (x3 - x1) / 2;
+  if(a) T0 = T0 - b / (2*a);
+
+  const freq = sampleRate / T0;
+  if(!isFinite(freq) || freq < 60 || freq > 1200) return { freq:null, rms };
+  return { freq, rms };
+}
+
+function updateNeedle(cents){
+  const clamped = Math.max(-50, Math.min(50, cents));
+  needle.style.left = (50 + clamped) + '%';
+}
+
+function startLoop(){
+  if(rafId) cancelAnimationFrame(rafId);
+
+  const loop = () => {
+    if(analyser && dataBuffer){
+      analyser.getFloatTimeDomainData(dataBuffer);
+      const result = autoCorrelate(dataBuffer, audioContext.sampleRate);
+      const freq = result.freq;
+      const rms = result.rms;
+
+      if(rms >= MIN_RMS){
+        soundState.textContent = 'Ses alındı';
+      } else {
+        soundState.textContent = 'Ses bekleniyor';
+      }
+
+      if(freq){
+        const nearestMidi = Math.round(freqToNearestMidiFloat(freq));
+        const centsToTarget = centsOff(freq, targetMidi);
+
+        detectedNote.textContent = midiToTrName(nearestMidi);
+        centsReadout.textContent = `${centsToTarget >= 0 ? '+' : ''}${centsToTarget.toFixed(1)} cent`;
+        freqReadout.textContent = `${freq.toFixed(1)} Hz`;
+        updateNeedle(centsToTarget);
+
+        if(testRunning && !testResolved){
+          if(!voiceDetected && rms >= MIN_RMS){
+            voiceDetected = true;
+            voiceStartTime = performance.now();
+            boxState.textContent = 'Dinleniyor...';
+            boxHint.textContent = 'Ses algılandı. Şimdi doğru perde aranıyor.';
+            setLog('Ses algılandı. 0.7 saniyelik pencere başladı.');
+          }
+
+          if(voiceDetected){
+            if(Math.abs(centsToTarget) <= TOLERANCE_CENTS){
+              succeed(freq, centsToTarget, nearestMidi);
+            } else {
+              const elapsed = performance.now() - voiceStartTime;
+              if(elapsed >= FAIL_TIMEOUT_MS) fail();
+            }
+          }
+        }
+      } else {
+        detectedNote.textContent = '-';
+        centsReadout.textContent = '0 cent';
+        freqReadout.textContent = '0 Hz';
+        needle.style.left = '50%';
+
+        if(testRunning && !testResolved && voiceDetected){
+          const elapsed = performance.now() - voiceStartTime;
+          if(elapsed >= FAIL_TIMEOUT_MS) fail();
+        }
+      }
+    }
+    rafId = requestAnimationFrame(loop);
+  };
+
+  loop();
+}
+</script>
+</body>
+</html>
