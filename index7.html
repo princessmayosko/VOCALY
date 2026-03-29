@@ -111,9 +111,9 @@ button,input,select{font:inherit}
 .tunerLabel{font-size:12px;color:var(--muted)}
 .tunerTarget{font-size:24px;font-weight:900}
 .tunerCurrent{font-size:15px;font-weight:700;min-height:18px;text-align:center}
-.tunerScale{margin-top:12px;flex:1;width:100%;display:grid;grid-template-rows:repeat(14,1fr);gap:6px}
-.noteCell{position:relative;border-radius:12px;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;text-align:center;opacity:.35;transition:.16s ease;font-weight:900;background:rgba(255,255,255,.04);font-size:14px}
-.noteCell.chromatic{font-size:11px;opacity:.22;transform:scaleY(.74);transform-origin:center}
+.tunerScale{margin-top:12px;flex:1;width:100%;display:grid;grid-template-rows:repeat(13,1fr);gap:8px}
+.noteCell{position:relative;border-radius:14px;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;text-align:center;opacity:.35;transition:.16s ease;font-weight:900;background:rgba(255,255,255,.04);font-size:15px;min-height:42px}
+.noteCell.chromatic{font-size:11px;opacity:.24;transform:scaleY(.78);transform-origin:center;min-height:28px}
 .noteCell.active{opacity:1;transform:scale(1.04);box-shadow:0 0 14px currentColor inset,0 0 10px currentColor}
 .noteCell.targetMark::after{content:'•';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:#fff;opacity:.85;font-size:18px}
 .note-do{color:var(--do)} .note-dosharp{color:var(--dosharp)} .note-re{color:var(--re)} .note-resharp{color:var(--resharp)} .note-mi{color:var(--mi)} .note-fa{color:var(--fa)} .note-fasharp{color:var(--fasharp)} .note-sol{color:var(--sol)} .note-solsharp{color:var(--solsharp)} .note-la{color:var(--la)} .note-lasharp{color:var(--lasharp)} .note-si{color:var(--si)}
@@ -162,8 +162,7 @@ button,input,select{font:inherit}
       <div class="noteCell note-do" data-note="Do-top">Do</div>
     </div>
 
-    <div class="tunerBottom">
-      <div class="pill" id="micPill">🎤 Mikrofon kapalı</div>
+    
       <button class="smallBtn" id="micBtn">Mikrofonu Aç</button>
     </div>
       <div class="pill" id="micPill">Hazır</div>
@@ -318,8 +317,7 @@ const tunerPanel = document.getElementById('tunerPanel');
 const tunerHandle = document.getElementById('tunerHandle');
 const tunerTarget = document.getElementById('tunerTarget');
 const tunerCurrent = document.getElementById('tunerCurrent');
-const micPill = document.getElementById('micPill');
-const micBtn = document.getElementById('micBtn');
+
 const heroOpenLibrary = document.getElementById('heroOpenLibrary');
 const heroOpenPractice = document.getElementById('heroOpenPractice');
 const nextHeceBtn = document.getElementById('nextHeceBtn');
@@ -596,9 +594,9 @@ function freqToNoteClass(freq){
 
 async function initMic(){
   try{
+    if(micReady) return;
     if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      micPill.textContent = 'Mikrofon desteklenmiyor';
-      micPill.className = 'pill bad';
+      console.error('Mikrofon desteklenmiyor');
       return;
     }
     mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -614,17 +612,16 @@ async function initMic(){
     sourceNode.connect(analyser);
     buffer = new Float32Array(analyser.fftSize);
     micReady = true;
-    micPill.textContent = '🎤 Mikrofon açık';
-    micPill.className = 'pill good';
-    if(!tunerPanel.classList.contains('open')) tunerPanel.classList.add('open');
     startPitchLoop();
     evaluatePassiveState();
   } catch(err){
-    micReady = false;
-    micPill.textContent = 'Mikrofon izni yok';
-    micPill.className = 'pill bad';
     console.error(err);
   }
+}
+
+function openTunerPanel(){
+  tunerPanel.classList.add('open');
+  initMic();
 }
 
 function startPitchLoop(){
@@ -656,8 +653,13 @@ function startPitchLoop(){
 navBtns.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
 heroOpenLibrary.addEventListener('click', () => showView('library'));
 heroOpenPractice.addEventListener('click', () => showView('practice'));
-tunerHandle.addEventListener('click', () => tunerPanel.classList.toggle('open'));
-micBtn.addEventListener('click', initMic);
+tunerHandle.addEventListener('click', () => {
+  if(tunerPanel.classList.contains('open')){
+    tunerPanel.classList.remove('open');
+  } else {
+    openTunerPanel();
+  }
+});
 nextHeceBtn.addEventListener('click', nextHece);
 startMeasureBtn.addEventListener('click', () => {
   if(!selectedSong) return;
@@ -669,6 +671,7 @@ document.body.addEventListener('click', async () => {
   if(audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
 }, { passive:true });
 
+openTunerPanel();
 renderLibrary();
 openSong('neseli-gunler');
 renderPractice();
