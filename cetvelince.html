@@ -86,8 +86,8 @@
   max-width:96px;
   background:linear-gradient(180deg,rgba(8,17,31,.97),rgba(12,22,39,.98));
   border-right:1px solid rgba(255,255,255,.08);
-  box-shadow:18px 0 44px rgba(0,0,0,.38);
-  transform:translateX(calc(-100% + 24px));
+  box-shadow:none;
+  transform:translateX(calc(-100% + 18px));
   transition:transform .22s ease;
   z-index:120;
   display:flex;
@@ -95,10 +95,10 @@
   padding:10px 6px 10px 6px;
   gap:2px;
 }
-#vocalyCetvel.open{transform:translateX(0)}
+#vocalyCetvel.open{transform:translateX(0);box-shadow:18px 0 44px rgba(0,0,0,.38)}
 #vocalyCetvelHandle{
   position:absolute;
-  right:-24px;
+  right:-18px;
   top:50%;
   transform:translateY(-50%);
   writing-mode:vertical-rl;
@@ -111,7 +111,7 @@
   font-size:12px;
   font-weight:800;
   letter-spacing:.4px;
-  padding:10px 4px;
+  padding:10px 3px;
   cursor:pointer;
   user-select:none;
   backdrop-filter:blur(8px);
@@ -155,6 +155,30 @@
   box-shadow:0 0 0 2px rgba(250,204,21,.26) inset,0 0 18px rgba(250,204,21,.12);
   background:rgba(250,204,21,.10);
 }
+.cetvelMeta{
+  padding:6px 4px 8px 4px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  margin-bottom:4px;
+}
+.cetvelMetaTitle{
+  font-size:10px;
+  color:#9fb0c9;
+  text-align:center;
+  margin-bottom:4px;
+  letter-spacing:.4px;
+}
+.cetvelTarget{
+  min-height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.07);
+  font-size:12px;
+  font-weight:800;
+  color:#eef4ff;
+}
 @media (max-width:680px){
   #vocalyCetvel{width:11.5vw;min-width:70px;max-width:88px}
   .cetvelBlock.main{min-height:44px;font-size:14px}
@@ -166,19 +190,23 @@
 <body>
   <aside id="vocalyCetvel">
     <div id="vocalyCetvelHandle">VOCALY CETVEL</div>
-    <div class="cetvelBlock main cetvel-do">Do</div>
-    <div class="cetvelBlock main cetvel-si">Si</div>
-    <div class="cetvelBlock chromatic cetvel-lasharp">La# / Sib</div>
-    <div class="cetvelBlock main cetvel-la">La</div>
-    <div class="cetvelBlock chromatic cetvel-solsharp">Sol# / Lab</div>
-    <div class="cetvelBlock main cetvel-sol active">Sol</div>
-    <div class="cetvelBlock chromatic cetvel-fasharp">Fa# / Solb</div>
-    <div class="cetvelBlock main cetvel-fa">Fa</div>
-    <div class="cetvelBlock main cetvel-mi">Mi</div>
-    <div class="cetvelBlock chromatic cetvel-resharp">Re# / Mib</div>
-    <div class="cetvelBlock main cetvel-re">Re</div>
-    <div class="cetvelBlock chromatic cetvel-dosharp">Do# / Reb</div>
-    <div class="cetvelBlock main cetvel-do">Do</div>
+    <div class="cetvelMeta">
+      <div class="cetvelMetaTitle">Hedef</div>
+      <div class="cetvelTarget" id="cetvelTargetText">—</div>
+    </div>
+    <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
+    <div class="cetvelBlock main cetvel-si" data-note="Si">Si</div>
+    <div class="cetvelBlock chromatic cetvel-lasharp" data-note="La#">La# / Sib</div>
+    <div class="cetvelBlock main cetvel-la" data-note="La">La</div>
+    <div class="cetvelBlock chromatic cetvel-solsharp" data-note="Sol#">Sol# / Lab</div>
+    <div class="cetvelBlock main cetvel-sol" data-note="Sol">Sol</div>
+    <div class="cetvelBlock chromatic cetvel-fasharp" data-note="Fa#">Fa# / Solb</div>
+    <div class="cetvelBlock main cetvel-fa" data-note="Fa">Fa</div>
+    <div class="cetvelBlock main cetvel-mi" data-note="Mi">Mi</div>
+    <div class="cetvelBlock chromatic cetvel-resharp" data-note="Re#">Re# / Mib</div>
+    <div class="cetvelBlock main cetvel-re" data-note="Re">Re</div>
+    <div class="cetvelBlock chromatic cetvel-dosharp" data-note="Do#">Do# / Reb</div>
+    <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
   </aside>
   <div class="topbar">
     <div class="topbar-inner">
@@ -336,8 +364,8 @@
     function renderRuler(){ ruler.innerHTML=''; const duration=getDurationSafe(); const totalWidth=Math.max(getScrollableWidth(), getVisibleWidth()); ruler.style.width=totalWidth+'px'; segmentStrip.style.width=totalWidth+'px'; overlayContent.style.width=totalWidth+'px'; for(let t=0;t<=duration+0.0001;t+=0.25){ const tf=round2(t); const x=timeToPx(tf); const tick=document.createElement('div'); let cls='minor'; if(Math.abs(tf-Math.round(tf))<0.001) cls='major'; else if(Math.abs((tf/0.5)-Math.round(tf/0.5))<0.001) cls='medium'; tick.className='ruler-tick '+cls; tick.style.left=x+'px'; ruler.appendChild(tick); if(cls==='major'){ const label=document.createElement('div'); label.className='ruler-label'; label.style.left=x+'px'; label.textContent=tf.toFixed(1)+'s'; ruler.appendChild(label); } } }
     function renderStrip(){ segmentStrip.innerHTML=''; const ordered=getOrderedTimedSegments(); ordered.forEach(item=>{ const seg=item.s; const left=timeToPx(seg.start); const width=Math.max(34, timeToPx(seg.end)-timeToPx(seg.start)); const block=document.createElement('div'); block.className='strip-block'+(seg.isIntro?' intro':'')+(item.i===loadedIndex?' active':''); block.style.left=left+'px'; block.style.width=width+'px'; block.dataset.index=item.i; block.innerHTML='<div class="handle left"></div><div class="drag"></div><div class="handle right"></div><div class="body">'+escapeHtml(seg.text)+'</div>'; block.addEventListener('click',e=>{ e.stopPropagation(); if(!dragState) seekToSegment(item.i,true); }); block.querySelector('.drag').addEventListener('pointerdown',e=>startDrag(e,item.i,'move')); block.querySelector('.handle.left').addEventListener('pointerdown',e=>startDrag(e,item.i,'resize-left')); block.querySelector('.handle.right').addEventListener('pointerdown',e=>startDrag(e,item.i,'resize-right')); segmentStrip.appendChild(block); }); }
     function renderKaraoke(){ const sorted=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); if(sorted.length===0){ karaoke.innerHTML=''; return; } karaoke.innerHTML=''; const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const introBox=document.createElement('div'); introBox.className='karaokeBox intro'; introBox.id='karaoke-intro'; introBox.innerHTML='<div class="fill"></div><div class="label">Intro '+intro.end.toFixed(2)+' sn</div>'; introBox.onclick=()=> hasAudioLoaded() && ws.play(0,intro.end); karaoke.appendChild(introBox); const br=document.createElement('div'); br.className='lineBreak'; karaoke.appendChild(br); } let lastLine=null; sorted.forEach((item,sortedIndex)=>{ if(lastLine!==null && item.seg.line!==lastLine){ const br=document.createElement('div'); br.className='lineBreak'; karaoke.appendChild(br); } const btn=document.createElement('div'); btn.className='karaokeBox'+(selectedSegmentIndexes.includes(item.idx)?' selected':''); btn.id='karaoke-box-'+sortedIndex; btn.dataset.realIndex=item.idx; const noteSmall=item.seg.note?' <span style="opacity:.72;font-size:12px;">('+escapeHtml(item.seg.note)+')</span>':''; btn.innerHTML='<div class="fill"></div><div class="label">'+escapeHtml(item.seg.text)+noteSmall+'</div>'; btn.onclick=()=> playSingleKaraokeSegment(item.idx); karaoke.appendChild(btn); lastLine=item.seg.line; }); }
-    function renderAll(){ normalizeIntroSegment(); renderRuler(); renderStrip(); renderKaraoke(); syncOverlayPosition(); }
-    function seekToSegment(index,playSnippet=false){ const seg=heceler[index]; if(!seg) return; loadedIndex=index; updateActiveSegmentLabel(index); heceInput.value=seg.text; notaInput.value=seg.note||''; satirInput.value=seg.line||''; startInput.value=seg.start!==null ? seg.start.toFixed(2) : ''; endInput.value=seg.end!==null ? seg.end.toFixed(2) : ''; if(seg.start!==null && hasAudioLoaded()){ seekToTime(seg.start); scrollToTime(seg.start); } renderStrip(); if(playSnippet && hasAudioLoaded() && seg.start!==null && seg.end!==null) ws.play(seg.start,seg.end); }
+    function renderAll(){ normalizeIntroSegment(); renderRuler(); renderStrip(); renderKaraoke(); syncOverlayPosition(); if(loadedIndex > -1 && heceler[loadedIndex]) setCetvelTarget(heceler[loadedIndex].note || ''); else setCetvelTarget(''); }
+    function seekToSegment(index,playSnippet=false){ const seg=heceler[index]; if(!seg) return; loadedIndex=index; updateActiveSegmentLabel(index); heceInput.value=seg.text; notaInput.value=seg.note||''; satirInput.value=seg.line||''; startInput.value=seg.start!==null ? seg.start.toFixed(2) : ''; endInput.value=seg.end!==null ? seg.end.toFixed(2) : ''; setCetvelTarget(seg.note || ''); if(seg.start!==null && hasAudioLoaded()){ seekToTime(seg.start); scrollToTime(seg.start); } renderStrip(); if(playSnippet && hasAudioLoaded() && seg.start!==null && seg.end!==null) ws.play(seg.start,seg.end); }
     function startDrag(e,index,mode){ e.preventDefault(); e.stopPropagation(); const seg=heceler[index]; if(!seg||seg.start===null||seg.end===null) return; dragState={index:index,mode:mode,startX:e.clientX,origStart:seg.start,origEnd:seg.end}; document.addEventListener('pointermove',onDragMove,{passive:false}); document.addEventListener('pointerup',endDrag); document.addEventListener('pointercancel',endDrag); }
     function onDragMove(e){
       if(!dragState) return;
@@ -489,6 +517,14 @@
     window.addEventListener('resize',()=> setTimeout(renderAll,50));
     const vocalyCetvel = document.getElementById('vocalyCetvel');
     const vocalyCetvelHandle = document.getElementById('vocalyCetvelHandle');
+    const cetvelTargetText = document.getElementById('cetvelTargetText');
+    function setCetvelTarget(note){
+      if(cetvelTargetText) cetvelTargetText.textContent = note && note.trim() ? note : '—';
+      document.querySelectorAll('#vocalyCetvel .cetvelBlock').forEach(el=>{
+        const n = el.dataset.note || '';
+        el.classList.toggle('active', !!note && n === note);
+      });
+    }
     if(vocalyCetvel && vocalyCetvelHandle){
       vocalyCetvelHandle.addEventListener('click',()=>{
         vocalyCetvel.classList.toggle('open');
