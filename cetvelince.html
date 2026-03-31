@@ -86,21 +86,25 @@
   max-width:96px;
   background:linear-gradient(180deg,rgba(8,17,31,.97),rgba(12,22,39,.98));
   border-right:1px solid rgba(255,255,255,.08);
-  box-shadow:none;
-  transform:translateX(calc(-100% + 18px));
+  transform:translateX(-100%);
   transition:transform .22s ease;
   z-index:120;
   display:flex;
   flex-direction:column;
   padding:10px 6px 10px 6px;
   gap:2px;
+  box-shadow:none;
 }
-#vocalyCetvel.open{transform:translateX(0);box-shadow:18px 0 44px rgba(0,0,0,.38)}
+#vocalyCetvel.open{
+  transform:translateX(0);
+  box-shadow:18px 0 44px rgba(0,0,0,.38);
+}
 #vocalyCetvelHandle{
-  position:absolute;
-  right:-18px;
+  position:fixed;
+  left:0;
   top:50%;
   transform:translateY(-50%);
+  z-index:200;
   writing-mode:vertical-rl;
   text-orientation:mixed;
   border-radius:0 12px 12px 0;
@@ -518,6 +522,9 @@
     const vocalyCetvel = document.getElementById('vocalyCetvel');
     const vocalyCetvelHandle = document.getElementById('vocalyCetvelHandle');
     const cetvelTargetText = document.getElementById('cetvelTargetText');
+    let cetvelMicStream = null;
+    let touchStartX = 0;
+
     function setCetvelTarget(note){
       if(cetvelTargetText) cetvelTargetText.textContent = note && note.trim() ? note : '—';
       document.querySelectorAll('#vocalyCetvel .cetvelBlock').forEach(el=>{
@@ -525,10 +532,50 @@
         el.classList.toggle('active', !!note && n === note);
       });
     }
+
+    async function startCetvelMic(){
+      try{
+        if(cetvelMicStream) return;
+        cetvelMicStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+      }catch(e){
+        console.log('mic izin yok');
+      }
+    }
+
+    function stopCetvelMic(){
+      if(!cetvelMicStream) return;
+      cetvelMicStream.getTracks().forEach(t => t.stop());
+      cetvelMicStream = null;
+    }
+
+    function openCetvel(){
+      if(!vocalyCetvel) return;
+      vocalyCetvel.classList.add('open');
+      startCetvelMic();
+    }
+
+    function closeCetvel(){
+      if(!vocalyCetvel) return;
+      vocalyCetvel.classList.remove('open');
+      stopCetvelMic();
+    }
+
     if(vocalyCetvel && vocalyCetvelHandle){
       vocalyCetvelHandle.addEventListener('click',()=>{
-        vocalyCetvel.classList.toggle('open');
+        if(vocalyCetvel.classList.contains('open')) closeCetvel();
+        else openCetvel();
       });
+
+      document.addEventListener('touchstart', e=>{
+        touchStartX = e.touches[0].clientX;
+      }, {passive:true});
+
+      document.addEventListener('touchend', e=>{
+        const endX = e.changedTouches[0].clientX;
+        const diff = endX - touchStartX;
+        if(touchStartX < 30 && diff > 60) openCetvel();
+        if(diff < -60 && vocalyCetvel.classList.contains('open')) closeCetvel();
+      }, {passive:true});
     }
   </script></body>
 </html>
