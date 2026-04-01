@@ -26,11 +26,11 @@
     button,input,textarea,select{font:inherit}
     .hidden{display:none!important}
     .app{max-width:1200px;margin:0 auto;padding:14px 14px 42px}
-
     .topbar{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(8,17,31,.96),rgba(8,17,31,.78));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
     .topbar-inner{max-width:1200px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;justify-content:center}
-    .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);color:#111827;font-weight:900;font-size:20px;box-shadow:0 8px 24px rgba(250,204,21,.22)}
-
+    .logoBtn{border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .logoWord{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:14px;background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);color:#111827;font-weight:900;letter-spacing:.8px;box-shadow:0 8px 24px rgba(250,204,21,.22)}
+    .logoSmall{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);color:#111827;font-weight:900;box-shadow:0 8px 24px rgba(250,204,21,.22)}
     .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:16px;margin-top:16px;overflow:hidden}
     .sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
     .sectionTitle h2{margin:0;font-size:20px}
@@ -39,15 +39,12 @@
     .smallBtn.primary{background:linear-gradient(135deg,var(--purple),#6d28d9)}
     .bigBtn{width:100%;min-height:66px;border:none;border-radius:18px;background:rgba(255,255,255,.08);color:var(--text);font-size:20px;font-weight:800;cursor:pointer}
     .pill{padding:8px 12px;border-radius:999px;font-size:13px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--muted);display:inline-flex;width:max-content}
-
     .libraryList{display:flex;flex-direction:column;gap:10px}
     .libraryItem{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
-
     .miniBar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);margin-bottom:10px}
     .iconBtn{width:34px;height:34px;border:none;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;padding:0;font-size:15px}
     .fileLabel{position:relative;overflow:hidden}.fileLabel input{position:absolute;inset:0;opacity:0;cursor:pointer}
     #zoom{flex:1;min-width:110px}
-
     .waveShell{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0c1528;width:100%}
     #waveform{height:300px;overflow-x:auto;overflow-y:hidden;width:100%}
     #overlayViewport{position:absolute;top:0;left:0;right:0;height:98px;overflow:hidden;z-index:8;pointer-events:none;background:linear-gradient(180deg,rgba(10,17,33,.97) 0%, rgba(10,17,33,.92) 70%, rgba(10,17,33,0) 100%)}
@@ -60,13 +57,10 @@
     .strip-block.intro{background:#4b3a0d;border-color:#b38a17;color:#fde68a}.strip-block.active{box-shadow:0 0 0 3px rgba(139,92,246,.18);border-color:#c4b5fd}
     .strip-block .body{position:absolute;left:8px;right:8px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
     .strip-block .handle{position:absolute;top:0;bottom:0;width:10px;z-index:2}.strip-block .handle.left{left:0;cursor:ew-resize}.strip-block .handle.right{right:0;cursor:ew-resize}.strip-block .drag{position:absolute;left:10px;right:10px;top:0;bottom:0;cursor:grab}
-
-    .rowCompact{display:grid;grid-template-columns:2fr .8fr 1.2fr 1fr .8fr .8fr .7fr auto;gap:8px;align-items:center;margin-top:10px}
-    .rowCompact > *{min-width:0}
+    .rowCompact{display:grid;grid-template-columns:2fr .8fr 1.2fr 1fr .8fr .8fr .7fr auto;gap:8px;align-items:center;margin-top:10px}.rowCompact>*{min-width:0}
     .rowCompact input{padding:10px 11px;border-radius:12px;border:1px solid #334267;background:#0f1830;color:#eef4ff}
     textarea{width:100%;margin-top:10px;min-height:110px;padding:12px;border-radius:14px;border:1px solid #334267;background:#0f1830;color:#eef4ff;resize:vertical;line-height:1.5}
     .statusPills{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-
     #karaoke,#measureBoxes{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;padding:12px;border:1px dashed rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.03);min-height:110px;max-height:380px;overflow:auto}
     .karaokeBox,.measureBox{position:relative;overflow:hidden;min-width:74px;padding:12px 14px;border-radius:14px;background:#192749;border:1px solid #31497e;font-weight:700;cursor:pointer;user-select:none;transition:.15s ease;flex:0 0 auto}
     .karaokeBox .fill,.measureBox .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(139,92,246,.18);pointer-events:none;transition:width .05s linear}
@@ -77,28 +71,23 @@
     .measureBox.ok{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.55)}
     .measureBox.bad{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.55)}
     .lineBreak{flex-basis:100%;height:0;width:0}
-
-    /* cetvel */
     #vocalyCetvelDrawer{position:fixed;left:0;top:0;bottom:0;width:11vw;min-width:72px;max-width:96px;background:linear-gradient(180deg,rgba(8,17,31,.97),rgba(12,22,39,.98));border-right:1px solid rgba(255,255,255,.08);transform:translateX(-100%);transition:transform .22s ease;z-index:120;display:flex;flex-direction:column;padding:10px 6px;gap:2px;box-shadow:none}
     #vocalyCetvelDrawer.open{transform:translateX(0);box-shadow:18px 0 44px rgba(0,0,0,.38)}
-    #vocalyCetvelHandle{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:121;writing-mode:vertical-rl;text-orientation:mixed;border-radius:0 12px 12px 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);border-left:none;color:#dbe6ff;font-size:12px;font-weight:800;letter-spacing:.4px;padding:10px 3px;cursor:pointer;user-select:none;backdrop-filter:blur(8px)}
+    #vocalyCetvelHandle{position:absolute;right:-22px;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;text-orientation:mixed;border-radius:0 12px 12px 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);border-left:none;color:#dbe6ff;font-size:12px;font-weight:800;letter-spacing:.4px;padding:10px 3px;cursor:pointer;user-select:none;backdrop-filter:blur(8px)}
     .cetvelMeta{padding:6px 4px 8px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:4px}.cetvelMetaTitle{font-size:10px;color:#9fb0c9;text-align:center;margin-bottom:4px;letter-spacing:.4px}.cetvelTarget{min-height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:12px;font-weight:800;color:#eef4ff}
     .cetvelBlock{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);font-weight:800;line-height:1;color:#dce7ff;overflow:hidden}
     .cetvelBlock.main{min-height:48px;font-size:15px}.cetvelBlock.chromatic{min-height:26px;font-size:10px;opacity:.78}
     .cetvel-do{color:#ef7373}.cetvel-dosharp{color:#d58bd7}.cetvel-re{color:#efb282}.cetvel-resharp{color:#b4d28a}.cetvel-mi{color:#f1d76a}.cetvel-fa{color:#7fd788}.cetvel-fasharp{color:#6fe0c1}.cetvel-sol{color:#6fd8f0}.cetvel-solsharp{color:#87b6ff}.cetvel-la{color:#8da4ff}.cetvel-lasharp{color:#b191ff}.cetvel-si{color:#ff9ed1}
     .cetvelBlock.target{box-shadow:0 0 0 2px rgba(250,204,21,.26) inset,0 0 18px rgba(250,204,21,.12);background:rgba(250,204,21,.10)}
     .cetvelBlock.detected{box-shadow:0 0 0 2px rgba(34,197,94,.28) inset,0 0 18px rgba(34,197,94,.14);background:rgba(34,197,94,.10)}
-
-    @media (max-width:980px){.rowCompact{grid-template-columns:1fr 1fr}.rowCompact > *:last-child{grid-column:1 / -1}#waveform{height:240px}.miniBar{gap:5px}}
+    @media (max-width:980px){.rowCompact{grid-template-columns:1fr 1fr}.rowCompact>*:last-child{grid-column:1/-1}#waveform{height:240px}.miniBar{gap:5px}}
     @media (max-width:680px){#vocalyCetvelDrawer{width:11.5vw;min-width:70px;max-width:88px}.cetvelBlock.main{min-height:44px;font-size:14px}.cetvelBlock.chromatic{min-height:24px;font-size:9px}}
   </style>
 </head>
 <body>
   <aside id="vocalyCetvelDrawer" class="hidden">
-    <div class="cetvelMeta">
-      <div class="cetvelMetaTitle">Hedef</div>
-      <div class="cetvelTarget" id="cetvelTargetText">—</div>
-    </div>
+    <div id="vocalyCetvelHandle">VOCALY CETVEL</div>
+    <div class="cetvelMeta"><div class="cetvelMetaTitle">Hedef</div><div class="cetvelTarget" id="cetvelTargetText">—</div></div>
     <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
     <div class="cetvelBlock main cetvel-si" data-note="Si">Si</div>
     <div class="cetvelBlock chromatic cetvel-lasharp" data-note="La#">La# / Sib</div>
@@ -113,29 +102,25 @@
     <div class="cetvelBlock chromatic cetvel-dosharp" data-note="Do#">Do# / Reb</div>
     <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
   </aside>
-  <div id="vocalyCetvelHandle" class="hidden">VOCALY CETVEL</div>
 
-  <div class="topbar"><div class="topbar-inner"><div class="logo">V</div></div></div>
+  <div class="topbar"><div class="topbar-inner"><button class="logoBtn" id="homeLogoBtn"><div class="logoWord">VOCALY</div></button></div></div>
 
   <div class="app">
     <section id="homeSection">
       <div class="card" style="display:flex;flex-direction:column;gap:12px">
-        <div style="display:flex;justify-content:center;padding:12px 0 6px"><div class="logo" style="width:72px;height:72px;font-size:32px">V</div></div>
+        <div style="display:flex;justify-content:center;padding:12px 0 6px"><button class="logoBtn" id="homeLogoBigBtn"><div class="logoWord" style="font-size:28px;padding:18px 22px">VOCALY</div></button></div>
         <button class="bigBtn" id="homeLibraryBtn">Kütüphane</button>
         <button class="bigBtn" id="homeEditorBtn">Editör</button>
       </div>
     </section>
 
     <section id="librarySection" class="hidden">
-      <div class="card">
-        <div class="sectionTitle"><h2>Kütüphane</h2><button class="smallBtn" id="libraryBackBtn">Geri</button></div>
-        <div id="libraryList" class="libraryList"></div>
-      </div>
+      <div class="card"><div class="sectionTitle"><h2>Kütüphane</h2><button class="smallBtn" id="libraryBackBtn">Geri</button></div><div id="libraryList" class="libraryList"></div></div>
     </section>
 
     <section id="measureSection" class="hidden">
       <div class="card">
-        <div class="sectionTitle"><h2>Karaoke / Ölçme</h2><div class="metaRow"><button class="smallBtn" id="measureBackBtn">Geri</button><button class="smallBtn primary" id="measurePlayBtn">Başlat</button><button class="smallBtn" id="measureStopBtn">Durdur</button><button class="smallBtn" id="measureResetBtn">Sıfırla</button></div></div>
+        <div class="sectionTitle"><h2>Karaoke / Ölçme</h2><div class="metaRow"><button class="smallBtn" id="measureBackBtn">Geri</button><button class="smallBtn primary" id="measurePlayBtn">Başlat</button><button class="smallBtn" id="measureStopBtn">Durdur</button><button class="smallBtn" id="measureResetBtn">Sıfırla</button><button class="smallBtn" id="measurePlaySelectedBtn">Seçilileri Çal</button></div></div>
         <div id="measureTitle" class="pill">—</div>
         <div id="measureBoxes" style="margin-top:12px"></div>
       </div>
@@ -162,33 +147,26 @@
       <div class="card">
         <div class="sectionTitle"><h2>Sözler</h2></div>
         <div class="rowCompact">
-          <input id="titleInput" type="text" placeholder="Eser başlığı">
-          <input id="intro" type="number" step="0.01" min="0" value="0.00" placeholder="Intro">
-          <input id="hece" type="text" placeholder="Kelime / hece">
-          <input id="nota" type="text" placeholder="Nota">
-          <input id="start" type="number" step="0.01" placeholder="Start">
-          <input id="end" type="number" step="0.01" placeholder="End">
-          <input id="satir" type="number" step="1" min="1" placeholder="Satır">
-          <button class="smallBtn primary" id="saveBtn">Kaydet</button>
+          <input id="titleInput" type="text" placeholder="Eser başlığı"><input id="intro" type="number" step="0.01" min="0" value="0.00" placeholder="Intro"><input id="hece" type="text" placeholder="Kelime / hece"><input id="nota" type="text" placeholder="Nota"><input id="start" type="number" step="0.01" placeholder="Start"><input id="end" type="number" step="0.01" placeholder="End"><input id="satir" type="number" step="1" min="1" placeholder="Satır"><button class="smallBtn primary" id="saveBtn">Kaydet</button>
         </div>
         <div class="rowCompact">
           <button class="smallBtn" id="updateBtn">Güncelle</button><button class="smallBtn" id="deleteLoadedBtn">Sil</button><button class="smallBtn" id="previewSelectedBtn">Dinle</button><button class="smallBtn" id="resetTimingBtn">Sıfırla</button><button class="smallBtn" id="minusStartBtn">Start -</button><button class="smallBtn" id="plusStartBtn">Start +</button><button class="smallBtn" id="minusEndBtn">End -</button><button class="smallBtn" id="plusEndBtn">End +</button>
         </div>
         <textarea id="lyricsInput" placeholder="Sözleri satır satır yapıştır..."></textarea>
       </div>
-      <div class="card">
-        <div class="sectionTitle"><h2>Önizleme</h2></div>
-        <div class="metaRow"><button class="smallBtn primary" id="previewPlayBtn">Önizleme</button><button class="smallBtn" id="previewStopBtn">Durdur</button><button class="smallBtn" id="clearSelectionBtn">Seçimi Temizle</button><button class="smallBtn" id="playLineBtn">Satırı Çal</button></div>
-        <div id="karaoke"></div>
-      </div>
+      <div class="card"><div class="sectionTitle"><h2>Önizleme</h2></div><div class="metaRow"><button class="smallBtn primary" id="previewPlayBtn">Önizleme</button><button class="smallBtn" id="previewStopBtn">Durdur</button><button class="smallBtn" id="clearSelectionBtn">Seçimi Temizle</button><button class="smallBtn" id="playLineBtn">Satırı Çal</button></div><div id="karaoke"></div></div>
     </section>
   </div>
 
   <script>
-    let ws = null, heceler = [], loadedIndex = -1, currentAudioName = 'audio.mp3', cursorTime = 0, objectUrlRef = null, dragState = null, wrapperBound = false, selectedSegmentIndexes = [], sequenceStopRequested = false, libraryItems = [], measureTimerRefs = [], currentMeasureItemId = null;
-    let cetvelMicStream = null, audioCtx = null, analyser = null, micSource = null, dataArray = null, isPitchRunning = false, touchStartX = 0;
-    const PROJECT_AUTOSAVE_KEY = 'vocaly_editor_clean_v4';
-    const LIBRARY_KEY = 'vocaly_library_clean_v4';
+    let ws = null, heceler = [], loadedIndex = -1, currentAudioName = 'audio.mp3', cursorTime = 0, objectUrlRef = null, dragState = null, wrapperBound = false, selectedSegmentIndexes = [], sequenceStopRequested = false, libraryItems = [], measureTimerRefs = [];
+    let cetvelMicStream = null, audioCtx = null, analyser = null, micSource = null, dataArray = null, isPitchRunning = false, touchStartX = 0, currentDetectedNote = '';
+    const PROJECT_AUTOSAVE_KEY = 'vocaly_editor_clean_v5';
+    const LIBRARY_KEY = 'vocaly_library_clean_v5';
+    const LONG_PRESS_MS = 350;
+    let longPressTimer = null;
+    const measureSelected = new Set();
+    let measureSelectionMode = false;
 
     const homeSection = document.getElementById('homeSection');
     const librarySection = document.getElementById('librarySection');
@@ -196,6 +174,8 @@
     const editorSection = document.getElementById('editorSection');
     const homeLibraryBtn = document.getElementById('homeLibraryBtn');
     const homeEditorBtn = document.getElementById('homeEditorBtn');
+    const homeLogoBtn = document.getElementById('homeLogoBtn');
+    const homeLogoBigBtn = document.getElementById('homeLogoBigBtn');
     const libraryBackBtn = document.getElementById('libraryBackBtn');
     const measureBackBtn = document.getElementById('measureBackBtn');
     const editorBackBtn = document.getElementById('editorBackBtn');
@@ -205,6 +185,7 @@
     const measurePlayBtn = document.getElementById('measurePlayBtn');
     const measureStopBtn = document.getElementById('measureStopBtn');
     const measureResetBtn = document.getElementById('measureResetBtn');
+    const measurePlaySelectedBtn = document.getElementById('measurePlaySelectedBtn');
     const vocalyCetvelDrawer = document.getElementById('vocalyCetvelDrawer');
     const vocalyCetvelHandle = document.getElementById('vocalyCetvelHandle');
     const cetvelTargetText = document.getElementById('cetvelTargetText');
@@ -254,17 +235,10 @@
     function escapeHtml(str){ return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
     function getIntroValue(){ const v=parseFloat(introInput.value); return isNaN(v)?0:round2(v); }
     function splitWordsFromText(text){ const lines=String(text||'').split(/\n/).map(x=>x.trim()); const out=[]; lines.forEach((line,lineIndex)=>{ if(!line) return; line.split(/\s+/).filter(Boolean).forEach(word=> out.push({text:word,line:lineIndex+1})); }); return out; }
-
-    function showSection(name){
-      homeSection.classList.add('hidden'); librarySection.classList.add('hidden'); measureSection.classList.add('hidden'); editorSection.classList.add('hidden');
-      closeCetvel();
-      if(name==='home') homeSection.classList.remove('hidden');
-      if(name==='library') librarySection.classList.remove('hidden');
-      if(name==='measure'){ measureSection.classList.remove('hidden'); vocalyCetvelDrawer.classList.remove('hidden'); vocalyCetvelHandle.classList.remove('hidden'); }
-      if(name==='editor') editorSection.classList.remove('hidden');
-    }
-
     function hasAudioLoaded(){ return !!(ws && ws.getDuration && ws.getDuration()>0); }
+    function showSection(name){ homeSection.classList.add('hidden'); librarySection.classList.add('hidden'); measureSection.classList.add('hidden'); editorSection.classList.add('hidden'); closeCetvel(); if(name==='home') homeSection.classList.remove('hidden'); if(name==='library') librarySection.classList.remove('hidden'); if(name==='measure'){ measureSection.classList.remove('hidden'); vocalyCetvelDrawer.classList.remove('hidden'); } if(name==='editor') editorSection.classList.remove('hidden'); }
+    function goHome(){ measureSelected.clear(); measureSelectionMode = false; stopMeasure(); showSection('home'); }
+
     function getWaveWrapper(){ return ws && ws.drawer ? ws.drawer.wrapper : null; }
     function getWaveInner(){ const wrapper=getWaveWrapper(); return wrapper ? (wrapper.querySelector('.wavesurfer-wave') || wrapper.firstElementChild) : null; }
     function getScrollableWidth(){ const inner=getWaveInner(); if(inner && inner.scrollWidth) return inner.scrollWidth; const wrapper=getWaveWrapper(); if(wrapper && wrapper.scrollWidth) return wrapper.scrollWidth; return overlayViewport.clientWidth || 1; }
@@ -287,7 +261,7 @@
     function renderRuler(){ ruler.innerHTML=''; const duration=getDurationSafe(); const totalWidth=Math.max(getScrollableWidth(), getVisibleWidth()); ruler.style.width=totalWidth+'px'; segmentStrip.style.width=totalWidth+'px'; overlayContent.style.width=totalWidth+'px'; for(let t=0;t<=duration+0.0001;t+=0.25){ const tf=round2(t); const x=timeToPx(tf); const tick=document.createElement('div'); let cls='minor'; if(Math.abs(tf-Math.round(tf))<0.001) cls='major'; else if(Math.abs((tf/0.5)-Math.round(tf/0.5))<0.001) cls='medium'; tick.className='ruler-tick '+cls; tick.style.left=x+'px'; ruler.appendChild(tick); if(cls==='major'){ const label=document.createElement('div'); label.className='ruler-label'; label.style.left=x+'px'; label.textContent=tf.toFixed(1)+'s'; ruler.appendChild(label); } } }
     function renderStrip(){ segmentStrip.innerHTML=''; const ordered=getOrderedTimedSegments(); ordered.forEach(item=>{ const seg=item.s; const left=timeToPx(seg.start); const width=Math.max(34, timeToPx(seg.end)-timeToPx(seg.start)); const block=document.createElement('div'); block.className='strip-block'+(seg.isIntro?' intro':'')+(item.i===loadedIndex?' active':''); block.style.left=left+'px'; block.style.width=width+'px'; block.dataset.index=item.i; block.innerHTML='<div class="handle left"></div><div class="drag"></div><div class="handle right"></div><div class="body">'+escapeHtml(seg.text)+'</div>'; block.addEventListener('click',e=>{ e.stopPropagation(); if(!dragState) seekToSegment(item.i,true); }); block.querySelector('.drag').addEventListener('pointerdown',e=>startDrag(e,item.i,'move')); block.querySelector('.handle.left').addEventListener('pointerdown',e=>startDrag(e,item.i,'resize-left')); block.querySelector('.handle.right').addEventListener('pointerdown',e=>startDrag(e,item.i,'resize-right')); segmentStrip.appendChild(block); }); }
     function renderKaraoke(){ const sorted=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); if(sorted.length===0){ karaoke.innerHTML=''; return; } karaoke.innerHTML=''; const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const introBox=document.createElement('div'); introBox.className='karaokeBox intro'; introBox.id='karaoke-intro'; introBox.innerHTML='<div class="fill"></div><div class="label">Intro '+intro.end.toFixed(2)+' sn</div>'; introBox.onclick=()=> hasAudioLoaded() && ws.play(0,intro.end); karaoke.appendChild(introBox); const br=document.createElement('div'); br.className='lineBreak'; karaoke.appendChild(br); } let lastLine=null; sorted.forEach((item,sortedIndex)=>{ if(lastLine!==null && item.seg.line!==lastLine){ const br=document.createElement('div'); br.className='lineBreak'; karaoke.appendChild(br); } const btn=document.createElement('div'); btn.className='karaokeBox'+(selectedSegmentIndexes.includes(item.idx)?' selected':''); btn.id='karaoke-box-'+sortedIndex; btn.dataset.realIndex=item.idx; const noteSmall=item.seg.note?' <span style="opacity:.72;font-size:12px;">('+escapeHtml(item.seg.note)+')</span>':''; btn.innerHTML='<div class="fill"></div><div class="label">'+escapeHtml(item.seg.text)+noteSmall+'</div>'; btn.onclick=()=> playSingleKaraokeSegment(item.idx); karaoke.appendChild(btn); lastLine=item.seg.line; }); }
-    function renderMeasure(){ measureBoxes.innerHTML=''; const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const b=document.createElement('div'); b.className='measureBox intro'; b.id='measure-intro'; b.innerHTML='<div class="fill"></div><div class="label">Intro</div>'; measureBoxes.appendChild(b); const br=document.createElement('div'); br.className='lineBreak'; measureBoxes.appendChild(br); } const sorted=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.line-b.seg.line || a.seg.start-b.seg.start); let lastLine=null; sorted.forEach((item)=>{ if(lastLine!==null && item.seg.line!==lastLine){ const br=document.createElement('div'); br.className='lineBreak'; measureBoxes.appendChild(br); } const box=document.createElement('div'); box.className='measureBox'; box.id='measure-box-'+item.idx; box.innerHTML='<div class="fill"></div><div class="label">'+escapeHtml(item.seg.text)+'</div>'; box.addEventListener('click',()=> playAndMeasureSegment(item.idx)); box.addEventListener('contextmenu',e=>e.preventDefault()); box.addEventListener('pointerdown',()=> toggleMeasureSelection(item.idx)); if(measureSelected.has(item.idx)) box.classList.add('selected'); measureBoxes.appendChild(box); lastLine=item.seg.line; }); }
+    function renderMeasure(){ measureBoxes.innerHTML=''; const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const b=document.createElement('div'); b.className='measureBox intro'; b.id='measure-intro'; b.innerHTML='<div class="fill"></div><div class="label">Intro</div>'; measureBoxes.appendChild(b); const br=document.createElement('div'); br.className='lineBreak'; measureBoxes.appendChild(br); } const sorted=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.line-b.seg.line || a.seg.start-b.seg.start); let lastLine=null; sorted.forEach((item)=>{ if(lastLine!==null && item.seg.line!==lastLine){ const br=document.createElement('div'); br.className='lineBreak'; measureBoxes.appendChild(br); } const box=document.createElement('div'); box.className='measureBox'; box.id='measure-box-'+item.idx; if(measureSelected.has(item.idx)) box.classList.add('selected'); box.innerHTML='<div class="fill"></div><div class="label">'+escapeHtml(item.seg.text)+'</div>'; wireMeasureBox(box,item.idx); measureBoxes.appendChild(box); lastLine=item.seg.line; }); }
     function renderAll(){ normalizeIntroSegment(); renderRuler(); renderStrip(); renderKaraoke(); syncOverlayPosition(); }
     function seekToSegment(index,playSnippet=false){ const seg=heceler[index]; if(!seg) return; loadedIndex=index; updateActiveSegmentLabel(index); heceInput.value=seg.text; notaInput.value=seg.note||''; satirInput.value=seg.line||''; startInput.value=seg.start!==null ? seg.start.toFixed(2) : ''; endInput.value=seg.end!==null ? seg.end.toFixed(2) : ''; if(seg.start!==null && hasAudioLoaded()){ seekToTime(seg.start); scrollToTime(seg.start); } renderStrip(); if(playSnippet && hasAudioLoaded() && seg.start!==null && seg.end!==null) ws.play(seg.start,seg.end); }
 
@@ -308,7 +282,7 @@
     function saveLibrary(){ localStorage.setItem(LIBRARY_KEY, JSON.stringify(libraryItems)); }
     function loadLibrary(){ const raw = localStorage.getItem(LIBRARY_KEY); if(!raw) return; try{ const parsed = JSON.parse(raw); if(Array.isArray(parsed)) libraryItems = parsed; }catch(err){ console.error(err); } }
     function renderLibrary(){ if(!libraryItems.length){ libraryList.innerHTML='<div class="pill">Henüz eser yok</div>'; return; } libraryList.innerHTML=''; libraryItems.forEach(item=>{ const row=document.createElement('div'); row.className='libraryItem'; row.innerHTML='<div><strong>'+escapeHtml(item.title)+'</strong><div class="pill" style="margin-top:6px">'+(item.lyrics ? item.lyrics.filter(h=>!h.isIntro).length : 0)+' segment</div></div><div class="metaRow"><button class="smallBtn primary" data-open-measure="'+escapeHtml(item.id)+'">Aç</button></div>'; libraryList.appendChild(row); }); libraryList.querySelectorAll('[data-open-measure]').forEach(btn=>btn.addEventListener('click',()=> openLibraryItem(btn.dataset.openMeasure))); }
-    function openLibraryItem(id){ const item=libraryItems.find(x=>x.id===id); if(!item) return; currentMeasureItemId = item.id; applyProjectPayload({ title:item.title, intro:item.intro||0, lyrics:'', audioName:item.audioName||'audio.mp3', audioUrl:item.audioUrl||'', heceler:item.lyrics||[], cursorTime:0, selectedSegmentIndexes:[] }); measureTitle.textContent = item.title; if(item.audioUrl&&ws){ objectUrlRef=item.audioUrl; ws.load(item.audioUrl); } measureSelected.clear(); renderMeasure(); showSection('measure'); }
+    function openLibraryItem(id){ const item=libraryItems.find(x=>x.id===id); if(!item) return; applyProjectPayload({ title:item.title, intro:item.intro||0, lyrics:'', audioName:item.audioName||'audio.mp3', audioUrl:item.audioUrl||'', heceler:item.lyrics||[], cursorTime:0, selectedSegmentIndexes:[] }); measureTitle.textContent = item.title; if(item.audioUrl&&ws){ objectUrlRef=item.audioUrl; ws.load(item.audioUrl); } measureSelected.clear(); measureSelectionMode=false; renderMeasure(); showSection('measure'); }
     function applyProjectPayload(parsed){ titleInput.value=parsed.title||''; introInput.value=Number(parsed.intro||0).toFixed(2); lyricsInput.value=parsed.lyrics||''; currentAudioName=parsed.audioName||'audio.mp3'; objectUrlRef=parsed.audioUrl||objectUrlRef; selectedSegmentIndexes=Array.isArray(parsed.selectedSegmentIndexes)?parsed.selectedSegmentIndexes:[]; heceler=Array.isArray(parsed.heceler)?parsed.heceler.map(h=>({text:h.text||'',note:h.note||'',start:h.start??null,end:h.end??null,line:h.line??0,isIntro:!!h.isIntro})):[]; cursorTime=parsed.cursorTime||0; loadedIndex=-1; normalizeIntroSegment(); renderAll(); setCursorTime(cursorTime); if(hasAudioLoaded()) scrollToTime(cursorTime); }
     function saveProject(){ const payload=buildProjectPayload(); localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(payload)); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); const blob=new Blob([JSON.stringify(payload,null,2)], {type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=((payload.title||'vocaly_editor').replace(/[^\w\u00C0-\u024F-]+/g,'_'))+'.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
     function autoSaveProject(){ localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(buildProjectPayload())); }
@@ -316,34 +290,63 @@
     function importProjectFromJsonText(text){ try{ applyProjectPayload(JSON.parse(text)); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); }catch(err){ console.error(err); alert('JSON okunamadı.'); } }
 
     function setCetvelTarget(note){ cetvelTargetText.textContent = note && note.trim() ? note : '—'; document.querySelectorAll('#vocalyCetvelDrawer .cetvelBlock').forEach(el=>{ const n = el.dataset.note || ''; el.classList.toggle('target', !!note && n === note); }); }
-    function setCetvelDetected(note){ document.querySelectorAll('#vocalyCetvelDrawer .cetvelBlock').forEach(el=>{ const n = el.dataset.note || ''; el.classList.toggle('detected', !!note && n === note); }); }
+    function setCetvelDetected(note){ currentDetectedNote = note || ''; document.querySelectorAll('#vocalyCetvelDrawer .cetvelBlock').forEach(el=>{ const n = el.dataset.note || ''; el.classList.toggle('detected', !!note && n === note); }); }
     async function initPitch(){ if(audioCtx && analyser) return; const stream = await navigator.mediaDevices.getUserMedia({audio:true}); cetvelMicStream = stream; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); micSource = audioCtx.createMediaStreamSource(stream); analyser = audioCtx.createAnalyser(); analyser.fftSize = 2048; dataArray = new Float32Array(analyser.fftSize); micSource.connect(analyser); }
     function autoCorrelate(buf, sampleRate){ let SIZE = buf.length; let rms = 0; for(let i=0;i<SIZE;i++){ let val = buf[i]; rms += val*val; } rms = Math.sqrt(rms/SIZE); if(rms < 0.01) return -1; let r1=0, r2=SIZE-1, thres=0.2; for(let i=0;i<SIZE/2;i++) if(Math.abs(buf[i])<thres){ r1=i; break; } for(let i=1;i<SIZE/2;i++) if(Math.abs(buf[SIZE-i])<thres){ r2=SIZE-i; break; } buf = buf.slice(r1, r2); SIZE = buf.length; let c = new Array(SIZE).fill(0); for(let i=0;i<SIZE;i++){ for(let j=0;j<SIZE-i;j++){ c[i] = c[i] + buf[j]*buf[j+i]; } } let d=0; while(c[d] > c[d+1]) d++; let maxval=-1, maxpos=-1; for(let i=d;i<SIZE;i++){ if(c[i] > maxval){ maxval = c[i]; maxpos = i; } } let T0 = maxpos; if(T0 <= 0) return -1; return sampleRate / T0; }
     function freqToNote(freq){ if(freq <= 0) return null; const notes = ['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si']; const A4 = 440; const n = Math.round(12 * Math.log2(freq / A4)); const index = (n + 9) % 12; return notes[(index+12)%12]; }
     function simplifyNote(note){ if(!note) return ''; const n = note.trim(); if(n.includes('/')) return n.split('/')[0].trim(); return n; }
     function noteMatches(target, detected){ if(!target || !detected) return false; const t = simplifyNote(target); if(t === detected) return true; if(t === 'Reb' && detected === 'Do#') return true; if(t === 'Mib' && detected === 'Re#') return true; if(t === 'Solb' && detected === 'Fa#') return true; if(t === 'Lab' && detected === 'Sol#') return true; if(t === 'Sib' && detected === 'La#') return true; return false; }
     function stopPitchLoop(){ isPitchRunning = false; }
-    async function startPitchLoop(targetNote, boxEl, durationMs){ try{ await initPitch(); }catch(err){ console.log(err); return; } setCetvelTarget(targetNote); setCetvelDetected(''); openCetvel(); isPitchRunning = true; let matched = false; const started = performance.now(); function frame(){ if(!isPitchRunning) return; analyser.getFloatTimeDomainData(dataArray); const freq = autoCorrelate(dataArray, audioCtx.sampleRate); const detected = freqToNote(freq); if(detected) setCetvelDetected(detected); if(noteMatches(targetNote, detected)) matched = true; if(performance.now() - started >= durationMs){ isPitchRunning = false; boxEl.classList.remove('active'); boxEl.classList.add(matched ? 'ok' : 'bad'); return; } requestAnimationFrame(frame); } requestAnimationFrame(frame); }
+    async function startPitchLoop(targetNote, boxEl, durationMs){ try{ await initPitch(); }catch(err){ console.log(err); return false; } setCetvelTarget(targetNote); setCetvelDetected(''); openCetvel(); isPitchRunning = true; let matched = false; const started = performance.now(); return await new Promise(resolve=>{ function frame(){ if(!isPitchRunning){ resolve(matched); return; } analyser.getFloatTimeDomainData(dataArray); const freq = autoCorrelate(dataArray, audioCtx.sampleRate); const detected = freqToNote(freq); if(detected) setCetvelDetected(detected); if(noteMatches(targetNote, detected)) matched = true; if(performance.now() - started >= durationMs){ isPitchRunning = false; resolve(matched); return; } requestAnimationFrame(frame); } requestAnimationFrame(frame); }); }
     function openCetvel(){ if(vocalyCetvelDrawer.classList.contains('hidden')) return; vocalyCetvelDrawer.classList.add('open'); }
     function closeCetvel(){ vocalyCetvelDrawer.classList.remove('open'); stopPitchLoop(); if(cetvelMicStream){ cetvelMicStream.getTracks().forEach(t=>t.stop()); cetvelMicStream = null; } if(audioCtx){ try{ audioCtx.close(); }catch(e){} audioCtx = null; analyser = null; micSource = null; dataArray = null; } setCetvelDetected(''); }
 
-    const measureSelected = new Set();
-    function toggleMeasureSelection(index){ if(measureSelected.has(index)) measureSelected.delete(index); else measureSelected.add(index); renderMeasure(); }
-    async function playSelectedMeasureSegments(){ const indexes = [...measureSelected].sort((a,b)=>(heceler[a]?.start||0)-(heceler[b]?.start||0)); if(!indexes.length) return; for(const idx of indexes){ await playAndMeasureSegment(idx, true); } }
-    async function playAndMeasureSegment(index, chain=false){ const seg = heceler[index]; const boxEl = document.getElementById('measure-box-'+index); if(!seg || !boxEl || seg.start===null || seg.end===null || !hasAudioLoaded()) return; boxEl.classList.remove('ok','bad'); boxEl.classList.add('active'); setCetvelTarget(seg.note || ''); ws.play(seg.start, seg.end); const durationMs = Math.max(120, (seg.end - seg.start) * 1000); setTimeout(()=> startPitchLoop(seg.note || '', boxEl, Math.max(200, durationMs - 220)), 220); if(chain){ await new Promise(resolve=>setTimeout(resolve, durationMs + 120)); } }
     function clearMeasureTimers(){ measureTimerRefs.forEach(t=>clearTimeout(t)); measureTimerRefs=[]; }
-    function startMeasure(){ if(!hasAudioLoaded()) return; clearMeasureTimers(); renderMeasure(); ws.stop(); ws.play(0); const intro=heceler.find(h=>h.isIntro); if(intro && intro.end>0){ measureTimerRefs.push(setTimeout(()=>{ const el=document.getElementById('measure-intro'); if(!el) return; el.classList.add('active'); const fill=el.querySelector('.fill'); if(fill){ fill.style.transition='width '+Math.max(60,intro.end*1000)+'ms linear'; fill.style.width='100%'; } },0)); } const items=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro&&x.seg.start!==null&&x.seg.end!==null); items.forEach(({seg,idx})=>{ const startMs=Math.max(0,(seg.start||0)*1000); const durationMs=Math.max(80,((seg.end||0)-(seg.start||0))*1000); measureTimerRefs.push(setTimeout(()=>{ const el=document.getElementById('measure-box-'+idx); if(!el) return; el.classList.remove('ok','bad'); el.classList.add('active'); setCetvelTarget(seg.note||''); openCetvel(); const fill=el.querySelector('.fill'); if(fill){ fill.style.transition='width '+durationMs+'ms linear'; fill.style.width='100%'; } setTimeout(()=> startPitchLoop(seg.note||'', el, Math.max(200,durationMs-220)), 220); },startMs)); }); }
     function stopMeasure(){ clearMeasureTimers(); if(hasAudioLoaded()) ws.pause(); closeCetvel(); }
-    function resetMeasure(){ stopMeasure(); setCetvelTarget(''); measureSelected.clear(); renderMeasure(); }
+    function resetMeasure(){ stopMeasure(); setCetvelTarget(''); measureSelected.clear(); measureSelectionMode = false; renderMeasure(); }
+    async function playAndMeasureSegment(index, chain=false){ const seg = heceler[index]; const boxEl = document.getElementById('measure-box-'+index); if(!seg || !boxEl || seg.start===null || seg.end===null || !hasAudioLoaded()) return; boxEl.classList.remove('ok','bad'); boxEl.classList.add('active'); setCetvelTarget(seg.note || ''); ws.play(seg.start, seg.end); const durationMs = Math.max(180, (seg.end - seg.start) * 1000); await new Promise(resolve=>setTimeout(resolve, 220)); const matched = await startPitchLoop(seg.note || '', boxEl, Math.max(250, durationMs - 220)); boxEl.classList.remove('active'); boxEl.classList.add(matched ? 'ok' : 'bad'); if(chain) await new Promise(resolve=>setTimeout(resolve,100)); }
+    async function playSelectedMeasureSegments(){ const indexes = [...measureSelected].sort((a,b)=>(heceler[a]?.start||0)-(heceler[b]?.start||0)); if(!indexes.length) return; for(const idx of indexes){ await playAndMeasureSegment(idx,true); } }
+    function startMeasure(){ if(!hasAudioLoaded()) return; clearMeasureTimers(); renderMeasure(); ws.stop(); ws.play(0); const intro=heceler.find(h=>h.isIntro); if(intro && intro.end>0){ measureTimerRefs.push(setTimeout(()=>{ const el=document.getElementById('measure-intro'); if(!el) return; el.classList.add('active'); const fill=el.querySelector('.fill'); if(fill){ fill.style.transition='width '+Math.max(60,intro.end*1000)+'ms linear'; fill.style.width='100%'; } },0)); }
+      const items=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro&&x.seg.start!==null&&x.seg.end!==null);
+      items.forEach(({seg,idx})=>{
+        const startMs=Math.max(0,(seg.start||0)*1000);
+        measureTimerRefs.push(setTimeout(()=>{ playAndMeasureSegment(idx); },startMs));
+      });
+    }
+
+    function wireMeasureBox(box,index){
+      let longPressed = false;
+      const startLong = ()=>{
+        longPressed = false;
+        clearTimeout(longPressTimer);
+        longPressTimer = setTimeout(()=>{
+          longPressed = true;
+          measureSelectionMode = true;
+          toggleMeasureSelection(index);
+        }, LONG_PRESS_MS);
+      };
+      const clearLong = ()=> clearTimeout(longPressTimer);
+      box.addEventListener('pointerdown', startLong);
+      box.addEventListener('pointerup', ()=>{
+        clearLong();
+        if(longPressed) return;
+        if(measureSelectionMode){ toggleMeasureSelection(index); return; }
+        playAndMeasureSegment(index);
+      });
+      box.addEventListener('pointerleave', clearLong);
+      box.addEventListener('contextmenu', e=>e.preventDefault());
+    }
+    function toggleMeasureSelection(index){ if(measureSelected.has(index)) measureSelected.delete(index); else measureSelected.add(index); renderMeasure(); }
 
     function initWave(){ ws = WaveSurfer.create({ container:'#waveform', waveColor:'#4a5f8e', progressColor:'#facc15', cursorColor:'#facc15', height:300, normalize:true, responsive:true, scrollParent:true, minPxPerSec:Number(zoom.value) }); ws.on('ready',()=>{ ws.zoom(Number(zoom.value)); bindWrapperEvents(); setCursorTime(ws.getCurrentTime()); normalizeIntroSegment(); renderAll(); }); ws.on('audioprocess',()=>{ const now=ws.getCurrentTime(); timeText.textContent=now.toFixed(2)+' sn'; setCursorTime(now); karaokePlaybackUpdate(now); syncOverlayPosition(); }); ws.on('seek',p=>{ const now=(ws.getDuration()||0)*p; timeText.textContent=now.toFixed(2)+' sn'; setCursorTime(now); karaokePlaybackUpdate(now); syncOverlayPosition(); }); ws.on('pause',()=>{ const now=ws.getCurrentTime(); setCursorTime(now); karaokePlaybackUpdate(now); syncOverlayPosition(); }); ws.on('finish',()=>{ karaokePlaybackUpdate(ws.getDuration()); }); ws.on('zoom',()=>{ renderAll(); syncOverlayPosition(); }); }
     function bindWaveformDrag(){ const wrapper=getWaveWrapper(); if(!wrapper) return; wrapper.addEventListener('pointerdown',e=>{ if(e.target.closest('.handle') || e.target.closest('.strip-block')) return; wrapper._drag={startX:e.clientX,startScroll:wrapper.scrollLeft}; }); wrapper.addEventListener('pointermove',e=>{ if(!wrapper._drag) return; const dx=e.clientX-wrapper._drag.startX; wrapper.scrollLeft=wrapper._drag.startScroll-dx; syncOverlayPosition(); }); const end=()=> wrapper._drag=null; wrapper.addEventListener('pointerup',end); wrapper.addEventListener('pointercancel',end); wrapper.addEventListener('scroll',syncOverlayPosition,{passive:true}); }
     function bindWrapperEvents(){ if(wrapperBound) return; const wrapper=getWaveWrapper(); if(!wrapper) return; bindWaveformDrag(); wrapperBound=true; }
 
     initWave(); renderAll(); setCursorTime(0); loadLibrary(); loadProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); showSection('home');
-
     homeLibraryBtn.addEventListener('click',()=> showSection('library'));
     homeEditorBtn.addEventListener('click',()=> showSection('editor'));
+    homeLogoBtn.addEventListener('click',goHome);
+    homeLogoBigBtn.addEventListener('click',goHome);
     libraryBackBtn.addEventListener('click',()=> showSection('home'));
     editorBackBtn.addEventListener('click',()=> showSection('home'));
     measureBackBtn.addEventListener('click',()=>{ stopMeasure(); showSection('library'); });
@@ -369,7 +372,7 @@
     previewPlayBtn.addEventListener('click',()=> { if(!hasAudioLoaded()) return; sequenceStopRequested=true; ws.stop(); ws.play(0); });
     previewStopBtn.addEventListener('click',()=> { if(!hasAudioLoaded()) return; sequenceStopRequested=true; ws.pause(); });
     clearSelectionBtn.addEventListener('click',clearSelection); playLineBtn.addEventListener('click',playSelectedLine);
-    measurePlayBtn.addEventListener('click',startMeasure); measureStopBtn.addEventListener('click',stopMeasure); measureResetBtn.addEventListener('click',resetMeasure);
+    measurePlayBtn.addEventListener('click',startMeasure); measureStopBtn.addEventListener('click',stopMeasure); measureResetBtn.addEventListener('click',resetMeasure); measurePlaySelectedBtn.addEventListener('click',playSelectedMeasureSegments);
     vocalyCetvelHandle.addEventListener('click',()=>{ if(vocalyCetvelDrawer.classList.contains('open')) closeCetvel(); else openCetvel(); });
     document.addEventListener('touchstart', e=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
     document.addEventListener('touchend', e=>{ if(measureSection.classList.contains('hidden')) return; const endX = e.changedTouches[0].clientX; const diff = endX - touchStartX; if(touchStartX < 30 && diff > 60) openCetvel(); if(diff < -60 && vocalyCetvelDrawer.classList.contains('open')) closeCetvel(); }, {passive:true});
