@@ -43,7 +43,7 @@
     .karaokeBox .fill,.measureBox .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(139,92,246,.18);pointer-events:none}
     .karaokeBox .label,.measureBox .label{position:relative;z-index:1;white-space:nowrap} .karaokeBox.active,.measureBox.active{border-color:#c4b5fd;box-shadow:0 0 0 4px rgba(139,92,246,.12);transform:scale(1.02)}
     .karaokeBox.intro,.measureBox.intro{background:#4b3a0d;border-color:#b38a17;color:#fde68a} .karaokeBox.selected,.measureBox.selected{box-shadow:0 0 0 4px rgba(96,165,250,.16);border-color:var(--blue)}
-    .measureBox.ok{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.55)} .measureBox.bad{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.55)} .lineBreak{flex-basis:100%;height:0;width:0}
+    .measureBox.ok{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.55)} .measureBox.bad{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.55)} .measureBox.neutral{background:rgba(148,163,184,.18);border-color:rgba(148,163,184,.5);color:#cbd5f5} .measureBox.neutral .label::after{content:" ♪";opacity:.8;font-size:.92em} .lineBreak{flex-basis:100%;height:0;width:0}
     #vocalyCetvelDrawer{position:fixed;left:0;top:0;bottom:0;width:11vw;min-width:82px;max-width:108px;background:linear-gradient(180deg,rgba(8,17,31,.97),rgba(12,22,39,.98));border-right:1px solid rgba(255,255,255,.08);transform:translateX(-100%);transition:transform .22s ease;z-index:120;display:flex;flex-direction:column;padding:10px 6px;gap:4px;box-shadow:none;overflow:visible}
     #vocalyCetvelDrawer.open{transform:translateX(0);box-shadow:18px 0 44px rgba(0,0,0,.38)} #vocalyCetvelHandle{position:absolute;right:-22px;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;text-orientation:mixed;border-radius:0 12px 12px 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);border-left:none;color:#dbe6ff;font-size:12px;font-weight:800;letter-spacing:.4px;padding:10px 3px;cursor:pointer;user-select:none;backdrop-filter:blur(8px)}
     .cetvelScroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:2px}.cetvelMeta{position:sticky;top:0;z-index:2;padding:6px 4px 8px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:4px;background:linear-gradient(180deg,rgba(8,17,31,.98),rgba(12,22,39,.96))} .cetvelMetaTitle{font-size:10px;color:#9fb0c9;text-align:center;margin-bottom:4px;letter-spacing:.4px}
@@ -387,17 +387,27 @@
       const seg = heceler[index];
       const boxEl = document.getElementById('measure-box-'+index);
       if(!seg || !boxEl || seg.start===null || seg.end===null || !hasAudioLoaded()) return;
-      boxEl.classList.remove('ok','bad');
+      boxEl.classList.remove('ok','bad','neutral');
       boxEl.classList.add('active');
       ensureVisible(boxEl, measureBoxes);
       const fill = boxEl.querySelector('.fill');
       if(fill){ fill.style.transition='none'; fill.style.width='0%'; }
-      setCetvelTarget(seg.note || '');
-      ws.play(seg.start, seg.end);
       const durationMs = Math.max(180, (seg.end - seg.start) * 1000);
       startBoxFill(boxEl, durationMs);
+      ws.play(seg.start, seg.end);
+      const noteText = String(seg.note || '').trim();
+      const hasTargetNote = noteText.length > 0;
+      if(!hasTargetNote){
+        setCetvelTarget('');
+        await new Promise(resolve => setTimeout(resolve, durationMs));
+        boxEl.classList.remove('active');
+        boxEl.classList.add('neutral');
+        if(chain) await new Promise(resolve => setTimeout(resolve,80));
+        return;
+      }
+      setCetvelTarget(noteText);
       await new Promise(resolve => setTimeout(resolve, 160));
-      const matched = await startPitchLoop(seg.note || '', boxEl, Math.max(220, durationMs - 160));
+      const matched = await startPitchLoop(noteText, boxEl, Math.max(220, durationMs - 160));
       boxEl.classList.remove('active');
       if(matched){ boxEl.classList.remove('bad'); boxEl.classList.add('ok'); } else { boxEl.classList.remove('ok'); boxEl.classList.add('bad'); }
       if(chain) await new Promise(resolve => setTimeout(resolve,80));
@@ -405,7 +415,7 @@
 
     async function playSelectedMeasureSegments(){ const indexes = [...measureSelected].sort((a,b)=>(heceler[a]?.start||0)-(heceler[b]?.start||0)); if(!indexes.length) return; stopLiveCetvelListening(); for(const idx of indexes){ await playAndMeasureSegment(idx,true); } }
 
-    function getMeasureScore(){ const boxes = [...document.querySelectorAll('#measureBoxes .measureBox:not(.intro)')]; const total = boxes.length; const ok = boxes.filter(b => b.classList.contains('ok')).length; const score = total ? Math.round((ok / total) * 100) : 0; return { total, ok, score }; }
+    function getMeasureScore(){ const boxes = [...document.querySelectorAll('#measureBoxes .measureBox:not(.intro)')]; const validBoxes = boxes.filter(b => !b.classList.contains('neutral')); const total = validBoxes.length; const ok = validBoxes.filter(b => b.classList.contains('ok')).length; const score = total ? Math.round((ok / total) * 100) : 0; return { total, ok, score }; }
     function showResultModal(){ const { total, ok, score } = getMeasureScore(); let badge = '🏅', title = 'Güzel!', text = `${ok} / ${total} doğru.`; if(score >= 90){ badge='🌟'; title='Harika!'; text='Tonu çok iyi yakaladın.'; } else if(score >= 75){ badge='🥇'; title='Çok iyi!'; text='Gayet başarılı bir performans.'; } else if(score >= 60){ badge='🥈'; title='İyi!'; text='Biraz daha çalışırsan çok daha iyi olacak.'; } else if(score >= 40){ badge='🥉'; title='Devam et!'; text='Bazı notalar geldi, biraz daha tekrar iyi olur.'; } else { badge='🎵'; title='Tekrar deneyelim'; text='Cetveli izleyip bir kez daha deneyebilirsin.'; } resultBadge.textContent = badge; resultTitle.textContent = title; resultScore.textContent = score; resultText.textContent = text; resultModal.classList.remove('hidden'); }
 
     function startMeasure(){ if(!hasAudioLoaded()) return; stopLiveCetvelListening(); clearMeasureTimers(); renderMeasure(); ws.stop(); ws.play(0); const intro=heceler.find(h=>h.isIntro); if(intro && intro.end>0){ measureTimerRefs.push(setTimeout(()=>{ const el=document.getElementById('measure-intro'); if(!el) return; el.classList.add('active'); startBoxFill(el, intro.end*1000); },0)); } const items=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro&&x.seg.start!==null&&x.seg.end!==null); items.forEach(({seg,idx})=>{ const startMs=Math.max(0,(seg.start||0)*1000); measureTimerRefs.push(setTimeout(()=>{ playAndMeasureSegment(idx); },startMs)); }); if(items.length){ const last = items[items.length-1].seg; resultTimer = setTimeout(showResultModal, ((last.end||0)*1000)+700); } }
