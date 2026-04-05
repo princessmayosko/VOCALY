@@ -44,22 +44,23 @@
     .karaokeBox .label,.measureBox .label{position:relative;z-index:1;white-space:nowrap} .karaokeBox.active,.measureBox.active{border-color:#c4b5fd;box-shadow:0 0 0 4px rgba(139,92,246,.12);transform:scale(1.02)}
     .karaokeBox.intro,.measureBox.intro{background:#4b3a0d;border-color:#b38a17;color:#fde68a} .karaokeBox.selected,.measureBox.selected{box-shadow:0 0 0 4px rgba(96,165,250,.16);border-color:var(--blue)}
     .measureBox.ok{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.55)} .measureBox.bad{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.55)} .lineBreak{flex-basis:100%;height:0;width:0}
-    #vocalyCetvelDrawer{position:fixed;left:0;top:0;bottom:0;width:11vw;min-width:72px;max-width:96px;background:linear-gradient(180deg,rgba(8,17,31,.97),rgba(12,22,39,.98));border-right:1px solid rgba(255,255,255,.08);transform:translateX(-100%);transition:transform .22s ease;z-index:120;display:flex;flex-direction:column;padding:10px 6px;gap:2px;box-shadow:none}
+    #vocalyCetvelDrawer{position:fixed;left:0;top:0;bottom:0;width:11vw;min-width:82px;max-width:108px;background:linear-gradient(180deg,rgba(8,17,31,.97),rgba(12,22,39,.98));border-right:1px solid rgba(255,255,255,.08);transform:translateX(-100%);transition:transform .22s ease;z-index:120;display:flex;flex-direction:column;padding:10px 6px;gap:4px;box-shadow:none;overflow:visible}
     #vocalyCetvelDrawer.open{transform:translateX(0);box-shadow:18px 0 44px rgba(0,0,0,.38)} #vocalyCetvelHandle{position:absolute;right:-22px;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;text-orientation:mixed;border-radius:0 12px 12px 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);border-left:none;color:#dbe6ff;font-size:12px;font-weight:800;letter-spacing:.4px;padding:10px 3px;cursor:pointer;user-select:none;backdrop-filter:blur(8px)}
-    .cetvelMeta{padding:6px 4px 8px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:4px} .cetvelMetaTitle{font-size:10px;color:#9fb0c9;text-align:center;margin-bottom:4px;letter-spacing:.4px}
-    .cetvelTarget{min-height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:12px;font-weight:800;color:#eef4ff}
-    .cetvelBlock{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);font-weight:800;line-height:1;color:#dce7ff;overflow:hidden}
+    .cetvelScroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:2px}.cetvelMeta{position:sticky;top:0;z-index:2;padding:6px 4px 8px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:4px;background:linear-gradient(180deg,rgba(8,17,31,.98),rgba(12,22,39,.96))} .cetvelMetaTitle{font-size:10px;color:#9fb0c9;text-align:center;margin-bottom:4px;letter-spacing:.4px}
+    .cetvelTarget{min-height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:12px;font-weight:800;color:#eef4ff;padding:4px 3px;line-height:1.1;text-align:center;word-break:break-word}
+    .cetvelBlock{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);font-weight:800;line-height:1.08;color:#dce7ff;overflow:hidden;padding:4px 3px;white-space:normal;word-break:break-word}
     .cetvelBlock.main{min-height:48px;font-size:15px} .cetvelBlock.chromatic{min-height:26px;font-size:10px;opacity:.78}
     .cetvel-do{color:#ef7373} .cetvel-dosharp{color:#d58bd7} .cetvel-re{color:#efb282} .cetvel-resharp{color:#b4d28a} .cetvel-mi{color:#f1d76a} .cetvel-fa{color:#7fd788} .cetvel-fasharp{color:#6fe0c1} .cetvel-sol{color:#6fd8f0} .cetvel-solsharp{color:#87b6ff} .cetvel-la{color:#8da4ff} .cetvel-lasharp{color:#b191ff} .cetvel-si{color:#ff9ed1}
     .cetvelBlock.target{box-shadow:0 0 0 2px rgba(250,204,21,.26) inset,0 0 18px rgba(250,204,21,.12);background:rgba(250,204,21,.10)} .cetvelBlock.detected{box-shadow:0 0 0 2px rgba(34,197,94,.28) inset,0 0 18px rgba(34,197,94,.14);background:rgba(34,197,94,.10)}
     #resultModal{position:fixed; inset:0; z-index:300; background:rgba(0,0,0,.65); display:flex; align-items:center; justify-content:center; padding:20px;}
     @media (max-width:980px){ .rowCompact{grid-template-columns:1fr 1fr} .rowCompact>*:last-child{grid-column:1/-1} #waveform{height:240px} .miniBar{gap:5px} }
-    @media (max-width:680px){ #vocalyCetvelDrawer{width:11.5vw;min-width:70px;max-width:88px} .cetvelBlock.main{min-height:44px;font-size:14px} .cetvelBlock.chromatic{min-height:24px;font-size:9px} .karaokeBox,.measureBox{min-width:52px;padding:7px 8px;font-size:13px} #karaoke,#measureBoxes{max-height:48vh} }
+    @media (max-width:680px){ #vocalyCetvelDrawer{width:88px;min-width:88px;max-width:88px;padding:8px 5px 10px;gap:4px;background:linear-gradient(180deg,rgba(8,17,31,.72),rgba(12,22,39,.78));backdrop-filter:blur(8px)} #vocalyCetvelHandle{right:-18px;font-size:10px;padding:9px 2px} .cetvelMeta{padding:6px 3px 7px} .cetvelMetaTitle{font-size:8px} .cetvelTarget{min-height:28px;font-size:10px} .cetvelBlock.main{min-height:34px;font-size:11px} .cetvelBlock.chromatic{min-height:22px;font-size:8px;line-height:1.0} .karaokeBox,.measureBox{min-width:52px;padding:7px 8px;font-size:13px} #karaoke,#measureBoxes{max-height:48vh} }
   </style>
 </head>
 <body>
   <aside id="vocalyCetvelDrawer" class="hidden">
     <div id="vocalyCetvelHandle">VOCALY CETVEL</div>
+    <div class="cetvelScroll">
     <div class="cetvelMeta"><div class="cetvelMetaTitle">Hedef</div><div class="cetvelTarget" id="cetvelTargetText">—</div></div>
     <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
     <div class="cetvelBlock main cetvel-si" data-note="Si">Si</div>
@@ -74,6 +75,7 @@
     <div class="cetvelBlock main cetvel-re" data-note="Re">Re</div>
     <div class="cetvelBlock chromatic cetvel-dosharp" data-note="Do#">Do# / Reb</div>
     <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
+    </div>
   </aside>
 
   <div class="topbar"><div class="topbar-inner"><button class="logoBtn" id="homeLogoBtn"><div class="logoWord">VOCALY</div></button></div></div>
@@ -93,7 +95,7 @@
 
     <section id="measureSection" class="hidden">
       <div class="card">
-        <div class="sectionTitle"><h2>Karaoke / Ölçme</h2><div class="metaRow"><button class="smallBtn" id="measureBackBtn">Geri</button><button class="smallBtn primary" id="measurePlayBtn">Başlat</button><button class="smallBtn" id="measureStopBtn">Durdur</button><button class="smallBtn" id="measureResetBtn">Sıfırla</button><button class="smallBtn" id="measurePlaySelectedBtn">Seçilileri Çal</button></div></div>
+        <div class="sectionTitle"><h2>Karaoke / Ölçme</h2><div class="metaRow"><button class="smallBtn" id="measureBackBtn">Geri</button><button class="smallBtn primary" id="measurePlayBtn">Başlat</button><button class="smallBtn" id="measureStopBtn">Durdur</button><button class="smallBtn" id="measureResetBtn">Sıfırla</button><button class="smallBtn" id="measurePlaySelectedBtn">Seçilileri Çal</button><label class="smallBtn" style="display:inline-flex;align-items:center;gap:8px;padding-right:10px">Tolerans <select id="toleranceSelect" style="background:transparent;color:var(--text);border:none;outline:none;cursor:pointer"><option value="15" selected>±15</option><option value="20">±20</option><option value="25">±25</option></select></label></div></div>
         <div id="measureTitle" class="pill">—</div>
         <div id="measureBoxes" style="margin-top:12px"></div>
       </div>
@@ -156,7 +158,7 @@
     let longPressTimer = null;
     const measureSelected = new Set();
     let measureSelectionMode = false;
-    const CENT_TOLERANCE = 20;
+    let CENT_TOLERANCE = 15;
 
     const homeSection = document.getElementById('homeSection');
     const librarySection = document.getElementById('librarySection');
@@ -175,7 +177,7 @@
     const measurePlayBtn = document.getElementById('measurePlayBtn');
     const measureStopBtn = document.getElementById('measureStopBtn');
     const measureResetBtn = document.getElementById('measureResetBtn');
-    const measurePlaySelectedBtn = document.getElementById('measurePlaySelectedBtn');
+    const measurePlaySelectedBtn = document.getElementById('measurePlaySelectedBtn'); const toleranceSelect = document.getElementById('toleranceSelect');
     const vocalyCetvelDrawer = document.getElementById('vocalyCetvelDrawer');
     const vocalyCetvelHandle = document.getElementById('vocalyCetvelHandle');
     const cetvelTargetText = document.getElementById('cetvelTargetText');
@@ -234,7 +236,7 @@
     function hasAudioLoaded(){ return !!(ws && ws.getDuration && ws.getDuration()>0); }
 
     function showSection(name){ homeSection.classList.add('hidden'); librarySection.classList.add('hidden'); measureSection.classList.add('hidden'); editorSection.classList.add('hidden'); closeCetvel(); if(name==='home') homeSection.classList.remove('hidden'); if(name==='library') librarySection.classList.remove('hidden'); if(name==='measure'){ measureSection.classList.remove('hidden'); vocalyCetvelDrawer.classList.remove('hidden'); } if(name==='editor') editorSection.classList.remove('hidden'); }
-    function goHome(){ measureSelected.clear(); measureSelectionMode = false; stopMeasure(); showSection('home'); }
+    function goHome(){ measureSelected.clear(); measureSelectionMode = false; stopMeasure(); showSection('home'); toleranceSelect.value = String(CENT_TOLERANCE); }
 
     function getWaveWrapper(){ return ws && ws.drawer ? ws.drawer.wrapper : null; }
     function getWaveInner(){ const wrapper=getWaveWrapper(); return wrapper ? (wrapper.querySelector('.wavesurfer-wave') || wrapper.firstElementChild) : null; }
@@ -415,7 +417,7 @@
     function bindWaveformDrag(){ const wrapper=getWaveWrapper(); if(!wrapper) return; wrapper.addEventListener('pointerdown',e=>{ if(e.target.closest('.handle') || e.target.closest('.strip-block')) return; wrapper._drag={startX:e.clientX,startScroll:wrapper.scrollLeft}; }); wrapper.addEventListener('pointermove',e=>{ if(!wrapper._drag) return; const dx=e.clientX-wrapper._drag.startX; wrapper.scrollLeft=wrapper._drag.startScroll-dx; syncOverlayPosition(); }); const end=()=> wrapper._drag=null; wrapper.addEventListener('pointerup',end); wrapper.addEventListener('pointercancel',end); wrapper.addEventListener('scroll',syncOverlayPosition,{passive:true}); }
     function bindWrapperEvents(){ if(wrapperBound) return; const wrapper=getWaveWrapper(); if(!wrapper) return; bindWaveformDrag(); wrapperBound=true; }
 
-    initWave(); renderAll(); setCursorTime(0); loadLibrary(); loadProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); showSection('home');
+    initWave(); renderAll(); setCursorTime(0); loadLibrary(); loadProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); showSection('home'); toleranceSelect.value = String(CENT_TOLERANCE);
 
     homeLibraryBtn.addEventListener('click',()=> showSection('library'));
     homeEditorBtn.addEventListener('click',()=> showSection('editor'));
@@ -450,7 +452,7 @@
     measurePlayBtn.addEventListener('click',startMeasure);
     measureStopBtn.addEventListener('click',stopMeasure);
     measureResetBtn.addEventListener('click',resetMeasure);
-    measurePlaySelectedBtn.addEventListener('click',playSelectedMeasureSegments);
+    measurePlaySelectedBtn.addEventListener('click',playSelectedMeasureSegments); toleranceSelect.addEventListener('change',()=>{ CENT_TOLERANCE = Number(toleranceSelect.value)||15; });
     vocalyCetvelHandle.addEventListener('click', async () => { if(vocalyCetvelDrawer.classList.contains('open')){ stopLiveCetvelListening(); closeCetvel(); } else { await startLiveCetvelListening(); } });
     resultCloseBtn.addEventListener('click',()=> resultModal.classList.add('hidden'));
     document.addEventListener('keydown',e=>{ const tag=document.activeElement ? document.activeElement.tagName.toLowerCase() : ''; const inInput=tag==='input'||tag==='textarea'||tag==='select'; if(inInput) return; if(e.code==='Space'){ e.preventDefault(); if(hasAudioLoaded()) ws.playPause(); return; } if(e.code==='Escape'){ loadedIndex=-1; selectedSegmentIndexes=[]; renderAll(); updateActiveSegmentLabel(-1); return; } if(e.code==='ArrowRight'){ e.preventDefault(); if(hasAudioLoaded()) seekToTime(ws.getCurrentTime()+0.2); return; } if(e.code==='ArrowLeft'){ e.preventDefault(); if(hasAudioLoaded()) seekToTime(ws.getCurrentTime()-0.2); return; } });
