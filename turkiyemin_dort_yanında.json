@@ -1,0 +1,422 @@
+{
+  "version": 1,
+  "title": "Türkiye'min Dört Yanında",
+  "intro": 37.18,
+  "lyrics": "Türkiye’min Dört Yanında\nBayram Bugün Sevinçliyim\nMutluluk Var İnsanımda\nGelecekten Ümitliyim\nTürkiye’min Dört Yanında\nBayram Bugün Sevinçliyim\nMutluluk Var İnsanımda\nGelecekten Ümitliyim\nAtatürk Bir Işık Bana\nYeryüzünde Övünç Bana\nVarlığıyla Gururluyum\nBu Bir Ömür Yeter Bana\nAtatürk Bir Işık Bana\nYeryüzünde Övünç Bana\nVarlığıyla Gururluyum\nBu Bir Ömür Yeter Bana",
+  "audioName": "TÜRKİYE'MİN DÖRT YANINDA - (320 Kbps) (1).mp3",
+  "audioUrl": "blob:https://princessmayosko.github.io/6623437d-bbcf-4fb5-b9a8-c7754cf84770",
+  "selectedSegmentIndexes": [
+    1
+  ],
+  "heceler": [
+    {
+      "text": "INTRO",
+      "note": "",
+      "start": 0,
+      "end": 37.18,
+      "line": 0,
+      "isIntro": true
+    },
+    {
+      "text": "Türkiye’min",
+      "note": "re mi fa fa",
+      "start": 37.18,
+      "end": 39.15,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Dört",
+      "note": "la",
+      "start": 39.15,
+      "end": 39.75,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Yanında",
+      "note": "fa mi re",
+      "start": 39.75,
+      "end": 41.2,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Bayram",
+      "note": "mi sol",
+      "start": 41.2,
+      "end": 42.09,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Bugün",
+      "note": "fa mi",
+      "start": 42.09,
+      "end": 43.34,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Sevinçliyim",
+      "note": "re do# mi",
+      "start": 43.34,
+      "end": 45.71,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Mutluluk",
+      "note": "mi fa sol",
+      "start": 45.71,
+      "end": 47.04,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "Var",
+      "note": "sol",
+      "start": 47.04,
+      "end": 47.88,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "İnsanımda",
+      "note": "la sib sol",
+      "start": 47.88,
+      "end": 49.93,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "Gelecekten",
+      "note": "la do si",
+      "start": 49.93,
+      "end": 51.84,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Ümitliyim",
+      "note": "la fa sol",
+      "start": 51.84,
+      "end": 54.36,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Türkiye’min",
+      "note": "re mi fa",
+      "start": 54.36,
+      "end": 56.36,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "Dört",
+      "note": "la",
+      "start": 56.36,
+      "end": 56.93,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "Yanında",
+      "note": "fa mi re",
+      "start": 56.93,
+      "end": 58.28,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "Bayram",
+      "note": "mi sol",
+      "start": 58.28,
+      "end": 59.39,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "Bugün",
+      "note": "fa mi",
+      "start": 59.39,
+      "end": 60.46,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "Sevinçliyim",
+      "note": "re do# mi",
+      "start": 60.46,
+      "end": 63.04,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "Mutluluk",
+      "note": "mi fa sol",
+      "start": 63.04,
+      "end": 64.26,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "Var",
+      "note": "sol",
+      "start": 64.26,
+      "end": 65.1,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "İnsanımda",
+      "note": "la sib sol",
+      "start": 65.1,
+      "end": 67.16,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "Gelecekten",
+      "note": "la do sib",
+      "start": 67.16,
+      "end": 69,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "Ümitliyim",
+      "note": "la fa sol",
+      "start": 69,
+      "end": 71.52,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "Atatürk",
+      "note": "la",
+      "start": 71.52,
+      "end": 72.73,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "Bir",
+      "note": "la",
+      "start": 72.73,
+      "end": 73.3,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "Işık",
+      "note": "la re",
+      "start": 73.3,
+      "end": 74.03,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "Bana",
+      "note": "sib la",
+      "start": 74.03,
+      "end": 75.71,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "Yeryüzünde",
+      "note": "sol",
+      "start": 75.71,
+      "end": 77.66,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "Övünç",
+      "note": "sol sib",
+      "start": 77.66,
+      "end": 78.44,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "Bana",
+      "note": "la sol",
+      "start": 78.44,
+      "end": 79.98,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "Varlığıyla",
+      "note": "fa",
+      "start": 79.98,
+      "end": 81.85,
+      "line": 11,
+      "isIntro": false
+    },
+    {
+      "text": "Gururluyum",
+      "note": "fa mi re sol# la",
+      "start": 81.85,
+      "end": 83.87,
+      "line": 11,
+      "isIntro": false
+    },
+    {
+      "text": "Bu",
+      "note": "sol#",
+      "start": 83.87,
+      "end": 84.3,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "Bir",
+      "note": "la",
+      "start": 84.3,
+      "end": 84.87,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "Ömür",
+      "note": "sol# la",
+      "start": 84.87,
+      "end": 86.06,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "Yeter",
+      "note": "mi fa",
+      "start": 86.06,
+      "end": 86.79,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "Bana",
+      "note": "do# re",
+      "start": 86.79,
+      "end": 88.24,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "Atatürk",
+      "note": "la",
+      "start": 88.24,
+      "end": 89.8,
+      "line": 13,
+      "isIntro": false
+    },
+    {
+      "text": "Bir",
+      "note": "la",
+      "start": 89.8,
+      "end": 90.51,
+      "line": 13,
+      "isIntro": false
+    },
+    {
+      "text": "Işık",
+      "note": "la re",
+      "start": 90.51,
+      "end": 91.1,
+      "line": 13,
+      "isIntro": false
+    },
+    {
+      "text": "Bana",
+      "note": "sib la",
+      "start": 91.1,
+      "end": 92.95,
+      "line": 13,
+      "isIntro": false
+    },
+    {
+      "text": "Yeryüzünde",
+      "note": "sol",
+      "start": 92.95,
+      "end": 94.66,
+      "line": 14,
+      "isIntro": false
+    },
+    {
+      "text": "Övünç",
+      "note": "sol sib",
+      "start": 94.66,
+      "end": 95.44,
+      "line": 14,
+      "isIntro": false
+    },
+    {
+      "text": "Bana",
+      "note": "la sol",
+      "start": 95.44,
+      "end": 97.06,
+      "line": 14,
+      "isIntro": false
+    },
+    {
+      "text": "Varlığıyla",
+      "note": "fa",
+      "start": 97.06,
+      "end": 99.04,
+      "line": 15,
+      "isIntro": false
+    },
+    {
+      "text": "Gururluyum",
+      "note": "fa mi re  sol# la",
+      "start": 99.04,
+      "end": 101.13,
+      "line": 15,
+      "isIntro": false
+    },
+    {
+      "text": "Bu",
+      "note": "sol#",
+      "start": 101.13,
+      "end": 101.39,
+      "line": 16,
+      "isIntro": false
+    },
+    {
+      "text": "Bir",
+      "note": "la",
+      "start": 101.39,
+      "end": 102.02,
+      "line": 16,
+      "isIntro": false
+    },
+    {
+      "text": "Ömür",
+      "note": "sol# la",
+      "start": 102.02,
+      "end": 103.39,
+      "line": 16,
+      "isIntro": false
+    },
+    {
+      "text": "Yeter",
+      "note": "mi fa",
+      "start": 103.39,
+      "end": 104.02,
+      "line": 16,
+      "isIntro": false
+    },
+    {
+      "text": "Bana",
+      "note": "do# re",
+      "start": 104.02,
+      "end": 105.73,
+      "line": 16,
+      "isIntro": false
+    }
+  ],
+  "cursorTime": 39.16
+}

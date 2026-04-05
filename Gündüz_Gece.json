@@ -1,0 +1,294 @@
+{
+  "version": 1,
+  "title": "Gündüz Gece",
+  "intro": 0,
+  "lyrics": "Intro\nUzun ince bir yoldayım\nAra_Müzik\nGidiyorum gündüz gece\nAra_Müzik\nBilmiyorum ne hâldeyim\nGidiyorum gündüz gece\ngündüz gece gündüz gece\ngündüz gece\nBilmiyorum ne hâldeyim\nGidiyorum gündüz gece\ngündüz gece gündüz gece\ngündüz gece",
+  "audioName": "Uzun ince Bir Yoldaym Karaoke Trk.mp3",
+  "audioUrl": "blob:https://princessmayosko.github.io/58ea4809-c1bd-407e-a680-3f5c58b4bea4",
+  "selectedSegmentIndexes": [
+    34
+  ],
+  "heceler": [
+    {
+      "text": "INTRO",
+      "note": "",
+      "start": 0,
+      "end": 0,
+      "line": 0,
+      "isIntro": true
+    },
+    {
+      "text": "Intro",
+      "note": "",
+      "start": 0,
+      "end": 16.77,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Uzun",
+      "note": "fa# sol#",
+      "start": 16.77,
+      "end": 18.15,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "ince",
+      "note": "sol# fa# fa re#",
+      "start": 18.15,
+      "end": 19.17,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "bir",
+      "note": "fa#",
+      "start": 19.17,
+      "end": 19.52,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "yoldayım",
+      "note": "fa re#",
+      "start": 19.52,
+      "end": 21.14,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Ara_Müzik",
+      "note": "",
+      "start": 21.14,
+      "end": 25.89,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "Gidiyorum",
+      "note": "fa# sol# fa re#",
+      "start": 25.89,
+      "end": 27.47,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "fa# fa re#",
+      "start": 27.47,
+      "end": 28.79,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "re#",
+      "start": 28.79,
+      "end": 29.61,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Ara_Müzik",
+      "note": "",
+      "start": 29.61,
+      "end": 34.62,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "Bilmiyorum",
+      "note": "do do#",
+      "start": 34.62,
+      "end": 36.22,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "ne",
+      "note": "do#",
+      "start": 36.22,
+      "end": 36.64,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "hâldeyim",
+      "note": "do la# do#",
+      "start": 36.64,
+      "end": 38.28,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "Gidiyorum",
+      "note": "do# la# sol# si",
+      "start": 38.28,
+      "end": 40.35,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "la# sol# fa#",
+      "start": 40.35,
+      "end": 41.67,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "la sol#",
+      "start": 41.67,
+      "end": 42.38,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "sol# fa# fa re#",
+      "start": 42.38,
+      "end": 43.54,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "sol# fa fa#",
+      "start": 43.54,
+      "end": 44.6,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "fa# fa re#",
+      "start": 44.6,
+      "end": 45.85,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "fa# fa",
+      "start": 45.85,
+      "end": 46.62,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "fa re# do#",
+      "start": 46.62,
+      "end": 47.8,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "fa re#",
+      "start": 47.8,
+      "end": 51.52,
+      "line": 9,
+      "isIntro": false
+    },
+    {
+      "text": "Bilmiyorum",
+      "note": "do do#",
+      "start": 51.52,
+      "end": 53.09,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "ne",
+      "note": "do#",
+      "start": 53.09,
+      "end": 53.47,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "hâldeyim",
+      "note": "do# do la#",
+      "start": 53.47,
+      "end": 55.38,
+      "line": 10,
+      "isIntro": false
+    },
+    {
+      "text": "Gidiyorum",
+      "note": "do# la# sol# si",
+      "start": 55.38,
+      "end": 57.44,
+      "line": 11,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "la# sol# fa#",
+      "start": 57.44,
+      "end": 58.73,
+      "line": 11,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "la sol#",
+      "start": 58.73,
+      "end": 59.54,
+      "line": 11,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "sol# fa# fa re#",
+      "start": 59.54,
+      "end": 60.57,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "sol# fa fa#",
+      "start": 60.57,
+      "end": 61.74,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "fa# fa re#",
+      "start": 61.74,
+      "end": 62.86,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "fa# fa",
+      "start": 62.86,
+      "end": 63.8,
+      "line": 12,
+      "isIntro": false
+    },
+    {
+      "text": "gündüz",
+      "note": "fa re# do#",
+      "start": 63.8,
+      "end": 64.82,
+      "line": 13,
+      "isIntro": false
+    },
+    {
+      "text": "gece",
+      "note": "fa re#",
+      "start": 64.82,
+      "end": 67.12,
+      "line": 13,
+      "isIntro": false
+    }
+  ],
+  "cursorTime": 68.65522916666667
+}
