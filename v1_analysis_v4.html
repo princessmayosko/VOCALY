@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>VOCALY</title>
+  <script src="https://unpkg.com/wavesurfer.js@6"></script>
+  <style>
+    :root{
+      --bg:#08111f; --bg2:#0f1b2d; --panel:rgba(12,22,39,.94); --line:rgba(255,255,255,.10);
+      --text:#eef4ff; --muted:#9fb0c9; --yellow:#facc15; --purple:#8b5cf6; --blue:#60a5fa;
+      --green:#22c55e; --red:#ef4444; --shadow:0 12px 36px rgba(0,0,0,.32);
+    }
+    *{box-sizing:border-box} html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:Arial,sans-serif}
+    body{min-height:100vh} button,input,textarea,select{font:inherit} .hidden{display:none!important}
+    .app{max-width:1200px;margin:0 auto;padding:14px 14px 42px} .topbar{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(8,17,31,.96),rgba(8,17,31,.78));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    .topbar-inner{max-width:1200px;margin:0 auto;padding:12px 14px;display:flex;align-items:center;justify-content:center} .logoBtn{border:none;background:none;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .logoWord{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:14px;background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);color:#111827;font-weight:900;letter-spacing:.8px;box-shadow:0 8px 24px rgba(250,204,21,.22)}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:16px;margin-top:16px;overflow:hidden}
+    .sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px} .sectionTitle h2{margin:0;font-size:20px}
+    .metaRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center} .smallBtn{padding:10px 12px;border:none;border-radius:12px;background:rgba(255,255,255,.08);color:var(--text);cursor:pointer}
+    .smallBtn.primary{background:linear-gradient(135deg,var(--purple),#6d28d9)}
+    .measureToolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .measureToolbarGroup{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px;padding:6px 8px}
+    .measureIconBtn{width:42px;height:42px;border:none;border-radius:12px;background:rgba(255,255,255,.07);color:var(--text);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;line-height:1;flex:0 0 auto}
+    .measureIconBtn.primary{background:linear-gradient(135deg,var(--purple),#6d28d9)}
+    .measureTolerance{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:14px;padding:0 10px;height:42px;color:var(--text)}
+    .measureTolerance select{background:transparent;color:var(--text);border:none;outline:none;cursor:pointer;font:inherit}
+    .measureTitleRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+ .bigBtn{width:100%;min-height:66px;border:none;border-radius:18px;background:rgba(255,255,255,.08);color:var(--text);font-size:20px;font-weight:800;cursor:pointer}
+    .pill{padding:8px 12px;border-radius:999px;font-size:13px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--muted);display:inline-flex;width:max-content}
+    .libraryList{display:flex;flex-direction:column;gap:10px} .libraryItem{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+    .miniBar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.04);margin-bottom:10px}
+    .iconBtn{width:34px;height:34px;border:none;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;padding:0;font-size:15px}
+    .fileLabel{position:relative;overflow:hidden} .fileLabel input{position:absolute;inset:0;opacity:0;cursor:pointer} #zoom{flex:1;min-width:110px}
+    .waveShell{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0c1528;width:100%} #waveform{height:300px;overflow-x:auto;overflow-y:hidden;width:100%}
+    #overlayViewport{position:absolute;top:0;left:0;right:0;height:98px;overflow:hidden;z-index:8;pointer-events:none;background:linear-gradient(180deg,rgba(10,17,33,.97) 0%, rgba(10,17,33,.92) 70%, rgba(10,17,33,0) 100%)}
+    #overlayContent{position:absolute;left:0;top:0;height:98px} #ruler{position:absolute;left:0;top:0;height:36px;border-bottom:1px solid #24355a;background:linear-gradient(180deg,rgba(13,22,44,.98) 0%, rgba(13,22,44,.92) 100%);pointer-events:auto}
+    #segmentStrip{position:absolute;left:0;top:36px;height:50px;pointer-events:auto} #stripCursor{position:absolute;top:0;bottom:0;width:2px;background:var(--yellow);opacity:.95;pointer-events:none;z-index:20}
+    .ruler-tick{position:absolute;bottom:0;width:1px;background:#4a5f8e} .ruler-tick.major{height:24px;background:#9fb0d8} .ruler-tick.medium{height:15px;background:#6f84b4} .ruler-tick.minor{height:8px;background:#43577f}
+    .ruler-label{position:absolute;top:4px;transform:translateX(-50%);font-size:10px;color:#dce8ff;white-space:nowrap;font-weight:700}
+    .strip-block{position:absolute;top:8px;height:32px;border-radius:10px;background:#1c2b52;border:1px solid #3c57a1;color:#eef4ff;min-width:34px;overflow:hidden;touch-action:none;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+    .strip-block.intro{background:#4b3a0d;border-color:#b38a17;color:#fde68a} .strip-block.active{box-shadow:0 0 0 3px rgba(139,92,246,.18);border-color:#c4b5fd}
+    .strip-block .body{position:absolute;left:8px;right:8px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+    .strip-block .handle{position:absolute;top:0;bottom:0;width:10px;z-index:2} .strip-block .handle.left{left:0;cursor:ew-resize} .strip-block .handle.right{right:0;cursor:ew-resize} .strip-block .drag{position:absolute;left:10px;right:10px;top:0;bottom:0;cursor:grab}
+    .rowCompact{display:grid;grid-template-columns:2fr .8fr 1.2fr 1fr .8fr .8fr .7fr auto;gap:8px;align-items:center;margin-top:10px} .rowCompact>*{min-width:0}
+    .rowCompact input{padding:10px 11px;border-radius:12px;border:1px solid #334267;background:#0f1830;color:#eef4ff}
+    textarea{width:100%;margin-top:10px;min-height:110px;padding:12px;border-radius:14px;border:1px solid #334267;background:#0f1830;color:#eef4ff;resize:vertical;line-height:1.5}
+    .statusPills{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px} #karaoke,#measureBoxes{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;padding:10px;border:1px dashed rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.03);min-height:96px;max-height:44vh;overflow:auto;scroll-behavior:smooth}
+    .karaokeBox,.measureBox{position:relative;overflow:hidden;min-width:58px;padding:8px 10px;border-radius:12px;background:#192749;border:1px solid #31497e;font-weight:700;font-size:14px;cursor:pointer;user-select:none;transition:.15s ease;flex:0 0 auto;line-height:1.15}
+    .karaokeBox .fill,.measureBox .fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:rgba(139,92,246,.18);pointer-events:none}
+    .karaokeBox .label,.measureBox .label{position:relative;z-index:1;white-space:nowrap} .karaokeBox.active,.measureBox.active{border-color:#c4b5fd;box-shadow:0 0 0 4px rgba(139,92,246,.12);transform:scale(1.02)}
+    .karaokeBox.intro,.measureBox.intro{background:#4b3a0d;border-color:#b38a17;color:#fde68a} .karaokeBox.selected,.measureBox.selected{box-shadow:0 0 0 4px rgba(96,165,250,.16);border-color:var(--blue)}
+    .measureBox.ok{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.55)} .measureBox.bad{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.55)} .measureBox.neutral{background:rgba(148,163,184,.18);border-color:rgba(148,163,184,.5);color:#cbd5f5} .measureBox.neutral .label::after{content:" ♪";opacity:.8;font-size:.92em} .lineBreak{flex-basis:100%;height:0;width:0}
+    #vocalyCetvelDrawer{position:fixed;left:0;top:0;bottom:0;width:11vw;min-width:82px;max-width:108px;background:linear-gradient(180deg,rgba(8,17,31,.97),rgba(12,22,39,.98));border-right:1px solid rgba(255,255,255,.08);transform:translateX(-100%);transition:transform .22s ease;z-index:120;display:flex;flex-direction:column;padding:10px 6px;gap:4px;box-shadow:none;overflow:visible}
+    #vocalyCetvelDrawer.open{transform:translateX(0);box-shadow:18px 0 44px rgba(0,0,0,.38)} #vocalyCetvelHandle{position:absolute;right:-22px;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;text-orientation:mixed;border-radius:0 12px 12px 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);border-left:none;color:#dbe6ff;font-size:12px;font-weight:800;letter-spacing:.4px;padding:10px 3px;cursor:pointer;user-select:none;backdrop-filter:blur(8px)}
+    .cetvelScroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-right:2px}.cetvelMeta{position:sticky;top:0;z-index:2;padding:6px 4px 8px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:4px;background:linear-gradient(180deg,rgba(8,17,31,.98),rgba(12,22,39,.96))} .cetvelMetaTitle{font-size:10px;color:#9fb0c9;text-align:center;margin-bottom:4px;letter-spacing:.4px}
+    .cetvelTarget{min-height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);font-size:12px;font-weight:800;color:#eef4ff;padding:4px 3px;line-height:1.1;text-align:center;word-break:break-word}
+    .cetvelBlock{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:10px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);font-weight:800;line-height:1.08;color:#dce7ff;overflow:hidden;padding:4px 3px;white-space:normal;word-break:break-word}
+    .cetvelBlock.main{min-height:48px;font-size:15px} .cetvelBlock.chromatic{min-height:26px;font-size:10px;opacity:.78}
+    .cetvel-do{color:#ef7373} .cetvel-dosharp{color:#d58bd7} .cetvel-re{color:#efb282} .cetvel-resharp{color:#b4d28a} .cetvel-mi{color:#f1d76a} .cetvel-fa{color:#7fd788} .cetvel-fasharp{color:#6fe0c1} .cetvel-sol{color:#6fd8f0} .cetvel-solsharp{color:#87b6ff} .cetvel-la{color:#8da4ff} .cetvel-lasharp{color:#b191ff} .cetvel-si{color:#ff9ed1}
+    .cetvelBlock.target{box-shadow:0 0 0 2px rgba(250,204,21,.26) inset,0 0 18px rgba(250,204,21,.12);background:rgba(250,204,21,.10)} .cetvelBlock.detected{box-shadow:0 0 0 2px rgba(34,197,94,.28) inset,0 0 18px rgba(34,197,94,.14);background:rgba(34,197,94,.10)}
+    #resultModal{position:fixed; inset:0; z-index:300; background:rgba(0,0,0,.65); display:flex; align-items:center; justify-content:center; padding:20px;}
+    body.cetvel-open #measureSection .card{transition:margin-left .22s ease,width .22s ease,transform .22s ease;}
+    @media (max-width:980px){ .rowCompact{grid-template-columns:1fr 1fr} .rowCompact>*:last-child{grid-column:1/-1} #waveform{height:240px} .miniBar{gap:5px} }
+    @media (max-width:680px){ #vocalyCetvelDrawer{width:88px;min-width:88px;max-width:88px;padding:8px 5px 10px;gap:4px;background:linear-gradient(180deg,rgba(8,17,31,.72),rgba(12,22,39,.78));backdrop-filter:blur(8px)} #vocalyCetvelHandle{right:-18px;font-size:10px;padding:9px 2px} .cetvelMeta{padding:6px 3px 7px} .cetvelMetaTitle{font-size:8px} .cetvelTarget{min-height:28px;font-size:10px} .cetvelBlock.main{min-height:34px;font-size:11px} .cetvelBlock.chromatic{min-height:22px;font-size:8px;line-height:1.0} .karaokeBox,.measureBox{min-width:52px;padding:7px 8px;font-size:13px} #karaoke,#measureBoxes{max-height:56vh} body.cetvel-open #measureSection .card{margin-left:72px;width:calc(100% - 72px);} .measureTitleRow{display:grid;grid-template-columns:minmax(64px,84px) 1fr;align-items:center;gap:8px} .measureTitleRow h2{font-size:13px;line-height:1.05;max-width:80px;margin:0} .measureToolbar{width:100%;min-width:0;display:flex;align-items:center;justify-content:flex-start;gap:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;-ms-overflow-style:none} .measureToolbar::-webkit-scrollbar{display:none} .measureToolbarGroup{flex:0 0 auto;gap:4px;padding:4px 5px;border-radius:12px} .measureIconBtn{width:32px;height:32px;font-size:15px;border-radius:9px} .measureTolerance{flex:0 0 auto;height:32px;padding:0 7px;font-size:12px;gap:4px;border-radius:12px;white-space:nowrap} .measureTolerance select{font-size:12px;min-width:46px} #measureTitle{margin-top:6px} }
+
+    .analysisCard{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.03)}
+    .analysisTop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    .analysisStats{display:flex;gap:8px;flex-wrap:wrap}
+    .analysisPill{padding:8px 12px;border-radius:999px;font-size:13px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--muted)}
+    .analysisPanelWrap{position:relative;border:1px solid var(--line);border-radius:16px;overflow-x:auto;overflow-y:hidden;background:#0a1426;scrollbar-width:thin}
+    .analysisPanelInner{min-width:100%;width:max-content}
+    #analysisCanvas{display:block;height:320px}
+    .analysisControls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .analysisSummary{margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);color:#d9e6ff;line-height:1.45}
+    .analysisSummary ul{margin:0;padding-left:18px}
+    .analysisSummary li{margin:6px 0}
+    #recordingAudio{width:100%;margin-top:10px}
+    @media (max-width:680px){
+      #analysisCanvas{height:240px}
+    }
+
+  </style>
+</head>
+<body>
+  <aside id="vocalyCetvelDrawer" class="hidden">
+    <div id="vocalyCetvelHandle">VOCALY CETVEL</div>
+    <div class="cetvelScroll">
+    <div class="cetvelMeta"><div class="cetvelMetaTitle">Hedef</div><div class="cetvelTarget" id="cetvelTargetText">—</div></div>
+    <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
+    <div class="cetvelBlock main cetvel-si" data-note="Si">Si</div>
+    <div class="cetvelBlock chromatic cetvel-lasharp" data-note="La#">La# / Sib</div>
+    <div class="cetvelBlock main cetvel-la" data-note="La">La</div>
+    <div class="cetvelBlock chromatic cetvel-solsharp" data-note="Sol#">Sol# / Lab</div>
+    <div class="cetvelBlock main cetvel-sol" data-note="Sol">Sol</div>
+    <div class="cetvelBlock chromatic cetvel-fasharp" data-note="Fa#">Fa# / Solb</div>
+    <div class="cetvelBlock main cetvel-fa" data-note="Fa">Fa</div>
+    <div class="cetvelBlock main cetvel-mi" data-note="Mi">Mi</div>
+    <div class="cetvelBlock chromatic cetvel-resharp" data-note="Re#">Re# / Mib</div>
+    <div class="cetvelBlock main cetvel-re" data-note="Re">Re</div>
+    <div class="cetvelBlock chromatic cetvel-dosharp" data-note="Do#">Do# / Reb</div>
+    <div class="cetvelBlock main cetvel-do" data-note="Do">Do</div>
+    </div>
+  </aside>
+
+  <div class="topbar"><div class="topbar-inner"><button class="logoBtn" id="homeLogoBtn"><div class="logoWord">VOCALY</div></button></div></div>
+
+  <div class="app">
+    <section id="homeSection">
+      <div class="card" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:center;padding:12px 0 6px"><button class="logoBtn" id="homeLogoBigBtn"><div class="logoWord" style="font-size:28px;padding:18px 22px">VOCALY</div></button></div>
+        <button class="bigBtn" id="homeLibraryBtn">Kütüphane</button>
+        <button class="bigBtn" id="homeEditorBtn">Editör</button>
+      </div>
+    </section>
+
+    <section id="librarySection" class="hidden">
+      <div class="card"><div class="sectionTitle"><h2>Kütüphane</h2><button class="smallBtn" id="libraryBackBtn">Geri</button></div><div id="libraryList" class="libraryList"></div></div>
+    </section>
+
+    <section id="measureSection" class="hidden">
+      <div class="card">
+        <div class="sectionTitle measureTitleRow"><h2>Karaoke / Ölçme</h2><div class="measureToolbar"><div class="measureToolbarGroup"><button class="measureIconBtn" id="measureBackBtn" title="Geri">⟵</button><button class="measureIconBtn primary" id="measurePlayBtn" title="Başlat">▶</button><button class="measureIconBtn" id="measureStopBtn" title="Durdur">■</button><button class="measureIconBtn" id="measureResetBtn" title="Sıfırla">↺</button><button class="measureIconBtn" id="measurePlaySelectedBtn" title="Seçilileri Çal">▤▶</button></div><label class="measureTolerance">± <select id="toleranceSelect"><option value="15" selected>15</option><option value="20">20</option><option value="25">25</option></select></label></div></div>
+        <div id="measureTitle" class="pill">—</div>
+        <div id="measureBoxes" style="margin-top:12px"></div>
+        <div class="analysisCard hidden" id="analysisCard">
+          <div class="analysisTop">
+            <div class="sectionTitle" style="margin-bottom:0"><h2 style="font-size:18px">Analiz</h2></div>
+            <div class="analysisStats">
+              <div class="analysisPill" id="analysisPitchPill">Perde: -</div>
+              <div class="analysisPill" id="analysisTimingPill">Zamanlama: -</div>
+              <div class="analysisPill" id="analysisCoveragePill">Kapsama: -</div>
+            </div>
+          </div>
+          <div class="analysisPanelWrap" id="analysisPanelWrap">
+            <div class="analysisPanelInner" id="analysisPanelInner">
+              <canvas id="analysisCanvas" width="1100" height="320"></canvas>
+            </div>
+          </div>
+          <div class="analysisSummary" id="analysisSummary">Ölçme tamamlanınca burada değerlendirme raporu görünecek.</div>
+          <audio id="recordingAudio" controls class="hidden"></audio>
+          <div class="analysisControls">
+            <button class="smallBtn" id="downloadRecordingBtn">Kaydı İndir</button>
+            <button class="smallBtn" id="downloadAnalysisJsonBtn">Rapor JSON</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="editorSection" class="hidden">
+      <div class="card">
+        <div class="sectionTitle"><h2>Editör</h2><button class="smallBtn" id="editorBackBtn">Geri</button></div>
+        <div class="miniBar">
+          <label class="iconBtn fileLabel" title="MP3 Aç">🎵<input type="file" id="audioFile" accept="audio/*"></label>
+          <label class="iconBtn fileLabel" title="JSON Aç">📂<input type="file" id="importJsonInput" accept=".json,application/json"></label>
+          <button class="iconBtn" id="playBtn" title="Oynat / Durdur">▶</button>
+          <button class="iconBtn" id="stopBtn" title="Durdur">■</button>
+          <button class="iconBtn" id="zoomOutBtn" title="Zoom -">－</button>
+          <input id="zoom" type="range" min="40" max="360" step="10" value="140">
+          <button class="iconBtn" id="zoomInBtn" title="Zoom +">＋</button>
+          <button class="iconBtn" id="splitWordsBtn" title="Kelimelere Böl">☰</button>
+          <button class="iconBtn" id="autoTimingBtn" title="Oto Timing">⚡</button>
+          <button class="iconBtn" id="saveProjectBtn" title="JSON İndir">💾</button>
+        </div>
+        <div class="waveShell"><div id="waveform"></div><div id="overlayViewport"><div id="overlayContent"><div id="ruler"></div><div id="segmentStrip"></div></div><div id="stripCursor"></div></div></div>
+        <div class="statusPills"><div class="pill" id="timeText">0.00 sn</div><div class="pill" id="cursorText">Cursor: 0.00 sn</div><div class="pill" id="activeSegmentText">Aktif: -</div></div>
+      </div>
+
+      <div class="card">
+        <div class="sectionTitle"><h2>Sözler</h2></div>
+        <div class="rowCompact">
+          <input id="titleInput" type="text" placeholder="Eser başlığı"><input id="intro" type="number" step="0.01" min="0" value="0.00" placeholder="Intro"><input id="hece" type="text" placeholder="Kelime / hece"><input id="nota" type="text" placeholder="Nota"><input id="start" type="number" step="0.01" placeholder="Start"><input id="end" type="number" step="0.01" placeholder="End"><input id="satir" type="number" step="1" min="1" placeholder="Satır"><button class="smallBtn primary" id="saveBtn">Kaydet</button>
+        </div>
+        <div class="rowCompact">
+          <button class="smallBtn" id="updateBtn">Güncelle</button><button class="smallBtn" id="deleteLoadedBtn">Sil</button><button class="smallBtn" id="previewSelectedBtn">Dinle</button><button class="smallBtn" id="resetTimingBtn">Sıfırla</button><button class="smallBtn" id="minusStartBtn">Start -</button><button class="smallBtn" id="plusStartBtn">Start +</button><button class="smallBtn" id="minusEndBtn">End -</button><button class="smallBtn" id="plusEndBtn">End +</button>
+        </div>
+        <textarea id="lyricsInput" placeholder="Sözleri satır satır yapıştır..."></textarea>
+      </div>
+
+      <div class="card"><div class="sectionTitle"><h2>Önizleme</h2></div><div class="metaRow"><button class="smallBtn primary" id="previewPlayBtn">Önizleme</button><button class="smallBtn" id="previewStopBtn">Durdur</button><button class="smallBtn" id="clearSelectionBtn">Seçimi Temizle</button><button class="smallBtn" id="playLineBtn">Satırı Çal</button></div><div id="karaoke"></div></div>
+    </section>
+  </div>
+
+  <div id="resultModal" class="hidden">
+    <div style="width:min(92vw,420px);background:linear-gradient(180deg,#0f1b2d,#08111f);border:1px solid rgba(255,255,255,.12);border-radius:24px;box-shadow:0 20px 50px rgba(0,0,0,.45);padding:22px;text-align:center;color:#eef4ff;">
+      <div id="resultBadge" style="font-size:52px; margin-bottom:10px;">🏅</div>
+      <div id="resultTitle" style="font-size:24px; font-weight:900; margin-bottom:8px;">Harika!</div>
+      <div id="resultScore" style="font-size:42px; font-weight:900; color:#facc15; margin-bottom:10px;">100</div>
+      <div id="resultText" style="color:#c7d4ea; margin-bottom:16px;">Tonu çok iyi yakaladın.</div>
+      <button id="resultCloseBtn" class="smallBtn primary">Tamam</button>
+    </div>
+  </div>
+
+  <script>
+    const PRELOADED_LIBRARY = [{"id": "t-rkiye-min-d-rt-yan-nda", "title": "Türkiye'min Dört Yanında", "audioName": "turkiye.mp3", "audioUrl": "media/turkiye.mp3", "intro": 37.18, "lyrics": [{"text": "INTRO", "note": "", "start": 0, "end": 37.18, "line": 0, "isIntro": true}, {"text": "Türkiye’min", "note": "re mi fa fa", "start": 37.18, "end": 39.15, "line": 1, "isIntro": false}, {"text": "Dört", "note": "la", "start": 39.15, "end": 39.75, "line": 1, "isIntro": false}, {"text": "Yanında", "note": "fa mi re", "start": 39.75, "end": 41.2, "line": 1, "isIntro": false}, {"text": "Bayram", "note": "mi sol", "start": 41.2, "end": 42.09, "line": 2, "isIntro": false}, {"text": "Bugün", "note": "fa mi", "start": 42.09, "end": 43.34, "line": 2, "isIntro": false}, {"text": "Sevinçliyim", "note": "re do# mi", "start": 43.34, "end": 45.71, "line": 2, "isIntro": false}, {"text": "Mutluluk", "note": "mi fa sol", "start": 45.71, "end": 47.04, "line": 3, "isIntro": false}, {"text": "Var", "note": "sol", "start": 47.04, "end": 47.88, "line": 3, "isIntro": false}, {"text": "İnsanımda", "note": "la sib sol", "start": 47.88, "end": 49.93, "line": 3, "isIntro": false}, {"text": "Gelecekten", "note": "la do si", "start": 49.93, "end": 51.84, "line": 4, "isIntro": false}, {"text": "Ümitliyim", "note": "la fa sol", "start": 51.84, "end": 54.36, "line": 4, "isIntro": false}, {"text": "Türkiye’min", "note": "re mi fa", "start": 54.36, "end": 56.36, "line": 5, "isIntro": false}, {"text": "Dört", "note": "la", "start": 56.36, "end": 56.93, "line": 5, "isIntro": false}, {"text": "Yanında", "note": "fa mi re", "start": 56.93, "end": 58.28, "line": 5, "isIntro": false}, {"text": "Bayram", "note": "mi sol", "start": 58.28, "end": 59.39, "line": 6, "isIntro": false}, {"text": "Bugün", "note": "fa mi", "start": 59.39, "end": 60.46, "line": 6, "isIntro": false}, {"text": "Sevinçliyim", "note": "re do# mi", "start": 60.46, "end": 63.04, "line": 6, "isIntro": false}, {"text": "Mutluluk", "note": "mi fa sol", "start": 63.04, "end": 64.26, "line": 7, "isIntro": false}, {"text": "Var", "note": "sol", "start": 64.26, "end": 65.1, "line": 7, "isIntro": false}, {"text": "İnsanımda", "note": "la sib sol", "start": 65.1, "end": 67.16, "line": 7, "isIntro": false}, {"text": "Gelecekten", "note": "la do sib", "start": 67.16, "end": 69, "line": 8, "isIntro": false}, {"text": "Ümitliyim", "note": "la fa sol", "start": 69, "end": 71.52, "line": 8, "isIntro": false}, {"text": "Atatürk", "note": "la", "start": 71.52, "end": 72.73, "line": 9, "isIntro": false}, {"text": "Bir", "note": "la", "start": 72.73, "end": 73.3, "line": 9, "isIntro": false}, {"text": "Işık", "note": "la re", "start": 73.3, "end": 74.03, "line": 9, "isIntro": false}, {"text": "Bana", "note": "sib la", "start": 74.03, "end": 75.71, "line": 9, "isIntro": false}, {"text": "Yeryüzünde", "note": "sol", "start": 75.71, "end": 77.66, "line": 10, "isIntro": false}, {"text": "Övünç", "note": "sol sib", "start": 77.66, "end": 78.44, "line": 10, "isIntro": false}, {"text": "Bana", "note": "la sol", "start": 78.44, "end": 79.98, "line": 10, "isIntro": false}, {"text": "Varlığıyla", "note": "fa", "start": 79.98, "end": 81.85, "line": 11, "isIntro": false}, {"text": "Gururluyum", "note": "fa mi re sol# la", "start": 81.85, "end": 83.87, "line": 11, "isIntro": false}, {"text": "Bu", "note": "sol#", "start": 83.87, "end": 84.3, "line": 12, "isIntro": false}, {"text": "Bir", "note": "la", "start": 84.3, "end": 84.87, "line": 12, "isIntro": false}, {"text": "Ömür", "note": "sol# la", "start": 84.87, "end": 86.06, "line": 12, "isIntro": false}, {"text": "Yeter", "note": "mi fa", "start": 86.06, "end": 86.79, "line": 12, "isIntro": false}, {"text": "Bana", "note": "do# re", "start": 86.79, "end": 88.24, "line": 12, "isIntro": false}, {"text": "Atatürk", "note": "la", "start": 88.24, "end": 89.8, "line": 13, "isIntro": false}, {"text": "Bir", "note": "la", "start": 89.8, "end": 90.51, "line": 13, "isIntro": false}, {"text": "Işık", "note": "la re", "start": 90.51, "end": 91.1, "line": 13, "isIntro": false}, {"text": "Bana", "note": "sib la", "start": 91.1, "end": 92.95, "line": 13, "isIntro": false}, {"text": "Yeryüzünde", "note": "sol", "start": 92.95, "end": 94.66, "line": 14, "isIntro": false}, {"text": "Övünç", "note": "sol sib", "start": 94.66, "end": 95.44, "line": 14, "isIntro": false}, {"text": "Bana", "note": "la sol", "start": 95.44, "end": 97.06, "line": 14, "isIntro": false}, {"text": "Varlığıyla", "note": "fa", "start": 97.06, "end": 99.04, "line": 15, "isIntro": false}, {"text": "Gururluyum", "note": "fa mi re  sol# la", "start": 99.04, "end": 101.13, "line": 15, "isIntro": false}, {"text": "Bu", "note": "sol#", "start": 101.13, "end": 101.39, "line": 16, "isIntro": false}, {"text": "Bir", "note": "la", "start": 101.39, "end": 102.02, "line": 16, "isIntro": false}, {"text": "Ömür", "note": "sol# la", "start": 102.02, "end": 103.39, "line": 16, "isIntro": false}, {"text": "Yeter", "note": "mi fa", "start": 103.39, "end": 104.02, "line": 16, "isIntro": false}, {"text": "Bana", "note": "do# re", "start": 104.02, "end": 105.73, "line": 16, "isIntro": false}]}, {"id": "g-nd-z-gece", "title": "Gündüz Gece", "audioName": "gunduzgece.mp3", "audioUrl": "media/gunduzgece.mp3", "intro": 0, "lyrics": [{"text": "INTRO", "note": "", "start": 0, "end": 0, "line": 0, "isIntro": true}, {"text": "Intro", "note": "", "start": 0, "end": 16.77, "line": 1, "isIntro": false}, {"text": "Uzun", "note": "fa# sol#", "start": 16.77, "end": 18.15, "line": 2, "isIntro": false}, {"text": "ince", "note": "sol# fa# fa re#", "start": 18.15, "end": 19.17, "line": 2, "isIntro": false}, {"text": "bir", "note": "fa#", "start": 19.17, "end": 19.52, "line": 2, "isIntro": false}, {"text": "yoldayım", "note": "fa re#", "start": 19.52, "end": 21.14, "line": 2, "isIntro": false}, {"text": "Ara_Müzik", "note": "", "start": 21.14, "end": 25.89, "line": 3, "isIntro": false}, {"text": "Gidiyorum", "note": "fa# sol# fa re#", "start": 25.89, "end": 27.47, "line": 4, "isIntro": false}, {"text": "gündüz", "note": "fa# fa re#", "start": 27.47, "end": 28.79, "line": 4, "isIntro": false}, {"text": "gece", "note": "re#", "start": 28.79, "end": 29.61, "line": 4, "isIntro": false}, {"text": "Ara_Müzik", "note": "", "start": 29.61, "end": 34.62, "line": 5, "isIntro": false}, {"text": "Bilmiyorum", "note": "do do#", "start": 34.62, "end": 36.22, "line": 6, "isIntro": false}, {"text": "ne", "note": "do#", "start": 36.22, "end": 36.64, "line": 6, "isIntro": false}, {"text": "hâldeyim", "note": "do la# do#", "start": 36.64, "end": 38.28, "line": 6, "isIntro": false}, {"text": "Gidiyorum", "note": "do# la# sol# si", "start": 38.28, "end": 40.35, "line": 7, "isIntro": false}, {"text": "gündüz", "note": "la# sol# fa#", "start": 40.35, "end": 41.67, "line": 7, "isIntro": false}, {"text": "gece", "note": "la sol#", "start": 41.67, "end": 42.38, "line": 7, "isIntro": false}, {"text": "gündüz", "note": "sol# fa# fa re#", "start": 42.38, "end": 43.54, "line": 8, "isIntro": false}, {"text": "gece", "note": "sol# fa fa#", "start": 43.54, "end": 44.6, "line": 8, "isIntro": false}, {"text": "gündüz", "note": "fa# fa re#", "start": 44.6, "end": 45.85, "line": 8, "isIntro": false}, {"text": "gece", "note": "fa# fa", "start": 45.85, "end": 46.62, "line": 8, "isIntro": false}, {"text": "gündüz", "note": "fa re# do#", "start": 46.62, "end": 47.8, "line": 9, "isIntro": false}, {"text": "gece", "note": "fa re#", "start": 47.8, "end": 51.52, "line": 9, "isIntro": false}, {"text": "Bilmiyorum", "note": "do do#", "start": 51.52, "end": 53.09, "line": 10, "isIntro": false}, {"text": "ne", "note": "do#", "start": 53.09, "end": 53.47, "line": 10, "isIntro": false}, {"text": "hâldeyim", "note": "do# do la#", "start": 53.47, "end": 55.38, "line": 10, "isIntro": false}, {"text": "Gidiyorum", "note": "do# la# sol# si", "start": 55.38, "end": 57.44, "line": 11, "isIntro": false}, {"text": "gündüz", "note": "la# sol# fa#", "start": 57.44, "end": 58.73, "line": 11, "isIntro": false}, {"text": "gece", "note": "la sol#", "start": 58.73, "end": 59.54, "line": 11, "isIntro": false}, {"text": "gündüz", "note": "sol# fa# fa re#", "start": 59.54, "end": 60.57, "line": 12, "isIntro": false}, {"text": "gece", "note": "sol# fa fa#", "start": 60.57, "end": 61.74, "line": 12, "isIntro": false}, {"text": "gündüz", "note": "fa# fa re#", "start": 61.74, "end": 62.86, "line": 12, "isIntro": false}, {"text": "gece", "note": "fa# fa", "start": 62.86, "end": 63.8, "line": 12, "isIntro": false}, {"text": "gündüz", "note": "fa re# do#", "start": 63.8, "end": 64.82, "line": 13, "isIntro": false}, {"text": "gece", "note": "fa re#", "start": 64.82, "end": 67.12, "line": 13, "isIntro": false}]}];
+
+    let ws = null, heceler = [], loadedIndex = -1, currentAudioName = 'audio.mp3', cursorTime = 0, objectUrlRef = null, dragState = null, wrapperBound = false, selectedSegmentIndexes = [], sequenceStopRequested = false, libraryItems = [], measureTimerRefs = [];
+    let cetvelMicStream = null, audioCtx = null, analyser = null, micSource = null, dataArray = null, isPitchRunning = false, isLiveCetvelRunning = false;
+    let resultTimer = null, currentDetectedPitchInfo = null;
+    let isMeasureRunning = false, analysisAnimFrame = 0;
+
+    let analysisData = null;
+    let lastAnalysisDrawTs = 0;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordingBlob = null;
+    let recordingUrl = null;
+
+    const PROJECT_AUTOSAVE_KEY = 'vocaly_editor_clean_v7';
+    const LIBRARY_KEY = 'vocaly_library_clean_v8';
+    const LONG_PRESS_MS = 350;
+    let longPressTimer = null;
+    const measureSelected = new Set();
+    let measureSelectionMode = false;
+    let CENT_TOLERANCE = 15;
+
+    const homeSection = document.getElementById('homeSection');
+    const librarySection = document.getElementById('librarySection');
+    const measureSection = document.getElementById('measureSection');
+    const editorSection = document.getElementById('editorSection');
+    const homeLibraryBtn = document.getElementById('homeLibraryBtn');
+    const homeEditorBtn = document.getElementById('homeEditorBtn');
+    const homeLogoBtn = document.getElementById('homeLogoBtn');
+    const homeLogoBigBtn = document.getElementById('homeLogoBigBtn');
+    const libraryBackBtn = document.getElementById('libraryBackBtn');
+    const measureBackBtn = document.getElementById('measureBackBtn');
+    const editorBackBtn = document.getElementById('editorBackBtn');
+    const libraryList = document.getElementById('libraryList');
+    const measureTitle = document.getElementById('measureTitle');
+    const measureBoxes = document.getElementById('measureBoxes');
+    const measurePlayBtn = document.getElementById('measurePlayBtn');
+    const measureStopBtn = document.getElementById('measureStopBtn');
+    const measureResetBtn = document.getElementById('measureResetBtn');
+    const measurePlaySelectedBtn = document.getElementById('measurePlaySelectedBtn'); const toleranceSelect = document.getElementById('toleranceSelect');
+    const vocalyCetvelDrawer = document.getElementById('vocalyCetvelDrawer');
+    const vocalyCetvelHandle = document.getElementById('vocalyCetvelHandle');
+    const cetvelTargetText = document.getElementById('cetvelTargetText');
+    const titleInput = document.getElementById('titleInput');
+    const audioFile = document.getElementById('audioFile');
+    const importJsonInput = document.getElementById('importJsonInput');
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const zoom = document.getElementById('zoom');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const introInput = document.getElementById('intro');
+    const startInput = document.getElementById('start');
+    const endInput = document.getElementById('end');
+    const heceInput = document.getElementById('hece');
+    const notaInput = document.getElementById('nota');
+    const satirInput = document.getElementById('satir');
+    const splitWordsBtn = document.getElementById('splitWordsBtn');
+    const autoTimingBtn = document.getElementById('autoTimingBtn');
+    const saveProjectBtn = document.getElementById('saveProjectBtn');
+    const resetTimingBtn = document.getElementById('resetTimingBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const updateBtn = document.getElementById('updateBtn');
+    const deleteLoadedBtn = document.getElementById('deleteLoadedBtn');
+    const lyricsInput = document.getElementById('lyricsInput');
+    const minusStartBtn = document.getElementById('minusStartBtn');
+    const plusStartBtn = document.getElementById('plusStartBtn');
+    const minusEndBtn = document.getElementById('minusEndBtn');
+    const plusEndBtn = document.getElementById('plusEndBtn');
+    const previewSelectedBtn = document.getElementById('previewSelectedBtn');
+    const previewPlayBtn = document.getElementById('previewPlayBtn');
+    const previewStopBtn = document.getElementById('previewStopBtn');
+    const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+    const playLineBtn = document.getElementById('playLineBtn');
+    const timeText = document.getElementById('timeText');
+    const cursorText = document.getElementById('cursorText');
+    const activeSegmentText = document.getElementById('activeSegmentText');
+    const overlayViewport = document.getElementById('overlayViewport');
+    const overlayContent = document.getElementById('overlayContent');
+    const ruler = document.getElementById('ruler');
+    const segmentStrip = document.getElementById('segmentStrip');
+    const stripCursor = document.getElementById('stripCursor');
+    const karaoke = document.getElementById('karaoke');
+    const resultModal = document.getElementById('resultModal');
+    const resultBadge = document.getElementById('resultBadge');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultScore = document.getElementById('resultScore');
+    const resultText = document.getElementById('resultText');
+    const resultCloseBtn = document.getElementById('resultCloseBtn');
+
+    const analysisCard = document.getElementById('analysisCard');
+    const analysisPanelWrap = document.getElementById('analysisPanelWrap');
+    const analysisPanelInner = document.getElementById('analysisPanelInner');
+    const analysisCanvas = document.getElementById('analysisCanvas');
+    const analysisPitchPill = document.getElementById('analysisPitchPill');
+    const analysisTimingPill = document.getElementById('analysisTimingPill');
+    const analysisCoveragePill = document.getElementById('analysisCoveragePill');
+    const analysisSummary = document.getElementById('analysisSummary');
+    const recordingAudio = document.getElementById('recordingAudio');
+    const downloadRecordingBtn = document.getElementById('downloadRecordingBtn');
+    const downloadAnalysisJsonBtn = document.getElementById('downloadAnalysisJsonBtn');
+
+    function clamp(v,min,max){ return Math.max(min, Math.min(max,v)); }
+    function round2(v){ return Number((v || 0).toFixed(2)); }
+    function escapeHtml(str){ return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+    function getIntroValue(){ const v=parseFloat(introInput.value); return isNaN(v)?0:round2(v); }
+    function splitWordsFromText(text){ const lines=String(text||'').split(/\n/).map(x=>x.trim()); const out=[]; lines.forEach((line,lineIndex)=>{ if(!line) return; line.split(/\s+/).filter(Boolean).forEach(word=> out.push({text:word,line:lineIndex+1})); }); return out; }
+    function hasAudioLoaded(){ return !!(ws && ws.getDuration && ws.getDuration()>0); }
+
+    function showSection(name){ homeSection.classList.add('hidden'); librarySection.classList.add('hidden'); measureSection.classList.add('hidden'); editorSection.classList.add('hidden'); closeCetvel(); if(name==='home') homeSection.classList.remove('hidden'); if(name==='library') librarySection.classList.remove('hidden'); if(name==='measure'){ measureSection.classList.remove('hidden'); vocalyCetvelDrawer.classList.remove('hidden'); } if(name==='editor') editorSection.classList.remove('hidden'); }
+    function goHome(){ measureSelected.clear(); measureSelectionMode = false; stopMeasure(); showSection('home'); toleranceSelect.value = String(CENT_TOLERANCE); }
+
+    function getWaveWrapper(){ return ws && ws.drawer ? ws.drawer.wrapper : null; }
+    function getWaveInner(){ const wrapper=getWaveWrapper(); return wrapper ? (wrapper.querySelector('.wavesurfer-wave') || wrapper.firstElementChild) : null; }
+    function getScrollableWidth(){ const inner=getWaveInner(); if(inner && inner.scrollWidth) return inner.scrollWidth; const wrapper=getWaveWrapper(); if(wrapper && wrapper.scrollWidth) return wrapper.scrollWidth; return overlayViewport.clientWidth || 1; }
+    function getVisibleWidth(){ const wrapper=getWaveWrapper(); return wrapper ? wrapper.clientWidth : (overlayViewport.clientWidth || 1); }
+    function getScrollLeft(){ const wrapper=getWaveWrapper(); return wrapper ? wrapper.scrollLeft : 0; }
+    function getDurationSafe(){ return hasAudioLoaded() ? ws.getDuration() : 1; }
+    function getPxPerSec(){ return getScrollableWidth()/getDurationSafe(); }
+    function timeToPx(t){ return t * getPxPerSec(); }
+    function pxToTime(px){ return px / getPxPerSec(); }
+    function seekToTime(t){ if(!hasAudioLoaded()) return; const d=ws.getDuration(); const c=clamp(t,0,d); ws.seekTo(d ? c/d : 0); setCursorTime(c); }
+    function setCursorTime(t){ cursorTime=clamp(round2(t||0),0,hasAudioLoaded()?ws.getDuration():999999); cursorText.textContent='Cursor: '+cursorTime.toFixed(2)+' sn'; updateStripCursor(); }
+    function scrollToTime(t){ const wrapper=getWaveWrapper(); if(!wrapper || !hasAudioLoaded()) return; const x=timeToPx(t); wrapper.scrollLeft=clamp(x-wrapper.clientWidth*0.35,0,wrapper.scrollWidth-wrapper.clientWidth); syncOverlayPosition(); }
+    function syncOverlayPosition(){ const wrapper=getWaveWrapper(); if(!wrapper) return; overlayContent.style.transform='translateX(' + (-wrapper.scrollLeft) + 'px)'; updateStripCursor(); }
+    function updateStripCursor(){ if(!hasAudioLoaded()){ stripCursor.style.left='0px'; return; } stripCursor.style.left=(timeToPx(cursorTime)-getScrollLeft())+'px'; }
+    function getOrderedTimedSegments(){ return heceler.map((s,i)=>({s:s,i:i})).filter(x=>x.s.start!==null && x.s.end!==null).sort((a,b)=>a.s.start-b.s.start); }
+    function updateActiveSegmentLabel(index=-1){ activeSegmentText.textContent = index===-1 || !heceler[index] ? 'Aktif: -' : 'Aktif: ' + heceler[index].text; }
+    function normalizeIntroSegment(){ const intro=getIntroValue(); const idx=heceler.findIndex(h=>h.isIntro); if(idx===-1){ heceler.unshift({text:'INTRO',note:'',start:0,end:intro,line:0,isIntro:true}); } else { heceler[idx].text='INTRO'; heceler[idx].start=0; heceler[idx].end=intro; heceler[idx].line=0; heceler[idx].isIntro=true; } }
+    function parseLyricsToSegmentsPreserve(){ const parsed=splitWordsFromText(lyricsInput.value); const oldWords=heceler.filter(h=>!h.isIntro); const introSeg=heceler.find(h=>h.isIntro)||{text:'INTRO',note:'',start:0,end:getIntroValue(),line:0,isIntro:true}; const next=[{text:'INTRO',note:introSeg.note||'',start:0,end:getIntroValue(),line:0,isIntro:true}]; parsed.forEach((w,i)=>{ const old=oldWords[i]; next.push({ text:w.text, note:old?old.note||'':'', start:old?old.start:null, end:old?old.end:null, line:w.line, isIntro:false }); }); heceler=next; selectedSegmentIndexes=[]; }
+
+    function renderRuler(){ ruler.innerHTML=''; const duration=getDurationSafe(); const totalWidth=Math.max(getScrollableWidth(), getVisibleWidth()); ruler.style.width=totalWidth+'px'; segmentStrip.style.width=totalWidth+'px'; overlayContent.style.width=totalWidth+'px'; for(let t=0;t<=duration+0.0001;t+=0.25){ const tf=round2(t); const x=timeToPx(tf); const tick=document.createElement('div'); let cls='minor'; if(Math.abs(tf-Math.round(tf))<0.001) cls='major'; else if(Math.abs((tf/0.5)-Math.round(tf/0.5))<0.001) cls='medium'; tick.className='ruler-tick '+cls; tick.style.left=x+'px'; ruler.appendChild(tick); if(cls==='major'){ const label=document.createElement('div'); label.className='ruler-label'; label.style.left=x+'px'; label.textContent=tf.toFixed(1)+'s'; ruler.appendChild(label); } } }
+    function renderStrip(){ segmentStrip.innerHTML=''; const ordered=getOrderedTimedSegments(); ordered.forEach(item=>{ const seg=item.s; const left=timeToPx(seg.start); const width=Math.max(34, timeToPx(seg.end)-timeToPx(seg.start)); const block=document.createElement('div'); block.className='strip-block'+(seg.isIntro?' intro':'')+(item.i===loadedIndex?' active':''); block.style.left=left+'px'; block.style.width=width+'px'; block.dataset.index=item.i; block.innerHTML='<div class="handle left"></div><div class="drag"></div><div class="handle right"></div><div class="body">'+escapeHtml(seg.text)+'</div>'; block.addEventListener('click',e=>{ e.stopPropagation(); if(!dragState) seekToSegment(item.i,true); }); block.querySelector('.drag').addEventListener('pointerdown',e=>startDrag(e,item.i,'move')); block.querySelector('.handle.left').addEventListener('pointerdown',e=>startDrag(e,item.i,'resize-left')); block.querySelector('.handle.right').addEventListener('pointerdown',e=>startDrag(e,item.i,'resize-right')); segmentStrip.appendChild(block); }); }
+    function renderKaraoke(){ const sorted=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); if(sorted.length===0){ karaoke.innerHTML=''; return; } karaoke.innerHTML=''; const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const introBox=document.createElement('div'); introBox.className='karaokeBox intro'; introBox.id='karaoke-intro'; introBox.innerHTML='<div class="fill"></div><div class="label">Intro '+intro.end.toFixed(2)+' sn</div>'; introBox.onclick=()=> hasAudioLoaded() && ws.play(0,intro.end); karaoke.appendChild(introBox); const br=document.createElement('div'); br.className='lineBreak'; karaoke.appendChild(br); } let lastLine=null; sorted.forEach((item,sortedIndex)=>{ if(lastLine!==null && item.seg.line!==lastLine){ const br=document.createElement('div'); br.className='lineBreak'; karaoke.appendChild(br); } const btn=document.createElement('div'); btn.className='karaokeBox'+(selectedSegmentIndexes.includes(item.idx)?' selected':''); btn.id='karaoke-box-'+sortedIndex; btn.dataset.realIndex=item.idx; const noteSmall=item.seg.note?' <span style="opacity:.72;font-size:12px;">('+escapeHtml(item.seg.note)+')</span>':''; btn.innerHTML='<div class="fill"></div><div class="label">'+escapeHtml(item.seg.text)+noteSmall+'</div>'; btn.onclick=()=> playSingleKaraokeSegment(item.idx); karaoke.appendChild(btn); lastLine=item.seg.line; }); }
+    function renderMeasure(){ measureBoxes.innerHTML=''; const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const b=document.createElement('div'); b.className='measureBox intro'; b.id='measure-intro'; b.innerHTML='<div class="fill"></div><div class="label">Intro</div>'; measureBoxes.appendChild(b); const br=document.createElement('div'); br.className='lineBreak'; measureBoxes.appendChild(br); } const sorted=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.line-b.seg.line || a.seg.start-b.seg.start); let lastLine=null; sorted.forEach((item)=>{ if(lastLine!==null && item.seg.line!==lastLine){ const br=document.createElement('div'); br.className='lineBreak'; measureBoxes.appendChild(br); } const box=document.createElement('div'); box.className='measureBox'; box.id='measure-box-'+item.idx; if(measureSelected.has(item.idx)) box.classList.add('selected'); box.innerHTML='<div class="fill"></div><div class="label">'+escapeHtml(item.seg.text)+'</div>'; wireMeasureBox(box,item.idx); measureBoxes.appendChild(box); lastLine=item.seg.line; }); }
+    function renderAll(){ normalizeIntroSegment(); renderRuler(); renderStrip(); renderKaraoke(); syncOverlayPosition(); }
+
+    function seekToSegment(index,playSnippet=false){ const seg=heceler[index]; if(!seg) return; loadedIndex=index; updateActiveSegmentLabel(index); heceInput.value=seg.text; notaInput.value=seg.note||''; satirInput.value=seg.line||''; startInput.value=seg.start!==null ? seg.start.toFixed(2) : ''; endInput.value=seg.end!==null ? seg.end.toFixed(2) : ''; if(seg.start!==null && hasAudioLoaded()){ seekToTime(seg.start); scrollToTime(seg.start); } renderStrip(); if(playSnippet && hasAudioLoaded() && seg.start!==null && seg.end!==null) ws.play(seg.start,seg.end); }
+
+    function startDrag(e,index,mode){ e.preventDefault(); e.stopPropagation(); const seg=heceler[index]; if(!seg||seg.start===null||seg.end===null) return; dragState={index:index,mode:mode,startX:e.clientX,origStart:seg.start,origEnd:seg.end}; document.addEventListener('pointermove',onDragMove,{passive:false}); document.addEventListener('pointerup',endDrag); document.addEventListener('pointercancel',endDrag); }
+    function onDragMove(e){ if(!dragState) return; e.preventDefault(); const seg = heceler[dragState.index]; const deltaPx = e.clientX - dragState.startX; const deltaTime = pxToTime(deltaPx); const minLen = 0.03; const duration = hasAudioLoaded() ? ws.getDuration() : Infinity; const ordered = getOrderedTimedSegments(); const pos = ordered.findIndex(x => x.i === dragState.index); const prev = pos > 0 ? ordered[pos - 1].s : null; const next = pos < ordered.length - 1 ? ordered[pos + 1].s : null; if(dragState.mode === 'move'){ if(seg.isIntro) return; const len = dragState.origEnd - dragState.origStart; let newStart = dragState.origStart + deltaTime; let newEnd = newStart + len; if(prev && prev.end !== null){ newStart = Math.max(newStart, prev.end); newEnd = newStart + len; } if(next && next.start !== null){ newEnd = Math.min(newEnd, next.start); newStart = newEnd - len; } if(newStart < 0){ newStart = 0; newEnd = len; } if(newEnd > duration){ newEnd = duration; newStart = Math.max(0, newEnd - len); } seg.start = round2(newStart); seg.end = round2(newEnd); } else if(dragState.mode === 'resize-left'){ let newStart = dragState.origStart + deltaTime; if(seg.isIntro) newStart = 0; if(prev && prev.end !== null){ newStart = Math.max(newStart, prev.end); } if(seg.end <= newStart + minLen){ newStart = seg.end - minLen; } seg.start = round2(newStart); } else if(dragState.mode === 'resize-right'){ let newEnd = dragState.origEnd + deltaTime; if(newEnd > duration) newEnd = duration; if(newEnd <= seg.start + minLen){ newEnd = seg.start + minLen; } seg.end = round2(newEnd); if(seg.isIntro){ introInput.value = seg.end.toFixed(2); } } startInput.value = seg.start.toFixed(2); endInput.value = seg.end.toFixed(2); renderStrip(); renderKaraoke(); }
+    function endDrag(){ if(!dragState) return; const idx=dragState.index; dragState=null; document.removeEventListener('pointermove',onDragMove); document.removeEventListener('pointerup',endDrag); document.removeEventListener('pointercancel',endDrag); renderAll(); seekToSegment(idx,false); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); }
+
+    function karaokePlaybackUpdate(time){ const sorted=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); document.querySelectorAll('.karaokeBox').forEach(el=>{ el.classList.remove('active'); const fill=el.querySelector('.fill'); if(fill) fill.style.width='0%'; }); const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const introEl=document.getElementById('karaoke-intro'); if(introEl){ const fill=introEl.querySelector('.fill'); if(time<=intro.end){ introEl.classList.add('active'); fill.style.width=Math.max(0,Math.min(100,(time/intro.end)*100))+'%'; ensureVisible(introEl, karaoke); } else fill.style.width='100%'; } } sorted.forEach((item,i)=>{ const el=document.getElementById('karaoke-box-'+i); if(!el) return; const fill=el.querySelector('.fill'); const h=item.seg; if(time>=h.start && time<=h.end){ el.classList.add('active'); fill.style.width=Math.max(0,Math.min(100,((time-h.start)/(h.end-h.start))*100))+'%'; ensureVisible(el, karaoke); } else if(time>h.end){ fill.style.width='100%'; } if(selectedSegmentIndexes.includes(item.idx)) el.classList.add('selected'); }); }
+    function playSingleKaraokeSegment(index){ const seg=heceler[index]; if(!seg||seg.start===null||seg.end===null||!hasAudioLoaded()) return; selectedSegmentIndexes=[index]; renderKaraoke(); seekToSegment(index,true); }
+    function clearSelection(){ selectedSegmentIndexes=[]; renderKaraoke(); }
+    function selectWholeLine(lineNo){ selectedSegmentIndexes=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.line===lineNo && x.seg.start!==null && x.seg.end!==null).map(x=>x.idx); renderKaraoke(); }
+    async function playSegmentsSequentially(indexes){ if(!hasAudioLoaded() || !indexes.length) return; sequenceStopRequested=false; const ordered=indexes.map(i=>({i:i,seg:heceler[i]})).filter(x=>x.seg&&x.seg.start!==null&&x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); for(const item of ordered){ if(sequenceStopRequested) break; selectedSegmentIndexes=[item.i]; renderKaraoke(); seekToSegment(item.i,false); ws.play(item.seg.start,item.seg.end); await new Promise(resolve=>setTimeout(resolve, Math.max(40, ((item.seg.end-item.seg.start)*1000)+60))); } }
+    function playSelectedLine(){ if(!selectedSegmentIndexes.length){ alert('Önce bir kelime seç.'); return; } const first=heceler[selectedSegmentIndexes[0]]; if(!first) return; selectWholeLine(first.line); playSegmentsSequentially(selectedSegmentIndexes); }
+    function ensureVisible(el, container){
+      if(!el || !container) return;
+
+      const cRect = container.getBoundingClientRect();
+      const bRect = el.getBoundingClientRect();
+      const topSafe = cRect.top + 20;
+      const bottomSafe = cRect.bottom - 20;
+      const fullyVisible = bRect.top >= topSafe && bRect.bottom <= bottomSafe;
+
+      if(fullyVisible) return;
+
+      const targetScroll = el.offsetTop - (container.clientHeight * 0.30);
+      container.scrollTo({
+        top: Math.max(0, targetScroll),
+        behavior:'smooth'
+      });
+    }
+
+
+    function createEmptyAnalysis(){
+      return {
+        createdAt: new Date().toISOString(),
+        title: measureTitle.textContent || titleInput.value.trim() || 'VOCALY',
+        tolerance: CENT_TOLERANCE,
+        frames: [],
+        segments: [],
+        score: {pitch:0,timing:0,coverage:0,total:0},
+        summary: '',
+        audioMimeType: '',
+        currentTime: 0
+      };
+    }
+    function safeRevokeRecordingUrl(){
+      if(recordingUrl){
+        URL.revokeObjectURL(recordingUrl);
+        recordingUrl = null;
+      }
+    }
+    function resetAnalysisUI(){
+      analysisCard.classList.add('hidden');
+      analysisPitchPill.textContent = 'Perde: -';
+      analysisTimingPill.textContent = 'Zamanlama: -';
+      analysisCoveragePill.textContent = 'Kapsama: -';
+      analysisSummary.innerHTML = '<ul><li>Ölçme tamamlanınca burada değerlendirme raporu görünecek.</li></ul>';
+      const ctx = analysisCanvas.getContext('2d');
+      ctx.clearRect(0,0,analysisCanvas.width,analysisCanvas.height);
+      recordingAudio.classList.add('hidden');
+      recordingAudio.removeAttribute('src');
+    }
+    function startRecording(){
+      if(!cetvelMicStream) return;
+      safeRevokeRecordingUrl();
+      recordingBlob = null;
+      recordedChunks = [];
+      try{
+        mediaRecorder = new MediaRecorder(cetvelMicStream);
+      }catch(err){
+        console.log(err);
+        mediaRecorder = null;
+        return;
+      }
+      if(analysisData) analysisData.audioMimeType = mediaRecorder.mimeType || '';
+      mediaRecorder.ondataavailable = e=>{ if(e.data && e.data.size) recordedChunks.push(e.data); };
+      mediaRecorder.onstop = ()=>{
+        if(!recordedChunks.length) return;
+        recordingBlob = new Blob(recordedChunks, {type: mediaRecorder.mimeType || 'audio/webm'});
+        recordingUrl = URL.createObjectURL(recordingBlob);
+        recordingAudio.src = recordingUrl;
+        recordingAudio.classList.remove('hidden');
+      };
+      mediaRecorder.start();
+    }
+    function stopRecording(){
+      if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+        try{ mediaRecorder.stop(); }catch(err){ console.log(err); }
+      }
+    }
+    function downloadBlob(blob, filename){
+      if(!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 200);
+    }
+    function noteToMidiLike(note){
+      const canon = getEnharmonicCanon(note);
+      const map = {'Do':60,'Do#':61,'Re':62,'Re#':63,'Mi':64,'Fa':65,'Fa#':66,'Sol':67,'Sol#':68,'La':69,'La#':70,'Si':71};
+      return map[canon] ?? null;
+    }
+    function getSegmentTargetMidi(seg){
+      const targets = expandTargetNotes(seg.note);
+      if(!targets.length) return null;
+      return noteToMidiLike(targets[0]);
+    }
+    function getAnalysisTotalDuration(){
+      return Math.max(0.1, heceler.filter(h=>!h.isIntro && h.end!=null).reduce((m,s)=>Math.max(m,s.end), 0));
+    }
+    
+    function autoScrollAnalysis(){
+      if(!analysisData || !analysisPanelWrap || !analysisCanvas) return;
+      const totalDuration = getAnalysisTotalDuration();
+      const x = 72 + (Math.max(0, Math.min(totalDuration, analysisData.currentTime || 0)) / totalDuration) * (analysisCanvas.width - 72 - 18);
+      const target = Math.max(0, x - analysisPanelWrap.clientWidth * 0.5);
+      analysisPanelWrap.scrollLeft = target;
+    }
+    function drawAnalysisLive(force=false){
+      const now = performance.now();
+      if(!force && now - lastAnalysisDrawTs < 120) return;
+      lastAnalysisDrawTs = now;
+      drawAnalysisPanel();
+      autoScrollAnalysis();
+    }
+    function stopAnalysisAnimation(){
+      if(analysisAnimFrame){ cancelAnimationFrame(analysisAnimFrame); analysisAnimFrame = 0; }
+    }
+    function startAnalysisAnimation(){
+      stopAnalysisAnimation();
+      function loop(){
+        if(!isMeasureRunning) return;
+        if(analysisData && hasAudioLoaded()){ analysisData.currentTime = ws.getCurrentTime(); }
+        drawAnalysisLive();
+        analysisAnimFrame = requestAnimationFrame(loop);
+      }
+      analysisAnimFrame = requestAnimationFrame(loop);
+    }
+
+    function buildAnalysisSummary(score, lateCount, weakCount){
+      const items = [];
+      if(score.total >= 85) items.push('Genel performans güçlü görünüyor.');
+      else if(score.total >= 65) items.push('Performans genel olarak iyi, ama bazı kelimelerde tutarlılık düşüyor.');
+      else items.push('Performansın genelinde perde doğruluğu güçlendirilmeli.');
+      if(lateCount > 0) items.push('Bazı kelimelerde doğru sesi geç yakalama görüldü.');
+      if(weakCount > 0) items.push('Bazı bölümlerde hedef perdeye yakınlık yetersiz kaldı.');
+      items.push('Yeşil kutular, doğru perdenin segment içinde en az bir kez net yakalandığı kelimeleri gösterir.');
+      items.push('Kırmızı kutular, hedef perdeden belirgin uzak kalınan kelimeleri gösterir.');
+      items.push('Kırmızı çizgi hedefi, mavi çizgi öğrencinin söylediği perdeyi gösterir.');
+      return '<ul>' + items.map(t => '<li>' + escapeHtml(t) + '</li>').join('') + '</ul>';
+    }
+    function drawAnalysisPanel(){
+      const ctx = analysisCanvas.getContext('2d');
+      const W = analysisCanvas.width, H = analysisCanvas.height;
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = '#0a1426';
+      ctx.fillRect(0,0,W,H);
+
+      if(!analysisData || !analysisData.segments.length){
+        ctx.fillStyle = '#d9e6ff';
+        ctx.font = '16px Arial';
+        ctx.fillText('Henüz analiz verisi yok.', 24, 40);
+        return;
+      }
+
+      const totalDuration = getAnalysisTotalDuration();
+      const desiredWidth = Math.max(1100, Math.round(totalDuration * 120) + 180);
+      if(analysisCanvas.width !== desiredWidth) analysisCanvas.width = desiredWidth;
+      const newW = analysisCanvas.width, newH = analysisCanvas.height;
+      if(W !== newW || H !== newH){ return drawAnalysisPanel(); }
+      analysisPanelInner.style.width = desiredWidth + 'px';
+      const plotLeft = 72, plotTop = 52, plotRight = 18, plotBottom = 34;
+      const plotW = W - plotLeft - plotRight;
+      const plotH = H - plotTop - plotBottom;
+      const midiValues = [];
+      analysisData.segments.forEach(s=>{ if(s.targetMidi != null) midiValues.push(s.targetMidi); });
+      analysisData.frames.forEach(f=>{ if(f.midi != null) midiValues.push(f.midi); });
+      const minMidi = Math.floor((Math.min(...(midiValues.length?midiValues:[60])))-2);
+      const maxMidi = Math.ceil((Math.max(...(midiValues.length?midiValues:[72])))+2);
+
+      const xAt = t => plotLeft + (Math.max(0, Math.min(totalDuration, t)) / totalDuration) * plotW;
+      const yAt = m => plotTop + ((maxMidi - m) / Math.max(1, (maxMidi - minMidi))) * plotH;
+
+      analysisData.segments.forEach(seg=>{
+        const x1 = xAt(seg.start), x2 = xAt(seg.end);
+        ctx.fillStyle = seg.status === 'ok' ? 'rgba(34,197,94,.92)' : 'rgba(239,68,68,.92)';
+        const barW = Math.max(34, x2 - x1);
+        ctx.fillRect(x1, 10, barW, 24);
+        ctx.fillStyle = '#eef4ff';
+        ctx.font = 'bold 13px Arial';
+        const label = seg.text || '';
+        if(barW > 42) ctx.fillText(label, x1 + 7, 27);
+      });
+
+      const names = ['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'];
+      for(let m=minMidi; m<=maxMidi; m++){
+        const y = yAt(m);
+        ctx.strokeStyle = (m % 12 === 0) ? 'rgba(255,255,255,.12)' : 'rgba(255,255,255,.06)';
+        ctx.beginPath();
+        ctx.moveTo(plotLeft, y);
+        ctx.lineTo(plotLeft + plotW, y);
+        ctx.stroke();
+        ctx.fillStyle = '#cfe0ff';
+        ctx.font = 'bold 12px Arial';
+        const pc = ((m%12)+12)%12;
+        ctx.fillText(names[pc], 18, y + 4);
+      }
+
+      analysisData.segments.forEach(seg=>{
+        const x = xAt(seg.start);
+        ctx.strokeStyle = 'rgba(255,255,255,.08)';
+        ctx.beginPath();
+        ctx.moveTo(x, plotTop);
+        ctx.lineTo(x, plotTop + plotH);
+        ctx.stroke();
+      });
+
+      ctx.strokeStyle = '#ff5b6e';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      let started = false;
+      analysisData.segments.forEach((seg, idx)=>{
+        if(seg.targetMidi == null) return;
+        const x1 = xAt(seg.start), x2 = xAt(seg.end), y = yAt(seg.targetMidi);
+        if(!started){
+          ctx.moveTo(x1, y);
+          started = true;
+        }else{
+          const prev = analysisData.segments[idx-1];
+          const prevY = yAt(prev && prev.targetMidi != null ? prev.targetMidi : seg.targetMidi);
+          ctx.lineTo(x1, prevY);
+          ctx.lineTo(x1, y);
+        }
+        ctx.lineTo(x2, y);
+      });
+      ctx.stroke();
+
+      ctx.strokeStyle = '#60a5fa';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      let activePath = false;
+      analysisData.frames.forEach(frame=>{
+        if(frame.midi == null){
+          activePath = false;
+          return;
+        }
+        const x = xAt(frame.t), y = yAt(frame.midi);
+        if(!activePath){
+          ctx.moveTo(x, y);
+          activePath = true;
+        }else{
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.stroke();
+
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 2;
+      const playX = xAt(analysisData.currentTime != null ? analysisData.currentTime : totalDuration);
+      ctx.beginPath();
+      ctx.moveTo(playX, plotTop);
+      ctx.lineTo(playX, plotTop + plotH);
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(255,255,255,.08)';
+      ctx.strokeRect(plotLeft, plotTop, plotW, plotH);
+    }
+    function finalizeAnalysis(){
+      if(!analysisData) return;
+      analysisCard.classList.remove('hidden');
+      analysisData.currentTime = getAnalysisTotalDuration();
+      const scored = analysisData.segments.filter(s=>!s.neutral);
+      const avg = key => scored.length ? Math.round(scored.reduce((sum,s)=>sum + (s[key] || 0),0)/scored.length) : 0;
+      const score = {
+        pitch: avg('pitchScore'),
+        timing: avg('timingScore'),
+        coverage: avg('coverageScore')
+      };
+      score.total = Math.round((scored.length ? (scored.filter(s => s.status === 'ok').length / scored.length) : 0) * 100);
+      analysisData.score = score;
+      const lateCount = scored.filter(s=>(s.firstCorrectMs ?? 999999) > ((s.durationMs || 1) * 0.5)).length;
+      const weakCount = scored.filter(s=>(s.pitchScore || 0) < 45).length;
+      analysisData.summary = buildAnalysisSummary(score, lateCount, weakCount);
+
+      analysisPitchPill.textContent = 'Perde: ' + score.pitch;
+      analysisTimingPill.textContent = 'Zamanlama: ' + score.timing;
+      analysisCoveragePill.textContent = 'Kapsama: ' + score.coverage;
+      analysisSummary.innerHTML = analysisData.summary;
+      drawAnalysisLive(true);
+    }
+
+    function buildProjectPayload(){ return { version:1, title:titleInput.value.trim(), intro:getIntroValue(), lyrics:lyricsInput.value, audioName:currentAudioName, audioUrl:objectUrlRef||'', selectedSegmentIndexes:selectedSegmentIndexes, heceler:heceler.map(h=>({text:h.text||'',note:h.note||'',start:h.start??null,end:h.end??null,line:h.line??0,isIntro:!!h.isIntro})), cursorTime:cursorTime }; }
+    function projectToLibraryItem(payload){ const title = payload.title && payload.title.trim() ? payload.title.trim() : 'Adsız Eser'; return { id:(payload.id||title).toLowerCase().replace(/[^a-z0-9ğüşöçıİĞÜŞÖÇ]+/gi,'-'), title:title, audioName:payload.audioName || 'audio.mp3', audioUrl:payload.audioUrl || '', intro:payload.intro || 0, lyrics:Array.isArray(payload.heceler) ? payload.heceler : [] }; }
+    function syncCurrentSongToLibrary(){ const payload=buildProjectPayload(); const item=projectToLibraryItem(payload); const idx=libraryItems.findIndex(x=>x.id===item.id); if(idx>=0) libraryItems[idx]=item; else libraryItems.unshift(item); }
+    function saveLibrary(){ localStorage.setItem(LIBRARY_KEY, JSON.stringify(libraryItems)); }
+    function loadLibrary(){
+      try{
+        localStorage.removeItem('vocaly_library_clean_v7');
+      }catch(e){}
+      const raw = localStorage.getItem(LIBRARY_KEY);
+      if(!raw){
+        libraryItems = [...PRELOADED_LIBRARY];
+        saveLibrary();
+        return;
+      }
+      try{
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length){
+          const allowedIds = new Set(PRELOADED_LIBRARY.map(x => x.id));
+          const kept = parsed.filter(item => item && allowedIds.has(item.id));
+          const byId = new Map();
+          PRELOADED_LIBRARY.forEach(item => byId.set(item.id, item));
+          kept.forEach(item => byId.set(item.id, item));
+          libraryItems = [...byId.values()];
+        }else{
+          libraryItems = [...PRELOADED_LIBRARY];
+          saveLibrary();
+        }
+      }catch(err){
+        console.error(err);
+        libraryItems = [...PRELOADED_LIBRARY];
+        saveLibrary();
+      }
+    }
+    function renderLibrary(){ if(!libraryItems.length){ libraryList.innerHTML='<div class="pill">Henüz eser yok</div>'; return; } libraryList.innerHTML=''; libraryItems.forEach(item=>{ const row=document.createElement('div'); row.className='libraryItem'; row.innerHTML='<div><strong>'+escapeHtml(item.title)+'</strong><div class="pill" style="margin-top:6px">'+(item.lyrics ? item.lyrics.filter(h=>!h.isIntro).length : 0)+' segment</div></div><div class="metaRow"><button class="smallBtn primary" data-open-measure="'+escapeHtml(item.id)+'">Aç</button></div>'; libraryList.appendChild(row); }); libraryList.querySelectorAll('[data-open-measure]').forEach(btn=>btn.addEventListener('click',()=> openLibraryItem(btn.dataset.openMeasure))); }
+    function openLibraryItem(id){ const item=libraryItems.find(x=>x.id===id); if(!item) return; applyProjectPayload({ title:item.title, intro:item.intro||0, lyrics:'', audioName:item.audioName||'audio.mp3', audioUrl:item.audioUrl||'', heceler:item.lyrics||[], cursorTime:0, selectedSegmentIndexes:[] }); measureTitle.textContent = item.title; if(item.audioUrl&&ws){ objectUrlRef=item.audioUrl; ws.load(item.audioUrl); } measureSelected.clear(); measureSelectionMode=false; analysisData = null; resetAnalysisUI(); renderMeasure(); showSection('measure'); }
+    function applyProjectPayload(parsed){ titleInput.value=parsed.title||''; introInput.value=Number(parsed.intro||0).toFixed(2); lyricsInput.value=parsed.lyrics||''; currentAudioName=parsed.audioName||'audio.mp3'; objectUrlRef=parsed.audioUrl||objectUrlRef; selectedSegmentIndexes=Array.isArray(parsed.selectedSegmentIndexes)?parsed.selectedSegmentIndexes:[]; heceler=Array.isArray(parsed.heceler)?parsed.heceler.map(h=>({text:h.text||'',note:h.note||'',start:h.start??null,end:h.end??null,line:h.line??0,isIntro:!!h.isIntro})):[]; cursorTime=parsed.cursorTime||0; loadedIndex=-1; normalizeIntroSegment(); renderAll(); setCursorTime(cursorTime); if(hasAudioLoaded()) scrollToTime(cursorTime); }
+    function saveProject(){ const payload=buildProjectPayload(); localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(payload)); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); const blob=new Blob([JSON.stringify(payload,null,2)], {type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=((payload.title||'vocaly_editor').replace(/[^\w\u00C0-\u024F-]+/g,'_'))+'.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+    function autoSaveProject(){ localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(buildProjectPayload())); }
+    function loadProject(){ const raw=localStorage.getItem(PROJECT_AUTOSAVE_KEY); if(!raw) return; try{ applyProjectPayload(JSON.parse(raw)); }catch(err){ console.error(err); } }
+    function importProjectFromJsonText(text){ try{ applyProjectPayload(JSON.parse(text)); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); }catch(err){ console.error(err); alert('JSON okunamadı.'); } }
+
+    function normalizeSingleNote(note){ if(!note) return ''; let n = String(note).trim().toLowerCase(); if(n.includes('/')) n = n.split('/')[0].trim(); const map = {'do':'Do','do#':'Do#','reb':'Reb','re':'Re','re#':'Re#','mib':'Mib','mi':'Mi','fa':'Fa','fa#':'Fa#','solb':'Solb','sol':'Sol','sol#':'Sol#','lab':'Lab','la':'La','la#':'La#','sib':'Sib','si':'Si'}; return map[n] || ''; }
+    function getEnharmonicCanon(note){ const n = normalizeSingleNote(note); const map = {'Reb':'Do#','Mib':'Re#','Solb':'Fa#','Lab':'Sol#','Sib':'La#'}; return map[n] || n; }
+    function expandTargetNotes(target){ if(!target) return []; return String(target).trim().split(/\s+/).map(normalizeSingleNote).filter(Boolean); }
+
+    function freqToPitchInfo(freq){
+      if(!freq || freq <= 0) return null;
+      const noteNames = ['Do','Do#','Re','Re#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'];
+      const midiFloat = 69 + 12 * Math.log2(freq / 440);
+      const midiNearest = Math.round(midiFloat);
+      const cents = Math.round((midiFloat - midiNearest) * 100);
+      const noteIndex = ((midiNearest % 12) + 12) % 12;
+      return { note: noteNames[noteIndex], cents, midi: midiNearest, freq };
+    }
+
+    function targetMatchesPitch(target, pitchInfo){
+      if(!target || !pitchInfo) return false;
+      const targetCanon = getEnharmonicCanon(target);
+      const detectedCanon = getEnharmonicCanon(pitchInfo.note);
+      if(targetCanon !== detectedCanon) return false;
+      return Math.abs(pitchInfo.cents) <= CENT_TOLERANCE;
+    }
+
+    function noteMatches(targetString, pitchInfo){
+      const targets = expandTargetNotes(targetString);
+      if(!targets.length || !pitchInfo) return false;
+      return targets.some(t => targetMatchesPitch(t, pitchInfo));
+    }
+
+    function setCetvelTarget(note){ const display = String(note || '').trim(); cetvelTargetText.textContent = display ? display : '—'; const targets = expandTargetNotes(note); document.querySelectorAll('#vocalyCetvelDrawer .cetvelBlock').forEach(el=>{ const n = el.dataset.note || ''; const canon = getEnharmonicCanon(n); el.classList.toggle('target', targets.some(t => getEnharmonicCanon(t) === canon)); }); }
+    function setCetvelDetected(pitchInfo){ currentDetectedPitchInfo = pitchInfo || null; document.querySelectorAll('#vocalyCetvelDrawer .cetvelBlock').forEach(el=>{ const n = el.dataset.note || ''; const canon = getEnharmonicCanon(n); el.classList.toggle('detected', !!pitchInfo && getEnharmonicCanon(pitchInfo.note) === canon); }); }
+    async function initPitch(){ if(audioCtx && analyser) return; const stream = await navigator.mediaDevices.getUserMedia({audio:true}); cetvelMicStream = stream; audioCtx = new (window.AudioContext || window.webkitAudioContext)(); micSource = audioCtx.createMediaStreamSource(stream); analyser = audioCtx.createAnalyser(); analyser.fftSize = 2048; dataArray = new Float32Array(analyser.fftSize); micSource.connect(analyser); }
+    function autoCorrelate(buf, sampleRate){ let SIZE = buf.length; let rms = 0; for(let i=0;i<SIZE;i++){ let val = buf[i]; rms += val*val; } rms = Math.sqrt(rms/SIZE); if(rms < 0.01) return -1; let r1=0, r2=SIZE-1, thres=0.2; for(let i=0;i<SIZE/2;i++) if(Math.abs(buf[i])<thres){ r1=i; break; } for(let i=1;i<SIZE/2;i++) if(Math.abs(buf[SIZE-i])<thres){ r2=SIZE-i; break; } buf = buf.slice(r1, r2); SIZE = buf.length; let c = new Array(SIZE).fill(0); for(let i=0;i<SIZE;i++){ for(let j=0;j<SIZE-i;j++){ c[i] = c[i] + buf[j]*buf[j+i]; } } let d=0; while(c[d] > c[d+1]) d++; let maxval=-1, maxpos=-1; for(let i=d;i<SIZE;i++){ if(c[i] > maxval){ maxval = c[i]; maxpos = i; } } let T0 = maxpos; if(T0 <= 0) return -1; return sampleRate / T0; }
+    function stopPitchLoop(){ isPitchRunning = false; }
+    async function startPitchLoop(targetNote, boxEl, durationMs, segmentIndex){
+      try{ await initPitch(); }catch(err){ console.log(err); return {matched:false}; }
+      setCetvelTarget(targetNote);
+      setCetvelDetected(null);
+      openCetvel();
+      isPitchRunning = true;
+      let matched = false;
+      let detectedFrames = 0;
+      let correctFrames = 0;
+      let firstVoiceMs = null;
+      let firstCorrectMs = null;
+      let lastTs = performance.now();
+      let correctDurationMs = 0;
+      let longestCorrectMs = 0;
+      let currentCorrectStreakMs = 0;
+      let centsSum = 0;
+      let centsCount = 0;
+      const started = performance.now();
+      return await new Promise(resolve=>{
+        function frame(){
+          if(!isPitchRunning || !analyser || !audioCtx){
+            resolve({matched, detectedFrames, correctFrames, firstVoiceMs, firstCorrectMs, correctDurationMs, longestCorrectMs, avgCents: centsCount ? (centsSum / centsCount) : null});
+            return;
+          }
+          const nowPerf = performance.now();
+          const dt = Math.max(0, nowPerf - lastTs);
+          lastTs = nowPerf;
+
+          analyser.getFloatTimeDomainData(dataArray);
+          const freq = autoCorrelate(dataArray, audioCtx.sampleRate);
+          const pitchInfo = freqToPitchInfo(freq);
+          const songTime = hasAudioLoaded() ? ws.getCurrentTime() : ((nowPerf - started) / 1000);
+
+          if(pitchInfo){
+            if(firstVoiceMs === null) firstVoiceMs = nowPerf - started;
+            setCetvelDetected(pitchInfo);
+            detectedFrames += 1;
+            const cents = pitchInfo.cents;
+            centsSum += cents;
+            centsCount += 1;
+            const isCorrect = noteMatches(targetNote, pitchInfo);
+            if(isCorrect){
+              matched = true;
+              correctFrames += 1;
+              if(firstCorrectMs === null) firstCorrectMs = nowPerf - started;
+              correctDurationMs += dt;
+              currentCorrectStreakMs += dt;
+              if(currentCorrectStreakMs > longestCorrectMs) longestCorrectMs = currentCorrectStreakMs;
+              if(boxEl){
+                boxEl.classList.remove('bad');
+                boxEl.classList.add('ok');
+              }
+            }else{
+              currentCorrectStreakMs = 0;
+            }
+            if(analysisData){
+              analysisData.frames.push({t: songTime, midi: pitchInfo.midi, note: pitchInfo.note, cents: pitchInfo.cents, segmentIndex});
+              analysisData.currentTime = songTime;
+              drawAnalysisLive();
+            }
+          }else{
+            currentCorrectStreakMs = 0;
+            if(analysisData){
+              analysisData.frames.push({t: songTime, midi: null, note: null, cents: null, segmentIndex});
+              analysisData.currentTime = songTime;
+              drawAnalysisLive();
+            }
+          }
+
+          if(nowPerf - started >= durationMs){
+            isPitchRunning = false;
+            resolve({matched, detectedFrames, correctFrames, firstVoiceMs, firstCorrectMs, correctDurationMs, longestCorrectMs, avgCents: centsCount ? (centsSum / centsCount) : null});
+            return;
+          }
+          requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+    async function startLiveCetvelListening(){ try{ await initPitch(); }catch(err){ console.log(err); return; } openCetvel(); isLiveCetvelRunning = true; function frame(){ if(!isLiveCetvelRunning || !analyser || !audioCtx) return; analyser.getFloatTimeDomainData(dataArray); const freq = autoCorrelate(dataArray, audioCtx.sampleRate); const pitchInfo = freqToPitchInfo(freq); setCetvelDetected(pitchInfo || null); requestAnimationFrame(frame); } requestAnimationFrame(frame); }
+    function stopLiveCetvelListening(){ isLiveCetvelRunning = false; setCetvelDetected(null); }
+    function openCetvel(){ if(vocalyCetvelDrawer.classList.contains('hidden')) return; vocalyCetvelDrawer.classList.add('open'); document.body.classList.add('cetvel-open'); }
+    function closeCetvel(){ vocalyCetvelDrawer.classList.remove('open'); document.body.classList.remove('cetvel-open'); stopPitchLoop(); stopLiveCetvelListening(); if(cetvelMicStream){ cetvelMicStream.getTracks().forEach(t=>t.stop()); cetvelMicStream = null; } if(audioCtx){ try{ audioCtx.close(); }catch(e){} audioCtx = null; analyser = null; micSource = null; dataArray = null; } setCetvelDetected(null); }
+
+    function clearMeasureTimers(){ measureTimerRefs.forEach(t=>clearTimeout(t)); measureTimerRefs=[]; if(resultTimer){ clearTimeout(resultTimer); resultTimer = null; } }
+    function stopMeasure(){ isMeasureRunning = false; stopAnalysisAnimation(); clearMeasureTimers(); if(hasAudioLoaded()) ws.pause(); stopPitchLoop(); stopLiveCetvelListening(); stopRecording(); closeCetvel(); }
+    function resetMeasure(){ stopMeasure(); setCetvelTarget(''); measureSelected.clear(); measureSelectionMode = false; analysisData = null; resetAnalysisUI(); renderMeasure(); }
+
+    function startBoxFill(boxEl, durationMs){
+      if(!boxEl) return;
+      const fill = boxEl.querySelector('.fill');
+      if(!fill) return;
+      fill.style.transition = 'none';
+      fill.style.width = '0%';
+      void fill.offsetWidth;
+      fill.style.transition = 'width ' + Math.max(50, durationMs) + 'ms linear';
+      fill.style.width = '100%';
+    }
+
+    async function playAndMeasureSegment(index, chain=false){
+      const seg = heceler[index];
+      const boxEl = document.getElementById('measure-box-'+index);
+      if(!seg || !boxEl || seg.start===null || seg.end===null || !hasAudioLoaded()) return;
+      boxEl.classList.remove('ok','bad','neutral');
+      boxEl.classList.add('active');
+      ensureVisible(boxEl, measureBoxes);
+      const fill = boxEl.querySelector('.fill');
+      if(fill){ fill.style.transition='none'; fill.style.width='0%'; }
+      const durationMs = Math.max(180, (seg.end - seg.start) * 1000);
+      startBoxFill(boxEl, durationMs);
+      ws.play(seg.start, seg.end);
+      const noteText = String(seg.note || '').trim();
+      const hasTargetNote = noteText.length > 0;
+      const targetMidi = getSegmentTargetMidi(seg);
+      const resultObj = {index, text:seg.text, start:seg.start, end:seg.end, target:noteText, targetMidi, durationMs, status:'bad', neutral:false, pitchScore:0, timingScore:0, coverageScore:0};
+
+      if(!hasTargetNote){
+        setCetvelTarget('');
+        await new Promise(resolve => setTimeout(resolve, durationMs));
+        boxEl.classList.remove('active');
+        boxEl.classList.add('neutral');
+        resultObj.status = 'neutral';
+        resultObj.neutral = true;
+        if(analysisData) analysisData.segments.push(resultObj);
+        if(chain) await new Promise(resolve => setTimeout(resolve,80));
+        return;
+      }
+
+      setCetvelTarget(noteText);
+      await new Promise(resolve => setTimeout(resolve, 160));
+      const stats = await startPitchLoop(noteText, boxEl, Math.max(220, durationMs - 160), index);
+      boxEl.classList.remove('active');
+
+      const coverageRatio = durationMs ? Math.min(1, (stats.correctDurationMs || 0) / durationMs) : 0;
+      const pitchRatio = stats.detectedFrames ? (stats.correctFrames / stats.detectedFrames) : 0;
+      let timingScore = 0;
+      if(stats.firstCorrectMs == null) timingScore = 0;
+      else {
+        const ratio = stats.firstCorrectMs / durationMs;
+        if(ratio <= 0.2) timingScore = 100;
+        else if(ratio <= 0.4) timingScore = 80;
+        else if(ratio <= 0.6) timingScore = 55;
+        else timingScore = 20;
+      }
+      resultObj.pitchScore = Math.round(pitchRatio * 100);
+      resultObj.timingScore = timingScore;
+      resultObj.coverageScore = Math.round(coverageRatio * 100);
+      resultObj.firstVoiceMs = stats.firstVoiceMs;
+      resultObj.firstCorrectMs = stats.firstCorrectMs;
+      resultObj.longestCorrectMs = stats.longestCorrectMs;
+      resultObj.avgCents = stats.avgCents;
+      resultObj.totalScore = stats.matched ? 100 : 0;
+      resultObj.status = stats.matched ? 'ok' : 'bad';
+      if(analysisData) analysisData.segments.push(resultObj);
+
+      if(resultObj.status === 'ok'){ boxEl.classList.remove('bad'); boxEl.classList.add('ok'); }
+      else { boxEl.classList.remove('ok'); boxEl.classList.add('bad'); }
+      if(chain) await new Promise(resolve => setTimeout(resolve,80));
+    }
+
+    async function playSelectedMeasureSegments(){ const indexes = [...measureSelected].sort((a,b)=>(heceler[a]?.start||0)-(heceler[b]?.start||0)); if(!indexes.length) return; stopLiveCetvelListening(); for(const idx of indexes){ await playAndMeasureSegment(idx,true); } }
+
+    function getMeasureScore(){ const boxes = [...document.querySelectorAll('#measureBoxes .measureBox:not(.intro)')]; const validBoxes = boxes.filter(b => !b.classList.contains('neutral')); const total = validBoxes.length; const ok = validBoxes.filter(b => b.classList.contains('ok')).length; const score = total ? Math.round((ok / total) * 100) : 0; return { total, ok, score }; }
+    function showResultModal(){
+      isMeasureRunning = false;
+      stopAnalysisAnimation();
+      finalizeAnalysis();
+      const score = analysisData?.score?.total ?? getMeasureScore().score;
+      let badge = '🏅', title = 'Güzel!', text = analysisData?.summary || 'Performans tamamlandı.';
+      if(score >= 90){ badge='🌟'; title='Harika!'; }
+      else if(score >= 75){ badge='🥇'; title='Çok iyi!'; }
+      else if(score >= 60){ badge='🥈'; title='İyi!'; }
+      else if(score >= 40){ badge='🥉'; title='Devam et!'; }
+      else { badge='🎵'; title='Tekrar deneyelim'; }
+      resultBadge.textContent = badge;
+      resultTitle.textContent = title;
+      resultScore.textContent = score;
+      resultText.textContent = text;
+      resultModal.classList.remove('hidden');
+      stopRecording();
+    }
+
+    async function startMeasure(){
+      if(!hasAudioLoaded()) return;
+      stopLiveCetvelListening();
+      clearMeasureTimers();
+      try{ await initPitch(); }catch(err){ console.log(err); }
+      analysisData = createEmptyAnalysis();
+      resetAnalysisUI();
+      analysisCard.classList.remove('hidden');
+      renderMeasure();
+      ws.stop();
+      ws.play(0);
+      measureStartClock = performance.now();
+      isMeasureRunning = true;
+      startRecording();
+      drawAnalysisLive(true);
+      startAnalysisAnimation();
+
+      const intro=heceler.find(h=>h.isIntro);
+      if(intro && intro.end>0){
+        measureTimerRefs.push(setTimeout(()=>{
+          const el=document.getElementById('measure-intro');
+          if(!el) return;
+          el.classList.add('active');
+          startBoxFill(el, intro.end*1000);
+        },0));
+      }
+
+      const items=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro&&x.seg.start!==null&&x.seg.end!==null);
+      items.forEach(({seg,idx})=>{
+        const startMs=Math.max(0,(seg.start||0)*1000);
+        measureTimerRefs.push(setTimeout(()=>{ playAndMeasureSegment(idx); },startMs));
+      });
+      if(items.length){
+        const last = items[items.length-1].seg;
+        resultTimer = setTimeout(showResultModal, ((last.end||0)*1000)+900);
+      }
+    }
+
+    function wireMeasureBox(box,index){ let longPressed = false; const startLong = ()=>{ longPressed = false; clearTimeout(longPressTimer); longPressTimer = setTimeout(()=>{ longPressed = true; measureSelectionMode = true; toggleMeasureSelection(index); }, LONG_PRESS_MS); }; const clearLong = ()=> clearTimeout(longPressTimer); box.addEventListener('pointerdown', startLong); box.addEventListener('pointerup', ()=>{ clearLong(); if(longPressed) return; if(measureSelectionMode){ toggleMeasureSelection(index); return; } playAndMeasureSegment(index); }); box.addEventListener('pointerleave', clearLong); box.addEventListener('contextmenu', e=>e.preventDefault()); }
+    function toggleMeasureSelection(index){ if(measureSelected.has(index)) measureSelected.delete(index); else measureSelected.add(index); renderMeasure(); }
+
+    function initWave(){ ws = WaveSurfer.create({ container:'#waveform', waveColor:'#4a5f8e', progressColor:'#facc15', cursorColor:'#facc15', height:300, normalize:true, responsive:true, scrollParent:true, minPxPerSec:Number(zoom.value) }); ws.on('ready',()=>{ ws.zoom(Number(zoom.value)); bindWrapperEvents(); setCursorTime(ws.getCurrentTime()); normalizeIntroSegment(); renderAll(); }); ws.on('audioprocess',()=>{ const now=ws.getCurrentTime(); timeText.textContent=now.toFixed(2)+' sn'; setCursorTime(now); karaokePlaybackUpdate(now); syncOverlayPosition(); }); ws.on('seek',p=>{ const now=(ws.getDuration()||0)*p; timeText.textContent=now.toFixed(2)+' sn'; setCursorTime(now); karaokePlaybackUpdate(now); syncOverlayPosition(); }); ws.on('pause',()=>{ const now=ws.getCurrentTime(); setCursorTime(now); karaokePlaybackUpdate(now); syncOverlayPosition(); }); ws.on('finish',()=>{ karaokePlaybackUpdate(ws.getDuration()); }); ws.on('zoom',()=>{ renderAll(); syncOverlayPosition(); }); }
+    function bindWaveformDrag(){ const wrapper=getWaveWrapper(); if(!wrapper) return; wrapper.addEventListener('pointerdown',e=>{ if(e.target.closest('.handle') || e.target.closest('.strip-block')) return; wrapper._drag={startX:e.clientX,startScroll:wrapper.scrollLeft}; }); wrapper.addEventListener('pointermove',e=>{ if(!wrapper._drag) return; const dx=e.clientX-wrapper._drag.startX; wrapper.scrollLeft=wrapper._drag.startScroll-dx; syncOverlayPosition(); }); const end=()=> wrapper._drag=null; wrapper.addEventListener('pointerup',end); wrapper.addEventListener('pointercancel',end); wrapper.addEventListener('scroll',syncOverlayPosition,{passive:true}); }
+    function bindWrapperEvents(){ if(wrapperBound) return; const wrapper=getWaveWrapper(); if(!wrapper) return; bindWaveformDrag(); wrapperBound=true; }
+
+    initWave(); renderAll(); setCursorTime(0); loadLibrary(); loadProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); showSection('home'); toleranceSelect.value = String(CENT_TOLERANCE); resetAnalysisUI();
+
+    homeLibraryBtn.addEventListener('click',()=> showSection('library'));
+    homeEditorBtn.addEventListener('click',()=> showSection('editor'));
+    homeLogoBtn.addEventListener('click',goHome);
+    homeLogoBigBtn.addEventListener('click',goHome);
+    libraryBackBtn.addEventListener('click',()=> showSection('home'));
+    editorBackBtn.addEventListener('click',()=> showSection('home'));
+    measureBackBtn.addEventListener('click',()=>{ stopMeasure(); showSection('library'); });
+    audioFile.addEventListener('change',e=>{ const file=e.target.files[0]; if(!file) return; currentAudioName=file.name; if(objectUrlRef && objectUrlRef.startsWith('blob:')) URL.revokeObjectURL(objectUrlRef); objectUrlRef=URL.createObjectURL(file); ws.load(objectUrlRef); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    importJsonInput.addEventListener('change',e=>{ const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=> importProjectFromJsonText(reader.result); reader.readAsText(file,'utf-8'); importJsonInput.value=''; });
+    playBtn.addEventListener('click',()=> hasAudioLoaded() && ws.playPause());
+    stopBtn.addEventListener('click',()=> { if(hasAudioLoaded()){ ws.stop(); setCursorTime(0); } });
+    zoom.addEventListener('input',()=> { if(!hasAudioLoaded()) return; ws.zoom(Number(zoom.value)); setTimeout(renderAll,20); });
+    zoomOutBtn.addEventListener('click',()=> { zoom.value=Math.max(40, Number(zoom.value)-20); zoom.dispatchEvent(new Event('input')); });
+    zoomInBtn.addEventListener('click',()=> { zoom.value=Math.min(360, Number(zoom.value)+20); zoom.dispatchEvent(new Event('input')); });
+    splitWordsBtn.addEventListener('click',()=> { parseLyricsToSegmentsPreserve(); loadedIndex=-1; renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    autoTimingBtn.addEventListener('click',()=> { if(!heceler.length) parseLyricsToSegmentsPreserve(); const words=heceler.filter(h=>!h.isIntro); if(!words.length) return; const intro=getIntroValue(); const duration=hasAudioLoaded()?ws.getDuration():Math.max(intro+words.length*0.8,8); const available=Math.max(0.6,duration-intro); const totalChars=words.reduce((s,w)=>s+Math.max(1,(w.text||'').length),0); let cursor=intro; words.forEach(seg=>{ const weight=Math.max(1,(seg.text||'').length); const segDur=Math.max(0.10, Number(((weight/totalChars)*available).toFixed(2))); seg.start=round2(cursor); seg.end=round2(cursor+segDur); cursor=seg.end; }); renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    saveProjectBtn.addEventListener('click',saveProject);
+    resetTimingBtn.addEventListener('click',()=> { normalizeIntroSegment(); heceler.forEach(h=>{ if(h.isIntro){ h.start=0; h.end=getIntroValue(); } else { h.start=null; h.end=null; } }); loadedIndex=-1; selectedSegmentIndexes=[]; renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    saveBtn.addEventListener('click',()=> { const text=heceInput.value.trim(); const note=notaInput.value.trim(); const start=parseFloat(startInput.value); const end=parseFloat(endInput.value); const line=Number(satirInput.value||1); if(!text) return alert('Kelime / hece gir.'); if(!isNaN(start) && !isNaN(end) && end<=start) return alert('End, start’tan büyük olmalı.'); const obj={ text:text, note:note, start:isNaN(start)?null:round2(start), end:isNaN(end)?null:round2(end), line:line, isIntro:false }; if(loadedIndex>-1){ const wasIntro=!!heceler[loadedIndex]?.isIntro; heceler[loadedIndex]={...obj,isIntro:wasIntro}; loadedIndex=-1; } else { heceler.push(obj); } normalizeIntroSegment(); renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    updateBtn.addEventListener('click',()=> { if(loadedIndex===-1) return alert('Önce bir segment seç.'); const seg=heceler[loadedIndex]; const start=parseFloat(startInput.value); const end=parseFloat(endInput.value); if(isNaN(start)||isNaN(end)||end<=start) return alert('Geçerli bir start/end gir.'); seg.text=heceInput.value.trim(); seg.note=notaInput.value.trim(); seg.start=round2(start); seg.end=round2(end); seg.line=Number(satirInput.value||seg.line||1); if(seg.isIntro){ seg.text='INTRO'; seg.start=0; introInput.value=seg.end.toFixed(2); } renderAll(); seekToSegment(loadedIndex,false); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    deleteLoadedBtn.addEventListener('click',()=> { if(loadedIndex===-1) return alert('Önce bir segment seç.'); if(heceler[loadedIndex]?.isIntro) return alert('Intro silinmez.'); const removed=loadedIndex; heceler.splice(removed,1); loadedIndex=-1; selectedSegmentIndexes=selectedSegmentIndexes.filter(i=>i!==removed).map(i=> i>removed ? i-1 : i); renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    minusStartBtn.addEventListener('click',()=> { if(loadedIndex===-1) return; const seg=heceler[loadedIndex]; const v=Math.max(0, round2((seg.start??0)-0.05)); if(seg.end<=v+0.03) return; seg.start=v; startInput.value=v.toFixed(2); renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    plusStartBtn.addEventListener('click',()=> { if(loadedIndex===-1) return; const seg=heceler[loadedIndex]; const v=round2((seg.start??0)+0.05); if(seg.end<=v+0.03) return; seg.start=v; startInput.value=v.toFixed(2); renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    minusEndBtn.addEventListener('click',()=> { if(loadedIndex===-1) return; const seg=heceler[loadedIndex]; const v=round2((seg.end??0)-0.05); if(v<=seg.start+0.03) return; seg.end=v; endInput.value=v.toFixed(2); renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    plusEndBtn.addEventListener('click',()=> { if(loadedIndex===-1) return; const seg=heceler[loadedIndex]; seg.end=round2((seg.end??0)+0.05); endInput.value=seg.end.toFixed(2); renderAll(); autoSaveProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); });
+    previewSelectedBtn.addEventListener('click',()=> { if(loadedIndex===-1) return alert('Önce bir segment seç.'); const seg=heceler[loadedIndex]; if(!seg||seg.start===null||seg.end===null||!hasAudioLoaded()) return; ws.play(seg.start,seg.end); });
+    previewPlayBtn.addEventListener('click',()=> { if(!hasAudioLoaded()) return; sequenceStopRequested=true; ws.stop(); ws.play(0); });
+    previewStopBtn.addEventListener('click',()=> { if(!hasAudioLoaded()) return; sequenceStopRequested=true; ws.pause(); });
+    clearSelectionBtn.addEventListener('click',clearSelection);
+    playLineBtn.addEventListener('click',playSelectedLine);
+    measurePlayBtn.addEventListener('click',startMeasure);
+    measureStopBtn.addEventListener('click',stopMeasure);
+    measureResetBtn.addEventListener('click',resetMeasure);
+    measurePlaySelectedBtn.addEventListener('click',playSelectedMeasureSegments); toleranceSelect.addEventListener('change',()=>{ CENT_TOLERANCE = Number(toleranceSelect.value)||15; });
+    vocalyCetvelHandle.addEventListener('click', async () => { if(vocalyCetvelDrawer.classList.contains('open')){ stopLiveCetvelListening(); closeCetvel(); } else { await startLiveCetvelListening(); } });
+
+    downloadRecordingBtn.addEventListener('click',()=> downloadBlob(recordingBlob, 'vocaly_kayit.webm'));
+    downloadAnalysisJsonBtn.addEventListener('click',()=>{
+      if(!analysisData) return;
+      downloadBlob(new Blob([JSON.stringify(analysisData, null, 2)], {type:'application/json'}), 'vocaly_analiz.json');
+    });
+    resultCloseBtn.addEventListener('click',()=> resultModal.classList.add('hidden'));
+    document.addEventListener('keydown',e=>{ const tag=document.activeElement ? document.activeElement.tagName.toLowerCase() : ''; const inInput=tag==='input'||tag==='textarea'||tag==='select'; if(inInput) return; if(e.code==='Space'){ e.preventDefault(); if(hasAudioLoaded()) ws.playPause(); return; } if(e.code==='Escape'){ loadedIndex=-1; selectedSegmentIndexes=[]; renderAll(); updateActiveSegmentLabel(-1); return; } if(e.code==='ArrowRight'){ e.preventDefault(); if(hasAudioLoaded()) seekToTime(ws.getCurrentTime()+0.2); return; } if(e.code==='ArrowLeft'){ e.preventDefault(); if(hasAudioLoaded()) seekToTime(ws.getCurrentTime()-0.2); return; } });
+    window.addEventListener('resize',()=> setTimeout(renderAll,50));
+  </script>
+</body>
+</html>
