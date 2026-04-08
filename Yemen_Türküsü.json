@@ -1,0 +1,238 @@
+{
+  "version": 1,
+  "title": "Yemen Türküsü",
+  "intro": 15.9,
+  "lyrics": "Havada bulut yok, bu ne dumandır?\nMahlede ölüm yok, bu ne figandır?\nŞu yemen elleri ne de yamandır\nAh o Yemen'dir gülü çemendir\nGiden gelmiyor acep nedendir?",
+  "audioName": "Yemen Turkusu.mp3",
+  "audioUrl": "blob:https://princessmayosko.github.io/4b6a56ba-c9a5-41a4-94be-bc0efc5924ca",
+  "selectedSegmentIndexes": [
+    27
+  ],
+  "heceler": [
+    {
+      "text": "INTRO",
+      "note": "",
+      "start": 0,
+      "end": 15.9,
+      "line": 0,
+      "isIntro": true
+    },
+    {
+      "text": "Havada",
+      "note": "do re mi",
+      "start": 15.91,
+      "end": 17.68,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "bulut",
+      "note": "mi mi",
+      "start": 17.68,
+      "end": 20.11,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "yok,",
+      "note": "mi re",
+      "start": 20.11,
+      "end": 22.28,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "bu",
+      "note": "sol",
+      "start": 22.29,
+      "end": 22.67,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "ne",
+      "note": "re",
+      "start": 22.67,
+      "end": 23.38,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "dumandır?",
+      "note": "mi do mi re",
+      "start": 23.38,
+      "end": 25.55,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Mahlede",
+      "note": "do re mi",
+      "start": 25.55,
+      "end": 27.16,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "ölüm",
+      "note": "mi mi",
+      "start": 27.16,
+      "end": 29.73,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "yok,",
+      "note": "mi re",
+      "start": 29.73,
+      "end": 31.98,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "bu",
+      "note": "sol",
+      "start": 31.98,
+      "end": 32.64,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "ne",
+      "note": "re",
+      "start": 32.64,
+      "end": 33.26,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "figandır?",
+      "note": "mi do mi re",
+      "start": 33.26,
+      "end": 35.09,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Şu",
+      "note": "do",
+      "start": 35.09,
+      "end": 35.55,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "yemen",
+      "note": "re mi",
+      "start": 35.56,
+      "end": 36.8,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "elleri",
+      "note": "mi re",
+      "start": 36.82,
+      "end": 41.63,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "ne",
+      "note": "sol",
+      "start": 41.63,
+      "end": 42.01,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "de",
+      "note": "re",
+      "start": 42.01,
+      "end": 42.71,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "yamandır",
+      "note": "mi do mi re",
+      "start": 42.71,
+      "end": 44.7,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "Ah",
+      "note": "mi",
+      "start": 44.7,
+      "end": 45.38,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "o",
+      "note": "re",
+      "start": 45.38,
+      "end": 45.72,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Yemen'dir",
+      "note": "re do mi re",
+      "start": 45.72,
+      "end": 48.11,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "gülü",
+      "note": "re do",
+      "start": 48.11,
+      "end": 49.07,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "çemendir",
+      "note": "do si re do",
+      "start": 49.07,
+      "end": 51.21,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Giden",
+      "note": "do si",
+      "start": 51.21,
+      "end": 52.04,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "gelmiyor",
+      "note": "si la do si",
+      "start": 52.04,
+      "end": 54.17,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "acep",
+      "note": "do si la",
+      "start": 54.17,
+      "end": 55.13,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "nedendir?",
+      "note": "si do la",
+      "start": 55.13,
+      "end": 60.44,
+      "line": 5,
+      "isIntro": false
+    }
+  ],
+  "cursorTime": 60.686462585034015
+}
