@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Vocaly Eğri Paneli</title>
+<style>
+body{
+  margin:0;
+  background:#0b1220;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:sans-serif;
+}
 
+.panel{
+  width:95%;
+  max-width:1100px;
+  height:260px;
+  background:linear-gradient(180deg,#0f1b2d,#08111f);
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  padding:10px;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+}
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <canvas id="c" width="1100" height="260"></canvas>
+</div>
+
+<script>
+const c = document.getElementById("c");
+const ctx = c.getContext("2d");
+
+// demo veri
+const target = [
+  {t:0, n:5},
+  {t:1, n:5},
+  {t:2, n:7},
+  {t:3, n:7},
+  {t:4, n:4},
+  {t:5, n:4}
+];
+
+const student = [
+  {t:0, n:4.7},
+  {t:0.5, n:5.1},
+  {t:1.5, n:5},
+  {t:2.2, n:6.8},
+  {t:3.1, n:7.2},
+  {t:4.3, n:4.2},
+  {t:5, n:4}
+];
+
+const maxT = 5;
+const minN = 0;
+const maxN = 12;
+
+function x(t){
+  return (t/maxT) * c.width;
+}
+
+function y(n){
+  return c.height - ((n-minN)/(maxN-minN))*c.height;
+}
+
+// grid (hafif)
+ctx.strokeStyle = "rgba(255,255,255,0.06)";
+for(let i=0;i<=12;i++){
+  ctx.beginPath();
+  ctx.moveTo(0,y(i));
+  ctx.lineTo(c.width,y(i));
+  ctx.stroke();
+}
+
+// 🔴 hedef (basamak)
+ctx.strokeStyle = "#ff4d5a";
+ctx.lineWidth = 3;
+ctx.beginPath();
+
+for(let i=0;i<target.length;i++){
+  let p = target[i];
+  let px = x(p.t);
+  let py = y(p.n);
+
+  if(i===0){
+    ctx.moveTo(px,py);
+  }else{
+    let prev = target[i-1];
+    ctx.lineTo(px, y(prev.n));
+    ctx.lineTo(px, py);
+  }
+}
+ctx.stroke();
+
+// 🔵 öğrenci (smooth)
+ctx.strokeStyle = "#4db8ff";
+ctx.lineWidth = 2;
+ctx.beginPath();
+
+for(let i=0;i<student.length;i++){
+  let p = student[i];
+  let px = x(p.t);
+  let py = y(p.n);
+
+  if(i===0){
+    ctx.moveTo(px,py);
+  }else{
+    ctx.lineTo(px,py);
+  }
+}
+ctx.stroke();
+
+// playhead
+let time = 2.5;
+ctx.strokeStyle = "#ffd166";
+ctx.beginPath();
+ctx.moveTo(x(time),0);
+ctx.lineTo(x(time),c.height);
+ctx.stroke();
+
+</script>
+</body>
+</html>
