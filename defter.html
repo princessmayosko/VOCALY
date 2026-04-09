@@ -2,107 +2,80 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Vocaly Defter Core v1</title>
+<title>Vocaly Defter Core v2</title>
 <style>
-body { background:#111; color:white; font-family:Arial; padding:20px; }
-button { padding:10px 14px; margin:5px; }
-.note { padding:6px; margin:4px; background:#222; border-radius:6px; }
-.good { color:#4caf50; }
-.bad { color:#ff5252; }
+body{background:#111;color:#fff;font-family:Arial;padding:20px}
+button{padding:10px 14px;margin:5px}
+.note{padding:6px;margin:4px;background:#222;border-radius:6px}
+.good{color:#4caf50}.bad{color:#ff5252}
+svg{background:#eee;border-radius:10px;margin-top:10px}
 </style>
 </head>
 <body>
 
-<h2>🎼 Vocaly Defter – Core v1</h2>
+<h2>🎼 Vocaly Defter – Core v2</h2>
 
 <div>
-  Ölçü:
-  <select id="meter">
-    <option value="2/4">2/4</option>
-    <option value="3/4">3/4</option>
-    <option value="4/4" selected>4/4</option>
-  </select>
+Ölçü:
+<select id="meter" onchange="render()">
+<option value="2/4">2/4</option>
+<option value="3/4">3/4</option>
+<option value="4/4" selected>4/4</option>
+</select>
 
-  Nota:
-  <select id="duration">
-    <option value="1">Dörtlük</option>
-    <option value="0.5">Sekizlik</option>
-    <option value="0.25">Onaltılık</option>
-  </select>
+Nota:
+<select id="duration">
+<option value="1">Dörtlük</option>
+<option value="0.5">Sekizlik</option>
+<option value="0.25">Onaltılık</option>
+</select>
 
-  <button onclick="play()">▶ Çal</button>
-  <button onclick="clearNotes()">Temizle</button>
+<button onclick="play()">▶ Çal</button>
+<button onclick="clearNotes()">Temizle</button>
 </div>
+
+<div id="status"></div>
+
+<svg id="staff" width="800" height="220"></svg>
 
 <hr>
 
 <div id="notes"></div>
 
-<hr>
-
-<div id="status"></div>
-
 <script>
-// ====== DATA MOTOR ======
 
+// ===== DATA =====
 let notes = [];
 
-function addNote(pitch) {
+function addNote(pitch){
   const duration = parseFloat(document.getElementById("duration").value);
-
   const total = notes.reduce((a,n)=>a+n.duration,0);
-  const capacity = getMeasureCapacity();
+  const capacity = getCapacity();
 
-  if (total + duration > capacity) {
+  if(total + duration > capacity){
     setStatus("Ölçü dolu!", true);
     return;
   }
 
-  notes.push({
-    pitch,
-    duration
-  });
-
+  notes.push({ pitch, duration });
   render();
 }
 
 function clearNotes(){
-  notes = [];
+  notes=[];
   render();
 }
 
-// ====== RİTİM MOTOR ======
-
-function getMeasureCapacity(){
-  const val = document.getElementById("meter").value;
-  const [top,bottom] = val.split("/").map(Number);
-  return top * (4 / bottom);
+// ===== RİTİM =====
+function getCapacity(){
+  const [top,bottom] = document.getElementById("meter").value.split("/").map(Number);
+  return top * (4/bottom);
 }
 
-// ====== SES MOTOR ======
+// ===== SES =====
+const ctx = new (window.AudioContext||window.webkitAudioContext)();
 
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let ctx = new AudioCtx();
-
-function playTone(freq, duration){
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.frequency.value = freq;
-  osc.type = "triangle";
-
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  gain.gain.setValueAtTime(0.3, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-
-  osc.start();
-  osc.stop(ctx.currentTime + duration);
-}
-
-// Nota frekansları (DO DOĞRU!)
-const noteFreq = {
+const freqMap = {
   "C4":261.63,
   "D4":293.66,
   "E4":329.63,
@@ -113,66 +86,154 @@ const noteFreq = {
   "C5":523.25
 };
 
-// ====== ÇALMA ======
-
 function play(){
   let t = ctx.currentTime;
-  const tempo = 120;
-  const beat = 60/tempo;
+  const beat = 60/120;
 
   notes.forEach(n=>{
-    playTone(noteFreq[n.pitch], n.duration * beat);
-    t += n.duration * beat;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.frequency.value = freqMap[n.pitch];
+    osc.type="triangle";
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    gain.gain.setValueAtTime(0.3, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t+n.duration*beat);
+
+    osc.start(t);
+    osc.stop(t+n.duration*beat);
+
+    t += n.duration*beat;
   });
 }
 
-// ====== GÖRSEL ======
+// ===== STAFF =====
+
+const pitchY = {
+  "C4":140,
+  "D4":130,
+  "E4":120,
+  "F4":110,
+  "G4":100,
+  "A4":90,
+  "B4":80,
+  "C5":70
+};
+
+function drawStaff(){
+  const svg = document.getElementById("staff");
+  svg.innerHTML="";
+
+  // 5 çizgi
+  for(let i=0;i<5;i++){
+    let y = 80 + i*10;
+    let line = document.createElementNS("http://www.w3.org/2000/svg","line");
+    line.setAttribute("x1",50);
+    line.setAttribute("x2",750);
+    line.setAttribute("y1",y);
+    line.setAttribute("y2",y);
+    line.setAttribute("stroke","black");
+    svg.appendChild(line);
+  }
+
+  // sol anahtar (basit sembol)
+  let clef = document.createElementNS("http://www.w3.org/2000/svg","text");
+  clef.setAttribute("x",55);
+  clef.setAttribute("y",115);
+  clef.setAttribute("font-size","40");
+  clef.textContent="𝄞";
+  svg.appendChild(clef);
+
+  // ölçü belirteci
+  const [top,bottom] = document.getElementById("meter").value.split("/");
+  
+  let t = document.createElementNS("http://www.w3.org/2000/svg","text");
+  t.setAttribute("x",90);
+  t.setAttribute("y",95);
+  t.textContent=top;
+
+  let b = document.createElementNS("http://www.w3.org/2000/svg","text");
+  b.setAttribute("x",90);
+  b.setAttribute("y",115);
+  b.textContent=bottom;
+
+  svg.appendChild(t);
+  svg.appendChild(b);
+
+  // ölçü çizgisi (son)
+  let bar = document.createElementNS("http://www.w3.org/2000/svg","line");
+  bar.setAttribute("x1",700);
+  bar.setAttribute("x2",700);
+  bar.setAttribute("y1",80);
+  bar.setAttribute("y2",120);
+  bar.setAttribute("stroke","black");
+  bar.setAttribute("stroke-width","2");
+  svg.appendChild(bar);
+}
+
+// ===== NOTA ÇİZ =====
+
+function drawNotes(){
+  const svg = document.getElementById("staff");
+
+  let x = 150;
+
+  notes.forEach(n=>{
+    let y = pitchY[n.pitch];
+
+    let circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    circle.setAttribute("cx",x);
+    circle.setAttribute("cy",y);
+    circle.setAttribute("r",6);
+    circle.setAttribute("fill","black");
+
+    svg.appendChild(circle);
+
+    x += 40;
+  });
+}
+
+// ===== UI =====
 
 function render(){
-  const div = document.getElementById("notes");
-  div.innerHTML = "";
+  document.getElementById("notes").innerHTML =
+    notes.map(n=>n.pitch+" ("+n.duration+")").join("<br>");
 
-  notes.forEach(n=>{
-    const el = document.createElement("div");
-    el.className = "note";
-    el.textContent = n.pitch + " (" + n.duration + ")";
-    div.appendChild(el);
-  });
-
-  checkMeasure();
+  drawStaff();
+  drawNotes();
+  check();
 }
 
-// ====== ÖLÇÜ KONTROL ======
-
-function checkMeasure(){
+function check(){
   const total = notes.reduce((a,n)=>a+n.duration,0);
-  const capacity = getMeasureCapacity();
+  const cap = getCapacity();
 
-  if (total === capacity) {
-    setStatus("Ölçü TAMAM", false);
-  } else if (total < capacity) {
-    setStatus("Eksik", true);
-  } else {
-    setStatus("TAŞTI", true);
+  if(total === cap){
+    setStatus("TAM",false);
+  }else{
+    setStatus("Eksik",true);
   }
 }
 
-function setStatus(msg, bad){
-  const s = document.getElementById("status");
-  s.innerHTML = msg;
-  s.className = bad ? "bad" : "good";
+function setStatus(msg,bad){
+  const s=document.getElementById("status");
+  s.textContent=msg;
+  s.className = bad ? "bad":"good";
 }
 
-// ====== PİYANO ======
+// ===== PİYANO =====
 
-const keys = ["C4","D4","E4","F4","G4","A4","B4","C5"];
-
-keys.forEach(k=>{
-  const b = document.createElement("button");
-  b.textContent = k;
-  b.onclick = ()=>addNote(k);
+["C4","D4","E4","F4","G4","A4","B4","C5"].forEach(n=>{
+  let b=document.createElement("button");
+  b.textContent=n;
+  b.onclick=()=>addNote(n);
   document.body.appendChild(b);
 });
+
+render();
 
 </script>
 </body>
