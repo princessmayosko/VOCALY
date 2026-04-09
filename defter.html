@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vocaly Defter v1</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1b1f24;
+      color: #f2f2f2;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      background: #242a31;
+      border-bottom: 1px solid #3a424c;
+    }
+
+    .group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: #2c333c;
+      padding: 8px 10px;
+      border-radius: 12px;
+    }
+
+    button, select, input[type="range"], input[type="text"] {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+
+    button {
+      background: #3a4654;
+      color: white;
+      cursor: pointer;
+    }
+
+    button.active {
+      background: #d9a300;
+      color: #111;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .main {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .staff-wrap {
+      background: #cfcfcf;
+      border-radius: 16px;
+      padding: 16px;
+      overflow-x: auto;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.15);
+    }
+
+    svg {
+      display: block;
+      background: linear-gradient(to bottom, #d8d8d8, #c7c7c7);
+      border-radius: 12px;
+    }
+
+    .bottom-panel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .lyrics-box, .json-box {
+      background: #242a31;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid #38424d;
+    }
+
+    .lyrics-input {
+      width: 100%;
+      background: #11161b;
+      color: white;
+    }
+
+    .json-output {
+      width: 100%;
+      min-height: 130px;
+      background: #11161b;
+      color: #d7f7d7;
+      border: 1px solid #2c3945;
+      border-radius: 10px;
+      padding: 10px;
+      resize: vertical;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .piano-wrap {
+      background: #242a31;
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid #38424d;
+      overflow-x: auto;
+    }
+
+    .piano {
+      position: relative;
+      height: 180px;
+      min-width: 980px;
+      user-select: none;
+    }
+
+    .white-key {
+      position: absolute;
+      width: 70px;
+      height: 180px;
+      background: linear-gradient(to bottom, #ffffff, #dfdfdf);
+      border: 1px solid #444;
+      border-radius: 0 0 8px 8px;
+      cursor: pointer;
+    }
+
+    .white-key.active-key {
+      background: linear-gradient(to bottom, #ffe48a, #d9a300);
+    }
+
+    .black-key {
+      position: absolute;
+      width: 42px;
+      height: 105px;
+      background: linear-gradient(to bottom, #1a1a1a, #000);
+      border: 1px solid #333;
+      border-radius: 0 0 6px 6px;
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    .black-key.active-key {
+      background: linear-gradient(to bottom, #ffca2f, #7d5b00);
+    }
+
+    .status {
+      padding: 10px 12px;
+      background: #242a31;
+      border: 1px solid #38424d;
+      border-radius: 12px;
+      color: #dcdcdc;
+      font-size: 14px;
+    }
+
+    .small {
+      font-size: 12px;
+      opacity: .85;
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        gap: 8px;
+      }
+      button, select, input[type="text"] {
+        font-size: 13px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="group">
+      <button id="modeSelectBtn" class="active">Seç</button>
+      <button id="modeAddBtn">Nota Ekle</button>
+      <button id="modeDeleteBtn">Sil</button>
+    </div>
+
+    <div class="group">
+      <span>Süre</span>
+      <button class="durBtn" data-dur="0.5">Sekizlik</button>
+      <button class="durBtn active" data-dur="1">Çeyrek</button>
+      <button class="durBtn" data-dur="2">Yarım</button>
+    </div>
+
+    <div class="group">
+      <button id="playBtn">▶ Oynat</button>
+      <button id="stopBtn">■ Durdur</button>
+      <button id="clearBtn">Temizle</button>
+    </div>
+
+    <div class="group">
+      <label for="tempoRange">Tempo</label>
+      <input id="tempoRange" type="range" min="60" max="180" value="120" />
+      <span id="tempoLabel">120</span>
+    </div>
+
+    <div class="group">
+      <button id="exportBtn">JSON Dışa Aktar</button>
+      <button id="importBtn">JSON İçe Aktar</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="staff-wrap">
+      <svg id="staffSvg" width="1600" height="360" viewBox="0 0 1600 360"></svg>
+    </div>
+
+    <div class="status" id="statusBox">
+      Hazır. Mod: <strong>Seç</strong>
+    </div>
+
+    <div class="bottom-panel">
+      <div class="lyrics-box">
+        <div style="margin-bottom:8px;"><strong>Seçili Nota Hece Alanı</strong></div>
+        <input id="syllableInput" class="lyrics-input" type="text" placeholder="Seçili notaya hece yaz..." />
+        <div class="small" style="margin-top:8px;">
+          Şimdilik her notaya tek hece giriliyor. Sonra bunu Vocaly hece sistemine bağlarız.
+        </div>
+      </div>
+
+      <div class="piano-wrap">
+        <div style="margin-bottom:8px;"><strong>Piyano ile Nota Giriş</strong></div>
+        <div class="piano" id="piano"></div>
+      </div>
+
+      <div class="json-box">
+        <div style="margin-bottom:8px;"><strong>JSON Çıktısı</strong></div>
+        <textarea id="jsonOutput" class="json-output" placeholder="JSON burada görünecek..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    const state = {
+      mode: "select",
+      selectedDuration: 1,
+      tempo: 120,
+      notes: [],
+      selectedNoteId: null,
+      playTimers: [],
+      isPlaying: false
+    };
+
+    const svg = document.getElementById("staffSvg");
+    const statusBox = document.getElementById("statusBox");
+    const syllableInput = document.getElementById("syllableInput");
+    const jsonOutput = document.getElementById("jsonOutput");
+
+    const modeSelectBtn = document.getElementById("modeSelectBtn");
+    const modeAddBtn = document.getElementById("modeAddBtn");
+    const modeDeleteBtn = document.getElementById("modeDeleteBtn");
+    const durBtns = [...document.querySelectorAll(".durBtn")];
+    const tempoRange = document.getElementById("tempoRange");
+    const tempoLabel = document.getElementById("tempoLabel");
+
+    const noteSpacing = 70;
+    const startX = 140;
+    const staffTop = 110;
+    const lineGap = 16;
+
+    const pitchMap = [
+      { name: "C6", y: staffTop - 56, midi: 84 },
+      { name: "B5", y: staffTop - 48, midi: 83 },
+      { name: "A5", y: staffTop - 40, midi: 81 },
+      { name: "G5", y: staffTop - 32, midi: 79 },
+      { name: "F5", y: staffTop - 24, midi: 77 },
+      { name: "E5", y: staffTop - 16, midi: 76 },
+      { name: "D5", y: staffTop - 8, midi: 74 },
+      { name: "C5", y: staffTop, midi: 72 },
+      { name: "B4", y: staffTop + 8, midi: 71 },
+      { name: "A4", y: staffTop + 16, midi: 69 },
+      { name: "G4", y: staffTop + 24, midi: 67 },
+      { name: "F4", y: staffTop + 32, midi: 65 },
+      { name: "E4", y: staffTop + 40, midi: 64 },
+      { name: "D4", y: staffTop + 48, midi: 62 },
+      { name: "C4", y: staffTop + 56, midi: 60 }
+    ];
+
+    const pianoNotes = [
+      "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4",
+      "C5","C#5","D5","D#5","E5","F5","F#5","G5","G#5","A5","A#5","B5"
+    ];
+
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    }
+
+    function midiToFreq(midi) {
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    function noteNameToMidi(noteName) {
+      const map = {
+        "C":0,"C#":1,"D":2,"D#":3,"E":4,"F":5,"F#":6,"G":7,"G#":8,"A":9,"A#":10,"B":11
+      };
+      const match = noteName.match(/^([A-G]#?)(\d)$/);
+      if (!match) return 60;
+      const [, base, oct] = match;
+      return (parseInt(oct, 10) + 1) * 12 + map[base];
+    }
+
+    function freqFromName(name) {
+      return midiToFreq(noteNameToMidi(name));
+    }
+
+    function getClosestPitch(y) {
+      let best = pitchMap[0];
+      let bestDist = Math.abs(y - best.y);
+      for (const p of pitchMap) {
+        const d = Math.abs(y - p.y);
+        if (d < bestDist) {
+          best = p;
+          bestDist = d;
+        }
+      }
+      return best;
+    }
+
+    function quarterSeconds() {
+      return 60 / state.tempo;
+    }
+
+    function noteDurationSeconds(durationUnits) {
+      return durationUnits * quarterSeconds();
+    }
+
+    function updateStatus() {
+      const modeText = state.mode === "select" ? "Seç" : state.mode === "add" ? "Nota Ekle" : "Sil";
+      statusBox.innerHTML = `Hazır. Mod: <strong>${modeText}</strong> | Nota sayısı: <strong>${state.notes.length}</strong>`;
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      modeSelectBtn.classList.toggle("active", mode === "select");
+      modeAddBtn.classList.toggle("active", mode === "add");
+      modeDeleteBtn.classList.toggle("active", mode === "delete");
+      updateStatus();
+    }
+
+    modeSelectBtn.onclick = () => setMode("select");
+    modeAddBtn.onclick = () => setMode("add");
+    modeDeleteBtn.onclick = () => setMode("delete");
+
+    durBtns.forEach(btn => {
+      btn.onclick = () => {
+        durBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.selectedDuration = Number(btn.dataset.dur);
+      };
+    });
+
+    tempoRange.addEventListener("input", () => {
+      state.tempo = Number(tempoRange.value);
+      tempoLabel.textContent = state.tempo;
+      refreshJSON();
+    });
+
+    function createSvgEl(tag, attrs = {}) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+      return el;
+    }
+
+    function drawStaffBase() {
+      svg.innerHTML = "";
+
+      for (let i = 0; i < 5; i++) {
+        const y = staffTop + i * lineGap;
+        svg.appendChild(createSvgEl("line", {
+          x1: 80, y1: y, x2: 1520, y2: y,
+          stroke: "#666", "stroke-width": 2
+        }));
+      }
+
+      const treble = createSvgEl("text", {
+        x: 95, y: staffTop + 42,
+        fill: "#111", "font-size": 58,
+        "font-family": "serif"
+      });
+      treble.textContent = "𝄞";
+      svg.appendChild(treble);
+
+      for (let i = 0; i < 18; i++) {
+        const x = startX + i * noteSpacing;
+        svg.appendChild(createSvgEl("line", {
+          x1: x, y1: 60, x2: x, y2: 300,
+          stroke: "rgba(0,0,0,.08)", "stroke-width": 1
+        }));
+      }
+
+      drawNotes();
+    }
+
+    function drawLedgerLine(x, y) {
+      const line = createSvgEl("line", {
+        x1: x - 16,
+        y1: y,
+        x2: x + 16,
+        y2: y,
+        stroke: "#111",
+        "stroke-width": 2
+      });
+      svg.appendChild(line);
+    }
+
+    function drawNotes() {
+      state.notes.forEach((note, index) => {
+        const x = startX + note.slot * noteSpacing;
+        const y = note.y;
+
+        if (y < staffTop) {
+          for (let ly = staffTop; ly >= y; ly -= lineGap) {
+            if (ly !== staffTop || y === ly) drawLedgerLine(x, ly);
+          }
+        }
+
+        if (y > staffTop + 4 * lineGap) {
+          for (let ly = staffTop + 4 * lineGap + lineGap; ly <= y; ly += lineGap) {
+            drawLedgerLine(x, ly);
+          }
+        }
+
+        const g = createSvgEl("g", { "data-id": note.id, style: "cursor:pointer;" });
+
+        const ellipse = createSvgEl("ellipse", {
+          cx: x,
+          cy: y,
+          rx: 12,
+          ry: 8,
+          fill: state.selectedNoteId === note.id ? "#d9a300" : "#111",
+          transform: `rotate(-20 ${x} ${y})`
+        });
+        g.appendChild(ellipse);
+
+        if (note.duration < 2) {
+          const stemX = x + 10;
+          const stem = createSvgEl("line", {
+            x1: stemX, y1: y,
+            x2: stemX, y2: y - 42,
+            stroke: "#111",
+            "stroke-width": 2
+          });
+          g.appendChild(stem);
+
+          if (note.duration === 0.5) {
+            const flag = createSvgEl("path", {
+              d: `M ${stemX} ${y - 42} Q ${stemX + 14} ${y - 35} ${stemX + 2} ${y - 22}`,
+              stroke: "#111",
+              "stroke-width": 2,
+              fill: "none"
+            });
+            g.appendChild(flag);
+          }
+        } else {
+          ellipse.setAttribute("fill", state.selectedNoteId === note.id ? "#d9a300" : "#fff");
+          ellipse.setAttribute("stroke", "#111");
+          ellipse.setAttribute("stroke-width", "2");
+        }
+
+        const label = createSvgEl("text", {
+          x: x - 12,
+          y: y + 32,
+          fill: "#222",
+          "font-size": 11
+        });
+        label.textContent = note.syllable || "";
+        g.appendChild(label);
+
+        g.addEventListener("click", (e) => {
+          e.stopPropagation();
+          handleNoteClick(note.id);
+        });
+
+        svg.appendChild(g);
+
+        if (state.selectedNoteId === note.id) {
+          const box = createSvgEl("rect", {
+            x: x - 18,
+            y: y - 18,
+            width: 36,
+            height: 36,
+            rx: 8,
+            fill: "none",
+            stroke: "#d9a300",
+            "stroke-width": 2,
+            "stroke-dasharray": "4 3"
+          });
+          svg.appendChild(box);
+        }
+      });
+    }
+
+    function handleNoteClick(id) {
+      if (state.mode === "delete") {
+        state.notes = state.notes.filter(n => n.id !== id);
+        if (state.selectedNoteId === id) {
+          state.selectedNoteId = null;
+          syllableInput.value = "";
+        }
+      } else {
+        state.selectedNoteId = id;
+        const note = state.notes.find(n => n.id === id);
+        syllableInput.value = note ? note.syllable || "" : "";
+      }
+      drawStaffBase();
+      refreshJSON();
+      updateStatus();
+    }
+
+    function getSlotFromX(x) {
+      return Math.max(0, Math.round((x - startX) / noteSpacing));
+    }
+
+    function addNoteAt(slot, pitchObj, duration = state.selectedDuration) {
+      const id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
+      const note = {
+        id,
+        slot,
+        pitch: pitchObj.name,
+        midi: pitchObj.midi,
+        y: pitchObj.y,
+        duration,
+        syllable: ""
+      };
+      state.notes.push(note);
+      state.notes.sort((a, b) => a.slot - b.slot || a.y - b.y);
+      state.selectedNoteId = id;
+      syllableInput.value = "";
+      drawStaffBase();
+      refreshJSON();
+      updateStatus();
+    }
+
+    svg.addEventListener("click", (e) => {
+      if (state.mode !== "add") return;
+      const pt = svg.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const loc = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+      const slot = getSlotFromX(loc.x);
+      const pitch = getClosestPitch(loc.y);
+      addNoteAt(slot, pitch);
+    });
+
+    syllableInput.addEventListener("input", () => {
+      const note = state.notes.find(n => n.id === state.selectedNoteId);
+      if (!note) return;
+      note.syllable = syllableInput.value;
+      drawStaffBase();
+      refreshJSON();
+    });
+
+    function buildJSONData() {
+      const sorted = [...state.notes].sort((a, b) => a.slot - b.slot);
+      let currentBeat = 0;
+
+      return sorted.map(note => {
+        const start = currentBeat * quarterSeconds();
+        const end = (currentBeat + note.duration) * quarterSeconds();
+        const obj = {
+          pitch: note.pitch,
+          midi: note.midi,
+          start: Number(start.toFixed(3)),
+          end: Number(end.toFixed(3)),
+          duration: note.duration,
+          syllable: note.syllable || ""
+        };
+        currentBeat += note.duration;
+        return obj;
+      });
+    }
+
+    function refreshJSON() {
+      jsonOutput.value = JSON.stringify({
+        tempo: state.tempo,
+        notes: buildJSONData()
+      }, null, 2);
+    }
+
+    function playTone(freq, startTime, durationSec) {
+      ensureAudio();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq, startTime);
+
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.25, startTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSec);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + durationSec + 0.03);
+    }
+
+    function highlightKey(noteName, on) {
+      document.querySelectorAll("[data-note]").forEach(el => {
+        if (el.dataset.note === noteName) {
+          el.classList.toggle("active-key", on);
+        }
+      });
+    }
+
+    function clearPlayTimers() {
+      state.playTimers.forEach(t => clearTimeout(t));
+      state.playTimers = [];
+    }
+
+    function playSequence() {
+      if (!state.notes.length) return;
+      stopSequence();
+      ensureAudio();
+      state.isPlaying = true;
+
+      const data = buildJSONData();
+      const now = audioCtx.currentTime + 0.05;
+
+      data.forEach(item => {
+        const dur = Math.max(0.12, item.end - item.start);
+        playTone(freqFromName(item.pitch), now + item.start, dur * 0.95);
+
+        const onTimer = setTimeout(() => highlightKey(item.pitch, true), item.start * 1000);
+        const offTimer = setTimeout(() => highlightKey(item.pitch, false), item.end * 1000);
+        state.playTimers.push(onTimer, offTimer);
+      });
+
+      const last = data[data.length - 1];
+      const endTimer = setTimeout(() => {
+        state.isPlaying = false;
+      }, last.end * 1000 + 200);
+      state.playTimers.push(endTimer);
+    }
+
+    function stopSequence() {
+      clearPlayTimers();
+      state.isPlaying = false;
+      document.querySelectorAll(".active-key").forEach(el => el.classList.remove("active-key"));
+      if (audioCtx && audioCtx.state !== "closed") {
+        try {
+          audioCtx.close();
+        } catch(e) {}
+        audioCtx = null;
+      }
+    }
+
+    document.getElementById("playBtn").onclick = playSequence;
+    document.getElementById("stopBtn").onclick = stopSequence;
+    document.getElementById("clearBtn").onclick = () => {
+      stopSequence();
+      state.notes = [];
+      state.selectedNoteId = null;
+      syllableInput.value = "";
+      drawStaffBase();
+      refreshJSON();
+      updateStatus();
+    };
+
+    document.getElementById("exportBtn").onclick = () => {
+      refreshJSON();
+      const blob = new Blob([jsonOutput.value], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "vocaly-defter.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    document.getElementById("importBtn").onclick = () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json,application/json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(reader.result);
+            if (!parsed.notes || !Array.isArray(parsed.notes)) {
+              alert("Geçerli bir Vocaly Defter JSON dosyası değil.");
+              return;
+            }
+
+            state.tempo = parsed.tempo || 120;
+            tempoRange.value = state.tempo;
+            tempoLabel.textContent = state.tempo;
+
+            let runningBeat = 0;
+            state.notes = parsed.notes.map(item => {
+              const pitchObj = pitchMap.find(p => p.name === item.pitch) || pitchMap.find(p => p.name === "C4");
+              const duration = Number(item.duration || 1);
+              const slot = Math.round(runningBeat);
+              runningBeat += duration;
+
+              return {
+                id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+                slot,
+                pitch: item.pitch,
+                midi: item.midi || noteNameToMidi(item.pitch),
+                y: pitchObj.y,
+                duration,
+                syllable: item.syllable || ""
+              };
+            });
+
+            state.selectedNoteId = null;
+            syllableInput.value = "";
+            drawStaffBase();
+            refreshJSON();
+            updateStatus();
+          } catch (err) {
+            alert("JSON okunamadı.");
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    };
+
+    function createPiano() {
+      const piano = document.getElementById("piano");
+      piano.innerHTML = "";
+
+      const whiteOrder = ["C","D","E","F","G","A","B"];
+      const blackAfter = { "C":"C#", "D":"D#", "F":"F#", "G":"G#", "A":"A#" };
+
+      let whiteIndex = 0;
+      const octaves = [4,5];
+
+      octaves.forEach(oct => {
+        whiteOrder.forEach(base => {
+          const note = base + oct;
+          const white = document.createElement("div");
+          white.className = "white-key";
+          white.style.left = `${whiteIndex * 70}px`;
+          white.dataset.note = note;
+          white.title = note;
+          white.addEventListener("click", () => handlePianoInput(note));
+          piano.appendChild(white);
+
+          if (blackAfter[base]) {
+            const black = document.createElement("div");
+            black.className = "black-key";
+            black.style.left = `${whiteIndex * 70 + 49}px`;
+            black.dataset.note = blackAfter[base] + oct;
+            black.title = black.dataset.note;
+            black.addEventListener("click", (e) => {
+              e.stopPropagation();
+              handlePianoInput(black.dataset.note);
+            });
+            piano.appendChild(black);
+          }
+
+          whiteIndex++;
+        });
+      });
+
+      const lastC = document.createElement("div");
+      lastC.className = "white-key";
+      lastC.style.left = `${whiteIndex * 70}px`;
+      lastC.dataset.note = "C6";
+      lastC.title = "C6";
+      lastC.addEventListener("click", () => handlePianoInput("C6"));
+      piano.appendChild(lastC);
+    }
+
+    function handlePianoInput(noteName) {
+      ensureAudio();
+      const midi = noteNameToMidi(noteName);
+      const freq = midiToFreq(midi);
+      playTone(freq, audioCtx.currentTime, 0.45);
+
+      highlightKey(noteName, true);
+      setTimeout(() => highlightKey(noteName, false), 180);
+
+      const pitchObj = pitchMap.find(p => p.name === noteName);
+      if (!pitchObj) return;
+
+      if (state.mode === "delete") return;
+
+      if (state.mode === "select" && state.selectedNoteId) {
+        const selected = state.notes.find(n => n.id === state.selectedNoteId);
+        if (selected) {
+          selected.pitch = pitchObj.name;
+          selected.midi = pitchObj.midi;
+          selected.y = pitchObj.y;
+          drawStaffBase();
+          refreshJSON();
+          return;
+        }
+      }
+
+      const nextSlot = state.notes.length
+        ? Math.max(...state.notes.map(n => n.slot)) + 1
+        : 0;
+
+      addNoteAt(nextSlot, pitchObj);
+    }
+
+    drawStaffBase();
+    createPiano();
+    refreshJSON();
+    updateStatus();
+  </script>
+</body>
+        </html>
