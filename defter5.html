@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vocaly Defter v5</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#151b24;color:#f3f3f3}
+    .wrap{max-width:1120px;margin:0 auto;padding:12px}
+    .toolbar{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+    .card{background:#222b37;border:1px solid #314051;border-radius:18px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    button,select,input{font:inherit}
+    button{border:none;border-radius:14px;background:#3a4658;color:#fff;padding:11px 16px;font-size:15px;cursor:pointer}
+    button.active{background:#d3a100;color:#111;font-weight:700}
+    .tempo-box{display:flex;align-items:center;gap:14px;min-width:260px}
+    .tempo-box input[type="range"]{flex:1}
+    details.settings{margin-bottom:12px}
+    details.settings summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:18px;font-weight:700}
+    details.settings summary::-webkit-details-marker{display:none}
+    .arrow{transition:transform .2s ease}
+    details[open] .arrow{transform:rotate(180deg)}
+    .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+    .field{background:#1b2330;border:1px solid #314051;border-radius:14px;padding:12px}
+    .field label{display:block;margin-bottom:8px;font-size:14px;opacity:.92}
+    .field select,.field input[type="text"]{width:100%;border:none;border-radius:10px;padding:11px 12px;background:#38465a;color:#fff;font-size:15px}
+    .staff-shell{background:#cfcfcf;border-radius:24px;padding:14px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);overflow:auto;border:1px solid rgba(255,255,255,.2)}
+    svg{display:block;background:#d8d8d8;border-radius:18px;touch-action:none}
+    .status{margin-top:10px;background:#222b37;border:1px solid #314051;border-radius:14px;padding:12px 14px;color:#e7e7e7;line-height:1.45}
+    .status .warn{color:#ff7f7f;font-weight:700}
+    .status .ok{color:#87e08f;font-weight:700}
+    .bottom{margin-top:12px;display:grid;grid-template-columns:1fr;gap:12px}
+    .hint{font-size:13px;opacity:.85;margin-top:8px;line-height:1.45}
+    .piano-wrap{overflow:auto}
+    .piano{position:relative;height:170px;min-width:980px;user-select:none}
+    .white-key{position:absolute;width:68px;height:170px;background:linear-gradient(to bottom,#fff,#dfdfdf);border:1px solid #444;border-radius:0 0 8px 8px;cursor:pointer}
+    .black-key{position:absolute;width:40px;height:100px;background:linear-gradient(to bottom,#1d1d1d,#000);border:1px solid #333;border-radius:0 0 6px 6px;z-index:3;cursor:pointer}
+    .active-key{background:linear-gradient(to bottom,#ffd95a,#d3a100)!important}
+    @media (max-width:768px){.wrap{padding:10px}button{padding:11px 14px;font-size:15px}.tempo-box{min-width:unset;width:100%}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="card row">
+        <button id="modeSelectBtn" class="active">Seç</button>
+        <button id="modeAddBtn">Nota Ekle</button>
+        <button id="modeDeleteBtn">Sil</button>
+      </div>
+      <div class="card row">
+        <button id="playBtn">▶ Oynat</button>
+        <button id="stopBtn">■ Durdur</button>
+        <button id="clearBtn">Temizle</button>
+      </div>
+      <div class="card tempo-box">
+        <span style="font-size:18px;">Tempo</span>
+        <input id="tempoRange" type="range" min="60" max="180" value="120">
+        <span id="tempoLabel" style="font-size:18px;">120</span>
+      </div>
+    </div>
+
+    <details class="settings card" open>
+      <summary>
+        <span>Nota ve Ölçü Ayarları</span>
+        <span class="arrow">⌄</span>
+      </summary>
+      <div class="settings-grid">
+        <div class="field">
+          <label for="durationSelect">Nota Değeri</label>
+          <select id="durationSelect">
+            <option value="8">Birlik</option>
+            <option value="4">İkilik</option>
+            <option value="2" selected>Dörtlük</option>
+            <option value="1">Sekizlik</option>
+            <option value="0.5">On Altılık</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="meterPresetSelect">Ölçü Türü</label>
+          <select id="meterPresetSelect">
+            <option value="2/4">2 dörtlük</option>
+            <option value="3/4">3 dörtlük</option>
+            <option value="4/4" selected>4 dörtlük</option>
+            <option value="5/8">5 sekizlik</option>
+            <option value="6/8">6 sekizlik</option>
+            <option value="7/8">7 sekizlik</option>
+            <option value="9/8">9 sekizlik</option>
+            <option value="12/8">12 sekizlik</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="measureCountSelect">Gösterilen Ölçü Sayısı</label>
+          <select id="measureCountSelect">
+            <option value="2">2 ölçü</option>
+            <option value="4" selected>4 ölçü</option>
+            <option value="6">6 ölçü</option>
+            <option value="8">8 ölçü</option>
+            <option value="12">12 ölçü</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="syllableInput">Seçili Nota Hece</label>
+          <input id="syllableInput" type="text" placeholder="Seçili notaya hece yaz...">
+        </div>
+      </div>
+      <div class="hint">
+        Porteye tıklayarak nota ekleyebilirsin. Seç modunda notayı sürükleyerek taşıyabilirsin.
+        Ölçü doluysa yeni nota eklenmez. Eksik ölçüler kırmızı uyarı verir.
+      </div>
+    </details>
+
+    <div class="staff-shell">
+      <svg id="staffSvg" width="1040" height="360" viewBox="0 0 1040 360"></svg>
+    </div>
+
+    <div class="status" id="statusBox">Hazır.</div>
+
+    <div class="bottom">
+      <div class="card piano-wrap">
+        <div style="margin-bottom:8px;font-weight:700;">Piyano ile Nota Giriş</div>
+        <div class="piano" id="piano"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx = null;
+
+  const svg = document.getElementById("staffSvg");
+  const statusBox = document.getElementById("statusBox");
+  const tempoRange = document.getElementById("tempoRange");
+  const tempoLabel = document.getElementById("tempoLabel");
+  const durationSelect = document.getElementById("durationSelect");
+  const meterPresetSelect = document.getElementById("meterPresetSelect");
+  const measureCountSelect = document.getElementById("measureCountSelect");
+  const syllableInput = document.getElementById("syllableInput");
+
+  const state = {
+    mode: "select",
+    tempo: 120,
+    selectedDuration: 2,
+    meterTop: 4,
+    meterBottom: 4,
+    measureCount: 4,
+    notes: [],
+    selectedNoteId: null,
+    playTimers: [],
+    dragId: null,
+    lastError: "",
+  };
+
+  const staffTop = 120;
+  const lineGap = 16;
+  const startX = 120;
+  const unitWidth = 34; // smallest rhythmic unit = sixteenth
+  const topLineY = staffTop;
+  const bottomLineY = staffTop + lineGap * 4;
+
+  const pitchMap = [
+    { name:"C6", midi:84, y:staffTop - 72 },
+    { name:"B5", midi:83, y:staffTop - 64 },
+    { name:"A5", midi:81, y:staffTop - 56 },
+    { name:"G5", midi:79, y:staffTop - 48 },
+    { name:"F5", midi:77, y:staffTop - 40 },
+    { name:"E5", midi:76, y:staffTop - 32 },
+    { name:"D5", midi:74, y:staffTop - 24 },
+    { name:"C5", midi:72, y:staffTop - 16 },
+    { name:"B4", midi:71, y:staffTop - 8  },
+    { name:"A4", midi:69, y:staffTop     },
+    { name:"G4", midi:67, y:staffTop + 8  },
+    { name:"F4", midi:65, y:staffTop + 16 },
+    { name:"E4", midi:64, y:staffTop + 24 },
+    { name:"D4", midi:62, y:staffTop + 32 },
+    { name:"C4", midi:60, y:staffTop + 40 },
+    { name:"B3", midi:59, y:staffTop + 48 },
+    { name:"A3", midi:57, y:staffTop + 56 },
+    { name:"G3", midi:55, y:staffTop + 64 },
+    { name:"F3", midi:53, y:staffTop + 72 },
+    { name:"E3", midi:52, y:staffTop + 80 }
+  ];
+
+  function uuid(){ return crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()); }
+  function ensureAudio(){ if(!audioCtx) audioCtx = new AudioCtx(); if(audioCtx.state === "suspended") audioCtx.resume(); }
+  function midiToFreq(midi){ return 440 * Math.pow(2, (midi - 69) / 12); }
+  function noteNameToMidi(noteName){
+    const map = {C:0,"C#":1,D:2,"D#":3,E:4,F:5,"F#":6,G:7,"G#":8,A:9,"A#":10,B:11};
+    const m = noteName.match(/^([A-G]#?)(\d)$/);
+    if(!m) return 60;
+    const [, base, oct] = m;
+    return (parseInt(oct,10)+1)*12 + map[base];
+  }
+  function freqFromName(name){ return midiToFreq(noteNameToMidi(name)); }
+  function getClosestPitch(y){
+    let best = pitchMap[0], bestDist = Math.abs(y - best.y);
+    for(const p of pitchMap){
+      const d = Math.abs(y - p.y);
+      if(d < bestDist){ best = p; bestDist = d; }
+    }
+    return best;
+  }
+  function getSelectedNote(){ return state.notes.find(n => n.id === state.selectedNoteId) || null; }
+  function unitsPerMeasure(){ return Math.round(state.meterTop * (16 / state.meterBottom)); }
+  function totalUnits(){ return state.measureCount * unitsPerMeasure(); }
+
+  function measureUsage(index){
+    const start = index * unitsPerMeasure();
+    const end = start + unitsPerMeasure();
+    let sum = 0;
+    for(const n of state.notes){ if(n.startUnit >= start && n.startUnit < end) sum += n.duration; }
+    return sum;
+  }
+
+  function analyzeMeasures(){
+    const list = [];
+    const capacity = unitsPerMeasure();
+    for(let i=0;i<state.measureCount;i++){
+      const used = measureUsage(i);
+      if(used > capacity) list.push({measure:i+1, type:"over"});
+      else if(used > 0 && used < capacity) list.push({measure:i+1, type:"under"});
+      else if(used === capacity) list.push({measure:i+1, type:"ok"});
+    }
+    return list;
+  }
+
+  function canAddToMeasure(startUnit, duration, ignoreId=null){
+    const capacity = unitsPerMeasure();
+    const measureIndex = Math.floor(startUnit / unitsPerMeasure());
+    if(measureIndex < 0 || measureIndex >= state.measureCount) return false;
+    const start = measureIndex * unitsPerMeasure();
+    const end = start + unitsPerMeasure();
+    let sum = 0;
+    for(const n of state.notes){
+      if(ignoreId && n.id === ignoreId) continue;
+      if(n.startUnit >= start && n.startUnit < end) sum += n.duration;
+    }
+    return (sum + duration) <= capacity;
+  }
+
+  function trimNotesOutside(){
+    const maxUnits = totalUnits();
+    state.notes = state.notes.filter(n => n.startUnit < maxUnits);
+    if(!getSelectedNote()){ state.selectedNoteId = null; syllableInput.value = ""; }
+  }
+
+  function updateStatus(){
+    const modeText = state.mode === "select" ? "Seç" : state.mode === "add" ? "Nota Ekle" : "Sil";
+    const issues = analyzeMeasures();
+    let issueText = issues.map(item => {
+      if(item.type === "over") return `<span class="warn">${item.measure}. ölçü taşmış.</span>`;
+      if(item.type === "under") return `<span class="warn">${item.measure}. ölçü eksik kalmış.</span>`;
+      return `<span class="ok">${item.measure}. ölçü tamam.</span>`;
+    }).join(" ");
+    if(!issueText) issueText = `<span class="ok">Ölçüler kontrol edildi.</span>`;
+    if(state.lastError) issueText = `<span class="warn">${state.lastError}</span> ` + issueText;
+    statusBox.innerHTML = `Mod: <strong>${modeText}</strong> | Nota sayısı: <strong>${state.notes.length}</strong> | Ölçü: <strong>${state.meterTop}/${state.meterBottom}</strong> | Gösterilen ölçü: <strong>${state.measureCount}</strong><br>${issueText}`;
+  }
+
+  function setMode(mode){
+    state.mode = mode;
+    document.getElementById("modeSelectBtn").classList.toggle("active", mode === "select");
+    document.getElementById("modeAddBtn").classList.toggle("active", mode === "add");
+    document.getElementById("modeDeleteBtn").classList.toggle("active", mode === "delete");
+    updateStatus();
+  }
+
+  document.getElementById("modeSelectBtn").onclick = () => setMode("select");
+  document.getElementById("modeAddBtn").onclick = () => setMode("add");
+  document.getElementById("modeDeleteBtn").onclick = () => setMode("delete");
+
+  tempoRange.addEventListener("input", () => { state.tempo = Number(tempoRange.value); tempoLabel.textContent = state.tempo; });
+
+  durationSelect.addEventListener("change", () => {
+    state.selectedDuration = Number(durationSelect.value);
+    const note = getSelectedNote();
+    if(note){
+      const original = note.duration;
+      note.duration = state.selectedDuration;
+      if(!canAddToMeasure(note.startUnit, note.duration, note.id)){
+        note.duration = original;
+        state.lastError = "Bu nota bu ölçüye sığmıyor.";
+      } else state.lastError = "";
+      drawAll();
+    }
+  });
+
+  meterPresetSelect.addEventListener("change", () => {
+    const [top, bottom] = meterPresetSelect.value.split("/").map(Number);
+    state.meterTop = top;
+    state.meterBottom = bottom;
+    trimNotesOutside();
+    drawAll();
+  });
+
+  measureCountSelect.addEventListener("change", () => { state.measureCount = Number(measureCountSelect.value); trimNotesOutside(); drawAll(); });
+  syllableInput.addEventListener("input", () => { const note = getSelectedNote(); if(!note) return; note.syllable = syllableInput.value; drawAll(); });
+
+  document.getElementById("clearBtn").onclick = () => { stopSequence(); state.notes = []; state.selectedNoteId = null; state.lastError = ""; syllableInput.value = ""; drawAll(); };
+  document.getElementById("playBtn").onclick = playSequence;
+  document.getElementById("stopBtn").onclick = stopSequence;
+
+  function createSvgEl(tag, attrs={}){ const el = document.createElementNS("http://www.w3.org/2000/svg", tag); for(const [k,v] of Object.entries(attrs)) el.setAttribute(k, v); return el; }
+  function drawLedgerLine(x, y){ svg.appendChild(createSvgEl("line", {x1:x-16, y1:y, x2:x+16, y2:y, stroke:"#111", "stroke-width":2})); }
+  function noteXFromUnit(unit){ return startX + unit * unitWidth; }
+  function noteCenterX(note){ return noteXFromUnit(note.startUnit) + 18; }
+
+  function drawStaffBase(){
+    svg.innerHTML = "";
+    const contentWidth = noteXFromUnit(totalUnits()) + 70;
+    const w = Math.max(1040, contentWidth);
+    svg.setAttribute("width", w);
+    svg.setAttribute("viewBox", `0 0 ${w} 360`);
+
+    for(let i=0;i<5;i++){
+      const y = staffTop + i*lineGap;
+      svg.appendChild(createSvgEl("line", {x1:70, y1:y, x2:contentWidth - 20, y2:y, stroke:"#666", "stroke-width":2}));
+    }
+
+    const treble = createSvgEl("text", {x:78, y:staffTop + 54, fill:"#111", "font-size":74, "font-family":"serif"});
+    treble.textContent = "𝄞";
+    svg.appendChild(treble);
+
+    const meterTopText = createSvgEl("text", {x:108, y:staffTop + 18, fill:"#111", "font-size":24, "font-weight":"700"});
+    meterTopText.textContent = state.meterTop;
+    svg.appendChild(meterTopText);
+
+    const meterBottomText = createSvgEl("text", {x:108, y:staffTop + 48, fill:"#111", "font-size":24, "font-weight":"700"});
+    meterBottomText.textContent = state.meterBottom;
+    svg.appendChild(meterBottomText);
+
+    for(let u=1; u<=totalUnits(); u++){
+      const x = noteXFromUnit(u);
+      const isMeasure = u % unitsPerMeasure() === 0;
+      if(isMeasure){
+        svg.appendChild(createSvgEl("line", {x1:x, y1:staffTop-8, x2:x, y2:bottomLineY+8, stroke:"#565656", "stroke-width":2.4}));
+      }else{
+        svg.appendChild(createSvgEl("line", {x1:x, y1:staffTop-8, x2:x, y2:bottomLineY+100, stroke:"rgba(0,0,0,.06)", "stroke-width":1}));
+      }
+    }
+
+    for(let m=0; m<state.measureCount; m++){
+      const x = noteXFromUnit(m * unitsPerMeasure()) + 10;
+      const label = createSvgEl("text", {x:x, y:staffTop - 24, fill:"#555", "font-size":13, "font-weight":"700"});
+      label.textContent = (m+1) + ". ölçü";
+      svg.appendChild(label);
+
+      const used = measureUsage(m);
+      const capacity = unitsPerMeasure();
+      if(used > 0 && used !== capacity){
+        const color = used > capacity ? "#d64f4f" : "#bb4d4d";
+        svg.appendChild(createSvgEl("rect", {
+          x:noteXFromUnit(m * unitsPerMeasure()) + 2, y:bottomLineY + 22,
+          width:Math.max(30, unitsPerMeasure()*unitWidth - 6), height:14, rx:7, fill:color, opacity:"0.75"
+        }));
+      }
+    }
+  }
+
+  function drawSingleNote(note){
+    const x = noteCenterX(note), y = note.y, selected = state.selectedNoteId === note.id;
+    if(y < topLineY){ for(let ly = topLineY; ly >= y; ly -= lineGap){ if(ly !== topLineY || y === ly) drawLedgerLine(x, ly); } }
+    if(y > bottomLineY){ for(let ly = bottomLineY + lineGap; ly <= y; ly += lineGap){ drawLedgerLine(x, ly); } }
+
+    const g = createSvgEl("g", {style:"cursor:pointer;", "data-note-id": note.id});
+    const isWhole = note.duration === 8, isHalf = note.duration === 4, isEighth = note.duration === 1, isSixteenth = note.duration === 0.5;
+    const headFill = isHalf || isWhole ? (selected ? "#ffe08a" : "#f5f5f5") : (selected ? "#d3a100" : "#111");
+
+    g.appendChild(createSvgEl("ellipse", {
+      cx:x, cy:y, rx:12, ry:8, fill: headFill, stroke: "#111", "stroke-width": 2.2, transform:`rotate(-20 ${x} ${y})`
+    }));
+
+    if(!isWhole){
+      const stemUp = y > staffTop + lineGap;
+      const stemX = stemUp ? x + 10 : x - 10;
+      const stemY2 = stemUp ? y - 42 : y + 42;
+      g.appendChild(createSvgEl("line", {x1:stemX, y1:y, x2:stemX, y2:stemY2, stroke:"#111", "stroke-width":2}));
+
+      if(isEighth || isSixteenth){
+        g.appendChild(createSvgEl("path", {
+          d: stemUp ? `M ${stemX} ${stemY2} Q ${stemX+14} ${stemY2+8} ${stemX+2} ${stemY2+22}` : `M ${stemX} ${stemY2} Q ${stemX-14} ${stemY2-8} ${stemX-2} ${stemY2-22}`,
+          stroke:"#111", "stroke-width":2, fill:"none"
+        }));
+      }
+      if(isSixteenth){
+        g.appendChild(createSvgEl("path", {
+          d: stemUp ? `M ${stemX} ${stemY2+10} Q ${stemX+14} ${stemY2+18} ${stemX+2} ${stemY2+32}` : `M ${stemX} ${stemY2-10} Q ${stemX-14} ${stemY2-18} ${stemX-2} ${stemY2-32}`,
+          stroke:"#111", "stroke-width":2, fill:"none"
+        }));
+      }
+    }
+
+    if(selected){
+      g.appendChild(createSvgEl("rect", {x:x-18, y:y-18, width:36, height:36, rx:8, fill:"none", stroke:"#d3a100", "stroke-width":2, "stroke-dasharray":"5 4"}));
+    }
+
+    if(note.syllable){
+      const txt = createSvgEl("text", {x:x - 10, y:bottomLineY + 60, fill:"#222", "font-size":13});
+      txt.textContent = note.syllable;
+      g.appendChild(txt);
+    }
+
+    g.addEventListener("pointerdown", (e) => {
+      e.stopPropagation();
+      if(state.mode === "delete"){
+        state.notes = state.notes.filter(n => n.id !== note.id);
+        if(state.selectedNoteId === note.id){ state.selectedNoteId = null; syllableInput.value = ""; }
+        state.lastError = ""; drawAll(); return;
+      }
+      state.selectedNoteId = note.id;
+      syllableInput.value = note.syllable || "";
+      durationSelect.value = String(note.duration);
+      state.selectedDuration = note.duration;
+      if(state.mode === "select"){ state.dragId = note.id; try{ g.setPointerCapture(e.pointerId); }catch(err){} }
+      drawAll();
+    });
+
+    g.addEventListener("pointermove", (e) => {
+      if(state.mode !== "select" || state.dragId !== note.id) return;
+      const p = getSvgPoint(e), unit = clampUnit(snapUnitFromX(p.x)), pitch = getClosestPitch(p.y);
+      const original = {startUnit: note.startUnit, pitch: note.pitch, midi: note.midi, y: note.y};
+      note.startUnit = unit; note.pitch = pitch.name; note.midi = pitch.midi; note.y = pitch.y;
+      if(!canAddToMeasure(note.startUnit, note.duration, note.id)){ Object.assign(note, original); state.lastError = "Bu ölçü tamamlanmıştır."; }
+      else state.lastError = "";
+      drawAll();
+    });
+
+    g.addEventListener("pointerup", () => { if(state.dragId === note.id) state.dragId = null; });
+    svg.appendChild(g);
+  }
+
+  function drawBeams(){
+    const notes = [...state.notes].sort((a,b)=>a.startUnit-b.startUnit || a.y-b.y);
+    const groups = [];
+    let current = [];
+    const sameMeasure = (a,b) => Math.floor(a.startUnit/unitsPerMeasure()) === Math.floor(b.startUnit/unitsPerMeasure());
+
+    for(const n of notes){
+      const beamable = (n.duration === 1 || n.duration === 0.5);
+      if(!beamable){
+        if(current.length >= 2) groups.push(current);
+        current = [];
+        continue;
+      }
+      if(current.length === 0){
+        current = [n];
+      } else {
+        const prev = current[current.length-1];
+        if(sameMeasure(prev,n) && n.startUnit === prev.startUnit + prev.duration){
+          current.push(n);
+        } else {
+          if(current.length >= 2) groups.push(current);
+          current = [n];
+        }
+      }
+    }
+    if(current.length >= 2) groups.push(current);
+
+    groups.forEach(group => {
+      const first = group[0], last = group[group.length-1];
+      const stemUp = first.y > staffTop + lineGap;
+      const y1 = stemUp ? first.y - 42 : first.y + 42;
+      const y2 = stemUp ? last.y - 42 : last.y + 42;
+      const x1 = stemUp ? noteCenterX(first)+10 : noteCenterX(first)-10;
+      const x2 = stemUp ? noteCenterX(last)+10 : noteCenterX(last)-10;
+      svg.appendChild(createSvgEl("line", {
+        x1, y1, x2, y2, stroke:"#111", "stroke-width":5, "stroke-linecap":"round"
+      }));
+      const hasSixteenth = group.some(n => n.duration === 0.5);
+      if(hasSixteenth){
+        svg.appendChild(createSvgEl("line", {
+          x1, y1: y1 + (stemUp ? 10 : -10), x2, y2: y2 + (stemUp ? 10 : -10),
+          stroke:"#111", "stroke-width":5, "stroke-linecap":"round"
+        }));
+      }
+    });
+  }
+
+  function drawNotes(){
+    [...state.notes].sort((a,b)=>a.startUnit-b.startUnit || a.y-b.y).forEach(drawSingleNote);
+    drawBeams();
+  }
+
+  function drawAll(){ drawStaffBase(); drawNotes(); updateStatus(); }
+
+  function getSvgPoint(evt){ const pt = svg.createSVGPoint(); pt.x = evt.clientX; pt.y = evt.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+  function snapUnitFromX(x){ return Math.round((x - startX) / unitWidth); }
+  function clampUnit(u){ return Math.max(0, Math.min(totalUnits()-1, u)); }
+
+  function addNoteAt(startUnit, pitchObj){
+    if(startUnit >= totalUnits()) return;
+    const existing = state.notes.find(n => n.startUnit === startUnit);
+    if(existing){
+      const original = {...existing};
+      existing.pitch = pitchObj.name; existing.midi = pitchObj.midi; existing.y = pitchObj.y; existing.duration = state.selectedDuration;
+      if(!canAddToMeasure(existing.startUnit, existing.duration, existing.id)){ Object.assign(existing, original); state.lastError = "Bu ölçü tamamlanmıştır."; }
+      else { state.lastError = ""; state.selectedNoteId = existing.id; syllableInput.value = existing.syllable || ""; durationSelect.value = String(existing.duration); }
+      drawAll(); return;
+    }
+
+    if(!canAddToMeasure(startUnit, state.selectedDuration)){ state.lastError = "Bu ölçü tamamlanmıştır."; drawAll(); return; }
+
+    const newNote = {id: uuid(), startUnit, duration: state.selectedDuration, pitch: pitchObj.name, midi: pitchObj.midi, y: pitchObj.y, syllable: ""};
+    state.notes.push(newNote); state.selectedNoteId = newNote.id; syllableInput.value = ""; durationSelect.value = String(newNote.duration); state.lastError = ""; drawAll();
+  }
+
+  svg.addEventListener("click", (e) => {
+    if(state.mode !== "add") return;
+    const p = getSvgPoint(e), unit = clampUnit(snapUnitFromX(p.x)), pitch = getClosestPitch(p.y);
+    addNoteAt(unit, pitch);
+  });
+
+  function buildSequenceData(){
+    return [...state.notes].sort((a,b)=>a.startUnit-b.startUnit).map(n => {
+      const secPerQuarter = 60 / state.tempo;
+      return { pitch:n.pitch, startSec:(n.startUnit / 4) * secPerQuarter, durSec:(n.duration / 4) * secPerQuarter };
+    });
+  }
+
+  function playTone(freq, startTime, durationSec){
+    ensureAudio();
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = "triangle"; osc.frequency.setValueAtTime(freq, startTime);
+    gain.gain.setValueAtTime(0.0001, startTime);
+    gain.gain.exponentialRampToValueAtTime(0.24, startTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSec);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(startTime); osc.stop(startTime + durationSec + 0.03);
+  }
+
+  function highlightKey(noteName, on){ document.querySelectorAll("[data-note]").forEach(el => { if(el.dataset.note === noteName) el.classList.toggle("active-key", on); }); }
+  function clearTimers(){ state.playTimers.forEach(t => clearTimeout(t)); state.playTimers = []; }
+
+  function playSequence(){
+    if(!state.notes.length) return;
+    stopSequence(); ensureAudio();
+    const seq = buildSequenceData(), now = audioCtx.currentTime + 0.05;
+    seq.forEach(item => {
+      playTone(freqFromName(item.pitch), now + item.startSec, Math.max(0.08, item.durSec * 0.92));
+      state.playTimers.push(setTimeout(() => highlightKey(item.pitch, true), item.startSec * 1000));
+      state.playTimers.push(setTimeout(() => highlightKey(item.pitch, false), (item.startSec + item.durSec) * 1000));
+    });
+  }
+
+  function stopSequence(){
+    clearTimers(); document.querySelectorAll(".active-key").forEach(el => el.classList.remove("active-key"));
+    if(audioCtx && audioCtx.state !== "closed"){ try { audioCtx.close(); } catch(e){} audioCtx = null; }
+  }
+
+  function createPiano(){
+    const piano = document.getElementById("piano");
+    piano.innerHTML = "";
+    const whiteOrder = ["C","D","E","F","G","A","B"];
+    const blackAfter = { C:"C#", D:"D#", F:"F#", G:"G#", A:"A#" };
+    let whiteIndex = 0;
+    [4,5].forEach(oct => {
+      whiteOrder.forEach(base => {
+        const note = base + oct;
+        const white = document.createElement("div");
+        white.className = "white-key";
+        white.style.left = `${whiteIndex * 68}px`;
+        white.dataset.note = note;
+        white.title = note;
+        white.onclick = () => handlePianoInput(note);
+        piano.appendChild(white);
+
+        if(blackAfter[base]){
+          const black = document.createElement("div");
+          black.className = "black-key";
+          black.style.left = `${whiteIndex * 68 + 48}px`;
+          black.dataset.note = blackAfter[base] + oct;
+          black.title = black.dataset.note;
+          black.onclick = (e) => { e.stopPropagation(); handlePianoInput(black.dataset.note); };
+          piano.appendChild(black);
+        }
+        whiteIndex++;
+      });
+    });
+
+    const lastC = document.createElement("div");
+    lastC.className = "white-key";
+    lastC.style.left = `${whiteIndex * 68}px`;
+    lastC.dataset.note = "C6";
+    lastC.title = "C6";
+    lastC.onclick = () => handlePianoInput("C6");
+    piano.appendChild(lastC);
+  }
+
+  function handlePianoInput(noteName){
+    ensureAudio();
+    playTone(freqFromName(noteName), audioCtx.currentTime, 0.35);
+    highlightKey(noteName, true);
+    setTimeout(() => highlightKey(noteName, false), 160);
+
+    const pitchObj = pitchMap.find(p => p.name === noteName);
+    if(!pitchObj || state.mode === "delete") return;
+
+    if(state.mode === "select" && state.selectedNoteId){
+      const selected = getSelectedNote();
+      if(selected){
+        const original = {...selected};
+        selected.pitch = pitchObj.name; selected.midi = pitchObj.midi; selected.y = pitchObj.y;
+        if(!canAddToMeasure(selected.startUnit, selected.duration, selected.id)){ Object.assign(selected, original); state.lastError = "Bu ölçü tamamlanmıştır."; }
+        else state.lastError = "";
+        drawAll(); return;
+      }
+    }
+
+    let nextUnit = 0;
+    for(let m = 0; m < state.measureCount; m++){
+      const measureStart = m * unitsPerMeasure();
+      const measureEnd = measureStart + unitsPerMeasure();
+      let cursor = measureStart;
+      const notesInMeasure = state.notes
+        .filter(n => n.startUnit >= measureStart && n.startUnit < measureEnd)
+        .sort((a,b) => a.startUnit - b.startUnit);
+      for(const n of notesInMeasure){
+        if(cursor === n.startUnit && canAddToMeasure(cursor, state.selectedDuration)){
+          nextUnit = cursor;
+          addNoteAt(nextUnit, pitchObj);
+          return;
+        }
+        cursor = n.startUnit + n.duration;
+      }
+      if(cursor < measureEnd && canAddToMeasure(cursor, state.selectedDuration)){
+        nextUnit = cursor;
+        addNoteAt(nextUnit, pitchObj);
+        return;
+      }
+    }
+    state.lastError = "Bu ölçü tamamlanmıştır.";
+    drawAll();
+  }
+
+  drawAll();
+  createPiano();
+  setMode("select");
+})();
+</script>
+</body>
+</html>
