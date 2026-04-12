@@ -230,6 +230,7 @@
     const homeEditorBtn = document.getElementById('homeEditorBtn');
     const homeLogoBtn = document.getElementById('homeLogoBtn');
     const homeLogoBigBtn = document.getElementById('homeLogoBigBtn');
+    const homeNotebookBtn = document.getElementById('homeNotebookBtn');
     const libraryBackBtn = document.getElementById('libraryBackBtn');
     const measureBackBtn = document.getElementById('measureBackBtn');
     const editorBackBtn = document.getElementById('editorBackBtn');
@@ -965,8 +966,13 @@
 
     homeLibraryBtn.addEventListener('click',()=> showSection('library'));
     homeEditorBtn.addEventListener('click',()=> showSection('editor'));
+    homeNotebookBtn.addEventListener('click', () => {
+  window.location.href = 'defter.html';
+});
     homeLogoBtn.addEventListener('click',goHome);
     homeLogoBigBtn.addEventListener('click',goHome);
+    
+    
     libraryBackBtn.addEventListener('click',()=> showSection('home'));
     editorBackBtn.addEventListener('click',()=> showSection('home'));
     measureBackBtn.addEventListener('click',()=>{ stopMeasure(); showSection('library'); });
