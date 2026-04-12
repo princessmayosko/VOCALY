@@ -1,240 +1,1596 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>Vocaly Defter Core v2</title>
-<style>
-body{background:#111;color:#fff;font-family:Arial;padding:20px}
-button{padding:10px 14px;margin:5px}
-.note{padding:6px;margin:4px;background:#222;border-radius:6px}
-.good{color:#4caf50}.bad{color:#ff5252}
-svg{background:#eee;border-radius:10px;margin-top:10px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vocaly Defter v10</title>
+  <style>
+    * { box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:#151b24;
+      color:#f3f3f3;
+    }
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:12px;
+    }
+    .toolbar, .bottom{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .card{
+      background:#222b37;
+      border:1px solid #314051;
+      border-radius:18px;
+      padding:12px;
+      box-shadow:0 8px 24px rgba(0,0,0,.14);
+    }
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+    button, select, input{
+      font:inherit;
+    }
+    button{
+      border:none;
+      border-radius:14px;
+      background:#3a4658;
+      color:#fff;
+      padding:11px 16px;
+      font-size:15px;
+      cursor:pointer;
+    }
+    button.active{
+      background:#d3a100;
+      color:#111;
+      font-weight:700;
+    }
+    .tempo-box{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:280px;
+    }
+    .tempo-box input[type="range"]{
+      flex:1;
+    }
+    details.settings{
+      margin-bottom:12px;
+    }
+    details.settings summary{
+      list-style:none;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:18px;
+      font-weight:700;
+    }
+    details.settings summary::-webkit-details-marker{
+      display:none;
+    }
+    .arrow{
+      transition:transform .2s ease;
+    }
+    details[open] .arrow{
+      transform:rotate(180deg);
+    }
+    .settings-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .field{
+      background:#1b2330;
+      border:1px solid #314051;
+      border-radius:14px;
+      padding:12px;
+    }
+    .field label{
+      display:block;
+      margin-bottom:8px;
+      font-size:14px;
+      opacity:.92;
+    }
+    .field select, .field input[type="text"]{
+      width:100%;
+      border:none;
+      border-radius:10px;
+      padding:11px 12px;
+      background:#38465a;
+      color:#fff;
+      font-size:15px;
+    }
+    .hint{
+      font-size:13px;
+      opacity:.86;
+      line-height:1.45;
+      margin-top:8px;
+    }
+    .staff-shell{
+      background:#cfcfcf;
+      border-radius:24px;
+      padding:14px;
+      box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);
+      overflow-y:auto;
+      overflow-x:hidden;
+      border:1px solid rgba(255,255,255,.2);
+      max-height:72vh;
+    }
+    svg{
+      display:block;
+      width:100%;
+      background:#d8d8d8;
+      border-radius:18px;
+      touch-action:none;
+    }
+    .status{
+      margin-top:10px;
+      background:#222b37;
+      border:1px solid #314051;
+      border-radius:14px;
+      padding:12px 14px;
+      color:#e7e7e7;
+      line-height:1.45;
+    }
+    .warn{ color:#ff7f7f; font-weight:700; }
+    .ok{ color:#87e08f; font-weight:700; }
+    .piano-wrap{ overflow:auto; }
+    .piano{
+      position:relative;
+      height:190px;
+      min-width:980px;
+      user-select:none;
+    }
+    .white-key{
+      position:absolute;
+      width:64px;
+      height:190px;
+      background:linear-gradient(to bottom,#fff,#e3e3e3);
+      border:1px solid #444;
+      border-radius:0 0 8px 8px;
+      cursor:pointer;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding-bottom:8px;
+      color:#555;
+      font-size:12px;
+    }
+    .black-key{
+      position:absolute;
+      width:38px;
+      height:112px;
+      background:linear-gradient(to bottom,#1d1d1d,#000);
+      border:1px solid #333;
+      border-radius:0 0 6px 6px;
+      z-index:3;
+      cursor:pointer;
+      color:#ddd;
+      font-size:11px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding-bottom:8px;
+    }
+    .active-key{
+      background:linear-gradient(to bottom,#ffd95a,#d3a100)!important;
+      color:#111!important;
+    }
+    .subtoggle{
+      margin-top:12px;
+      border-top:1px solid #314051;
+      padding-top:12px;
+    }
+    @media (max-width:768px){
+      .wrap{ padding:10px; }
+      .tempo-box{ min-width:unset; width:100%; }
+      button{ padding:11px 14px; }
+      .staff-shell{ max-height:68vh; }
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="card row">
+        <button id="modeSelectBtn" class="active">Seç</button>
+        <button id="modeAddBtn">Nota Ekle</button>
+        <button id="modeDeleteBtn">Sil</button>
+      </div>
 
-<h2>🎼 Vocaly Defter – Core v2</h2>
+      <div class="card row">
+        <button id="playBtn">▶ Oynat</button>
+        <button id="stopBtn">■ Durdur</button>
+        <button id="clearBtn">Temizle</button>
+        <button id="reflowBtn">Otomatik Hizala</button>
+      </div>
 
-<div>
-Ölçü:
-<select id="meter" onchange="render()">
-<option value="2/4">2/4</option>
-<option value="3/4">3/4</option>
-<option value="4/4" selected>4/4</option>
-</select>
+      <div class="card row">
+        <button id="pdfBtn">PDF İndir</button>
+        <button id="audioBtn">Ses İndir</button>
+      </div>
 
-Nota:
-<select id="duration">
-<option value="1">Dörtlük</option>
-<option value="0.5">Sekizlik</option>
-<option value="0.25">Onaltılık</option>
-</select>
+      <div class="card tempo-box">
+        <span style="font-size:18px;">Tempo</span>
+        <input id="tempoRange" type="range" min="60" max="180" value="120">
+        <span id="tempoLabel" style="font-size:18px;">120</span>
+      </div>
+    </div>
 
-<button onclick="play()">▶ Çal</button>
-<button onclick="clearNotes()">Temizle</button>
-</div>
+    <details class="settings card" open>
+      <summary>
+        <span>Nota ve Ölçü Ayarları</span>
+        <span class="arrow">⌄</span>
+      </summary>
 
-<div id="status"></div>
+      <div class="settings-grid">
+        <div class="field">
+          <label for="titleInput">Eser Başlığı</label>
+          <input id="titleInput" type="text" placeholder="Eser başlığını gir...">
+        </div>
 
-<svg id="staff" width="800" height="220"></svg>
+        <div class="field">
+          <label for="composerInput">Besteci</label>
+          <input id="composerInput" type="text" placeholder="Besteci adını gir...">
+        </div>
 
-<hr>
+        <div class="field">
+          <label for="durationSelect">Nota Değeri</label>
+          <select id="durationSelect">
+            <option value="4">Birlik</option>
+            <option value="2">İkilik</option>
+            <option value="1" selected>Dörtlük</option>
+            <option value="0.5">Sekizlik</option>
+            <option value="0.25">On Altılık</option>
+          </select>
+        </div>
 
-<div id="notes"></div>
+        <div class="field">
+          <label for="meterPresetSelect">Ölçü Türü</label>
+          <select id="meterPresetSelect">
+            <option value="2/4">2 dörtlük</option>
+            <option value="3/4">3 dörtlük</option>
+            <option value="4/4" selected>4 dörtlük</option>
+            <option value="5/8">5 sekizlik</option>
+            <option value="6/8">6 sekizlik</option>
+            <option value="7/8">7 sekizlik</option>
+            <option value="9/8">9 sekizlik</option>
+            <option value="12/8">12 sekizlik</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="measureCountSelect">Toplam Ölçü Sayısı</label>
+          <select id="measureCountSelect">
+            <option value="2">2 ölçü</option>
+            <option value="4" selected>4 ölçü</option>
+            <option value="6">6 ölçü</option>
+            <option value="8">8 ölçü</option>
+            <option value="12">12 ölçü</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="syllableInput">Seçili Nota Hece</label>
+          <input id="syllableInput" type="text" placeholder="Seçili notaya hece yaz...">
+        </div>
+      </div>
+
+      <details class="subtoggle">
+        <summary style="cursor:pointer; font-weight:700;">Ton / Donanım ▼</summary>
+        <div class="settings-grid" style="margin-top:12px;">
+          <div class="field">
+            <label for="keySelect">Ton ve Donanım</label>
+            <select id="keySelect">
+              <option value="C|Am|0|Do Majör / La minör">Do Majör / La minör</option>
+              <option value="G|Em|1#|Sol Majör / Mi minör">Sol Majör / Mi minör</option>
+              <option value="D|Bm|2#|Re Majör / Si minör">Re Majör / Si minör</option>
+              <option value="A|F#m|3#|La Majör / Fa# minör">La Majör / Fa# minör</option>
+              <option value="E|C#m|4#|Mi Majör / Do# minör">Mi Majör / Do# minör</option>
+              <option value="B|G#m|5#|Si Majör / Sol# minör">Si Majör / Sol# minör</option>
+              <option value="F|Dm|1b|Fa Majör / Re minör">Fa Majör / Re minör</option>
+              <option value="Bb|Gm|2b|Si♭ Majör / Sol minör">Si♭ Majör / Sol minör</option>
+              <option value="Eb|Cm|3b|Mi♭ Majör / Do minör">Mi♭ Majör / Do minör</option>
+              <option value="Ab|Fm|4b|La♭ Majör / Fa minör">La♭ Majör / Fa minör</option>
+              <option value="Db|Bbm|5b|Re♭ Majör / Si♭ minör">Re♭ Majör / Si♭ minör</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <div class="hint">
+        Siyah tuşlar ve donanım artık gerçekten sesi etkiler. Doğal notalar donanıma göre çalar; elde girilmiş diyez/bemoller kendi halleriyle çalar.
+      </div>
+    </details>
+
+    <div class="staff-shell">
+      <svg id="staffSvg" width="1080" height="780" viewBox="0 0 1080 780"></svg>
+    </div>
+
+    <div class="status" id="statusBox">Hazır.</div>
+
+    <div class="bottom">
+      <div class="card piano-wrap" style="width:100%">
+        <div style="margin-bottom:8px;font-weight:700;">Piyano ile Nota Giriş</div>
+        <div class="piano" id="piano"></div>
+      </div>
+    </div>
+  </div>
 
 <script>
+(() => {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx = null;
 
-// ===== DATA =====
-let notes = [];
+  const svg = document.getElementById("staffSvg");
+  const statusBox = document.getElementById("statusBox");
+  const tempoRange = document.getElementById("tempoRange");
+  const tempoLabel = document.getElementById("tempoLabel");
+  const durationSelect = document.getElementById("durationSelect");
+  const meterPresetSelect = document.getElementById("meterPresetSelect");
+  const measureCountSelect = document.getElementById("measureCountSelect");
+  const syllableInput = document.getElementById("syllableInput");
+  const titleInput = document.getElementById("titleInput");
+  const composerInput = document.getElementById("composerInput");
+  const keySelect = document.getElementById("keySelect");
 
-function addNote(pitch){
-  const duration = parseFloat(document.getElementById("duration").value);
-  const total = notes.reduce((a,n)=>a+n.duration,0);
-  const capacity = getCapacity();
+  const state = {
+    mode: "select",
+    tempo: 120,
+    selectedDurationQ: 1,
+    meterTop: 4,
+    meterBottom: 4,
+    measureCount: 4,
+    notes: [],
+    selectedNoteId: null,
+    cursorNoteId: null,
+    playTimers: [],
+    lastError: "",
+    title: "",
+    composer: "",
+    keyValue: keySelect.value
+  };
 
-  if(total + duration > capacity){
-    setStatus("Ölçü dolu!", true);
-    return;
+  const SYSTEM_GAP = 180;
+  const STAFF_LEFT = 92;
+  const STAFF_RIGHT = 1020;
+  const SYSTEM_START_Y = 190;
+  const LINE_GAP = 16;
+  const MEASURES_PER_SYSTEM = 2;
+  const NOTE_HEAD_OFFSET_X = 18;
+  const PAGE_WIDTH = 1100;
+
+  const NATURAL_PITCH_STEPS = [
+    { name:"A5", midi:81, offset:-16 },
+    { name:"G5", midi:79, offset:-8  },
+    { name:"F5", midi:77, offset:0   },
+    { name:"E5", midi:76, offset:8   },
+    { name:"D5", midi:74, offset:16  },
+    { name:"C5", midi:72, offset:24  },
+    { name:"B4", midi:71, offset:32  },
+    { name:"A4", midi:69, offset:40  },
+    { name:"G4", midi:67, offset:48  },
+    { name:"F4", midi:65, offset:56  },
+    { name:"E4", midi:64, offset:64  },
+    { name:"D4", midi:62, offset:72  },
+    { name:"C4", midi:60, offset:80  },
+    { name:"B3", midi:59, offset:88  },
+    { name:"A3", midi:57, offset:96 }
+  ];
+
+  const NATURAL_Y_BY_NAME = {};
+  NATURAL_PITCH_STEPS.forEach(p => NATURAL_Y_BY_NAME[p.name] = p);
+
+  const SHARP_ORDER = ["F","C","G","D","A","E","B"];
+  const FLAT_ORDER  = ["B","E","A","D","G","C","F"];
+
+  const NOTE_LABEL_TR = {
+    "C":"Do", "C#":"Do#", "Db":"Re♭",
+    "D":"Re", "D#":"Re#", "Eb":"Mi♭",
+    "E":"Mi",
+    "F":"Fa", "F#":"Fa#", "Gb":"Sol♭",
+    "G":"Sol","G#":"Sol#","Ab":"La♭",
+    "A":"La","A#":"La#","Bb":"Si♭",
+    "B":"Si"
+  };
+
+  function uuid(){ return crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()); }
+
+  function ensureAudio(){
+    if(!audioCtx) audioCtx = new AudioCtx();
+    if(audioCtx.state === "suspended") audioCtx.resume();
   }
 
-  notes.push({ pitch, duration });
-  render();
-}
+  function parseKeyValue(v){
+    const [major, minor, sig, label] = v.split("|");
+    return { major, minor, sig, label };
+  }
 
-function clearNotes(){
-  notes=[];
-  render();
-}
+  function keySignatureInfo(){
+    const parsed = parseKeyValue(state.keyValue);
+    const sig = parsed.sig;
+    if(sig === "0") return { type:null, count:0, label: parsed.label };
+    return {
+      type: sig.endsWith("#") ? "#" : "b",
+      count: parseInt(sig, 10),
+      label: parsed.label
+    };
+  }
 
-// ===== RİTİM =====
-function getCapacity(){
-  const [top,bottom] = document.getElementById("meter").value.split("/").map(Number);
-  return top * (4/bottom);
-}
+  function parseNote(note){
+    const m = note.match(/^([A-G])([#b]?)(\d)$/);
+    if(!m) return null;
+    return { letter:m[1], accidental:m[2] || "", octave:Number(m[3]) };
+  }
 
-// ===== SES =====
-const ctx = new (window.AudioContext||window.webkitAudioContext)();
+  function naturalNameOf(note){
+    const p = parseNote(note);
+    return p ? `${p.letter}${p.octave}` : note;
+  }
 
-const freqMap = {
-  "C4":261.63,
-  "D4":293.66,
-  "E4":329.63,
-  "F4":349.23,
-  "G4":392.00,
-  "A4":440.00,
-  "B4":493.88,
-  "C5":523.25
-};
+  function hasExplicitAccidental(note){
+    const p = parseNote(note);
+    return !!(p && p.accidental);
+  }
 
-function play(){
-  let t = ctx.currentTime;
-  const beat = 60/120;
+  function getMidi(note){
+    const p = parseNote(note);
+    if(!p) return 60;
+    const map = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+    const accidentalShift = p.accidental === "#" ? 1 : p.accidental === "b" ? -1 : 0;
+    return (p.octave + 1) * 12 + map[p.letter] + accidentalShift;
+  }
 
-  notes.forEach(n=>{
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+  function midiToFreq(midi){
+    return 440 * Math.pow(2, (midi - 69) / 12);
+  }
 
-    osc.frequency.value = freqMap[n.pitch];
-    osc.type="triangle";
+  function freqFromName(note){
+    return midiToFreq(getMidi(note));
+  }
 
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+  function applyKeySignatureToPlayback(note){
+    const p = parseNote(note);
+    if(!p) return note;
+    if(p.accidental) return note;
 
-    gain.gain.setValueAtTime(0.3, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t+n.duration*beat);
+    const info = keySignatureInfo();
+    if(!info.type || info.count <= 0) return note;
 
-    osc.start(t);
-    osc.stop(t+n.duration*beat);
+    if(info.type === "#" && SHARP_ORDER.slice(0, info.count).includes(p.letter)){
+      return `${p.letter}#${p.octave}`;
+    }
+    if(info.type === "b" && FLAT_ORDER.slice(0, info.count).includes(p.letter)){
+      return `${p.letter}b${p.octave}`;
+    }
+    return note;
+  }
 
-    t += n.duration*beat;
+  function displayPitchLabel(note){
+    const p = parseNote(note);
+    if(!p) return note;
+    const key = `${p.letter}${p.accidental}`;
+    const base = NOTE_LABEL_TR[key] || key;
+    return `${base}${p.octave}`;
+  }
+
+  function pitchTextForKey(key){
+    return displayPitchLabel(key);
+  }
+
+  function playPianoLike(freq, startTime, durationSec, ctx = audioCtx, destination = null){
+    const dest = destination || ctx.destination;
+
+    const master = ctx.createGain();
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.setValueAtTime(3200, startTime);
+    lp.Q.setValueAtTime(0.8, startTime);
+
+    const body = ctx.createGain();
+    body.gain.setValueAtTime(0.0001, startTime);
+    body.gain.linearRampToValueAtTime(0.18, startTime + 0.01);
+    body.gain.exponentialRampToValueAtTime(0.10, startTime + 0.12);
+    body.gain.exponentialRampToValueAtTime(0.02, startTime + Math.max(0.22, durationSec * 0.8));
+    body.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSec + 0.35);
+
+    const partials = [
+      {ratio:1, gain:0.90, type:"triangle"},
+      {ratio:2, gain:0.20, type:"sine"},
+      {ratio:3, gain:0.10, type:"sine"},
+      {ratio:4, gain:0.05, type:"sine"}
+    ];
+
+    partials.forEach(p => {
+      const osc = ctx.createOscillator();
+      const og = ctx.createGain();
+      osc.type = p.type;
+      osc.frequency.setValueAtTime(freq * p.ratio, startTime);
+      og.gain.setValueAtTime(p.gain, startTime);
+      osc.connect(og);
+      og.connect(body);
+      osc.start(startTime);
+      osc.stop(startTime + durationSec + 0.4);
+    });
+
+    const noiseBuffer = ctx.createBuffer(1, Math.max(1, ctx.sampleRate * 0.025), ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i] = (Math.random() * 2 - 1) * 0.12;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.035, startTime);
+    ng.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.03);
+    noise.connect(ng);
+    ng.connect(body);
+    noise.start(startTime);
+    noise.stop(startTime + 0.04);
+
+    master.gain.setValueAtTime(0.9, startTime);
+    body.connect(lp);
+    lp.connect(master);
+    master.connect(dest);
+  }
+
+  function getSelectedNote(){ return state.notes.find(n => n.id === state.selectedNoteId) || null; }
+  function measureCapacityQ(){ return state.meterTop * (4 / state.meterBottom); }
+  function totalCapacityQ(){ return state.measureCount * measureCapacityQ(); }
+
+  function sortedNotes(){
+    return [...state.notes].sort((a,b) => {
+      if(Math.abs(a.startQ - b.startQ) > 1e-9) return a.startQ - b.startQ;
+      return getMidi(a.pitch) - getMidi(b.pitch);
+    });
+  }
+
+  function getCursorIndex(){
+    if(!state.cursorNoteId) return 0;
+    const idx = sortedNotes().findIndex(n => n.id === state.cursorNoteId);
+    return idx >= 0 ? idx : 0;
+  }
+
+  function setMode(mode){
+    state.mode = mode;
+    document.getElementById("modeSelectBtn").classList.toggle("active", mode === "select");
+    document.getElementById("modeAddBtn").classList.toggle("active", mode === "add");
+    document.getElementById("modeDeleteBtn").classList.toggle("active", mode === "delete");
+    updateStatus();
+  }
+
+  function createSvgEl(tag, attrs={}){
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for(const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+    return el;
+  }
+
+  function getSystemCount(){
+    return Math.ceil(state.measureCount / MEASURES_PER_SYSTEM);
+  }
+
+  function systemTopY(systemIndex){
+    return SYSTEM_START_Y + systemIndex * SYSTEM_GAP;
+  }
+
+  function lineY(systemIndex, lineIndex){
+    return systemTopY(systemIndex) + lineIndex * LINE_GAP;
+  }
+
+  function topLineY(systemIndex){ return lineY(systemIndex, 0); }
+  function bottomLineY(systemIndex){ return lineY(systemIndex, 4); }
+
+  function pitchY(noteName, systemIndex){
+    const base = naturalNameOf(noteName);
+    const data = NATURAL_Y_BY_NAME[base] || NATURAL_Y_BY_NAME["C4"];
+    return topLineY(systemIndex) + data.offset;
+  }
+
+  function getMeasureRange(measureIndex){
+    const cap = measureCapacityQ();
+    const startQ = measureIndex * cap;
+    const endQ = startQ + cap;
+    return { startQ, endQ };
+  }
+
+  function getSystemMeasureXBounds(localMeasureIndex){
+    const totalWidth = STAFF_RIGHT - STAFF_LEFT;
+    const gutter = 34;
+    const measureWidth = (totalWidth - gutter) / 2;
+    const x1 = STAFF_LEFT + localMeasureIndex * (measureWidth + gutter);
+    const x2 = x1 + measureWidth;
+    return { x1, x2, width: measureWidth };
+  }
+
+  function getDisplayXForNote(note){
+    const cap = measureCapacityQ();
+    const measureIndex = Math.floor(note.startQ / cap);
+    const localMeasureIndex = measureIndex % MEASURES_PER_SYSTEM;
+    const { startQ, endQ } = getMeasureRange(measureIndex);
+    const notesInMeasure = sortedNotes().filter(n => n.startQ >= startQ && n.startQ < endQ);
+    const visible = notesInMeasure.sort((a,b)=>a.startQ-b.startQ || getMidi(a.pitch)-getMidi(b.pitch));
+    const idx = visible.findIndex(n => n.id === note.id);
+    const bounds = getSystemMeasureXBounds(localMeasureIndex);
+
+    const leftPad = 70;
+    const rightPad = 34;
+    const usable = Math.max(80, bounds.width - leftPad - rightPad);
+
+    if(visible.length === 1){
+      return bounds.x1 + leftPad + usable * 0.18 + NOTE_HEAD_OFFSET_X;
+    }
+
+    const posByRhythm = (note.startQ - startQ) / measureCapacityQ();
+    const posByIndex = visible.length > 1 ? idx / (visible.length - 1) : 0;
+    const blend = visible.length <= 2 ? posByRhythm : (posByRhythm * 0.65 + posByIndex * 0.35);
+    return bounds.x1 + leftPad + usable * Math.min(1, Math.max(0, blend)) + NOTE_HEAD_OFFSET_X;
+  }
+
+  function getClosestPitch(y, systemIndex){
+    const top = topLineY(systemIndex);
+    let best = null;
+    let bestDist = Infinity;
+    NATURAL_PITCH_STEPS.forEach(p => {
+      const py = top + p.offset;
+      const d = Math.abs(y - py);
+      if(d < bestDist){
+        best = p;
+        bestDist = d;
+      }
+    });
+    return best;
+  }
+
+  function keySigPitchY(letter, accidental, systemIndex){
+    const sharpPos = { F:"F5", C:"C5", G:"G5", D:"D5", A:"A4", E:"E5", B:"B4" };
+    const flatPos  = { B:"B4", E:"E5", A:"A4", D:"D5", G:"G4", C:"C5", F:"F4" };
+    const target = accidental === "#" ? sharpPos[letter] : flatPos[letter];
+    return pitchY(target, systemIndex) + 7;
+  }
+
+  function drawKeySignature(systemIndex, xBase){
+    const info = keySignatureInfo();
+    if(!info.type || info.count <= 0) return xBase;
+
+    const order = info.type === "#" ? SHARP_ORDER : FLAT_ORDER;
+    let x = xBase;
+    for(let i=0;i<info.count;i++){
+      const acc = createSvgEl("text", {
+        x,
+        y: keySigPitchY(order[i], info.type, systemIndex),
+        fill:"#111",
+        "font-size":24,
+        "font-family":"serif",
+        "font-weight":"700"
+      });
+      acc.textContent = info.type === "#" ? "♯" : "♭";
+      svg.appendChild(acc);
+      x += 18;
+    }
+    return x + 8;
+  }
+
+  function measureUsageQ(index){
+    const { startQ, endQ } = getMeasureRange(index);
+    let sum = 0;
+    for(const n of state.notes){
+      if(n.startQ >= startQ && n.startQ < endQ) sum += n.durationQ;
+    }
+    return sum;
+  }
+
+  function analyzeMeasures(){
+    const list = [];
+    const cap = measureCapacityQ();
+    for(let i=0;i<state.measureCount;i++){
+      const used = measureUsageQ(i);
+      if(used > cap + 1e-9) list.push({measure:i+1, type:"over"});
+      else if(used > 1e-9 && used < cap - 1e-9) list.push({measure:i+1, type:"under"});
+      else if(Math.abs(used - cap) < 1e-9) list.push({measure:i+1, type:"ok"});
+    }
+    return list;
+  }
+
+  function updateStatus(){
+    const modeText = state.mode === "select" ? "Seç" : state.mode === "add" ? "Nota Ekle" : "Sil";
+    const keyText = parseKeyValue(state.keyValue).label;
+    const issues = analyzeMeasures();
+    let issueText = issues.map(item => {
+      if(item.type === "over") return `<span class="warn">${item.measure}. ölçü taşmış.</span>`;
+      if(item.type === "under") return `<span class="warn">${item.measure}. ölçü eksik kalmış.</span>`;
+      return `<span class="ok">${item.measure}. ölçü tamam.</span>`;
+    }).join(" ");
+    if(!issueText) issueText = `<span class="ok">Ölçüler kontrol edildi.</span>`;
+    if(state.lastError) issueText = `<span class="warn">${state.lastError}</span> ` + issueText;
+
+    statusBox.innerHTML =
+      `Mod: <strong>${modeText}</strong> | Nota sayısı: <strong>${state.notes.length}</strong> | Ölçü: <strong>${state.meterTop}/${state.meterBottom}</strong> | Ton: <strong>${keyText}</strong><br>${issueText}`;
+  }
+
+  function clearTimers(){
+    state.playTimers.forEach(t => clearTimeout(t));
+    state.playTimers = [];
+  }
+
+  function stopSequence(){
+    clearTimers();
+    document.querySelectorAll(".active-key").forEach(el => el.classList.remove("active-key"));
+    if(audioCtx && audioCtx.state !== "closed"){
+      try { audioCtx.close(); } catch(e){}
+      audioCtx = null;
+    }
+    drawAll();
+  }
+
+  function highlightKey(noteName, on){
+    document.querySelectorAll("[data-note]").forEach(el => {
+      if(el.dataset.note === noteName) el.classList.toggle("active-key", on);
+    });
+  }
+
+  function buildSequenceData(){
+    const sorted = sortedNotes();
+    const startIndex = getCursorIndex();
+    const filtered = sorted.slice(startIndex);
+    if(!filtered.length) return [];
+
+    const secPerQuarter = 60 / state.tempo;
+    let accSec = 0;
+
+    return filtered.map(n => {
+      const playbackPitch = applyKeySignatureToPlayback(n.pitch);
+      const item = {
+        id: n.id,
+        writtenPitch: n.pitch,
+        playbackPitch,
+        startSec: accSec,
+        durSec: n.durationQ * secPerQuarter
+      };
+      accSec += item.durSec;
+      return item;
+    });
+  }
+
+  function playSequence(){
+    if(!state.notes.length) return;
+    stopSequence();
+    ensureAudio();
+    const seq = buildSequenceData();
+    const now = audioCtx.currentTime + 0.05;
+
+    seq.forEach(item => {
+      playPianoLike(freqFromName(item.playbackPitch), now + item.startSec, Math.max(0.16, item.durSec * 0.96));
+
+      state.playTimers.push(setTimeout(() => {
+        highlightKey(item.writtenPitch, true);
+        highlightKey(item.playbackPitch, true);
+        state.cursorNoteId = item.id;
+        drawAll();
+      }, item.startSec * 1000));
+
+      state.playTimers.push(setTimeout(() => {
+        highlightKey(item.writtenPitch, false);
+        highlightKey(item.playbackPitch, false);
+      }, (item.startSec + item.durSec) * 1000));
+    });
+  }
+
+  function canAddToMeasure(startQ, durationQ, ignoreId = null){
+    const cap = measureCapacityQ();
+    const measureIndex = Math.floor(startQ / cap);
+    if(measureIndex < 0 || measureIndex >= state.measureCount) return false;
+
+    const { startQ: ms, endQ: me } = getMeasureRange(measureIndex);
+    let sum = 0;
+    for(const n of state.notes){
+      if(ignoreId && n.id === ignoreId) continue;
+      if(n.startQ >= ms && n.startQ < me) sum += n.durationQ;
+    }
+    return sum + durationQ <= cap + 1e-9;
+  }
+
+  function trimNotesOutside(){
+    const maxQ = totalCapacityQ();
+    state.notes = state.notes.filter(n => n.startQ < maxQ);
+    if(!getSelectedNote()){
+      state.selectedNoteId = null;
+      syllableInput.value = "";
+    }
+    if(state.cursorNoteId && !state.notes.find(n => n.id === state.cursorNoteId)){
+      state.cursorNoteId = state.notes[0]?.id || null;
+    }
+  }
+
+  function reflowSequentialWithinMeasures(){
+    const cap = measureCapacityQ();
+    const sorted = sortedNotes();
+    const buckets = Array.from({length: state.measureCount}, () => []);
+    sorted.forEach(n => {
+      let m = Math.floor(n.startQ / cap);
+      if(m < 0) m = 0;
+      if(m >= state.measureCount) m = state.measureCount - 1;
+      buckets[m].push(n);
+    });
+
+    for(let m=0; m<state.measureCount; m++){
+      let cursor = m * cap;
+      const end = cursor + cap;
+      buckets[m].forEach(n => {
+        if(cursor + n.durationQ <= end + 1e-9){
+          n.startQ = cursor;
+          cursor += n.durationQ;
+        }
+      });
+    }
+  }
+
+  function addNoteToMeasure(measureIndex, pitchObj){
+    const cap = measureCapacityQ();
+    const measureStart = measureIndex * cap;
+    const measureEnd = measureStart + cap;
+    const notes = sortedNotes().filter(n => n.startQ >= measureStart && n.startQ < measureEnd);
+    let cursor = measureStart;
+    for(const n of notes){
+      if(cursor + state.selectedDurationQ <= n.startQ + 1e-9) break;
+      cursor = Math.max(cursor, n.startQ + n.durationQ);
+    }
+    if(cursor + state.selectedDurationQ > measureEnd + 1e-9){
+      state.lastError = "Bu ölçü tamamlanmıştır.";
+      drawAll();
+      return;
+    }
+
+    const newNote = {
+      id: uuid(),
+      startQ: cursor,
+      durationQ: state.selectedDurationQ,
+      pitch: pitchObj.name,
+      syllable: ""
+    };
+    state.notes.push(newNote);
+    state.selectedNoteId = newNote.id;
+    state.cursorNoteId = newNote.id;
+    syllableInput.value = "";
+    state.lastError = "";
+    reflowSequentialWithinMeasures();
+    drawAll();
+  }
+
+  function drawLedgerLine(x, y){
+    svg.appendChild(createSvgEl("line", {
+      x1:x-16, y1:y, x2:x+16, y2:y,
+      stroke:"#111", "stroke-width":2
+    }));
+  }
+
+  function drawPaperHeader(){
+    svg.appendChild(createSvgEl("text", {
+      x: PAGE_WIDTH / 2,
+      y: 58,
+      fill:"#111",
+      "font-size":28,
+      "font-weight":"700",
+      "text-anchor":"middle"
+    })).textContent = state.title || "Başlıksız Eser";
+
+    svg.appendChild(createSvgEl("line", {
+      x1: 320, y1: 68, x2: 780, y2: 68,
+      stroke:"#777", "stroke-width":1.4
+    }));
+
+    svg.appendChild(createSvgEl("text", {
+      x: 965,
+      y: 42,
+      fill:"#111",
+      "font-size":14,
+      "font-weight":"700",
+      "text-anchor":"end"
+    })).textContent = "Besteci";
+
+    svg.appendChild(createSvgEl("text", {
+      x: 965,
+      y: 62,
+      fill:"#111",
+      "font-size":18,
+      "font-style":"italic",
+      "text-anchor":"end"
+    })).textContent = state.composer || "—";
+
+    svg.appendChild(createSvgEl("line", {
+      x1: 810, y1: 68, x2: 970, y2: 68,
+      stroke:"#777", "stroke-width":1.2
+    }));
+  }
+
+  function drawStaffBase(){
+    svg.innerHTML = "";
+    const systems = getSystemCount();
+    const totalHeight = systems * SYSTEM_GAP + 110;
+    svg.setAttribute("viewBox", `0 0 ${PAGE_WIDTH} ${totalHeight}`);
+    svg.setAttribute("height", totalHeight);
+
+    drawPaperHeader();
+
+    for(let s=0; s<systems; s++){
+      const top = topLineY(s);
+      const bottom = bottomLineY(s);
+
+      for(let i=0;i<5;i++){
+        const y = lineY(s, i);
+        svg.appendChild(createSvgEl("line", {
+          x1:STAFF_LEFT, y1:y, x2:STAFF_RIGHT, y2:y,
+          stroke:"#666", "stroke-width":2
+        }));
+      }
+
+      const treble = createSvgEl("text", {
+        x:STAFF_LEFT + 4,
+        y:top + 54,
+        fill:"#111",
+        "font-size":74,
+        "font-family":"serif"
+      });
+      treble.textContent = "𝄞";
+      svg.appendChild(treble);
+
+      const meterX = STAFF_LEFT + 44;
+      const afterKeySigX = drawKeySignature(s, STAFF_LEFT + 42);
+
+      svg.appendChild(createSvgEl("text", {
+        x:Math.max(meterX, afterKeySigX),
+        y:top + 20,
+        fill:"#111",
+        "font-size":24,
+        "font-weight":"700"
+      })).textContent = state.meterTop;
+
+      svg.appendChild(createSvgEl("text", {
+        x:Math.max(meterX, afterKeySigX),
+        y:top + 50,
+        fill:"#111",
+        "font-size":24,
+        "font-weight":"700"
+      })).textContent = state.meterBottom;
+
+      for(let local=0; local<MEASURES_PER_SYSTEM; local++){
+        const globalMeasure = s * MEASURES_PER_SYSTEM + local;
+        if(globalMeasure >= state.measureCount) break;
+
+        const { x1, x2 } = getSystemMeasureXBounds(local);
+
+        if(local === 1){
+          svg.appendChild(createSvgEl("line", {
+            x1:x1 - 17,
+            y1:top - 8,
+            x2:x1 - 17,
+            y2:bottom + 8,
+            stroke:"#555",
+            "stroke-width":2
+          }));
+        }
+
+        const label = createSvgEl("text", {
+          x:x1 + 12,
+          y:top - 24,
+          fill:"#555",
+          "font-size":13,
+          "font-weight":"700"
+        });
+        label.textContent = `${globalMeasure + 1}. ölçü`;
+        svg.appendChild(label);
+
+        const isLastMeasure = globalMeasure === state.measureCount - 1;
+        if(isLastMeasure){
+          svg.appendChild(createSvgEl("line", {
+            x1:x2 - 7, y1:top - 8, x2:x2 - 7, y2:bottom + 8,
+            stroke:"#565656", "stroke-width":1.6
+          }));
+          svg.appendChild(createSvgEl("line", {
+            x1:x2, y1:top - 8, x2:x2, y2:bottom + 8,
+            stroke:"#111", "stroke-width":4.4
+          }));
+        }
+
+        const used = measureUsageQ(globalMeasure);
+        const cap = measureCapacityQ();
+        if(used > 1e-9 && Math.abs(used - cap) > 1e-9){
+          const color = used > cap ? "#d64f4f" : "#bb4d4d";
+          svg.appendChild(createSvgEl("rect", {
+            x:x1 + 10,
+            y:bottom + 24,
+            width:(x2 - x1) - 22,
+            height:14,
+            rx:7,
+            fill:color,
+            opacity:"0.75"
+          }));
+        }
+
+        const clickZone = createSvgEl("rect", {
+          x:x1,
+          y:top - 18,
+          width:x2 - x1,
+          height:(bottom - top) + 38,
+          fill:"transparent",
+          "data-measure": globalMeasure,
+          "data-system": s
+        });
+
+        clickZone.addEventListener("click", (e) => {
+          if(state.mode !== "add") return;
+          const pitch = getClosestPitch(getSvgPoint(e).y, s);
+          addNoteToMeasure(globalMeasure, pitch);
+        });
+
+        svg.appendChild(clickZone);
+      }
+    }
+  }
+
+  function getBeamGroups(){
+    const notes = sortedNotes();
+    const groups = [];
+    const cap = measureCapacityQ();
+
+    function sameMeasure(a,b){
+      return Math.floor(a.startQ / cap) === Math.floor(b.startQ / cap);
+    }
+
+    let current = [];
+    for(const n of notes){
+      const beamable = (n.durationQ === 0.5 || n.durationQ === 0.25);
+      if(!beamable){
+        if(current.length >= 2) groups.push(current.slice(0,2));
+        current = [];
+        continue;
+      }
+      if(current.length === 0){
+        current = [n];
+      } else {
+        const prev = current[current.length - 1];
+        const contiguous = sameMeasure(prev, n) && Math.abs(n.startQ - (prev.startQ + prev.durationQ)) < 1e-9;
+        if(contiguous && current.length < 2){
+          current.push(n);
+          if(current.length === 2){
+            groups.push([...current]);
+            current = [];
+          }
+        } else {
+          current = [n];
+        }
+      }
+    }
+    return groups;
+  }
+
+  function beamMembershipMap(){
+    const map = new Map();
+    getBeamGroups().forEach(group => group.forEach(n => map.set(n.id, group)));
+    return map;
+  }
+
+  function drawCursorFor(note){
+    const cap = measureCapacityQ();
+    const measureIndex = Math.floor(note.startQ / cap);
+    const systemIndex = Math.floor(measureIndex / MEASURES_PER_SYSTEM);
+    const x = getDisplayXForNote(note);
+    const y = pitchY(note.pitch, systemIndex);
+
+    svg.appendChild(createSvgEl("line", {
+      x1:x, y1:y-62, x2:x, y2:y-22,
+      stroke:"#1c6fff", "stroke-width":3, "stroke-linecap":"round"
+    }));
+    svg.appendChild(createSvgEl("circle", {
+      cx:x, cy:y-66, r:5, fill:"#1c6fff"
+    }));
+  }
+
+  function drawSingleNote(note, beamMap){
+    const cap = measureCapacityQ();
+    const measureIndex = Math.floor(note.startQ / cap);
+    const systemIndex = Math.floor(measureIndex / MEASURES_PER_SYSTEM);
+    const x = getDisplayXForNote(note);
+    const y = pitchY(note.pitch, systemIndex);
+    const selected = state.selectedNoteId === note.id;
+
+    if(y < topLineY(systemIndex)){
+      for(let ly = topLineY(systemIndex); ly >= y; ly -= LINE_GAP){
+        if(ly !== topLineY(systemIndex) || Math.abs(y - ly) < 1e-9) drawLedgerLine(x, ly);
+      }
+    }
+    if(y > bottomLineY(systemIndex)){
+      for(let ly = bottomLineY(systemIndex) + LINE_GAP; ly <= y; ly += LINE_GAP){
+        drawLedgerLine(x, ly);
+      }
+    }
+
+    const g = createSvgEl("g", { style:"cursor:pointer;", "data-note-id":note.id });
+    const isWhole = note.durationQ === 4;
+    const isHalf = note.durationQ === 2;
+    const isEighth = note.durationQ === 0.5;
+    const isSixteenth = note.durationQ === 0.25;
+    const beamed = beamMap.has(note.id);
+
+    const headFill =
+      isHalf || isWhole
+        ? (selected ? "#ffe08a" : "#f5f5f5")
+        : (selected ? "#d3a100" : "#111");
+
+    if(hasExplicitAccidental(note.pitch)){
+      const acc = parseNote(note.pitch).accidental;
+      const accText = createSvgEl("text", {
+        x:x - 26,
+        y:y + 6,
+        fill:"#111",
+        "font-size":24,
+        "font-family":"serif",
+        "font-weight":"700"
+      });
+      accText.textContent = acc === "#" ? "♯" : "♭";
+      g.appendChild(accText);
+    }
+
+    g.appendChild(createSvgEl("ellipse", {
+      cx:x, cy:y, rx:12, ry:8,
+      fill:headFill, stroke:"#111", "stroke-width":2.2,
+      transform:`rotate(-20 ${x} ${y})`
+    }));
+
+    if(!isWhole){
+      const stemUp = y > topLineY(systemIndex) + LINE_GAP;
+      const stemX = stemUp ? x + 10 : x - 10;
+      const stemY2 = stemUp ? y - 42 : y + 42;
+
+      g.appendChild(createSvgEl("line", {
+        x1:stemX, y1:y, x2:stemX, y2:stemY2,
+        stroke:"#111", "stroke-width":2
+      }));
+
+      if((isEighth || isSixteenth) && !beamed){
+        g.appendChild(createSvgEl("path", {
+          d: stemUp
+            ? `M ${stemX} ${stemY2} Q ${stemX+14} ${stemY2+8} ${stemX+2} ${stemY2+22}`
+            : `M ${stemX} ${stemY2} Q ${stemX-14} ${stemY2-8} ${stemX-2} ${stemY2-22}`,
+          stroke:"#111",
+          "stroke-width":2,
+          fill:"none"
+        }));
+      }
+
+      if(isSixteenth && !beamed){
+        g.appendChild(createSvgEl("path", {
+          d: stemUp
+            ? `M ${stemX} ${stemY2+10} Q ${stemX+14} ${stemY2+18} ${stemX+2} ${stemY2+32}`
+            : `M ${stemX} ${stemY2-10} Q ${stemX-14} ${stemY2-18} ${stemX-2} ${stemY2-32}`,
+          stroke:"#111",
+          "stroke-width":2,
+          fill:"none"
+        }));
+      }
+    }
+
+    if(selected){
+      g.appendChild(createSvgEl("rect", {
+        x:x-22, y:y-18, width:44, height:36, rx:8,
+        fill:"none", stroke:"#d3a100", "stroke-width":2, "stroke-dasharray":"5 4"
+      }));
+    }
+
+    if(note.syllable){
+      const txt = createSvgEl("text", {
+        x:x - 10,
+        y:bottomLineY(systemIndex) + 62,
+        fill:"#222",
+        "font-size":13
+      });
+      txt.textContent = note.syllable;
+      g.appendChild(txt);
+    }
+
+    g.addEventListener("pointerdown", (e) => {
+      e.stopPropagation();
+
+      if(state.mode === "delete"){
+        state.notes = state.notes.filter(n => n.id !== note.id);
+        if(state.selectedNoteId === note.id){
+          state.selectedNoteId = null;
+          syllableInput.value = "";
+        }
+        if(state.cursorNoteId === note.id){
+          state.cursorNoteId = state.notes[0]?.id || null;
+        }
+        state.lastError = "";
+        drawAll();
+        return;
+      }
+
+      state.selectedNoteId = note.id;
+      state.cursorNoteId = note.id;
+      syllableInput.value = note.syllable || "";
+      durationSelect.value = String(note.durationQ);
+      state.selectedDurationQ = note.durationQ;
+      drawAll();
+    });
+
+    svg.appendChild(g);
+
+    if(state.cursorNoteId === note.id) drawCursorFor(note);
+  }
+
+  function drawBeams(){
+    const groups = getBeamGroups();
+
+    groups.forEach(group => {
+      const first = group[0];
+      const last = group[group.length - 1];
+      const cap = measureCapacityQ();
+      const measureIndex = Math.floor(first.startQ / cap);
+      const systemIndex = Math.floor(measureIndex / MEASURES_PER_SYSTEM);
+
+      const firstX = getDisplayXForNote(first);
+      const lastX = getDisplayXForNote(last);
+      const firstY = pitchY(first.pitch, systemIndex);
+      const lastY = pitchY(last.pitch, systemIndex);
+
+      const stemUp = firstY > topLineY(systemIndex) + LINE_GAP;
+      const x1 = stemUp ? firstX + 10 : firstX - 10;
+      const x2 = stemUp ? lastX + 10 : lastX - 10;
+      const y1 = stemUp ? firstY - 42 : firstY + 42;
+      const y2 = stemUp ? lastY - 42 : lastY + 42;
+
+      svg.appendChild(createSvgEl("line", {
+        x1, y1, x2, y2,
+        stroke:"#111", "stroke-width":5, "stroke-linecap":"round"
+      }));
+
+      const hasSixteenth = group.some(n => n.durationQ === 0.25);
+      if(hasSixteenth){
+        svg.appendChild(createSvgEl("line", {
+          x1,
+          y1: y1 + (stemUp ? 10 : -10),
+          x2,
+          y2: y2 + (stemUp ? 10 : -10),
+          stroke:"#111",
+          "stroke-width":5,
+          "stroke-linecap":"round"
+        }));
+      }
+    });
+  }
+
+  function drawNotes(){
+    const beamMap = beamMembershipMap();
+    sortedNotes().forEach(n => drawSingleNote(n, beamMap));
+    drawBeams();
+  }
+
+  function drawAll(){
+    drawStaffBase();
+    drawNotes();
+    updateStatus();
+  }
+
+  function getSvgPoint(evt){
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function handleDurationChange(){
+    const note = getSelectedNote();
+    state.selectedDurationQ = Number(durationSelect.value);
+    if(note){
+      const original = note.durationQ;
+      note.durationQ = state.selectedDurationQ;
+      if(!canAddToMeasure(note.startQ, note.durationQ, note.id)){
+        note.durationQ = original;
+        state.lastError = "Bu nota bu ölçüye sığmıyor.";
+      } else {
+        state.lastError = "";
+        reflowSequentialWithinMeasures();
+      }
+      drawAll();
+    }
+  }
+
+  function createPiano(){
+    const piano = document.getElementById("piano");
+    piano.innerHTML = "";
+
+    const whites = [
+      ["C4","Do"],["D4","Re"],["E4","Mi"],["F4","Fa"],["G4","Sol"],["A4","La"],["B4","Si"],
+      ["C5","Do"],["D5","Re"],["E5","Mi"],["F5","Fa"],["G5","Sol"],["A5","La"],["B5","Si"]
+    ];
+    const blackMap = {
+      0:["C#4","Do#"],
+      1:["D#4","Re#"],
+      3:["F#4","Fa#"],
+      4:["G#4","Sol#"],
+      5:["A#4","La#"],
+      7:["C#5","Do#"],
+      8:["D#5","Re#"],
+      10:["F#5","Fa#"],
+      11:["G#5","Sol#"],
+      12:["A#5","La#"]
+    };
+
+    whites.forEach(([note, label], i) => {
+      const white = document.createElement("div");
+      white.className = "white-key";
+      white.style.left = `${i * 64}px`;
+      white.dataset.note = note;
+      white.title = note;
+      white.textContent = label;
+      white.onclick = () => handlePianoInput(note);
+      piano.appendChild(white);
+
+      if(blackMap[i]){
+        const [bNote, bLabel] = blackMap[i];
+        const black = document.createElement("div");
+        black.className = "black-key";
+        black.style.left = `${i * 64 + 44}px`;
+        black.dataset.note = bNote;
+        black.title = bNote;
+        black.textContent = bLabel;
+        black.onclick = (e) => {
+          e.stopPropagation();
+          handlePianoInput(bNote);
+        };
+        piano.appendChild(black);
+      }
+    });
+  }
+
+  function findMeasureForSelectedOrCursor(){
+    const cap = measureCapacityQ();
+    const selected = getSelectedNote();
+    if(selected) return Math.floor(selected.startQ / cap);
+
+    if(state.cursorNoteId){
+      const note = state.notes.find(n => n.id === state.cursorNoteId);
+      if(note) return Math.floor(note.startQ / cap);
+    }
+
+    for(let i=0;i<state.measureCount;i++){
+      const used = measureUsageQ(i);
+      if(used < cap - 1e-9) return i;
+    }
+
+    return 0;
+  }
+
+  function handlePianoInput(noteName){
+    ensureAudio();
+    playPianoLike(freqFromName(noteName), audioCtx.currentTime, 0.45);
+    highlightKey(noteName, true);
+    setTimeout(() => highlightKey(noteName, false), 220);
+
+    if(state.mode === "delete") return;
+
+    if(state.mode === "select" && state.selectedNoteId){
+      const selected = getSelectedNote();
+      if(selected){
+        selected.pitch = noteName;
+        state.lastError = "";
+        drawAll();
+        return;
+      }
+    }
+
+    const measureIndex = findMeasureForSelectedOrCursor();
+    addNoteToMeasure(measureIndex, { name: noteName });
+  }
+
+  function serializeSVG(){
+    const clone = svg.cloneNode(true);
+    clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+    return new XMLSerializer().serializeToString(clone);
+  }
+
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function exportPDF(){
+    drawAll();
+    const svgText = serializeSVG();
+    const blob = new Blob([svgText], {type:"image/svg+xml;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width || 1100;
+      canvas.height = img.height || 800;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#d8d8d8";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+
+      const pngData = canvas.toDataURL("image/png");
+      const pdfHtml = `
+<!DOCTYPE html>
+<html>
+<head><title>PDF</title></head>
+<body style="margin:0">
+  <img src="${pngData}" style="width:100%;display:block;">
+  <script>
+    window.onload = () => {
+      setTimeout(() => { window.print(); }, 100);
+    };
+  <\/script>
+</body>
+</html>`;
+      const win = window.open("", "_blank");
+      if(!win){
+        alert("PDF penceresi açılamadı.");
+        URL.revokeObjectURL(url);
+        return;
+      }
+      win.document.open();
+      win.document.write(pdfHtml);
+      win.document.close();
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  }
+
+  function floatTo16BitPCM(float32Array){
+    const buffer = new ArrayBuffer(float32Array.length * 2);
+    const view = new DataView(buffer);
+    let offset = 0;
+    for(let i=0;i<float32Array.length;i++, offset+=2){
+      let s = Math.max(-1, Math.min(1, float32Array[i]));
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    }
+    return buffer;
+  }
+
+  function encodeWAV(samples, sampleRate){
+    const pcmBuffer = floatTo16BitPCM(samples);
+    const dataLength = pcmBuffer.byteLength;
+    const buffer = new ArrayBuffer(44 + dataLength);
+    const view = new DataView(buffer);
+
+    function writeString(offset, str){
+      for(let i=0;i<str.length;i++) view.setUint8(offset + i, str.charCodeAt(i));
+    }
+
+    writeString(0, "RIFF");
+    view.setUint32(4, 36 + dataLength, true);
+    writeString(8, "WAVE");
+    writeString(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
+    writeString(36, "data");
+    view.setUint32(40, dataLength, true);
+
+    new Uint8Array(buffer, 44).set(new Uint8Array(pcmBuffer));
+    return new Blob([buffer], {type:"audio/wav"});
+  }
+
+  async function exportAudio(){
+    const seq = buildSequenceData();
+    if(!seq.length){
+      alert("Önce nota eklemelisin.");
+      return;
+    }
+
+    const sampleRate = 44100;
+    const totalDuration = seq[seq.length - 1].startSec + seq[seq.length - 1].durSec + 1;
+    const offline = new OfflineAudioContext(1, Math.ceil(sampleRate * totalDuration), sampleRate);
+
+    seq.forEach(item => {
+      playPianoLike(
+        freqFromName(item.playbackPitch),
+        item.startSec,
+        Math.max(0.16, item.durSec * 0.96),
+        offline,
+        offline.destination
+      );
+    });
+
+    const rendered = await offline.startRendering();
+    const ch0 = rendered.getChannelData(0);
+    const wavBlob = encodeWAV(ch0, sampleRate);
+    const titleSafe = (state.title || "eser").replace(/[\\/:*?"<>|]+/g, "_");
+    downloadBlob(wavBlob, `${titleSafe}.wav`);
+  }
+
+  document.getElementById("modeSelectBtn").onclick = () => setMode("select");
+  document.getElementById("modeAddBtn").onclick = () => setMode("add");
+  document.getElementById("modeDeleteBtn").onclick = () => setMode("delete");
+  document.getElementById("playBtn").onclick = playSequence;
+  document.getElementById("stopBtn").onclick = stopSequence;
+  document.getElementById("reflowBtn").onclick = () => {
+    reflowSequentialWithinMeasures();
+    state.lastError = "";
+    drawAll();
+  };
+  document.getElementById("pdfBtn").onclick = exportPDF;
+  document.getElementById("audioBtn").onclick = exportAudio;
+
+  document.getElementById("clearBtn").onclick = () => {
+    stopSequence();
+    state.notes = [];
+    state.selectedNoteId = null;
+    state.cursorNoteId = null;
+    state.lastError = "";
+    syllableInput.value = "";
+    drawAll();
+  };
+
+  tempoRange.addEventListener("input", () => {
+    state.tempo = Number(tempoRange.value);
+    tempoLabel.textContent = state.tempo;
   });
-}
 
-// ===== STAFF =====
+  durationSelect.addEventListener("change", handleDurationChange);
 
-const pitchY = {
-  "C4":140,
-  "D4":130,
-  "E4":120,
-  "F4":110,
-  "G4":100,
-  "A4":90,
-  "B4":80,
-  "C5":70
-};
-
-function drawStaff(){
-  const svg = document.getElementById("staff");
-  svg.innerHTML="";
-
-  // 5 çizgi
-  for(let i=0;i<5;i++){
-    let y = 80 + i*10;
-    let line = document.createElementNS("http://www.w3.org/2000/svg","line");
-    line.setAttribute("x1",50);
-    line.setAttribute("x2",750);
-    line.setAttribute("y1",y);
-    line.setAttribute("y2",y);
-    line.setAttribute("stroke","black");
-    svg.appendChild(line);
-  }
-
-  // sol anahtar (basit sembol)
-  let clef = document.createElementNS("http://www.w3.org/2000/svg","text");
-  clef.setAttribute("x",55);
-  clef.setAttribute("y",115);
-  clef.setAttribute("font-size","40");
-  clef.textContent="𝄞";
-  svg.appendChild(clef);
-
-  // ölçü belirteci
-  const [top,bottom] = document.getElementById("meter").value.split("/");
-  
-  let t = document.createElementNS("http://www.w3.org/2000/svg","text");
-  t.setAttribute("x",90);
-  t.setAttribute("y",95);
-  t.textContent=top;
-
-  let b = document.createElementNS("http://www.w3.org/2000/svg","text");
-  b.setAttribute("x",90);
-  b.setAttribute("y",115);
-  b.textContent=bottom;
-
-  svg.appendChild(t);
-  svg.appendChild(b);
-
-  // ölçü çizgisi (son)
-  let bar = document.createElementNS("http://www.w3.org/2000/svg","line");
-  bar.setAttribute("x1",700);
-  bar.setAttribute("x2",700);
-  bar.setAttribute("y1",80);
-  bar.setAttribute("y2",120);
-  bar.setAttribute("stroke","black");
-  bar.setAttribute("stroke-width","2");
-  svg.appendChild(bar);
-}
-
-// ===== NOTA ÇİZ =====
-
-function drawNotes(){
-  const svg = document.getElementById("staff");
-
-  let x = 150;
-
-  notes.forEach(n=>{
-    let y = pitchY[n.pitch];
-
-    let circle = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    circle.setAttribute("cx",x);
-    circle.setAttribute("cy",y);
-    circle.setAttribute("r",6);
-    circle.setAttribute("fill","black");
-
-    svg.appendChild(circle);
-
-    x += 40;
+  meterPresetSelect.addEventListener("change", () => {
+    const [top, bottom] = meterPresetSelect.value.split("/").map(Number);
+    state.meterTop = top;
+    state.meterBottom = bottom;
+    trimNotesOutside();
+    reflowSequentialWithinMeasures();
+    drawAll();
   });
-}
 
-// ===== UI =====
+  measureCountSelect.addEventListener("change", () => {
+    state.measureCount = Number(measureCountSelect.value);
+    trimNotesOutside();
+    reflowSequentialWithinMeasures();
+    drawAll();
+  });
 
-function render(){
-  document.getElementById("notes").innerHTML =
-    notes.map(n=>n.pitch+" ("+n.duration+")").join("<br>");
+  syllableInput.addEventListener("input", () => {
+    const note = getSelectedNote();
+    if(!note) return;
+    note.syllable = syllableInput.value;
+    drawAll();
+  });
 
-  drawStaff();
-  drawNotes();
-  check();
-}
+  titleInput.addEventListener("input", () => {
+    state.title = titleInput.value;
+    drawAll();
+  });
 
-function check(){
-  const total = notes.reduce((a,n)=>a+n.duration,0);
-  const cap = getCapacity();
+  composerInput.addEventListener("input", () => {
+    state.composer = composerInput.value;
+    drawAll();
+  });
 
-  if(total === cap){
-    setStatus("TAM",false);
-  }else{
-    setStatus("Eksik",true);
-  }
-}
+  keySelect.addEventListener("change", () => {
+    state.keyValue = keySelect.value;
+    drawAll();
+  });
 
-function setStatus(msg,bad){
-  const s=document.getElementById("status");
-  s.textContent=msg;
-  s.className = bad ? "bad":"good";
-}
-
-// ===== PİYANO =====
-
-["C4","D4","E4","F4","G4","A4","B4","C5"].forEach(n=>{
-  let b=document.createElement("button");
-  b.textContent=n;
-  b.onclick=()=>addNote(n);
-  document.body.appendChild(b);
-});
-
-render();
-
+  drawAll();
+  createPiano();
+  setMode("select");
+})();
 </script>
 </body>
 </html>
