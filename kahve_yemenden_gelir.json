@@ -1,0 +1,294 @@
+{
+  "version": 1,
+  "title": "Kahve Yemen'den Gelir",
+  "intro": 12.74,
+  "lyrics": "  \nBülbül çemenden gelir aman\nBülbül çemenden gelir aman\nKahve Yemen'den gelir\nBülbül çemenden gelir aman\nBülbül çemenden gelir aman\nA canım, sürmelim, palazım\nKekliğim de yeşilim aman, aman, aman, aman, aman",
+  "audioName": "Kahve Yemenden Gelir.mp3",
+  "audioUrl": "blob:https://princessmayosko.github.io/315dcc21-86bb-4449-8ec7-700be8acf3fc",
+  "selectedSegmentIndexes": [
+    33
+  ],
+  "heceler": [
+    {
+      "text": "INTRO",
+      "note": "re",
+      "start": 0,
+      "end": 12.74,
+      "line": 0,
+      "isIntro": true
+    },
+    {
+      "text": "Kahve",
+      "note": "re",
+      "start": 12.54,
+      "end": 13.23,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Yemen'den",
+      "note": "re sol",
+      "start": 13.13,
+      "end": 14.13,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "gelir",
+      "note": "sol fa#",
+      "start": 14.03,
+      "end": 15.64,
+      "line": 1,
+      "isIntro": false
+    },
+    {
+      "text": "Bülbül",
+      "note": "la sol#",
+      "start": 15.79,
+      "end": 16.62,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "çemenden",
+      "note": "fa mi re",
+      "start": 16.62,
+      "end": 17.95,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "gelir",
+      "note": "mi re",
+      "start": 17.85,
+      "end": 18.36,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "aman",
+      "note": "do# re",
+      "start": 18.46,
+      "end": 19.7,
+      "line": 2,
+      "isIntro": false
+    },
+    {
+      "text": "Bülbül",
+      "note": "la sol#",
+      "start": 19.55,
+      "end": 20.68,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "çemenden",
+      "note": "fa mi re",
+      "start": 20.63,
+      "end": 21.86,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "gelir",
+      "note": "mi re",
+      "start": 21.91,
+      "end": 22.37,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "aman",
+      "note": "do# re",
+      "start": 22.42,
+      "end": 24.29,
+      "line": 3,
+      "isIntro": false
+    },
+    {
+      "text": "Kahve",
+      "note": "la re",
+      "start": 24.53,
+      "end": 25.36,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Yemen'den",
+      "note": "re sol",
+      "start": 25.07,
+      "end": 26.12,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "gelir",
+      "note": "sol fa#",
+      "start": 26.12,
+      "end": 27.23,
+      "line": 4,
+      "isIntro": false
+    },
+    {
+      "text": "Bülbül",
+      "note": "la sol#",
+      "start": 27.73,
+      "end": 28.61,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "çemenden",
+      "note": "fa mi re",
+      "start": 28.61,
+      "end": 29.95,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "gelir",
+      "note": "mi re",
+      "start": 29.8,
+      "end": 30.45,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "aman",
+      "note": "do# re",
+      "start": 30.25,
+      "end": 31.39,
+      "line": 5,
+      "isIntro": false
+    },
+    {
+      "text": "Bülbül",
+      "note": "la sol#",
+      "start": 31.79,
+      "end": 32.72,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "çemenden",
+      "note": "fa mi re",
+      "start": 32.72,
+      "end": 33.85,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "gelir",
+      "note": "mi re",
+      "start": 33.85,
+      "end": 34.41,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "aman",
+      "note": "do# re",
+      "start": 34.21,
+      "end": 34.9,
+      "line": 6,
+      "isIntro": false
+    },
+    {
+      "text": "A",
+      "note": "si",
+      "start": 34.93,
+      "end": 35.63,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "canım,",
+      "note": "si la sol fa#",
+      "start": 35.62,
+      "end": 37.05,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "sürmelim,",
+      "note": "la sol fa# mi",
+      "start": 37.05,
+      "end": 39.11,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "palazım",
+      "note": "sol fa# mi re",
+      "start": 39.13,
+      "end": 41.23,
+      "line": 7,
+      "isIntro": false
+    },
+    {
+      "text": "Kekliğim",
+      "note": "la",
+      "start": 41.23,
+      "end": 41.88,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "de",
+      "note": "la",
+      "start": 41.88,
+      "end": 42.21,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "yeşilim",
+      "note": "la si do",
+      "start": 42.21,
+      "end": 43.02,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "aman,",
+      "note": "la sol# fa",
+      "start": 43.02,
+      "end": 43.63,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "aman,",
+      "note": "la sol# fa mi",
+      "start": 43.63,
+      "end": 44.09,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "aman,",
+      "note": "fa mi",
+      "start": 44.09,
+      "end": 44.55,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "aman,",
+      "note": "re",
+      "start": 44.57,
+      "end": 45.44,
+      "line": 8,
+      "isIntro": false
+    },
+    {
+      "text": "aman",
+      "note": "do# re",
+      "start": 45.44,
+      "end": 45.98,
+      "line": 8,
+      "isIntro": false
+    }
+  ],
+  "cursorTime": 45.46
+}
