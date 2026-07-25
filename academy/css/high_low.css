@@ -1,1 +1,229 @@
 
+/* VOCALY Akademi - high_low.css v1.0 */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#121212;
+    color:#fff;
+    min-height:100vh;
+}
+
+.topbar{
+    background:#1f1f1f;
+    padding:20px;
+    text-align:center;
+    border-bottom:1px solid #333;
+}
+
+.backButton{
+    display:inline-block;
+    margin-bottom:15px;
+    color:#ffd54f;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.titleArea h1{
+    font-size:2rem;
+    margin-bottom:8px;
+}
+
+.titleArea p{
+    color:#cfcfcf;
+}
+
+.gameContainer{
+    max-width:900px;
+    margin:auto;
+    padding:24px;
+}
+
+.gameStatus{
+    display:flex;
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.statusCard{
+    flex:1;
+    background:#202020;
+    border-radius:16px;
+    padding:18px;
+    text-align:center;
+}
+
+.statusCard span{
+    color:#aaa;
+    font-size:.9rem;
+}
+
+.statusCard h2{
+    margin-top:8px;
+    font-size:2rem;
+}
+
+.progressBar{
+    width:100%;
+    height:16px;
+    background:#333;
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:30px;
+}
+
+.progressFill{
+    width:10%;
+    height:100%;
+    background:#4caf50;
+    transition:.3s;
+}
+
+.listenArea{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.playButton{
+    border:none;
+    border-radius:20px;
+    background:#1976d2;
+    color:white;
+    padding:22px 40px;
+    font-size:1.3rem;
+    cursor:pointer;
+}
+
+.answerArea{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.answerButton{
+    border:none;
+    border-radius:20px;
+    padding:35px;
+    font-size:1.6rem;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.answerButton:hover{
+    transform:translateY(-3px);
+}
+
+.thin{
+    background:#26a69a;
+    color:#fff;
+}
+
+.thick{
+    background:#ef6c00;
+    color:#fff;
+}
+
+.feedback{
+    min-height:40px;
+    text-align:center;
+    font-size:1.2rem;
+    font-weight:bold;
+    margin-bottom:30px;
+}
+
+.resultScreen{
+    display:none;
+    background:#202020;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+}
+
+.resultScreen:not(.hidden){
+    display:block;
+}
+
+.resultButtons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:20px;
+}
+
+.resultButtons button,
+.resultButtons a{
+    padding:12px 24px;
+    border:none;
+    border-radius:12px;
+    background:#1976d2;
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.infoBox{
+    margin-top:40px;
+    background:#202020;
+    border-radius:16px;
+    overflow:hidden;
+}
+
+.infoHeader{
+    width:100%;
+    border:none;
+    background:#2a2a2a;
+    color:white;
+    text-align:left;
+    padding:18px;
+    font-size:1rem;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+}
+
+.infoContent{
+    display:none;
+    padding:20px;
+}
+
+.infoContent.open{
+    display:block;
+}
+
+.infoItem{
+    margin-bottom:20px;
+}
+
+.infoItem h3{
+    color:#ffd54f;
+    margin-bottom:8px;
+}
+
+.infoItem p,
+.infoItem li{
+    color:#ddd;
+    line-height:1.6;
+}
+
+@media(max-width:700px){
+
+    .gameStatus{
+        flex-direction:column;
+    }
+
+    .answerArea{
+        grid-template-columns:1fr;
+    }
+
+    .playButton{
+        width:100%;
+    }
+
+}
