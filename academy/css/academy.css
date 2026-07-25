@@ -1,343 +1,241 @@
 /* ==========================================
    VOCALY AKADEMİ
-   Ortak Stil Dosyası
-========================================== */
+   academy.css
+   Version : 1.0.0
+   ========================================== */
 
-:root{
-
-    --bg:#08111f;
-    --card:#111b2d;
-    --card2:#1b2740;
-
-    --primary:#7c4dff;
-    --primary-hover:#9268ff;
-
-    --yellow:#f5c242;
-
-    --green:#30d158;
-    --red:#ff4d4f;
-
-    --text:#ffffff;
-    --text2:#b8c2d9;
-
-    --radius:20px;
-
-}
-
-/* ==========================================
-   GENEL
-========================================== */
+/* ---------- RESET ---------- */
 
 *{
-
     margin:0;
     padding:0;
     box-sizing:border-box;
+}
+
+:root{
+
+    --bg:#111827;
+    --card:#1F2937;
+    --card-hover:#273447;
+
+    --purple:#8B5CF6;
+    --purple-hover:#7C3AED;
+
+    --teal:#14B8A6;
+
+    --text:#F9FAFB;
+    --text-secondary:#D1D5DB;
+
+    --border:#374151;
+
+    --radius:18px;
 
 }
 
 body{
 
+    font-family:Arial, Helvetica, sans-serif;
+
     background:var(--bg);
 
     color:var(--text);
 
-    font-family:Segoe UI,Tahoma,sans-serif;
+    min-height:100vh;
 
 }
+
+/* ---------- HEADER ---------- */
+
+.topbar{
+
+    text-align:center;
+
+    padding:50px 20px;
+
+}
+
+.topbar h1{
+
+    font-size:42px;
+
+    color:var(--purple);
+
+    margin-bottom:12px;
+
+}
+
+.topbar p{
+
+    color:var(--text-secondary);
+
+    font-size:20px;
+
+}
+
+/* ---------- CONTENT ---------- */
 
 .container{
 
-    width:min(1100px,95%);
+    width:min(1100px,92%);
 
     margin:auto;
 
-    padding:35px;
-
 }
 
-/* ==========================================
-   HEADER
-========================================== */
+/* ---------- WELCOME ---------- */
 
-.header{
+.welcome-card{
 
-    text-align:center;
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    padding:30px;
 
     margin-bottom:35px;
 
 }
 
-.back-button{
-
-    display:inline-block;
-
-    margin-bottom:25px;
-
-    color:white;
-
-    text-decoration:none;
-
-}
-
-.back-button:hover{
-
-    color:var(--yellow);
-
-}
-
-.logo{
-
-    width:170px;
+.welcome-card h2{
 
     margin-bottom:15px;
 
-}
-
-.header h1{
-
-    font-size:42px;
-
-    margin-bottom:10px;
+    color:var(--purple);
 
 }
 
-.subtitle{
+.welcome-card p{
 
-    color:var(--text2);
+    line-height:1.8;
 
-    font-size:18px;
-
-}
-
-/* ==========================================
-   KARTLAR
-========================================== */
-
-.info-card,
-.game-card,
-.scale-card{
-
-    background:var(--card);
-
-    border-radius:var(--radius);
-
-    padding:28px;
-
-    margin-bottom:25px;
-
-    border:1px solid rgba(255,255,255,.08);
+    color:var(--text-secondary);
 
 }
 
-/* ==========================================
-   ETKİNLİK BİLGİSİ
-========================================== */
+/* ---------- MENU ---------- */
 
-.info-grid{
+.menu{
 
     display:grid;
 
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 
-    gap:20px;
-
-    margin-top:20px;
+    gap:25px;
 
 }
 
-.info-grid strong{
+/* ---------- CARD ---------- */
 
-    color:var(--yellow);
+.menu-card{
 
-}
+    background:var(--card);
 
-/* ==========================================
-   PROGRESS
-========================================== */
+    border:1px solid var(--border);
 
-.progress-section{
+    border-radius:var(--radius);
 
-    margin-bottom:25px;
-
-}
-
-.progress-text{
+    padding:25px;
 
     display:flex;
 
-    justify-content:space-between;
+    gap:20px;
+
+    text-decoration:none;
+
+    color:white;
+
+    transition:.25s;
+
+}
+
+.menu-card.active:hover{
+
+    transform:translateY(-6px);
+
+    border-color:var(--purple);
+
+    box-shadow:0 10px 30px rgba(139,92,246,.30);
+
+}
+
+.menu-card.disabled{
+
+    opacity:.45;
+
+    cursor:not-allowed;
+
+}
+
+/* ---------- ICON ---------- */
+
+.icon{
+
+    font-size:42px;
+
+}
+
+/* ---------- CONTENT ---------- */
+
+.content h3{
 
     margin-bottom:10px;
 
-}
-
-.progress-bar{
-
-    width:100%;
-
-    height:12px;
-
-    background:#26324d;
-
-    border-radius:20px;
-
-    overflow:hidden;
+    color:var(--purple);
 
 }
 
-#progressFill{
+.content p{
 
-    width:0%;
+    color:var(--text-secondary);
 
-    height:100%;
-
-    background:var(--primary);
-
-    transition:.3s;
+    line-height:1.6;
 
 }
 
-/* ==========================================
-   OYUN
-========================================== */
+/* ---------- FOOTER ---------- */
 
-.game-card{
+footer{
 
     text-align:center;
 
-}
+    margin-top:70px;
 
-.play-button{
+    padding:25px;
 
-    width:100%;
+    color:#9CA3AF;
 
-    padding:18px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:var(--primary);
-
-    color:white;
-
-    font-size:22px;
-
-    cursor:pointer;
-
-    margin-bottom:25px;
-
-    transition:.25s;
+    border-top:1px solid var(--border);
 
 }
 
-.play-button:hover{
+/* ---------- RESPONSIVE ---------- */
 
-    background:var(--primary-hover);
+@media(max-width:700px){
 
-}
+.topbar h1{
 
-.answer-buttons{
-
-    display:flex;
-
-    gap:20px;
+font-size:32px;
 
 }
 
-.answer-btn{
+.topbar p{
 
-    flex:1;
-
-    padding:18px;
-
-    border:none;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    font-size:22px;
-
-    background:var(--card2);
-
-    color:white;
-
-    transition:.25s;
+font-size:18px;
 
 }
 
-.answer-btn:hover{
+.icon{
 
-    transform:translateY(-3px);
-
-}
-
-#highBtn{
-
-    border:2px solid #57a0ff;
+font-size:34px;
 
 }
 
-#lowBtn{
+.menu-card{
 
-    border:2px solid orange;
-
-}
-
-.feedback{
-
-    margin-top:25px;
-
-    font-size:22px;
-
-    font-weight:bold;
+padding:20px;
 
 }
-
-/* ==========================================
-   CETVEL
-========================================== */
-
-.scale-card h2{
-
-    margin-bottom:20px;
-
-}
-
-#vocalyScale{
-
-    height:130px;
-
-    border-radius:12px;
-
-    background:#1d2740;
-
-}
-
-/* ==========================================
-   RESPONSIVE
-========================================== */
-
-@media(max-width:768px){
-
-    .info-grid{
-
-        grid-template-columns:1fr;
-
-    }
-
-    .answer-buttons{
-
-        flex-direction:column;
-
-    }
-
-    .header h1{
-
-        font-size:32px;
-
-    }
 
 }
