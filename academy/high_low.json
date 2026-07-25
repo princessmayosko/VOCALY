@@ -1,0 +1,1 @@
+body{font-family:Arial;background:#121212;color:#fff;padding:30px}button{padding:12px 20px;margin:8px;border-radius:10px}#infoContent{display:none}.open{display:block}.hidden{display:none}
