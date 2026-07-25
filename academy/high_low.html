@@ -1,1 +1,136 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>İnce-Kalın Ses Avı</title><link rel="stylesheet" href="css/high_low.css"></head><body><h1>🎼 İnce-Kalın Ses Avı</h1><p>Bu paket örnek modüldür.</p><button id="playButton">🔊 Sesi Dinle</button><button id="thinButton">İNCE</button><button id="thickButton">KALIN</button><div id="feedback"></div><div id="resultScreen" class="hidden"><h2>Oyun Bitti</h2><div id="finalScore"></div><div id="earnedXP"></div><button id="restartButton">Tekrar</button></div><button id="toggleInfo">ℹ️ Bilgiler <span id="infoArrow">▼</span></button><div id="infoContent"></div><script src="js/high_low.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İnce-Kalın Ses Avı</title>
+
+    <link rel="stylesheet" href="css/high_low.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+
+        <a href="index.html" class="backButton">
+            ← Akademiye Dön
+        </a>
+
+        <div class="titleArea">
+            <h1>🎼 İnce-Kalın Ses Avı</h1>
+            <p>Sesleri dinle ve doğru cevabı seç.</p>
+        </div>
+
+    </header>
+
+    <main class="gameContainer">
+
+        <div class="gameStatus">
+
+            <div class="statusCard">
+                <span>Soru</span>
+                <h2 id="questionNumber">1 / 10</h2>
+            </div>
+
+            <div class="statusCard">
+                <span>Puan</span>
+                <h2 id="score">0 Puan</h2>
+            </div>
+
+        </div>
+
+        <div class="progressBar">
+            <div class="progressFill" id="progressFill"></div>
+        </div>
+
+        <div class="listenArea">
+
+            <button id="playButton" class="playButton">
+                🔊 Sesi Dinle
+            </button>
+
+        </div>
+
+        <div class="answerArea">
+
+            <button id="highBtn" class="answerButton thin">
+                İNCE
+            </button>
+
+            <button id="lowBtn" class="answerButton thick">
+                KALIN
+            </button>
+
+        </div>
+
+        <div class="feedback" id="feedback">
+            Hazır mısın?
+        </div>
+
+        <section id="resultScreen" class="resultScreen hidden">
+
+            <h2>🎉 Tebrikler</h2>
+
+            <p id="finalScore"></p>
+
+            <p id="earnedXP"></p>
+
+            <div class="resultButtons">
+
+                <button id="restartButton"
+                    onclick="location.reload()">
+                    Tekrar Oyna
+                </button>
+
+                <a href="index.html">
+                    Akademiye Dön
+                </a>
+
+            </div>
+
+        </section>
+
+        <section class="infoBox">
+
+            <button class="infoHeader" id="toggleInfo">
+
+                ℹ️ Etkinlik Bilgileri
+
+                <span id="infoArrow">▼</span>
+
+            </button>
+
+            <div class="infoContent" id="infoContent">
+
+                <div class="infoItem">
+                    <h3>🎯 Hedef Kazanım</h3>
+                    <p>İnce ve kalın sesleri ayırt eder.</p>
+                </div>
+
+                <div class="infoItem">
+                    <h3>📚 Programdaki Konumu</h3>
+                    <p>İşitsel algı ve ses farkındalığı.</p>
+                </div>
+
+                <div class="infoItem">
+                    <h3>🧩 CIPP Boyutu</h3>
+                    <p>Ürün değerlendirme odaklı örnek etkinlik.</p>
+                </div>
+
+                <div class="infoItem">
+                    <h3>📈 Beklenen Çıktı</h3>
+                    <p>Öğrenci sesleri doğru sınıflandırabilir.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="js/high_low.js"></script>
+
+</body>
+
+</html>
