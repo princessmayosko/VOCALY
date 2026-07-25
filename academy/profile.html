@@ -1,1 +1,146 @@
 
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>VOCALY Akademi</title>
+
+    <link rel="stylesheet"
+          href="css/academy.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <button class="logoBtn">
+
+        <div class="logoWord">
+
+            VOCALY
+
+        </div>
+
+    </button>
+
+    <h2>AKADEMİ</h2>
+
+    <p>Müzik Eğitimi Modülü</p>
+
+</header>
+
+<main class="container">
+
+    <section class="welcome-card">
+
+        <h2>Öğrenci Bilgileri</h2>
+
+        <p>
+
+            VOCALY Akademi'yi kullanmaya başlamadan önce
+            lütfen bilgilerinizi giriniz.
+
+        </p>
+
+    </section>
+
+    <section class="welcome-card">
+
+        <form id="studentForm">
+
+            <div class="formGroup">
+
+                <label>Ad</label>
+
+                <input
+                    type="text"
+                    id="ad"
+                    required>
+
+            </div>
+
+            <div class="formGroup">
+
+                <label>Soyad</label>
+
+                <input
+                    type="text"
+                    id="soyad"
+                    required>
+
+            </div>
+
+            <div class="formGroup">
+
+                <label>Okul</label>
+
+                <input
+                    type="text"
+                    id="okul">
+
+            </div>
+
+            <div class="formGroup">
+
+                <label>Okul No</label>
+
+                <input
+                    type="number"
+                    id="okulNo">
+
+            </div>
+
+            <div class="row">
+
+                <div class="formGroup">
+
+                    <label>Sınıf</label>
+
+                    <input
+                        type="text"
+                        id="sinif"
+                        placeholder="5">
+
+                </div>
+
+                <div class="formGroup">
+
+                    <label>Şube</label>
+
+                    <input
+                        type="text"
+                        id="sube"
+                        placeholder="A">
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="startButton">
+
+                Akademiye Başla
+
+            </button>
+
+        </form>
+
+    </section>
+
+</main>
+
+<script src="js/student.js"></script>
+
+<script src="js/profile.js"></script>
+
+</body>
+
+</html>
