@@ -2,52 +2,52 @@
   "questions": [
     {
       "id": 1,
-      "sound": "media/high_low/1.mp3",
-      "answer": "ince"
+      "sound": "media/sfx/aslan.wav",
+      "answer": "kalin"
     },
     {
       "id": 2,
-      "sound": "media/high_low/2.mp3",
-      "answer": "kalin"
+      "sound": "media/sfx/bebek.wav",
+      "answer": "ince"
     },
     {
       "id": 3,
-      "sound": "media/high_low/3.mp3",
-      "answer": "ince"
+      "sound": "media/sfx/inek.wav",
+      "answer": "kalin"
     },
     {
       "id": 4,
-      "sound": "media/high_low/4.mp3",
-      "answer": "kalin"
+      "sound": "media/sfx/kus.wav",
+      "answer": "ince"
     },
     {
       "id": 5,
-      "sound": "media/high_low/5.mp3",
-      "answer": "ince"
+      "sound": "media/sfx/tuba.wav",
+      "answer": "kalin"
     },
     {
       "id": 6,
-      "sound": "media/high_low/6.mp3",
-      "answer": "kalin"
+      "sound": "media/sfx/keman.mp3",
+      "answer": "ince"
     },
     {
       "id": 7,
-      "sound": "media/high_low/7.mp3",
-      "answer": "ince"
-    },
-    {
-      "id": 8,
-      "sound": "media/high_low/8.mp3",
+      "sound": "media/sfx/traktor.mp3",
       "answer": "kalin"
     },
     {
-      "id": 9,
-      "sound": "media/high_low/9.mp3",
+      "id": 8,
+      "sound": "media/sfx/ambulans.mp3",
       "answer": "ince"
     },
     {
+      "id": 9,
+      "sound": "media/sfx/gok_gurultusu.wav",
+      "answer": "kalin"
+    },
+    {
       "id": 10,
-      "sound": "media/high_low/10.mp3",
+      "sound": "media/sfx/duduk.wav",
       "answer": "kalin"
     }
   ]
