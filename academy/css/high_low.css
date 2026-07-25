@@ -196,9 +196,10 @@ body{
     padding:20px;
 }
 
-.infoItem{
-    margin-bottom:20px;
+.infoContent{
+    padding:20px;
 }
+
 
 .infoItem:last-child{
     margin-bottom:0;
