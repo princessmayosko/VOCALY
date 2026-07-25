@@ -1,184 +1,273 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>VOCALY Akademi | İnce - Kalın Ses Avı</title>
+    <title>İnce - Kalın Ses Avı | VOCALY Akademi</title>
 
-    <link rel="stylesheet" href="css/academy.css">
+    <link rel="stylesheet" href="css/high_low.css">
+
 </head>
+
 <body>
 
-<div class="container">
+<header class="topbar">
 
-    <!-- HEADER -->
+    <a href="index.html" class="backButton">
+        ← Akademiye Dön
+    </a>
 
-    <header class="header">
+    <div class="titleArea">
 
-        <a href="index.html" class="back-button">← Akademiye Dön</a>
+        <h1>🎼 İnce - Kalın Ses Avı</h1>
 
-        <img src="../logo.png" alt="VOCALY Logo" class="logo">
+        <p>Dinle, karar ver ve puan kazan!</p>
 
-        <h1>İnce - Kalın Ses Avı</h1>
+    </div>
 
-        <p class="subtitle">
-            Çalınan sesi dinle ve sesin ince mi kalın mı olduğunu belirle.
-        </p>
+</header>
 
-    </header>
+<main class="gameContainer">
 
+    <!-- Üst Bilgiler -->
 
-    <!-- PEDAGOJİK PANEL -->
+    <section class="gameStatus">
 
-    <section class="info-card">
+        <div class="statusCard">
 
-        <h2>📚 Etkinlik Bilgisi</h2>
+            <span>Soru</span>
 
-        <div class="info-grid">
+            <h2 id="questionNumber">
+                1 / 10
+            </h2>
 
-            <div>
-                <strong>Kazanım</strong>
-                <p>İnce ve kalın sesleri ayırt eder.</p>
-            </div>
+        </div>
 
-            <div>
-                <strong>Amaç</strong>
-                <p>Çevrede duyulan sesleri yükseklik özelliklerine göre sınıflandırır.</p>
-            </div>
+        <div class="statusCard">
 
-            <div>
-                <strong>Yöntem</strong>
-                <p>Kodály Yaklaşımı</p>
-            </div>
+            <span>Puan</span>
 
-            <div>
-                <strong>Süre</strong>
-                <p>5 Dakika</p>
-            </div>
+            <h2 id="score">
+                0
+            </h2>
 
-            <div>
-                <strong>Yaş</strong>
-                <p>6+</p>
-            </div>
+        </div>
 
-            <div>
-                <strong>Zorluk</strong>
-                <p>Kolay</p>
+    </section>
+
+    <!-- İlerleme -->
+
+    <section class="progressSection">
+
+        <div class="progressBar">
+
+            <div
+                id="progressFill"
+                class="progressFill">
+
             </div>
 
         </div>
 
     </section>
 
+    <!-- Ses -->
 
-    <!-- İLERLEME -->
+    <section class="listenArea">
 
-    <section class="progress-section">
+        <button
+            id="playButton"
+            class="playButton">
 
-        <div class="progress-text">
+            🔊
 
-            <span id="questionNumber">1 / 10</span>
-
-            <span id="score">0 Puan</span>
-
-        </div>
-
-        <div class="progress-bar">
-
-            <div id="progressFill"></div>
-
-        </div>
-
-    </section>
-
-
-    <!-- OYUN -->
-
-    <main class="game-card">
-
-        <button id="playButton" class="play-button">
-
-            🔊 SESİ DİNLE
+            <span>Sesi Dinle</span>
 
         </button>
 
-        <div class="answer-buttons">
+    </section>
 
-            <button id="highBtn" class="answer-btn">
+    <!-- Cevap -->
 
-                🔵 İNCE
+    <section class="answerArea">
+
+        <button
+            id="thinButton"
+            class="answerButton thin">
+
+            🎵
+
+            <span>İNCE</span>
+
+        </button>
+
+        <button
+            id="thickButton"
+            class="answerButton thick">
+
+            🥁
+
+            <span>KALIN</span>
+
+        </button>
+
+    </section>
+
+    <!-- Geri Bildirim -->
+
+    <section
+        id="feedback"
+        class="feedback">
+
+    </section>
+
+    <!-- Sonuç -->
+
+    <section
+        id="resultScreen"
+        class="resultScreen hidden">
+
+        <h2>
+
+            🎉 Tebrikler
+
+        </h2>
+
+        <h3>
+
+            Oyun Tamamlandı
+
+        </h3>
+
+        <p>
+
+            Toplam Puan
+
+        </p>
+
+        <h1 id="finalScore">
+
+            0
+
+        </h1>
+
+        <p id="earnedXP">
+
+            +0 XP
+
+        </p>
+
+        <div class="resultButtons">
+
+            <button
+                id="restartButton">
+
+                Tekrar Oyna
 
             </button>
 
-            <button id="lowBtn" class="answer-btn">
+            <a
+                href="index.html">
 
-                🟠 KALIN
+                Akademiye Dön
 
-            </button>
-
-        </div>
-
-        <div id="feedback" class="feedback">
-
-            Hazır mısın?
-
-        </div>
-
-    </main>
-
-
-    <!-- VOCALY CETVEL -->
-
-    <section class="scale-card">
-
-        <h2>VOCALY CETVELİ</h2>
-
-        <div id="vocalyScale">
-
-            <!-- Daha sonra JS oluşturacak -->
+            </a>
 
         </div>
 
     </section>
 
+    <!-- Açılır Bilgi -->
 
-    <!-- CIPP -->
+    <section class="infoBox">
 
-    <section class="cipp-card">
+        <button
+            id="toggleInfo"
+            class="infoHeader">
 
-        <h2>📊 CIPP</h2>
+            ℹ️ Etkinlik Bilgileri
 
-        <div class="cipp-grid">
+            <span id="infoArrow">
 
-            <div>
-                <strong>Context</strong>
-                <p>İnce ve kalın sesleri ayırt etme becerisini geliştirmek.</p>
+                ▼
+
+            </span>
+
+        </button>
+
+        <div
+            id="infoContent"
+            class="infoContent">
+
+            <div class="infoItem">
+
+                <h3>
+
+                    🎯 Hedef Kazanım
+
+                </h3>
+
+                <p id="hedefKazanim">
+
+                </p>
+
             </div>
 
-            <div>
-                <strong>Input</strong>
-                <p>Gerçek çevre sesleri, Vocaly Cetveli ve Kodály temelli etkinlik.</p>
+            <div class="infoItem">
+
+                <h3>
+
+                    📚 Programdaki Konumu
+
+                </h3>
+
+                <p id="programKonumu">
+
+                </p>
+
             </div>
 
-            <div>
-                <strong>Process</strong>
-                <p>Sesi dinler, sınıflandırır ve anında geri bildirim alır.</p>
+            <div class="infoItem">
+
+                <h3>
+
+                    🧩 CIPP Boyutları
+
+                </h3>
+
+                <p id="cipp">
+
+                </p>
+
             </div>
 
-            <div>
-                <strong>Product</strong>
-                <p>İnce ve kalın sesleri ayırt eder.</p>
+            <div class="infoItem">
+
+                <h3>
+
+                    📈 Beklenen Öğrenme Çıktıları
+
+                </h3>
+
+                <ul id="learningOutcomes">
+
+                </ul>
+
             </div>
 
         </div>
 
     </section>
 
-</div>
+</main>
 
-<script src="js/components.js"></script>
+<script src="js/student.js"></script>
+
 <script src="js/high_low.js"></script>
 
 </body>
+
 </html>
