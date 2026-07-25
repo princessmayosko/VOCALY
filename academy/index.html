@@ -36,13 +36,13 @@
 
             <h3>İlerleme</h3>
 
-            <span>%0</span>
+            <span id="progressPercent">%0</span>
 
         </div>
 
         <div class="progress-bar">
 
-            <div class="progress-fill"></div>
+            <div class="progress-fill" id="progressFill"></div>
 
         </div>
 
@@ -50,7 +50,7 @@
 
             <div class="stat">
 
-                <h2>1</h2>
+                <h2 id="studentLevel">1</h2>
 
                 <span>Seviye</span>
 
@@ -58,7 +58,7 @@
 
             <div class="stat">
 
-                <h2>0</h2>
+                <h2 id="studentXP">0</h2>
 
                 <span>XP</span>
 
@@ -66,7 +66,7 @@
 
             <div class="stat">
 
-                <h2>0</h2>
+                <h2 id="studentBadges">0</h2>
 
                 <span>Rozet</span>
 
@@ -78,7 +78,9 @@
 
     <section class="welcome-card">
 
-        <h2>Hoş Geldiniz</h2>
+        <h2 id="welcomeTitle">Hoş Geldiniz</h2>
+
+        <p id="studentInfo"></p>
 
         <p>
 
@@ -161,6 +163,9 @@
     <p>VOCALY Akademi • Sürüm 1.0.0</p>
 
 </footer>
+
+<script src="js/student.js"></script>
+<script src="js/academy.js"></script>
 
 </body>
 
