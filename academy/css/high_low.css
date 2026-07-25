@@ -225,5 +225,7 @@ body{
     .playButton{
         width:100%;
     }
-
+.hidden{
+    display:none !important;
+}
 }
