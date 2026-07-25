@@ -1,0 +1,343 @@
+/* ==========================================
+   VOCALY AKADEMİ
+   Ortak Stil Dosyası
+========================================== */
+
+:root{
+
+    --bg:#08111f;
+    --card:#111b2d;
+    --card2:#1b2740;
+
+    --primary:#7c4dff;
+    --primary-hover:#9268ff;
+
+    --yellow:#f5c242;
+
+    --green:#30d158;
+    --red:#ff4d4f;
+
+    --text:#ffffff;
+    --text2:#b8c2d9;
+
+    --radius:20px;
+
+}
+
+/* ==========================================
+   GENEL
+========================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+body{
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    font-family:Segoe UI,Tahoma,sans-serif;
+
+}
+
+.container{
+
+    width:min(1100px,95%);
+
+    margin:auto;
+
+    padding:35px;
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.header{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+.back-button{
+
+    display:inline-block;
+
+    margin-bottom:25px;
+
+    color:white;
+
+    text-decoration:none;
+
+}
+
+.back-button:hover{
+
+    color:var(--yellow);
+
+}
+
+.logo{
+
+    width:170px;
+
+    margin-bottom:15px;
+
+}
+
+.header h1{
+
+    font-size:42px;
+
+    margin-bottom:10px;
+
+}
+
+.subtitle{
+
+    color:var(--text2);
+
+    font-size:18px;
+
+}
+
+/* ==========================================
+   KARTLAR
+========================================== */
+
+.info-card,
+.game-card,
+.scale-card{
+
+    background:var(--card);
+
+    border-radius:var(--radius);
+
+    padding:28px;
+
+    margin-bottom:25px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+/* ==========================================
+   ETKİNLİK BİLGİSİ
+========================================== */
+
+.info-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:20px;
+
+    margin-top:20px;
+
+}
+
+.info-grid strong{
+
+    color:var(--yellow);
+
+}
+
+/* ==========================================
+   PROGRESS
+========================================== */
+
+.progress-section{
+
+    margin-bottom:25px;
+
+}
+
+.progress-text{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:10px;
+
+}
+
+.progress-bar{
+
+    width:100%;
+
+    height:12px;
+
+    background:#26324d;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+#progressFill{
+
+    width:0%;
+
+    height:100%;
+
+    background:var(--primary);
+
+    transition:.3s;
+
+}
+
+/* ==========================================
+   OYUN
+========================================== */
+
+.game-card{
+
+    text-align:center;
+
+}
+
+.play-button{
+
+    width:100%;
+
+    padding:18px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    margin-bottom:25px;
+
+    transition:.25s;
+
+}
+
+.play-button:hover{
+
+    background:var(--primary-hover);
+
+}
+
+.answer-buttons{
+
+    display:flex;
+
+    gap:20px;
+
+}
+
+.answer-btn{
+
+    flex:1;
+
+    padding:18px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-size:22px;
+
+    background:var(--card2);
+
+    color:white;
+
+    transition:.25s;
+
+}
+
+.answer-btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+#highBtn{
+
+    border:2px solid #57a0ff;
+
+}
+
+#lowBtn{
+
+    border:2px solid orange;
+
+}
+
+.feedback{
+
+    margin-top:25px;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+/* ==========================================
+   CETVEL
+========================================== */
+
+.scale-card h2{
+
+    margin-bottom:20px;
+
+}
+
+#vocalyScale{
+
+    height:130px;
+
+    border-radius:12px;
+
+    background:#1d2740;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:768px){
+
+    .info-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .answer-buttons{
+
+        flex-direction:column;
+
+    }
+
+    .header h1{
+
+        font-size:32px;
+
+    }
+
+}

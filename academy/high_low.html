@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VOCALY Akademi | İnce - Kalın Ses Avı</title>
+
+    <link rel="stylesheet" href="css/academy.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <a href="index.html" class="back-button">← Akademiye Dön</a>
+
+        <img src="../logo.png" alt="VOCALY Logo" class="logo">
+
+        <h1>İnce - Kalın Ses Avı</h1>
+
+        <p class="subtitle">
+            Çalınan sesi dinle ve sesin ince mi kalın mı olduğunu belirle.
+        </p>
+
+    </header>
+
+
+    <!-- PEDAGOJİK PANEL -->
+
+    <section class="info-card">
+
+        <h2>📚 Etkinlik Bilgisi</h2>
+
+        <div class="info-grid">
+
+            <div>
+                <strong>Kazanım</strong>
+                <p>İnce ve kalın sesleri ayırt eder.</p>
+            </div>
+
+            <div>
+                <strong>Amaç</strong>
+                <p>Çevrede duyulan sesleri yükseklik özelliklerine göre sınıflandırır.</p>
+            </div>
+
+            <div>
+                <strong>Yöntem</strong>
+                <p>Kodály Yaklaşımı</p>
+            </div>
+
+            <div>
+                <strong>Süre</strong>
+                <p>5 Dakika</p>
+            </div>
+
+            <div>
+                <strong>Yaş</strong>
+                <p>6+</p>
+            </div>
+
+            <div>
+                <strong>Zorluk</strong>
+                <p>Kolay</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- İLERLEME -->
+
+    <section class="progress-section">
+
+        <div class="progress-text">
+
+            <span id="questionNumber">1 / 10</span>
+
+            <span id="score">0 Puan</span>
+
+        </div>
+
+        <div class="progress-bar">
+
+            <div id="progressFill"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- OYUN -->
+
+    <main class="game-card">
+
+        <button id="playButton" class="play-button">
+
+            🔊 SESİ DİNLE
+
+        </button>
+
+        <div class="answer-buttons">
+
+            <button id="highBtn" class="answer-btn">
+
+                🔵 İNCE
+
+            </button>
+
+            <button id="lowBtn" class="answer-btn">
+
+                🟠 KALIN
+
+            </button>
+
+        </div>
+
+        <div id="feedback" class="feedback">
+
+            Hazır mısın?
+
+        </div>
+
+    </main>
+
+
+    <!-- VOCALY CETVEL -->
+
+    <section class="scale-card">
+
+        <h2>VOCALY CETVELİ</h2>
+
+        <div id="vocalyScale">
+
+            <!-- Daha sonra JS oluşturacak -->
+
+        </div>
+
+    </section>
+
+
+    <!-- CIPP -->
+
+    <section class="cipp-card">
+
+        <h2>📊 CIPP</h2>
+
+        <div class="cipp-grid">
+
+            <div>
+                <strong>Context</strong>
+                <p>İnce ve kalın sesleri ayırt etme becerisini geliştirmek.</p>
+            </div>
+
+            <div>
+                <strong>Input</strong>
+                <p>Gerçek çevre sesleri, Vocaly Cetveli ve Kodály temelli etkinlik.</p>
+            </div>
+
+            <div>
+                <strong>Process</strong>
+                <p>Sesi dinler, sınıflandırır ve anında geri bildirim alır.</p>
+            </div>
+
+            <div>
+                <strong>Product</strong>
+                <p>İnce ve kalın sesleri ayırt eder.</p>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script src="js/components.js"></script>
+<script src="js/high_low.js"></script>
+
+</body>
+</html>
