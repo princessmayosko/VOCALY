@@ -17,11 +17,7 @@ window.addEventListener("DOMContentLoaded", initGame);
 
 async function initGame() {
 
-    console.log("initGame başladı");
-
     await loadQuestions();
-
-    console.log("Yüklenen soru sayısı:", game.questions.length);
 
     shuffleQuestions();
 
@@ -41,11 +37,9 @@ async function loadQuestions() {
 
         game.questions = data.questions;
 
-        console.log("JSON yüklendi:", game.questions);
-
     } catch (err) {
 
-        console.error("JSON Hatası:", err);
+        console.error(err);
 
         alert("Sorular yüklenemedi.");
 
@@ -61,27 +55,41 @@ function shuffleQuestions() {
 
 function registerEvents() {
 
-    console.log("registerEvents çalıştı");
-
     const playButton = document.getElementById("playButton");
     const highBtn = document.getElementById("highBtn");
     const lowBtn = document.getElementById("lowBtn");
 
-    console.log("Play:", playButton);
-    console.log("High:", highBtn);
-    console.log("Low:", lowBtn);
-
-    playButton.addEventListener("click", () => {
-
-        console.log("Play butonuna basıldı");
-
-        playSound();
-
-    });
+    playButton.addEventListener("click", playSound);
 
     highBtn.addEventListener("click", () => checkAnswer("ince"));
 
     lowBtn.addEventListener("click", () => checkAnswer("kalin"));
+
+    // Etkinlik Bilgileri Aç / Kapat
+
+    const toggleInfo = document.getElementById("toggleInfo");
+    const infoContent = document.getElementById("infoContent");
+    const infoArrow = document.getElementById("infoArrow");
+
+    if (toggleInfo && infoContent && infoArrow) {
+
+        toggleInfo.addEventListener("click", () => {
+
+            infoContent.classList.toggle("hidden");
+
+            if (infoContent.classList.contains("hidden")) {
+
+                infoArrow.textContent = "▼";
+
+            } else {
+
+                infoArrow.textContent = "▲";
+
+            }
+
+        });
+
+    }
 
 }
 
@@ -103,33 +111,19 @@ function updateUI() {
 
 function playSound() {
 
-    console.log("playSound çalıştı");
-
     if (game.currentAudio) {
 
         game.currentAudio.pause();
+
+        game.currentAudio.currentTime = 0;
 
     }
 
     const question = game.questions[game.currentIndex];
 
-    console.log("Question:", question);
-
-    console.log("Ses yolu:", question.sound);
-
     game.currentAudio = new Audio(question.sound);
 
-    game.currentAudio.play()
-        .then(() => {
-
-            console.log("Ses başarıyla çaldı.");
-
-        })
-        .catch(err => {
-
-            console.error("Ses çalma hatası:", err);
-
-        });
+    game.currentAudio.play().catch(console.error);
 
     game.replayCount++;
 
@@ -170,6 +164,8 @@ function checkAnswer(answer) {
 
     }
 
+    updateUI();
+
     setTimeout(nextQuestion, 1200);
 
 }
@@ -189,6 +185,7 @@ function nextQuestion() {
     }
 
     document.getElementById("feedback").textContent = "Hazır mısın?";
+
     document.getElementById("feedback").style.color = "#ffffff";
 
     updateUI();
@@ -200,13 +197,13 @@ function finishGame() {
     const percent =
         Math.round((game.score / game.questions.length) * 100);
 
-    alert(`Etkinlik Tamamlandı
+    document.getElementById("resultScreen").classList.remove("hidden");
 
-Doğru : ${game.score}
+    document.getElementById("finalScore").textContent =
+        `Doğru: ${game.score} | Yanlış: ${game.wrong} | Başarı: %${percent}`;
 
-Yanlış : ${game.wrong}
-
-Başarı : %${percent}`);
+    document.getElementById("earnedXP").textContent =
+        "Etkinlik başarıyla tamamlandı.";
 
     console.table(game.results);
 
