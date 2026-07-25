@@ -1,94 +1,99 @@
-/* ==========================================
-   VOCALY AKADEMİ
-   academy.css
-   Version : 1.0.0
-   ========================================== */
-
-/* ---------- RESET ---------- */
-
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
 
-:root{
-
-    --bg:#111827;
-    --card:#1F2937;
-    --card-hover:#273447;
-
-    --purple:#8B5CF6;
-    --purple-hover:#7C3AED;
-
-    --teal:#14B8A6;
-
-    --text:#F9FAFB;
-    --text-secondary:#D1D5DB;
-
-    --border:#374151;
-
-    --radius:18px;
-
-}
-
 body{
 
     font-family:Arial, Helvetica, sans-serif;
 
-    background:var(--bg);
+    background:#0b1120;
 
-    color:var(--text);
+    color:#ffffff;
 
     min-height:100vh;
 
 }
 
-/* ---------- HEADER ---------- */
+a{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
 
 .topbar{
 
     text-align:center;
 
-    padding:50px 20px;
+    padding:45px 20px 35px;
+
+    background:linear-gradient(180deg,#111827,#0b1120);
 
 }
 
-.topbar h1{
+.logoBtn{
 
-    font-size:42px;
+    border:none;
 
-    color:var(--purple);
+    background:none;
 
-    margin-bottom:12px;
+    cursor:pointer;
+
+    margin-bottom:18px;
+
+}
+
+.logoWord{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:12px 24px;
+
+    border-radius:16px;
+
+    background:radial-gradient(circle at 30% 30%,
+    #fde047 0%,
+    #facc15 45%,
+    #ca8a04 100%);
+
+    color:#111827;
+
+    font-weight:900;
+
+    font-size:34px;
+
+    letter-spacing:2px;
+
+    box-shadow:0 10px 30px rgba(250,204,21,.35);
+
+}
+
+.topbar h2{
+
+    margin-top:15px;
+
+    font-size:30px;
+
+    letter-spacing:4px;
 
 }
 
 .topbar p{
 
-    color:var(--text-secondary);
+    margin-top:10px;
 
-    font-size:20px;
+    color:#bfc8da;
 
-    letter-spacing:.5px;
-
-}
-/* ---------- LOGO ---------- */
-
-.logo{
-
-    width:220px;
-
-    max-width:80%;
-
-    display:block;
-
-    margin:0 auto 18px auto;
-
-    filter:drop-shadow(0 8px 20px rgba(255,193,7,.25));
+    font-size:17px;
 
 }
-/* ---------- CONTENT ---------- */
 
 .container{
 
@@ -96,21 +101,109 @@ body{
 
     margin:auto;
 
+    padding:35px 0 60px;
+
 }
 
-/* ---------- WELCOME ---------- */
+.progress-card{
+
+    background:#162238;
+
+    border-radius:22px;
+
+    padding:25px;
+
+    margin-bottom:30px;
+
+}
+
+.progress-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+
+}
+
+.progress-header h3{
+
+    font-size:22px;
+
+}
+
+.progress-bar{
+
+    width:100%;
+
+    height:16px;
+
+    background:#27354f;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.progress-fill{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(90deg,#22c55e,#38bdf8);
+
+}
+
+.stats{
+
+    display:flex;
+
+    gap:18px;
+
+    margin-top:25px;
+
+}
+
+.stat{
+
+    flex:1;
+
+    background:#101b2f;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    text-align:center;
+
+}
+
+.stat h2{
+
+    font-size:36px;
+
+}
+
+.stat span{
+
+    color:#b9c4d8;
+
+}
 
 .welcome-card{
 
-    background:var(--card);
+    background:#162238;
 
-    border:1px solid var(--border);
+    border-radius:22px;
 
-    border-radius:var(--radius);
+    padding:28px;
 
-    padding:30px;
-
-    margin-bottom:35px;
+    margin-bottom:30px;
 
 }
 
@@ -118,19 +211,15 @@ body{
 
     margin-bottom:15px;
 
-    color:var(--purple);
-
 }
 
 .welcome-card p{
 
     line-height:1.8;
 
-    color:var(--text-secondary);
+    color:#d8dce6;
 
 }
-
-/* ---------- MENU ---------- */
 
 .menu{
 
@@ -138,29 +227,23 @@ body{
 
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 
-    gap:25px;
+    gap:22px;
 
 }
 
-/* ---------- CARD ---------- */
-
 .menu-card{
-
-    background:var(--card);
-
-    border:1px solid var(--border);
-
-    border-radius:var(--radius);
-
-    padding:25px;
 
     display:flex;
 
     gap:20px;
 
-    text-decoration:none;
+    align-items:center;
 
-    color:white;
+    background:#162238;
+
+    border-radius:22px;
+
+    padding:22px;
 
     transition:.25s;
 
@@ -170,9 +253,7 @@ body{
 
     transform:translateY(-6px);
 
-    border-color:var(--purple);
-
-    box-shadow:0 10px 30px rgba(139,92,246,.30);
+    background:#1c2d49;
 
 }
 
@@ -184,74 +265,54 @@ body{
 
 }
 
-/* ---------- ICON ---------- */
-
 .icon{
 
     font-size:42px;
 
 }
 
-/* ---------- CONTENT ---------- */
-
 .content h3{
 
-    margin-bottom:10px;
-
-    color:var(--purple);
+    margin-bottom:8px;
 
 }
 
 .content p{
 
-    color:var(--text-secondary);
+    color:#c4cede;
 
-    line-height:1.6;
+    line-height:1.5;
 
 }
-
-/* ---------- FOOTER ---------- */
 
 footer{
 
     text-align:center;
 
-    margin-top:70px;
+    color:#9ca9c2;
 
-    padding:25px;
-
-    color:#9CA3AF;
-
-    border-top:1px solid var(--border);
+    padding:35px 20px;
 
 }
-
-/* ---------- RESPONSIVE ---------- */
 
 @media(max-width:700px){
 
-.topbar h1{
+    .stats{
 
-font-size:32px;
+        flex-direction:column;
 
-}
+    }
 
-.topbar p{
+    .logoWord{
 
-font-size:18px;
+        font-size:28px;
 
-}
+    }
 
-.icon{
+    .topbar h2{
 
-font-size:34px;
+        font-size:24px;
 
-}
-
-.menu-card{
-
-padding:20px;
-
-}
+    }
 
 }
