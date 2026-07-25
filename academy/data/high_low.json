@@ -17,70 +17,70 @@
     {
       "id": 1,
       "name": "Ambulans",
-      "sound": "../media/sfx/ambulans.mp3",
+      "sound": "media/sfx/ambulans.mp3",
       "answer": "ince"
     },
 
     {
       "id": 2,
       "name": "Kuş",
-      "sound": "../media/sfx/kus.wav",
+      "sound": "media/sfx/kus.wav",
       "answer": "ince"
     },
 
     {
       "id": 3,
       "name": "Düdük",
-      "sound": "../media/sfx/duduk.wav",
+      "sound": "media/sfx/duduk.wav",
       "answer": "ince"
     },
 
     {
       "id": 4,
       "name": "Keman",
-      "sound": "../media/sfx/keman.mp3",
+      "sound": "media/sfx/keman.mp3",
       "answer": "ince"
     },
 
     {
       "id": 5,
       "name": "Bebek",
-      "sound": "../media/sfx/bebek.wav",
+      "sound": "media/sfx/bebek.wav",
       "answer": "ince"
     },
 
     {
       "id": 6,
       "name": "Aslan",
-      "sound": "../media/sfx/aslan.wav",
+      "sound": "media/sfx/aslan.wav",
       "answer": "kalin"
     },
 
     {
       "id": 7,
       "name": "İnek",
-      "sound": "../media/sfx/inek.wav",
+      "sound": "media/sfx/inek.wav",
       "answer": "kalin"
     },
 
     {
       "id": 8,
       "name": "Traktör",
-      "sound": "../media/sfx/traktor.mp3",
+      "sound": "media/sfx/traktor.mp3",
       "answer": "kalin"
     },
 
     {
       "id": 9,
       "name": "Gök Gürültüsü",
-      "sound": "../media/sfx/gok_gurultusu.wav",
+      "sound": "media/sfx/gok_gurultusu.wav",
       "answer": "kalin"
     },
 
     {
       "id": 10,
       "name": "Tuba",
-      "sound": "../media/sfx/tuba.wav",
+      "sound": "media/sfx/tuba.wav",
       "answer": "kalin"
     }
 
