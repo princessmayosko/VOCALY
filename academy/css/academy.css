@@ -71,7 +71,21 @@ body{
     font-size:20px;
 
 }
+/* ---------- LOGO ---------- */
 
+.logo{
+
+    width:220px;
+
+    max-width:80%;
+
+    display:block;
+
+    margin:0 auto 18px auto;
+
+    filter:drop-shadow(0 8px 20px rgba(255,193,7,.25));
+
+}
 /* ---------- CONTENT ---------- */
 
 .container{
