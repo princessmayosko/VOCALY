@@ -65,22 +65,6 @@ function registerEvents() {
 
     lowBtn.addEventListener("click", () => checkAnswer("kalin"));
 
-    const toggleInfo = document.getElementById("toggleInfo");
-const infoContent = document.getElementById("infoContent");
-const infoArrow = document.getElementById("infoArrow");
-
-toggleInfo.addEventListener("click", () => {
-
-    infoContent.classList.toggle("hidden");
-
-    if(infoContent.classList.contains("hidden")){
-        infoArrow.textContent = "▼";
-    }
-    else{
-        infoArrow.textContent = "▲";
-    }
-
-});
 
     // Etkinlik Bilgileri Aç / Kapat
 
