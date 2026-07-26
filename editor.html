@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>VOCALY Editör</title>
+  <title>VOCALY Öğretmen Editörü</title>
   <script src="https://unpkg.com/wavesurfer.js@6"></script>
   <style>
     :root{
@@ -18,7 +18,7 @@
       --shadow:0 12px 36px rgba(0,0,0,.32);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:Arial,sans-serif}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:"Times New Roman", Times, serif}
     body{min-height:100vh}
     button,input,textarea,select{font:inherit}
     .app{max-width:1380px;margin:0 auto;padding:14px 14px 42px}
@@ -27,7 +27,7 @@
     .brand{display:flex;align-items:center;gap:10px;font-weight:800}
     .logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,#fde047 0,#facc15 42%,#ca8a04 100%);color:#111827;font-weight:900;box-shadow:0 8px 24px rgba(250,204,21,.22)}
     .brand span{font-size:20px;color:var(--yellow)}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:16px;margin-top:16px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:16px;margin-top:16px;overflow:hidden}
     .sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
     .sectionTitle h2{margin:0;font-size:20px}
     .metaRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -37,8 +37,8 @@
     .fileLabel{position:relative;overflow:hidden}
     .fileLabel input{position:absolute;inset:0;opacity:0;cursor:pointer}
     #zoom{flex:1;min-width:110px}
-    .waveShell{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0c1528}
-    #waveform{height:300px;overflow-x:auto;overflow-y:hidden}
+    .waveShell{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0c1528;width:100%;max-width:100%}
+    #waveform{height:300px;overflow-x:auto;overflow-y:hidden;width:100%;max-width:100%}
     #overlayViewport{position:absolute;top:0;left:0;right:0;height:98px;overflow:hidden;z-index:8;pointer-events:none;background:linear-gradient(180deg,rgba(10,17,33,.97) 0%, rgba(10,17,33,.92) 70%, rgba(10,17,33,0) 100%)}
     #overlayContent{position:absolute;left:0;top:0;height:98px}
     #ruler{position:absolute;left:0;top:0;height:36px;border-bottom:1px solid #24355a;background:linear-gradient(180deg,rgba(13,22,44,.98) 0%, rgba(13,22,44,.92) 100%);pointer-events:auto}
@@ -58,7 +58,7 @@
     .strip-block .handle.right{right:0;cursor:ew-resize}
     .strip-block .drag{position:absolute;left:10px;right:10px;top:0;bottom:0;cursor:grab}
     .grid{display:block}
-    .rowCompact{display:grid;grid-template-columns:2fr .8fr 1.2fr 1fr .8fr .8fr .7fr auto;gap:8px;align-items:center;margin-top:10px}
+    .rowCompact{display:grid;grid-template-columns:2fr .8fr 1.2fr 1fr .8fr .8fr .7fr auto;gap:8px;align-items:center;margin-top:10px}.rowCompact > *{min-width:0}
     .rowCompact input,.rowCompact select{padding:10px 11px;border-radius:12px;border:1px solid #334267;background:#0f1830;color:#eef4ff}
     textarea{width:100%;margin-top:10px;min-height:110px;padding:12px;border-radius:14px;border:1px solid #334267;background:#0f1830;color:#eef4ff;resize:vertical;line-height:1.5}
     .smallBtn{padding:10px 12px;border:none;border-radius:12px;background:rgba(255,255,255,.08);color:var(--text);cursor:pointer}
@@ -75,14 +75,14 @@
     .karaokeBox.selected{box-shadow:0 0 0 4px rgba(96,165,250,.16);border-color:var(--blue)}
     .lineBreak{flex-basis:100%;height:0;width:0}
     #status{color:var(--muted);font-size:14px}
-    @media (max-width:980px){.grid{grid-template-columns:1fr}.rowCompact{grid-template-columns:1fr 1fr}#waveform{height:240px}}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}.rowCompact{grid-template-columns:1fr 1fr}.rowCompact > *:last-child{grid-column:1 / -1}#waveform{height:240px}.waveShell{width:100%}.miniBar{gap:5px}}
   </style>
 </head>
 <body>
   <div class="topbar">
     <div class="topbar-inner">
       <div class="brand"><div class="logo">V</div><span>VOCALY</span></div>
-      <div id="status">Editör</div>
+      <div id="status">Öğretmen Editörü</div>
     </div>
   </div>  <div class="app">
     <div class="card">
@@ -238,7 +238,109 @@
     function renderAll(){ normalizeIntroSegment(); renderRuler(); renderStrip(); renderKaraoke(); syncOverlayPosition(); }
     function seekToSegment(index,playSnippet=false){ const seg=heceler[index]; if(!seg) return; loadedIndex=index; updateActiveSegmentLabel(index); heceInput.value=seg.text; notaInput.value=seg.note||''; satirInput.value=seg.line||''; startInput.value=seg.start!==null ? seg.start.toFixed(2) : ''; endInput.value=seg.end!==null ? seg.end.toFixed(2) : ''; if(seg.start!==null && hasAudioLoaded()){ seekToTime(seg.start); scrollToTime(seg.start); } renderStrip(); if(playSnippet && hasAudioLoaded() && seg.start!==null && seg.end!==null) ws.play(seg.start,seg.end); }
     function startDrag(e,index,mode){ e.preventDefault(); e.stopPropagation(); const seg=heceler[index]; if(!seg||seg.start===null||seg.end===null) return; dragState={index:index,mode:mode,startX:e.clientX,origStart:seg.start,origEnd:seg.end}; document.addEventListener('pointermove',onDragMove,{passive:false}); document.addEventListener('pointerup',endDrag); document.addEventListener('pointercancel',endDrag); }
-    function onDragMove(e){ if(!dragState) return; e.preventDefault(); const seg=heceler[dragState.index]; const deltaPx=e.clientX-dragState.startX; const deltaTime=pxToTime(deltaPx); const minLen=0.03; const duration=hasAudioLoaded()?ws.getDuration():Infinity; if(dragState.mode==='move'){ if(seg.isIntro) return; const len=dragState.origEnd-dragState.origStart; let newStart=Math.max(0,dragState.origStart+deltaTime); let newEnd=newStart+len; if(newEnd>duration){ newEnd=duration; newStart=Math.max(0,newEnd-len); } seg.start=round2(newStart); seg.end=round2(newEnd); } else if(dragState.mode==='resize-left'){ let newStart=Math.max(0,dragState.origStart+deltaTime); if(seg.isIntro) newStart=0; if(seg.end<=newStart+minLen) newStart=seg.end-minLen; seg.start=round2(newStart); } else if(dragState.mode==='resize-right'){ let newEnd=Math.max(seg.start+minLen, dragState.origEnd+deltaTime); if(newEnd>duration) newEnd=duration; seg.end=round2(newEnd); if(seg.isIntro) introInput.value=seg.end.toFixed(2); } startInput.value=seg.start.toFixed(2); endInput.value=seg.end.toFixed(2); renderStrip(); renderKaraoke(); }
+    function onDragMove(e){
+      if(!dragState) return;
+      e.preventDefault();
+
+      const seg = heceler[dragState.index];
+      const deltaPx = e.clientX - dragState.startX;
+      const deltaTime = pxToTime(deltaPx);
+      const minLen = 0.03;
+      const duration = hasAudioLoaded() ? ws.getDuration() : Infinity;
+
+      const ordered = getOrderedTimedSegments();
+      const pos = ordered.findIndex(x => x.i === dragState.index);
+      const prev = pos > 0 ? ordered[pos - 1].s : null;
+      const next = pos < ordered.length - 1 ? ordered[pos + 1].s : null;
+
+      if(dragState.mode === 'move'){
+        if(seg.isIntro) return;
+
+        const len = dragState.origEnd - dragState.origStart;
+        let newStart = dragState.origStart + deltaTime;
+        let newEnd = newStart + len;
+
+        if(prev && prev.end !== null){
+          newStart = Math.max(newStart, prev.end);
+          newEnd = newStart + len;
+        }
+
+        if(next && next.start !== null){
+          newEnd = Math.min(newEnd, next.start);
+          newStart = newEnd - len;
+        }
+
+        if(newStart < 0){
+          newStart = 0;
+          newEnd = len;
+        }
+
+        if(newEnd > duration){
+          newEnd = duration;
+          newStart = Math.max(0, newEnd - len);
+        }
+
+        seg.start = round2(newStart);
+        seg.end = round2(newEnd);
+      }
+
+      else if(dragState.mode === 'resize-left'){
+        let newStart = dragState.origStart + deltaTime;
+
+        if(seg.isIntro) newStart = 0;
+        if(prev && prev.end !== null){
+          newStart = Math.max(newStart, prev.end);
+        }
+        if(seg.end <= newStart + minLen){
+          newStart = seg.end - minLen;
+        }
+
+        seg.start = round2(newStart);
+      }
+
+      else if(dragState.mode === 'resize-right'){
+        let newEnd = dragState.origEnd + deltaTime;
+        if(newEnd > duration) newEnd = duration;
+        if(newEnd <= seg.start + minLen){
+          newEnd = seg.start + minLen;
+        }
+
+        const diff = round2(newEnd - seg.end);
+        seg.end = round2(newEnd);
+
+        if(seg.isIntro){
+          introInput.value = seg.end.toFixed(2);
+        }
+
+        if(diff !== 0 && pos !== -1){
+          for(let i = pos + 1; i < ordered.length; i++){
+            const cur = ordered[i].s;
+            const len = Math.max(minLen, round2(cur.end - cur.start));
+            cur.start = round2(cur.start + diff);
+            cur.end = round2(cur.start + len);
+
+            if(cur.end > duration){
+              cur.end = round2(duration);
+              if(cur.end <= cur.start) cur.start = round2(Math.max(0, cur.end - minLen));
+            }
+          }
+
+          for(let i = pos + 1; i < ordered.length; i++){
+            const prevSeg = ordered[i - 1].s;
+            const cur = ordered[i].s;
+            const len = Math.max(minLen, round2(cur.end - cur.start));
+            cur.start = round2(prevSeg.end);
+            cur.end = round2(cur.start + len);
+          }
+        }
+      }
+
+      startInput.value = seg.start.toFixed(2);
+      endInput.value = seg.end.toFixed(2);
+      renderStrip();
+      renderKaraoke();
+    }
+
     function endDrag(){ if(!dragState) return; const idx=dragState.index; dragState=null; document.removeEventListener('pointermove',onDragMove); document.removeEventListener('pointerup',endDrag); document.removeEventListener('pointercancel',endDrag); renderAll(); seekToSegment(idx,false); autoSaveProject(); }
     function karaokePlaybackUpdate(time){ const sorted=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); document.querySelectorAll('.karaokeBox').forEach(el=>{ el.classList.remove('active'); const fill=el.querySelector('.fill'); if(fill) fill.style.width='0%'; }); const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const introEl=document.getElementById('karaoke-intro'); if(introEl){ const fill=introEl.querySelector('.fill'); if(time<=intro.end){ introEl.classList.add('active'); fill.style.width=Math.max(0,Math.min(100,(time/intro.end)*100))+'%'; } else fill.style.width='100%'; } } sorted.forEach((item,i)=>{ const el=document.getElementById('karaoke-box-'+i); if(!el) return; const fill=el.querySelector('.fill'); const h=item.seg; if(time>=h.start && time<=h.end){ el.classList.add('active'); fill.style.width=Math.max(0,Math.min(100,((time-h.start)/(h.end-h.start))*100))+'%'; } else if(time>h.end){ fill.style.width='100%'; } if(selectedSegmentIndexes.includes(item.idx)) el.classList.add('selected'); }); }
     function playSingleKaraokeSegment(index){ const seg=heceler[index]; if(!seg||seg.start===null||seg.end===null||!hasAudioLoaded()) return; selectedSegmentIndexes=[index]; renderKaraoke(); seekToSegment(index,true); }
