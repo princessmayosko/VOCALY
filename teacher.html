@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VOCALY Öğretmen Paneli</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+min-height:100vh;
+background:#07101f;
+color:white;
+font-family:"Times New Roman", Times, serif;
+}
+
+header{
+text-align:center;
+padding:35px;
+}
+
+.logo{
+display:inline-block;
+background:linear-gradient(135deg,#ffd54f,#e8a900);
+color:#101827;
+font-size:34px;
+font-weight:900;
+letter-spacing:3px;
+padding:15px 32px;
+border-radius:12px;
+}
+
+.welcome{
+margin-top:25px;
+font-size:22px;
+color:#ffd54f;
+}
+
+.container{
+width:90%;
+max-width:1000px;
+margin:auto;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+padding:20px;
+}
+
+.card{
+background:#111b2d;
+border:1px solid #26344d;
+border-radius:20px;
+padding:30px;
+text-align:center;
+cursor:pointer;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+border-color:#ffd54f;
+}
+
+.card h2{
+color:#ffd54f;
+margin-bottom:15px;
+}
+
+.card p{
+color:#ddd;
+line-height:1.5;
+}
+
+.logout{
+display:block;
+width:200px;
+margin:35px auto;
+padding:12px;
+background:#c62828;
+color:white;
+text-align:center;
+text-decoration:none;
+border-radius:12px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+VOCALY
+</div>
+
+<div class="welcome" id="welcome">
+Hoş geldiniz
+</div>
+
+</header>
+
+
+<div class="container">
+
+
+<div class="card" onclick="openPage('editor.html')">
+<h2>🎼 Şarkı Editörü</h2>
+<p>
+Yeni karaoke içerikleri oluşturun,
+hedef nota ve kelime eşleştirmeleri yapın.
+</p>
+</div>
+
+
+<div class="card" onclick="openPage('academy_teacher.html')">
+<h2>🎓 VOCALY Academy</h2>
+<p>
+Kazanımlar, etkinlikler ve
+CIPP değerlendirme süreçlerini yönetin.
+</p>
+</div>
+
+
+<div class="card" onclick="openPage('students.html')">
+<h2>👥 Öğrenci Takibi</h2>
+<p>
+Öğrenci çalışmalarını,
+performanslarını ve gelişimlerini takip edin.
+</p>
+</div>
+
+
+<div class="card" onclick="openPage('library_teacher.html')">
+<h2>📚 İçerik Kütüphanesi</h2>
+<p>
+Hazırlanan karaoke ve eğitim materyallerini yönetin.
+</p>
+</div>
+
+
+<div class="card" onclick="openPage('reports.html')">
+<h2>📊 Raporlama</h2>
+<p>
+Öğrenci gelişim raporlarını ve analizleri inceleyin.
+</p>
+</div>
+
+
+</div>
+
+
+<a class="logout" href="opening.html">
+Çıkış
+</a>
+
+
+<script>
+
+const teacher =
+JSON.parse(localStorage.getItem("teacherInfo"));
+
+
+if(teacher && teacher.name){
+
+document.getElementById("welcome").innerHTML =
+"Hoş geldiniz, " + teacher.name;
+
+}
+
+
+function openPage(page){
+
+window.location.href=page;
+
+}
+
+</script>
+
+
+</body>
+</html>
