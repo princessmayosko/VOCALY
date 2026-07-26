@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VOCALY Öğrenci Girişi</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    background:#07101f;
+    color:white;
+    font-family:"Times New Roman", Times, serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:90%;
+    max-width:500px;
+    background:#111b2d;
+    padding:40px;
+    border-radius:22px;
+    text-align:center;
+    border:1px solid #26344d;
+}
+
+.logo{
+    display:inline-block;
+    background:linear-gradient(135deg,#ffd54f,#e8a900);
+    color:#101827;
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:3px;
+    padding:15px 32px;
+    border-radius:12px;
+    margin-bottom:30px;
+}
+
+h2{
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    margin:8px 0;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    margin-top:18px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#1976d2;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.back{
+    display:block;
+    margin-top:20px;
+    color:#ffd54f;
+    text-decoration:none;
+}
+
+.demo{
+    margin-top:20px;
+    color:#aaa;
+    font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">
+    VOCALY
+</div>
+
+<h2>Öğrenci Girişi</h2>
+
+<input id="name" placeholder="Ad Soyad">
+<input id="number" placeholder="Öğrenci Numarası">
+<input id="className" placeholder="Sınıf">
+<input id="school" placeholder="Okul">
+<input id="bypass" placeholder="Geliştirici erişimi">
+
+<button onclick="login()">Giriş Yap</button>
+
+<a class="back" href="opening.html">← Geri Dön</a>
+
+<div class="demo">
+Demo erişimi: @dmin
+</div>
+
+</div>
+
+<script>
+function login(){
+
+const student={
+name:document.getElementById("name").value,
+number:document.getElementById("number").value,
+className:document.getElementById("className").value,
+school:document.getElementById("school").value
+};
+
+const bypass=document.getElementById("bypass").value;
+
+if(bypass==="@dmin"){
+    student.name = student.name || "Demo Öğrenci";
+}
+else if(
+!student.name ||
+!student.number ||
+!student.className ||
+!student.school
+){
+    alert("Lütfen tüm bilgileri doldurun.");
+    return;
+}
+
+localStorage.setItem("studentInfo",JSON.stringify(student));
+
+location.href="student.html";
+
+}
+</script>
+
+</body>
+</html>
