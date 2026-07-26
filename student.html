@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VOCALY Öğrenci Paneli</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    background:#07101f;
+    color:white;
+    font-family:"Times New Roman", Times, serif;
+}
+
+header{
+    text-align:center;
+    padding:30px;
+}
+
+.logo{
+    display:inline-block;
+    background:linear-gradient(135deg,#ffd54f,#e8a900);
+    color:#101827;
+    font-size:34px;
+    font-weight:bold;
+    letter-spacing:3px;
+    padding:15px 32px;
+    border-radius:12px;
+}
+
+.welcome{
+    margin-top:25px;
+    font-size:22px;
+    color:#ffd54f;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.card{
+    background:#111b2d;
+    border:1px solid #26344d;
+    border-radius:20px;
+    padding:30px;
+    text-align:center;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    border-color:#ffd54f;
+}
+
+.card h2{
+    margin-bottom:15px;
+    color:#ffd54f;
+}
+
+.card p{
+    color:#ddd;
+    line-height:1.5;
+}
+
+.logout{
+    display:block;
+    width:200px;
+    margin:30px auto;
+    padding:12px;
+    background:#b71c1c;
+    color:white;
+    text-align:center;
+    text-decoration:none;
+    border-radius:12px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+VOCALY
+</div>
+
+<div class="welcome" id="welcome">
+Hoş geldin
+</div>
+
+</header>
+
+
+<div class="container">
+
+
+<div class="card" onclick="openPage('karaoke.html')">
+<h2>🎤 Karaoke</h2>
+<p>
+Hazır şarkılarla ses çalışmalarını gerçekleştir.
+</p>
+</div>
+
+
+<div class="card" onclick="openPage('academy.html')">
+<h2>🎓 VOCALY Academy</h2>
+<p>
+Etkinliklere katıl, kazanımlarını geliştir.
+</p>
+</div>
+
+
+<div class="card" onclick="openPage('muzik_defteri.html')">
+<h2>📒 Müzik Defteri</h2>
+<p>
+Notasyon oluştur, çalışmalarını dinle.
+</p>
+</div>
+
+
+<div class="card" onclick="openPage('progress.html')">
+<h2>📊 Gelişimim</h2>
+<p>
+Çalışmalarını ve ilerlemeni takip et.
+</p>
+</div>
+
+
+</div>
+
+
+<a class="logout" href="opening.html">
+Çıkış
+</a>
+
+
+<script>
+
+const student =
+JSON.parse(localStorage.getItem("studentInfo"));
+
+
+if(student && student.name){
+
+document.getElementById("welcome").innerHTML =
+"Hoş geldin, " + student.name;
+
+}
+
+
+function openPage(page){
+
+window.location.href=page;
+
+}
+
+</script>
+
+
+</body>
+</html>
