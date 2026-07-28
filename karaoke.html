@@ -4,7 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>VOCALY</title>
-  <script src="https://unpkg.com/wavesurfer.js@6"></script>
+  <script src="https://unpkg.com/wavesurfer.js@6">
+function goLibrary(){
+  const lib=document.getElementById("librarySection");
+  const measure=document.getElementById("measureSection");
+  if(lib) lib.classList.remove("hidden");
+  if(measure) measure.classList.add("hidden");
+}
+
+function goMeasure(){
+  const lib=document.getElementById("librarySection");
+  const measure=document.getElementById("measureSection");
+  if(lib) lib.classList.add("hidden");
+  if(measure) measure.classList.remove("hidden");
+}
+
+// Eski showSection çağrılarını yeni öğrenci akışına yönlendir
+const oldShowSection = window.showSection;
+window.showSection = function(name){
+  if(name==="library"){
+    goLibrary();
+    return;
+  }
+  if(name==="measure"){
+    goMeasure();
+    return;
+  }
+  if(typeof oldShowSection==="function"){
+    oldShowSection(name);
+  }
+};
+
+</script>
   <style>
     :root{
       --bg:#08111f; --bg2:#0f1b2d; --panel:rgba(12,22,39,.94); --line:rgba(255,255,255,.10);
