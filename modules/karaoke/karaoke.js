@@ -58,7 +58,7 @@ async function openSong(i){
  let response = await fetch("../../" + current.json);
  let data = await response.json();
 
- current.segments = data.segments;
+ current.segments = data.heceler || [];
 
  renderWords();
 }
