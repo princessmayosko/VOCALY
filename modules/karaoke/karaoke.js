@@ -34,7 +34,10 @@ function renderLibrary(){
       </button>
    `;
 
-   div.onclick=()=>openSong(i);
+   div.querySelector("button").onclick=(e)=>{
+    e.stopPropagation();
+    openSong(i);
+};
 
    box.appendChild(div);
 
