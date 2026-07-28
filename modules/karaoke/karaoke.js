@@ -1,0 +1,72 @@
+
+let library=[];
+let current=null;
+let audio=document.getElementById('audio');
+let timer=null;
+
+fetch('../../data/library.json')
+.then(r=>r.json())
+.then(d=>{
+ library=d;
+ renderLibrary();
+});
+
+function renderLibrary(){
+ const box=document.getElementById('songs');
+ box.innerHTML="";
+ library.forEach((s,i)=>{
+   let div=document.createElement('div');
+   div.className="card";
+   div.innerHTML=s.title;
+   div.onclick=()=>openSong(i);
+   box.appendChild(div);
+ });
+}
+
+function openSong(i){
+ current=library[i];
+ document.getElementById('library').classList.add('hidden');
+ document.getElementById('karaoke').classList.remove('hidden');
+ document.getElementById('title').innerHTML=current.title;
+ audio.src="../../"+current.audio;
+ renderWords();
+}
+
+function renderWords(){
+ let box=document.getElementById('words');
+ box.innerHTML="";
+ current.segments.forEach((x,i)=>{
+   let w=document.createElement('span');
+   w.className="word";
+   w.innerHTML=x.text;
+   w.dataset.i=i;
+   box.appendChild(w);
+ });
+}
+
+function playSong(){
+ audio.play();
+ timer=setInterval(()=>{
+   let t=audio.currentTime;
+   current.segments.forEach((x,i)=>{
+    let el=document.querySelector(`[data-i="${i}"]`);
+    if(el && t>=x.start && t<=x.end)
+       el.classList.add('active');
+    else if(el) el.classList.remove('active');
+   });
+ },100);
+}
+
+function stopSong(){
+ audio.pause();
+}
+
+function resetSong(){
+ audio.currentTime=0;
+}
+
+function backLibrary(){
+ audio.pause();
+ document.getElementById('karaoke').classList.add('hidden');
+ document.getElementById('library').classList.remove('hidden');
+}

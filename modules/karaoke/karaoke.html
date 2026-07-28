@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VOCALY Karaoke</title>
+<link rel="stylesheet" href="karaoke.css">
+</head>
+<body>
+
+<div class="logo">VOCALY</div>
+
+<section id="library">
+<h2>Şarkı Kütüphanesi</h2>
+<div id="songs"></div>
+</section>
+
+<section id="karaoke" class="hidden">
+<button onclick="backLibrary()">← Şarkılar</button>
+<h2 id="title"></h2>
+
+<div class="controls">
+<button onclick="playSong()">▶</button>
+<button onclick="stopSong()">■</button>
+<button onclick="resetSong()">↺</button>
+</div>
+
+<audio id="audio"></audio>
+
+<div id="words"></div>
+
+<div id="cetvel">
+VOCALY CETVEL
+</div>
+</section>
+
+<script src="karaoke.js"></script>
+<script src="cetvel.js"></script>
+
+</body>
+</html>
