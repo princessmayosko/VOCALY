@@ -23,15 +23,24 @@ function renderLibrary(){
  });
 }
 
-function openSong(i){
- current=library[i];
+async function openSong(i){
+
+ current = library[i];
+
  document.getElementById('library').classList.add('hidden');
  document.getElementById('karaoke').classList.remove('hidden');
- document.getElementById('title').innerHTML=current.title;
- audio.src="../../"+current.audio;
+
+ document.getElementById('title').innerHTML = current.title;
+
+ audio.src = "../../" + current.audio;
+
+ let response = await fetch("../../" + current.json);
+ let data = await response.json();
+
+ current.segments = data.segments;
+
  renderWords();
 }
-
 function renderWords(){
  let box=document.getElementById('words');
  box.innerHTML="";
