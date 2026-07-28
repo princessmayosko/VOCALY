@@ -5,37 +5,194 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>VOCALY Karaoke</title>
 <link rel="stylesheet" href="karaoke.css">
+
+<style>
+body{
+margin:0;
+background:#07101f;
+color:#eef4ff;
+font-family:Arial,sans-serif;
+}
+
+.app{min-height:100vh;}
+
+.top{
+height:90px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+border-bottom:1px solid #22324d;
+}
+
+.logo{
+background:#facc15;
+color:#101827;
+padding:12px 35px;
+border-radius:15px;
+font-size:30px;
+font-weight:bold;
+}
+
+.subtitle{
+margin-top:8px;
+color:#facc15;
+}
+
+.layout{
+display:flex;
+}
+
+#cetvel{
+width:115px;
+min-height:calc(100vh - 90px);
+background:#101b31;
+border-right:1px solid #263858;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.cetvel-title{
+writing-mode:vertical-rl;
+transform:rotate(180deg);
+color:#9fb0cc;
+font-weight:bold;
+}
+
+main{
+flex:1;
+padding:30px;
+}
+
+.panel{
+background:#101b31;
+border:1px solid #263858;
+border-radius:22px;
+padding:25px;
+max-width:1200px;
+margin:auto;
+}
+
+.card{
+background:#17243d;
+border:1px solid #33476b;
+padding:18px;
+border-radius:15px;
+margin:12px 0;
+cursor:pointer;
+}
+
+.karaoke-head{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:20px;
+}
+
+button{
+background:#263858;
+color:white;
+border:0;
+padding:10px 15px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.controls{
+display:flex;
+gap:8px;
+}
+
+.words{
+height:420px;
+overflow:auto;
+margin-top:25px;
+padding:20px;
+background:#111d33;
+border-radius:15px;
+}
+
+.word{
+display:inline-block;
+padding:10px;
+margin:6px;
+background:#182b50;
+border-radius:10px;
+}
+
+.active{
+background:#22c55e;
+}
+
+.hidden{
+display:none!important;
+}
+</style>
+
 </head>
+
 <body>
 
-<div class="logo">VOCALY</div>
+<div class="app">
+
+<header class="top">
+  <div class="logo">VOCALY</div>
+  <div class="subtitle">Karaoke / Ölçme</div>
+</header>
+
+<div class="layout">
+
+<aside id="cetvel">
+  <div class="cetvel-title">VOCALY CETVEL</div>
+</aside>
+
+<main>
 
 <section id="library">
-<h2>Şarkı Kütüphanesi</h2>
-<div id="songs"></div>
+  <div class="panel">
+    <h2>Şarkı Kütüphanesi</h2>
+    <div id="songs"></div>
+  </div>
 </section>
 
-<section id="karaoke" class="hidden">
-<button onclick="backLibrary()">← Şarkılar</button>
-<h2 id="title"></h2>
 
-<div class="controls">
-<button onclick="playSong()">▶</button>
-<button onclick="stopSong()">■</button>
-<button onclick="resetSong()">↺</button>
+<section id="karaoke" class="hidden">
+
+<div class="panel">
+
+<div class="karaoke-head">
+  <button onclick="backLibrary()">←</button>
+
+  <h2 id="title">Karaoke / Ölçme</h2>
+
+  <div class="controls">
+    <button onclick="playSong()">▶</button>
+    <button onclick="stopSong()">■</button>
+    <button onclick="resetSong()">↺</button>
+    <button>☰</button>
+    <button>±20</button>
+  </div>
 </div>
+
 
 <audio id="audio"></audio>
 
-<div id="words"></div>
+<div id="words" class="words"></div>
 
-<div id="cetvel">
-VOCALY CETVEL
 </div>
+
 </section>
+
+</main>
+
+</div>
+
+</div>
 
 <script src="karaoke.js"></script>
 <script src="cetvel.js"></script>
 
 </body>
+
 </html>
