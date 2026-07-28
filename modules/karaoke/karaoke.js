@@ -14,12 +14,30 @@ fetch('../../data/library.json')
 function renderLibrary(){
  const box=document.getElementById('songs');
  box.innerHTML="";
+
  library.forEach((s,i)=>{
+
    let div=document.createElement('div');
    div.className="card";
-   div.innerHTML=s.title;
+
+   div.innerHTML=`
+      <div style="font-size:20px;font-weight:bold">
+        🎵 ${s.title}
+      </div>
+
+      <div style="opacity:.7;margin-top:8px">
+        VOCALY Karaoke
+      </div>
+
+      <button style="margin-top:12px">
+        Aç
+      </button>
+   `;
+
    div.onclick=()=>openSong(i);
+
    box.appendChild(div);
+
  });
 }
 
