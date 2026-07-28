@@ -65,14 +65,40 @@ async function openSong(i){
 function renderWords(){
  let box=document.getElementById('words');
  box.innerHTML="";
- current.segments.forEach((x,i)=>{
-   let w=document.createElement('span');
-   w.className="word";
-   w.innerHTML=x.text;
-   w.dataset.i=i;
-   box.appendChild(w);
- });
-}
+let lines={};
+
+current.segments.forEach(x=>{
+
+   if(!lines[x.line]){
+      lines[x.line]=[];
+   }
+
+   lines[x.line].push(x);
+
+});
+
+
+Object.values(lines).forEach(line=>{
+
+   let row=document.createElement("div");
+   row.className="lyric-line";
+
+
+   line.forEach(x=>{
+
+      let w=document.createElement("span");
+
+      w.className="word";
+      w.innerText=x.text;
+
+      row.appendChild(w);
+
+   });
+
+
+   box.appendChild(row);
+
+});
 
 function playSong(){
  audio.play();
