@@ -1,8 +1,11 @@
 console.log("YENİ KARAOKE JS ÇALIŞTI");
+
+
 let library = [];
 let current = null;
 let audio = document.getElementById("audio");
 let timer = null;
+
 
 
 // Kütüphane yükle
@@ -15,26 +18,33 @@ fetch("../../data/library.json")
 
 })
 .catch(err => {
+
     console.error("Library yüklenemedi:", err);
+
 });
 
 
 
 
-// Şarkı listesini oluştur
+
+// Liste oluştur
 function renderLibrary(){
 
     const box = document.getElementById("songs");
+
     box.innerHTML = "";
 
 
     library.forEach((s,i)=>{
 
-        let div = document.createElement("div");
-        div.className = "card";
+
+        let div=document.createElement("div");
+
+        div.className="card";
 
 
-        div.innerHTML = `
+        div.innerHTML=`
+
             <div class="song-title">
                 🎵 ${s.title}
             </div>
@@ -44,30 +54,40 @@ function renderLibrary(){
             </div>
 
             <button>Aç</button>
+
         `;
 
 
-        div.querySelector("button").onclick = function(e){
+
+        div.querySelector("button").onclick=(e)=>{
 
             e.stopPropagation();
+
             openSong(i);
 
         };
 
 
+
         box.appendChild(div);
 
+
     });
+
 
 }
 
 
 
 
-// Şarkıyı aç
+
+
+
+// Şarkı aç
 async function openSong(i){
 
-    current = library[i];
+
+    current=library[i];
 
 
     document.getElementById("library")
@@ -80,50 +100,65 @@ async function openSong(i){
 
 
     document.getElementById("title")
-    .innerHTML = current.title;
+    .innerHTML=current.title;
 
 
 
-    audio.src = "../../" + current.audio;
+    audio.src="../../"+current.audio;
 
 
 
     try{
 
-        let response = await fetch("../../" + current.json);
 
-        let data = await response.json();
+        let response=await fetch("../../"+current.json);
+
+        let data=await response.json();
 
 
-        current.segments = data.heceler || [];
+        current.segments=data.heceler || [];
 
 
         renderWords();
 
 
-    }catch(e){
+    }
+
+
+    catch(e){
+
 
         console.error("JSON yüklenemedi:",e);
 
         current.segments=[];
 
+
     }
+
 
 }
 
 
 
 
-// Sözleri oluştur
+
+
+
+
+// Kelimeleri oluştur
 function renderWords(){
 
-    let box = document.getElementById("words");
+
+    let box=document.getElementById("words");
 
     box.innerHTML="";
 
 
+
     if(!current || !current.segments){
+
         return;
+
     }
 
 
@@ -136,13 +171,17 @@ function renderWords(){
 
 
         if(!lines[x.line]){
+
             lines[x.line]=[];
+
         }
 
 
         lines[x.line].push({
+
             ...x,
             index:i
+
         });
 
 
@@ -170,14 +209,17 @@ function renderWords(){
             w.className="word";
 
 
-            // zaman bilgileri
             w.dataset.i=x.index;
+
             w.dataset.start=x.start;
+
             w.dataset.end=x.end;
 
 
 
-            w.innerText=x.text;
+            w.innerHTML=
+
+            `<span>${x.text}</span>`;
 
 
 
@@ -203,7 +245,12 @@ function renderWords(){
 
 
 
-// Çal
+
+
+
+
+
+// Çalma + zaman dolumu
 function playSong(){
 
 
@@ -215,8 +262,11 @@ function playSong(){
 
 
     if(timer){
+
         clearInterval(timer);
+
     }
+
 
 
 
@@ -227,7 +277,9 @@ function playSong(){
 
 
 
-        document.querySelectorAll(".word").forEach(el=>{
+        document.querySelectorAll(".word")
+
+        .forEach(el=>{
 
 
             let start=parseFloat(el.dataset.start);
@@ -236,27 +288,95 @@ function playSong(){
 
 
 
+            if(isNaN(start) || isNaN(end)) return;
+
+
+
+
+            // hece aktif süresi
+
             if(t>=start && t<=end){
+
+
+
+                let progress=
+
+                ((t-start)/(end-start))*100;
+
+
+
+                el.style.setProperty(
+
+                    "--progress",
+
+                    progress+"%"
+
+                );
+
+
 
                 el.classList.add("active");
 
+
+
             }
-            else{
+
+
+
+            else if(t>end){
+
+
+
+                el.style.setProperty(
+
+                    "--progress",
+
+                    "100%"
+
+                );
+
 
                 el.classList.remove("active");
 
+                el.classList.add("done");
+
+
+
             }
+
+
+
+            else{
+
+
+                el.style.setProperty(
+
+                    "--progress",
+
+                    "0%"
+
+                );
+
+
+                el.classList.remove("active");
+
+
+            }
+
 
 
         });
 
 
 
-    },100);
+    },50);
 
 
 
 }
+
+
+
 
 
 
@@ -274,7 +394,11 @@ function stopSong(){
 
     }
 
+
 }
+
+
+
 
 
 
@@ -282,7 +406,31 @@ function stopSong(){
 // Baştan
 function resetSong(){
 
+
     audio.currentTime=0;
+
+
+
+    document.querySelectorAll(".word")
+
+    .forEach(el=>{
+
+
+        el.style.setProperty(
+
+            "--progress",
+
+            "0%"
+
+        );
+
+
+        el.classList.remove("active");
+
+        el.classList.remove("done");
+
+
+    });
 
 
 }
@@ -290,7 +438,10 @@ function resetSong(){
 
 
 
-// Listeye dön
+
+
+
+// Geri
 function backLibrary(){
 
 
@@ -298,10 +449,12 @@ function backLibrary(){
 
 
     document.getElementById("karaoke")
+
     .classList.add("hidden");
 
 
     document.getElementById("library")
+
     .classList.remove("hidden");
 
 
