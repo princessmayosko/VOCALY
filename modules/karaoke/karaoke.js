@@ -55,13 +55,16 @@ async function openSong(i){
 
  audio.src = "../../" + current.audio;
 
- let response = await fetch("../../" + current.json);
- let data = await response.json();
+let data = await response.json();
 
- current.segments = data.heceler || [];
+console.log("JSON:", data);
+console.log("HECELER:", data.heceler);
 
- renderWords();
-}
+current.segments = data.heceler || [];
+
+console.log("SEGMENTS:", current.segments);
+
+renderWords();
 function renderWords(){
  let box=document.getElementById('words');
  box.innerHTML="";
