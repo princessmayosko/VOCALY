@@ -1,3 +1,4 @@
+console.log("YENİ KARAOKE JS ÇALIŞTI");
 let library = [];
 let current = null;
 let audio = document.getElementById("audio");
