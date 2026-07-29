@@ -1,38 +1,35 @@
 console.log("YENİ KARAOKE JS ÇALIŞTI");
 
 
-let library = [];
-let current = null;
-let audio = document.getElementById("audio");
-let timer = null;
+let library=[];
+let current=null;
+let audio=document.getElementById("audio");
+let timer=null;
 
 
 
-// Kütüphane yükle
+// KÜTÜPHANE
+
 fetch("../../data/library.json")
-.then(r => r.json())
-.then(d => {
+.then(r=>r.json())
+.then(d=>{
 
-    library = d;
+    library=d;
+
     renderLibrary();
 
 })
-.catch(err => {
-
-    console.error("Library yüklenemedi:", err);
-
-});
+.catch(e=>console.error(e));
 
 
 
 
 
-// Liste oluştur
 function renderLibrary(){
 
-    const box = document.getElementById("songs");
+    let box=document.getElementById("songs");
 
-    box.innerHTML = "";
+    box.innerHTML="";
 
 
     library.forEach((s,i)=>{
@@ -45,15 +42,15 @@ function renderLibrary(){
 
         div.innerHTML=`
 
-            <div class="song-title">
-                🎵 ${s.title}
-            </div>
+        <div class="song-title">
+        🎵 ${s.title}
+        </div>
 
-            <div class="song-info">
-                VOCALY Karaoke
-            </div>
+        <div class="song-info">
+        VOCALY Karaoke
+        </div>
 
-            <button>Aç</button>
+        <button>Aç</button>
 
         `;
 
@@ -66,7 +63,6 @@ function renderLibrary(){
             openSong(i);
 
         };
-
 
 
         box.appendChild(div);
@@ -83,7 +79,8 @@ function renderLibrary(){
 
 
 
-// Şarkı aç
+// ŞARKI AÇ
+
 async function openSong(i){
 
 
@@ -111,9 +108,13 @@ async function openSong(i){
     try{
 
 
-        let response=await fetch("../../"+current.json);
+        let response=
+        await fetch("../../"+current.json);
 
-        let data=await response.json();
+
+        let data=
+        await response.json();
+
 
 
         current.segments=data.heceler || [];
@@ -122,16 +123,15 @@ async function openSong(i){
         renderWords();
 
 
-    }
 
+    }
 
     catch(e){
 
-
-        console.error("JSON yüklenemedi:",e);
-
-        current.segments=[];
-
+        console.error(
+        "JSON yükleme hatası",
+        e
+        );
 
     }
 
@@ -145,21 +145,16 @@ async function openSong(i){
 
 
 
-// Kelimeleri oluştur
+
+// SÖZLERİ OLUŞTUR
+
 function renderWords(){
 
 
     let box=document.getElementById("words");
 
+
     box.innerHTML="";
-
-
-
-    if(!current || !current.segments){
-
-        return;
-
-    }
 
 
 
@@ -180,6 +175,7 @@ function renderWords(){
         lines[x.line].push({
 
             ...x,
+
             index:i
 
         });
@@ -195,6 +191,7 @@ function renderWords(){
 
 
         let row=document.createElement("div");
+
 
         row.className="lyric-line";
 
@@ -219,12 +216,14 @@ function renderWords(){
 
             w.innerHTML=
 
-            `<span>${x.text}</span>`;
+            `
+            <div class="fill"></div>
+            <span>${x.text}</span>
+            `;
 
 
 
             row.appendChild(w);
-
 
 
         });
@@ -234,9 +233,7 @@ function renderWords(){
         box.appendChild(row);
 
 
-
     });
-
 
 
 }
@@ -250,7 +247,9 @@ function renderWords(){
 
 
 
-// Çalma + zaman dolumu
+
+// ÇALMA
+
 function playSong(){
 
 
@@ -266,7 +265,6 @@ function playSong(){
         clearInterval(timer);
 
     }
-
 
 
 
@@ -288,12 +286,12 @@ function playSong(){
 
 
 
-            if(isNaN(start) || isNaN(end)) return;
+            if(isNaN(start) || isNaN(end))
+            return;
 
 
 
 
-            // hece aktif süresi
 
             if(t>=start && t<=end){
 
@@ -301,23 +299,27 @@ function playSong(){
 
                 let progress=
 
-                ((t-start)/(end-start))*100;
+                Math.min(
+
+                    100,
+
+                    ((t-start)/(end-start))*100
+
+                );
 
 
 
                 el.style.setProperty(
 
-                    "--progress",
+                "--progress",
 
-                    progress+"%"
+                progress+"%"
 
                 );
 
 
 
                 el.classList.add("active");
-
-
 
             }
 
@@ -329,36 +331,17 @@ function playSong(){
 
                 el.style.setProperty(
 
-                    "--progress",
+                "--progress",
 
-                    "100%"
+                "100%"
 
                 );
+
 
 
                 el.classList.remove("active");
 
                 el.classList.add("done");
-
-
-
-            }
-
-
-
-            else{
-
-
-                el.style.setProperty(
-
-                    "--progress",
-
-                    "0%"
-
-                );
-
-
-                el.classList.remove("active");
 
 
             }
@@ -381,7 +364,7 @@ function playSong(){
 
 
 
-// Durdur
+
 function stopSong(){
 
 
@@ -394,7 +377,6 @@ function stopSong(){
 
     }
 
-
 }
 
 
@@ -403,12 +385,10 @@ function stopSong(){
 
 
 
-// Baştan
 function resetSong(){
 
 
     audio.currentTime=0;
-
 
 
     document.querySelectorAll(".word")
@@ -418,9 +398,9 @@ function resetSong(){
 
         el.style.setProperty(
 
-            "--progress",
+        "--progress",
 
-            "0%"
+        "0%"
 
         );
 
@@ -440,8 +420,6 @@ function resetSong(){
 
 
 
-
-// Geri
 function backLibrary(){
 
 
