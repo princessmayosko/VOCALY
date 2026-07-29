@@ -19,6 +19,7 @@ fetch("../../data/library.json")
 
 
 
+
 // Şarkı listesini oluştur
 function renderLibrary(){
 
@@ -27,7 +28,6 @@ function renderLibrary(){
 
 
     library.forEach((s,i)=>{
-
 
         let div = document.createElement("div");
         div.className = "card";
@@ -49,14 +49,12 @@ function renderLibrary(){
         div.querySelector("button").onclick = function(e){
 
             e.stopPropagation();
-
             openSong(i);
 
         };
 
 
         box.appendChild(div);
-
 
     });
 
@@ -67,7 +65,6 @@ function renderLibrary(){
 
 // Şarkıyı aç
 async function openSong(i){
-
 
     current = library[i];
 
@@ -86,13 +83,11 @@ async function openSong(i){
 
 
 
-    // müzik
     audio.src = "../../" + current.audio;
 
 
 
     try{
-
 
         let response = await fetch("../../" + current.json);
 
@@ -105,7 +100,6 @@ async function openSong(i){
         renderWords();
 
 
-
     }catch(e){
 
         console.error("JSON yüklenemedi:",e);
@@ -113,7 +107,6 @@ async function openSong(i){
         current.segments=[];
 
     }
-
 
 }
 
@@ -123,16 +116,13 @@ async function openSong(i){
 // Sözleri oluştur
 function renderWords(){
 
-
     let box = document.getElementById("words");
 
     box.innerHTML="";
 
 
     if(!current || !current.segments){
-
         return;
-
     }
 
 
@@ -145,9 +135,7 @@ function renderWords(){
 
 
         if(!lines[x.line]){
-
             lines[x.line]=[];
-
         }
 
 
@@ -158,6 +146,7 @@ function renderWords(){
 
 
     });
+
 
 
 
@@ -179,7 +168,12 @@ function renderWords(){
 
             w.className="word";
 
+
+            // zaman bilgileri
             w.dataset.i=x.index;
+            w.dataset.start=x.start;
+            w.dataset.end=x.end;
+
 
 
             w.innerText=x.text;
@@ -207,6 +201,7 @@ function renderWords(){
 
 
 
+
 // Çal
 function playSong(){
 
@@ -218,7 +213,9 @@ function playSong(){
 
 
 
-    if(timer) clearInterval(timer);
+    if(timer){
+        clearInterval(timer);
+    }
 
 
 
@@ -229,25 +226,23 @@ function playSong(){
 
 
 
-        current.segments.forEach((x,i)=>{
+        document.querySelectorAll(".word").forEach(el=>{
 
 
-            let el=document.querySelector(`[data-i="${i}"]`);
+            let start=parseFloat(el.dataset.start);
+
+            let end=parseFloat(el.dataset.end);
 
 
 
-            if(el && t>=x.start && t<=x.end){
-
+            if(t>=start && t<=end){
 
                 el.classList.add("active");
 
-
             }
-            else if(el){
-
+            else{
 
                 el.classList.remove("active");
-
 
             }
 
@@ -278,7 +273,6 @@ function stopSong(){
 
     }
 
-
 }
 
 
@@ -286,7 +280,6 @@ function stopSong(){
 
 // Baştan
 function resetSong(){
-
 
     audio.currentTime=0;
 
