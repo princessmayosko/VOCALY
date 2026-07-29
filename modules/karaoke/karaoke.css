@@ -18,59 +18,104 @@ body{
 }
 
 
-/* KARTLAR */
+
+/* KART */
 .card{
+
     background:#15233d;
+
     padding:18px;
+
     margin:12px 0;
+
     border-radius:15px;
+
     cursor:pointer;
+
     border:1px solid #24395e;
+
 }
+
 
 .card:hover{
-    background:#1c3155;
+
+    background:#1d3155;
+
 }
 
 
-/* GENEL */
-.hidden{
-    display:none;
-}
 
+/* BUTON */
 
 button{
+
     padding:10px 16px;
+
     border-radius:10px;
+
     background:#263858;
+
     color:white;
+
     border:0;
+
     cursor:pointer;
+
 }
 
+
 button:hover{
+
     background:#3b5278;
+
 }
+
+
+
+
+.hidden{
+
+    display:none;
+
+}
+
 
 
 
 /* SÖZ ALANI */
+
 #words{
-    padding:20px;
+
     background:#101c34;
+
+    padding:20px;
+
     border-radius:15px;
-    min-height:300px;
+
+    height:500px;
+
     overflow-y:auto;
+
 }
+
+
+
 
 
 .lyric-line{
-    margin-bottom:20px;
+
+    margin-bottom:18px;
+
 }
 
 
 
-/* KELİME KUTULARI */
+
+
+
+
+/* KELİME */
+
 .word{
 
     position:relative;
@@ -93,25 +138,27 @@ button:hover{
 
 
 
-/* DOLAN YEŞİL ALAN */
-.word::after{
 
-    content:"";
+
+/* DOLAN ALAN */
+
+.word .fill{
 
     position:absolute;
 
     left:0;
+
     top:0;
 
     height:100%;
 
     width:var(--progress,0%);
 
+
     background:#22c55e;
 
-    opacity:.55;
+    opacity:.65;
 
-    transition:none;
 
     z-index:0;
 
@@ -119,45 +166,45 @@ button:hover{
 
 
 
-/* YAZI ÜSTE ÇIKSIN */
-.word{
-    color:white;
-}
-
-.word{
-    isolation:isolate;
-}
-
-.word::before{
-    content:attr(data-text);
-    position:absolute;
-}
 
 
 
-/* AKTİF DURUM */
-.word.active{
+/* YAZI ÜSTTE */
 
-    background:#203b60;
-
-}
-
-
-
-/* TAMAMLANAN */
-.word.done{
-
-    background:#16a34a;
-
-}
-
-
-
-/* KELİME YAZISI */
 .word span{
 
     position:relative;
 
     z-index:2;
+
+}
+
+
+
+
+
+
+/* AKTİF */
+
+.word.active{
+
+    transform:scale(1.05);
+
+    transition:.1s;
+
+}
+
+
+
+
+
+
+/* TAMAMLANAN */
+
+.word.done .fill{
+
+    width:100%;
+
+    background:#16a34a;
 
 }
