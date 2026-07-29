@@ -66,6 +66,7 @@ function renderWords(){
  let box=document.getElementById('words');
  box.innerHTML="";
 let lines={};
+}
 
 current.segments.forEach(x=>{
 
