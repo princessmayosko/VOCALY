@@ -1,132 +1,314 @@
+let library = [];
+let current = null;
+let audio = document.getElementById("audio");
+let timer = null;
 
-let library=[];
-let current=null;
-let audio=document.getElementById('audio');
-let timer=null;
 
-fetch('../../data/library.json')
-.then(r=>r.json())
-.then(d=>{
- library=d;
- renderLibrary();
+// Kütüphane yükle
+fetch("../../data/library.json")
+.then(r => r.json())
+.then(d => {
+
+    library = d;
+    renderLibrary();
+
+})
+.catch(err => {
+    console.error("Library yüklenemedi:", err);
 });
 
+
+
+// Şarkı listesini oluştur
 function renderLibrary(){
- const box=document.getElementById('songs');
- box.innerHTML="";
 
- library.forEach((s,i)=>{
+    const box = document.getElementById("songs");
+    box.innerHTML = "";
 
-   let div=document.createElement('div');
-   div.className="card";
 
-   div.innerHTML=`
-      <div style="font-size:20px;font-weight:bold">
-        🎵 ${s.title}
-      </div>
+    library.forEach((s,i)=>{
 
-      <div style="opacity:.7;margin-top:8px">
-        VOCALY Karaoke
-      </div>
 
-      <button style="margin-top:12px">
-        Aç
-      </button>
-   `;
+        let div = document.createElement("div");
+        div.className = "card";
 
-   div.querySelector("button").onclick=(e)=>{
-    e.stopPropagation();
-    openSong(i);
-};
 
-   box.appendChild(div);
+        div.innerHTML = `
+            <div class="song-title">
+                🎵 ${s.title}
+            </div>
 
- });
+            <div class="song-info">
+                VOCALY Karaoke
+            </div>
+
+            <button>Aç</button>
+        `;
+
+
+        div.querySelector("button").onclick = function(e){
+
+            e.stopPropagation();
+
+            openSong(i);
+
+        };
+
+
+        box.appendChild(div);
+
+
+    });
+
 }
 
+
+
+
+// Şarkıyı aç
 async function openSong(i){
 
- current = library[i];
 
- document.getElementById('library').classList.add('hidden');
- document.getElementById('karaoke').classList.remove('hidden');
+    current = library[i];
 
- document.getElementById('title').innerHTML = current.title;
 
- audio.src = "../../" + current.audio;
+    document.getElementById("library")
+    .classList.add("hidden");
 
-let data = await response.json();
 
-console.log("JSON:", data);
-console.log("HECELER:", data.heceler);
+    document.getElementById("karaoke")
+    .classList.remove("hidden");
 
-current.segments = data.heceler || [];
 
-console.log("SEGMENTS:", current.segments);
 
-renderWords();
+    document.getElementById("title")
+    .innerHTML = current.title;
+
+
+
+    // müzik
+    audio.src = "../../" + current.audio;
+
+
+
+    try{
+
+
+        let response = await fetch("../../" + current.json);
+
+        let data = await response.json();
+
+
+        current.segments = data.heceler || [];
+
+
+        renderWords();
+
+
+
+    }catch(e){
+
+        console.error("JSON yüklenemedi:",e);
+
+        current.segments=[];
+
+    }
+
+
+}
+
+
+
+
+// Sözleri oluştur
 function renderWords(){
- let box=document.getElementById('words');
- box.innerHTML="";
-let lines={};
 
 
-current.segments.forEach(x=>{
+    let box = document.getElementById("words");
 
-   if(!lines[x.line]){
-      lines[x.line]=[];
-   }
-
-   lines[x.line].push(x);
-
-});
+    box.innerHTML="";
 
 
-Object.values(lines).forEach(line=>{
+    if(!current || !current.segments){
 
-   let row=document.createElement("div");
-   row.className="lyric-line";
+        return;
 
-
-   line.forEach(x=>{
-
-      let w=document.createElement("span");
-
-      w.className="word";
-      w.innerText=x.text;
-
-      row.appendChild(w);
-
-   });
+    }
 
 
-   box.appendChild(row);
 
-});
+    let lines={};
 
+
+
+    current.segments.forEach((x,i)=>{
+
+
+        if(!lines[x.line]){
+
+            lines[x.line]=[];
+
+        }
+
+
+        lines[x.line].push({
+            ...x,
+            index:i
+        });
+
+
+    });
+
+
+
+
+    Object.values(lines).forEach(line=>{
+
+
+        let row=document.createElement("div");
+
+        row.className="lyric-line";
+
+
+
+        line.forEach(x=>{
+
+
+            let w=document.createElement("span");
+
+
+            w.className="word";
+
+            w.dataset.i=x.index;
+
+
+            w.innerText=x.text;
+
+
+
+            row.appendChild(w);
+
+
+
+        });
+
+
+
+        box.appendChild(row);
+
+
+
+    });
+
+
+
+}
+
+
+
+
+// Çal
 function playSong(){
- audio.play();
- timer=setInterval(()=>{
-   let t=audio.currentTime;
-   current.segments.forEach((x,i)=>{
-    let el=document.querySelector(`[data-i="${i}"]`);
-    if(el && t>=x.start && t<=x.end)
-       el.classList.add('active');
-    else if(el) el.classList.remove('active');
-   });
- },100);
+
+
+    if(!current) return;
+
+
+    audio.play();
+
+
+
+    if(timer) clearInterval(timer);
+
+
+
+    timer=setInterval(()=>{
+
+
+        let t=audio.currentTime;
+
+
+
+        current.segments.forEach((x,i)=>{
+
+
+            let el=document.querySelector(`[data-i="${i}"]`);
+
+
+
+            if(el && t>=x.start && t<=x.end){
+
+
+                el.classList.add("active");
+
+
+            }
+            else if(el){
+
+
+                el.classList.remove("active");
+
+
+            }
+
+
+        });
+
+
+
+    },100);
+
+
+
 }
 
+
+
+
+// Durdur
 function stopSong(){
- audio.pause();
+
+
+    audio.pause();
+
+
+    if(timer){
+
+        clearInterval(timer);
+
+    }
+
+
 }
 
+
+
+
+// Baştan
 function resetSong(){
- audio.currentTime=0;
+
+
+    audio.currentTime=0;
+
+
 }
 
+
+
+
+// Listeye dön
 function backLibrary(){
- audio.pause();
- document.getElementById('karaoke').classList.add('hidden');
- document.getElementById('library').classList.remove('hidden');
+
+
+    stopSong();
+
+
+    document.getElementById("karaoke")
+    .classList.add("hidden");
+
+
+    document.getElementById("library")
+    .classList.remove("hidden");
+
+
 }
