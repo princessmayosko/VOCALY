@@ -348,8 +348,37 @@
     function selectWholeLine(lineNo){ selectedSegmentIndexes=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.line===lineNo && x.seg.start!==null && x.seg.end!==null).map(x=>x.idx); renderKaraoke(); }
     async function playSegmentsSequentially(indexes){ if(!hasAudioLoaded() || !indexes.length) return; sequenceStopRequested=false; const ordered=indexes.map(i=>({i:i,seg:heceler[i]})).filter(x=>x.seg&&x.seg.start!==null&&x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); for(const item of ordered){ if(sequenceStopRequested) break; selectedSegmentIndexes=[item.i]; renderKaraoke(); seekToSegment(item.i,false); ws.play(item.seg.start,item.seg.end); await new Promise(resolve=>setTimeout(resolve, Math.max(40, ((item.seg.end-item.seg.start)*1000)+50))); } }
     function playSelectedLine(){ if(!selectedSegmentIndexes.length){ alert('Önce bir kelime seç.'); return; } const first=heceler[selectedSegmentIndexes[0]]; if(!first) return; selectWholeLine(first.line); playSegmentsSequentially(selectedSegmentIndexes); }
-    function buildProjectPayload(){ return { version:1, title:titleInput.value.trim(), intro:getIntroValue(), lyrics:lyricsInput.value, audioName:currentAudioName, selectedSegmentIndexes:selectedSegmentIndexes, heceler:heceler.map(h=>({text:h.text||'',note:h.note||'',start:h.start??null,end:h.end??null,line:h.line??0,isIntro:!!h.isIntro})), cursorTime:cursorTime }; }
-    function applyProjectPayload(parsed){ titleInput.value=parsed.title||''; introInput.value=Number(parsed.intro||0).toFixed(2); lyricsInput.value=parsed.lyrics||''; currentAudioName=parsed.audioName||'audio.mp3'; selectedSegmentIndexes=Array.isArray(parsed.selectedSegmentIndexes)?parsed.selectedSegmentIndexes:[]; heceler=Array.isArray(parsed.heceler)?parsed.heceler.map(h=>({text:h.text||'',note:h.note||'',start:h.start??null,end:h.end??null,line:h.line??0,isIntro:!!h.isIntro})):[]; cursorTime=parsed.cursorTime||0; loadedIndex=-1; normalizeIntroSegment(); renderAll(); setCursorTime(cursorTime); if(hasAudioLoaded()) scrollToTime(cursorTime); }
+    function normalizeNotes(note){
+  if(Array.isArray(note)) return note.filter(Boolean).join(' ');
+  return String(note||'').trim();
+}
+function buildProjectPayload(){ 
+ return { 
+  version:1, 
+  title:titleInput.value.trim(), 
+  intro:getIntroValue(), 
+  lyrics:lyricsInput.value, 
+  audioName:currentAudioName, 
+  selectedSegmentIndexes:selectedSegmentIndexes, 
+  heceler:heceler.map(h=>({
+    text:h.text||'',
+    note:normalizeNotes(h.note),
+    start:h.start??null,
+    end:h.end??null,
+    line:h.line??0,
+    isIntro:!!h.isIntro
+  })), 
+  cursorTime:cursorTime 
+ }; 
+}
+    function applyProjectPayload(parsed){ titleInput.value=parsed.title||''; introInput.value=Number(parsed.intro||0).toFixed(2); lyricsInput.value=parsed.lyrics||''; currentAudioName=parsed.audioName||'audio.mp3'; selectedSegmentIndexes=Array.isArray(parsed.selectedSegmentIndexes)?parsed.selectedSegmentIndexes:[]; heceler=Array.isArray(parsed.heceler)?parsed.heceler.map(h=>({
+ text:h.text||'',
+ note:Array.isArray(h.note)?h.note.join(' '):(h.note||''),
+ start:h.start??null,
+ end:h.end??null,
+ line:h.line??0,
+ isIntro:!!h.isIntro
+})):[]; cursorTime=parsed.cursorTime||0; loadedIndex=-1; normalizeIntroSegment(); renderAll(); setCursorTime(cursorTime); if(hasAudioLoaded()) scrollToTime(cursorTime); }
     function saveProject(){ const payload=buildProjectPayload(); localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(payload)); const blob=new Blob([JSON.stringify(payload,null,2)], {type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=((payload.title||'vocaly_editor').replace(/[^\w\u00C0-\u024F-]+/g,'_'))+'.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
     function autoSaveProject(){ localStorage.setItem(PROJECT_AUTOSAVE_KEY, JSON.stringify(buildProjectPayload())); }
     function loadProject(){ const raw=localStorage.getItem(PROJECT_AUTOSAVE_KEY); if(!raw) return; try{ applyProjectPayload(JSON.parse(raw)); }catch(err){ console.error(err); } }
