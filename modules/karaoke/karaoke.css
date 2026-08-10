@@ -27,29 +27,29 @@ font-family:Arial,sans-serif;
 
 #cetvel{
 
-width:0;
+    width:0;
 
-background:#101b31;
+    height:calc(100vh - 90px);
 
-border-right:1px solid #263858;
+    background:#101b31;
 
-overflow:hidden;
+    border-right:1px solid #263858;
 
-transition:0.3s ease;
+    overflow:hidden;
 
-flex-shrink:0;
+    transition:0.3s ease;
 
-position:relative;
+    flex-shrink:0;
 
 }
-
 
 
 #cetvel.open{
 
-width:130px;
+    width:130px;
 
 }
+
 
 
 
