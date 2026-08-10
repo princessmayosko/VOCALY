@@ -5,6 +5,7 @@ let audioContext;
 let analyser;
 let microphone;
 let dataArray;
+let micStream;
 
 let pitchRunning = false;
 
@@ -19,7 +20,7 @@ async function startPitch(){
     pitchRunning = true;
 
 
-    const stream =
+    micStream =
     await navigator.mediaDevices.getUserMedia({
         audio:true
     });
@@ -32,7 +33,9 @@ async function startPitch(){
 
 
     microphone =
-    audioContext.createMediaStreamSource(stream);
+    audioContext.createMediaStreamSource(
+        micStream
+    );
 
 
 
@@ -65,6 +68,8 @@ async function startPitch(){
 
 
 
+
+
 function detectPitch(){
 
 
@@ -90,20 +95,35 @@ function detectPitch(){
     if(frequency !== -1){
 
 
+
         let note =
         frequencyToNote(frequency);
+
+
+
+        let result=false;
+
+
+
         if(typeof checkPitch==="function"){
 
-    let result = checkPitch(note);
 
-    console.log(
-        "Nota:",
-        note,
-        "Doğru:",
-        result
-    );
+            result =
+            checkPitch(note);
 
-}
+
+
+            console.log(
+                "Nota:",
+                note,
+                "Doğru:",
+                result
+            );
+
+
+        }
+
+
 
 
 
@@ -113,7 +133,9 @@ function detectPitch(){
         );
 
 
+
         if(element){
+
 
             element.innerHTML =
             note +
@@ -122,11 +144,12 @@ function detectPitch(){
             +
             " Hz";
 
+
         }
 
 
-
     }
+
 
 
 
@@ -144,7 +167,9 @@ function detectPitch(){
 
 
 
+
 // FREKANS -> NOTA
+// Oktav kaldırıldı
 
 function frequencyToNote(freq){
 
@@ -177,20 +202,9 @@ function frequencyToNote(freq){
 
 
 
-    let note =
-    notes[
+    return notes[
         ((midi % 12)+12)%12
     ];
-
-
-
-    let octave =
-    Math.floor(midi / 12)-1;
-
-
-
-    return note + octave;
-
 
 }
 
@@ -201,9 +215,14 @@ function frequencyToNote(freq){
 
 
 
-// AUTOCORRELATION PITCH BULMA
 
-function autoCorrelate(buffer,sampleRate){
+
+// AUTOCORRELATION
+
+function autoCorrelate(
+    buffer,
+    sampleRate
+){
 
 
 
@@ -212,16 +231,19 @@ function autoCorrelate(buffer,sampleRate){
 
 
 
-    let rms = 0;
+    let rms=0;
 
 
 
     for(let i=0;i<SIZE;i++){
 
+
         let val =
         buffer[i];
 
+
         rms += val*val;
+
 
     }
 
@@ -234,13 +256,12 @@ function autoCorrelate(buffer,sampleRate){
 
 
 
-    // sessizlik
-
     if(rms < 0.01){
 
         return -1;
 
     }
+
 
 
 
@@ -252,8 +273,7 @@ function autoCorrelate(buffer,sampleRate){
 
 
     while(
-        Math.abs(buffer[r1])
-        <0.02
+        Math.abs(buffer[r1]) <0.02
         &&
         r1<SIZE/2
     ){
@@ -265,8 +285,7 @@ function autoCorrelate(buffer,sampleRate){
 
 
     while(
-        Math.abs(buffer[r2])
-        <0.02
+        Math.abs(buffer[r2]) <0.02
         &&
         r2>SIZE/2
     ){
@@ -274,6 +293,7 @@ function autoCorrelate(buffer,sampleRate){
         r2--;
 
     }
+
 
 
 
@@ -294,6 +314,8 @@ function autoCorrelate(buffer,sampleRate){
     let bestOffset=-1;
 
     let bestCorrelation=0;
+
+
 
 
 
@@ -329,19 +351,22 @@ function autoCorrelate(buffer,sampleRate){
 
 
 
+
         if(
             correlation >
             bestCorrelation
         ){
 
+
             bestCorrelation =
             correlation;
+
 
             bestOffset =
             offset;
 
-        }
 
+        }
 
 
     }
@@ -349,9 +374,9 @@ function autoCorrelate(buffer,sampleRate){
 
 
 
-    if(
-        bestCorrelation > 0.01
-    ){
+
+    if(bestCorrelation > 0.01){
+
 
 
         let frequency =
@@ -360,19 +385,20 @@ function autoCorrelate(buffer,sampleRate){
 
 
 
-        // insan sesi aralığı
-
         if(
             frequency > 50 &&
             frequency < 1200
         ){
 
+
             return frequency;
+
 
         }
 
 
     }
+
 
 
 
@@ -387,15 +413,36 @@ function autoCorrelate(buffer,sampleRate){
 
 
 
+
+
 function stopPitch(){
+
 
 
     pitchRunning=false;
 
 
+
+    if(micStream){
+
+
+        micStream
+        .getTracks()
+        .forEach(
+            track=>track.stop()
+        );
+
+
+    }
+
+
+
+
     if(audioContext){
 
+
         audioContext.close();
+
 
     }
 
