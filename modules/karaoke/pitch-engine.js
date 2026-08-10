@@ -1,4 +1,4 @@
-console.log("PITCH ENGINE YENİ SÜRÜM - HZ YOK");
+console.log("PITCH ENGINE ÇALIŞTI - CETVEL BAĞLI");
 
 
 let audioContext;
@@ -7,58 +7,89 @@ let microphone;
 let dataArray;
 let micStream;
 
+
 let pitchRunning = false;
 
+
+let smoothFrequency = 0;
+
+
+
+// ==========================
+// BAŞLAT
+// ==========================
 
 
 async function startPitch(){
 
 
-    if(pitchRunning) return;
+    if(pitchRunning)
+        return;
 
 
-    pitchRunning = true;
-
-
-    micStream =
-    await navigator.mediaDevices.getUserMedia({
-        audio:true
-    });
+    pitchRunning=true;
 
 
 
-    audioContext =
-    new AudioContext();
+    try{
+
+
+        micStream =
+        await navigator.mediaDevices.getUserMedia({
+
+            audio:true
+
+        });
 
 
 
-    microphone =
-    audioContext.createMediaStreamSource(
-        micStream
-    );
+        audioContext =
+        new AudioContext();
 
 
 
-    analyser =
-    audioContext.createAnalyser();
-
-
-    analyser.fftSize = 4096;
-
-
-
-    dataArray =
-    new Float32Array(
-        analyser.fftSize
-    );
+        microphone =
+        audioContext.createMediaStreamSource(
+            micStream
+        );
 
 
 
-    microphone.connect(analyser);
+        analyser =
+        audioContext.createAnalyser();
 
 
 
-    detectPitch();
+        analyser.fftSize = 4096;
+
+
+
+        dataArray =
+        new Float32Array(
+            analyser.fftSize
+        );
+
+
+
+        microphone.connect(analyser);
+
+
+
+        detectPitch();
+
+
+
+    }
+
+
+    catch(e){
+
+        console.error(
+            "Mikrofon hatası",
+            e
+        );
+
+    }
 
 
 }
@@ -69,12 +100,18 @@ async function startPitch(){
 
 
 
+// ==========================
+// PITCH OKUMA
+// ==========================
+
 
 function detectPitch(){
 
 
+
     if(!pitchRunning)
         return;
+
 
 
 
@@ -84,35 +121,13 @@ function detectPitch(){
 
 
 
- let frequency =
-autoCorrelate(
-dataArray,
-audioContext.sampleRate
-);
+    let frequency =
+    autoCorrelate(
+        dataArray,
+        audioContext.sampleRate
+    );
 
 
-
-if(frequency !== -1){
-
-
-    if(!smoothFrequency){
-
-        smoothFrequency = frequency;
-
-    }
-    else{
-
-        smoothFrequency =
-        smoothFrequency * 0.8 +
-        frequency * 0.2;
-
-    }
-
-
-    frequency = smoothFrequency;
-
-
-}
 
 
 
@@ -120,29 +135,37 @@ if(frequency !== -1){
 
 
 
+        if(smoothFrequency===0){
+
+            smoothFrequency=frequency;
+
+        }
+
+        else{
+
+            smoothFrequency =
+            smoothFrequency * 0.85 +
+            frequency * 0.15;
+
+        }
+
+
+
+
         let note =
-        frequencyToNote(frequency);
+        frequencyToNote(
+            smoothFrequency
+        );
 
 
 
-        let result=false;
+
+        // CETVEL
+
+        if(typeof updateCetvel==="function"){
 
 
-
-        if(typeof checkPitch==="function"){
-
-
-            result =
-            checkPitch(note);
-
-
-
-            console.log(
-                "Nota:",
-                note,
-                "Doğru:",
-                result
-            );
+            updateCetvel(note);
 
 
         }
@@ -151,25 +174,25 @@ if(frequency !== -1){
 
 
 
-        let element =
+        // SONUÇ
+
+        let result =
         document.getElementById(
             "pitch-result"
         );
 
 
 
-        if(element){
+        if(result){
 
-
-            element.innerHTML =
-            note
-
+            result.innerHTML =
+            note.toUpperCase();
 
         }
 
 
-    }
 
+    }
 
 
 
@@ -186,44 +209,65 @@ if(frequency !== -1){
 
 
 
+// ==========================
+// FREKANS NOTA
+// ==========================
 
-
-// FREKANS -> NOTA
-// Oktav kaldırıldı
 
 function frequencyToNote(freq){
 
 
+
     let midi =
+
     Math.round(
+
         69 +
+
         12 *
-        Math.log2(freq / 440)
+
+        Math.log2(freq/440)
+
     );
 
 
 
-    let notes = [
+    let notes=[
+
 
         "do",
+
         "do#",
+
         "re",
+
         "re#",
+
         "mi",
+
         "fa",
+
         "fa#",
+
         "sol",
+
         "sol#",
+
         "la",
+
         "la#",
+
         "si"
+
 
     ];
 
 
 
     return notes[
-        ((midi % 12)+12)%12
+
+        ((midi%12)+12)%12
+
     ];
 
 }
@@ -234,14 +278,14 @@ function frequencyToNote(freq){
 
 
 
-
-
-
+// ==========================
 // AUTOCORRELATION
+// ==========================
+
 
 function autoCorrelate(
-    buffer,
-    sampleRate
+buffer,
+sampleRate
 ){
 
 
@@ -276,7 +320,9 @@ function autoCorrelate(
 
 
 
-    if(rms < 0.01){
+    // sessizlik
+
+    if(rms < 0.015){
 
         return -1;
 
@@ -284,50 +330,6 @@ function autoCorrelate(
 
 
 
-
-
-
-    let r1=0;
-    let r2=SIZE-1;
-
-
-
-    while(
-        Math.abs(buffer[r1]) <0.02
-        &&
-        r1<SIZE/2
-    ){
-
-        r1++;
-
-    }
-
-
-
-    while(
-        Math.abs(buffer[r2]) <0.02
-        &&
-        r2>SIZE/2
-    ){
-
-        r2--;
-
-    }
-
-
-
-
-
-    buffer =
-    buffer.slice(
-        r1,
-        r2
-    );
-
-
-
-    SIZE =
-    buffer.length;
 
 
 
@@ -341,12 +343,14 @@ function autoCorrelate(
 
     for(
         let offset=20;
-        offset<SIZE;
+        offset<SIZE/2;
         offset++
     ){
 
 
+
         let correlation=0;
+
 
 
 
@@ -357,17 +361,25 @@ function autoCorrelate(
         ){
 
 
+
             correlation +=
+
             buffer[i] *
+
             buffer[i+offset];
+
 
 
         }
 
 
 
+
+
         correlation /=
-        SIZE-offset;
+
+        (SIZE-offset);
+
 
 
 
@@ -395,19 +407,25 @@ function autoCorrelate(
 
 
 
-    if(bestCorrelation > 0.01){
+    if(
+        bestCorrelation > 0.25 &&
+        bestOffset>0
+    ){
 
 
 
         let frequency =
+
         sampleRate /
+
         bestOffset;
 
 
 
+
         if(
-            frequency > 50 &&
-            frequency < 1200
+            frequency>60 &&
+            frequency<1000
         ){
 
 
@@ -421,8 +439,8 @@ function autoCorrelate(
 
 
 
-
     return -1;
+
 
 
 }
@@ -433,6 +451,9 @@ function autoCorrelate(
 
 
 
+// ==========================
+// DURDUR
+// ==========================
 
 
 function stopPitch(){
@@ -442,6 +463,9 @@ function stopPitch(){
     pitchRunning=false;
 
 
+    smoothFrequency=0;
+
+
 
     if(micStream){
 
@@ -449,12 +473,11 @@ function stopPitch(){
         micStream
         .getTracks()
         .forEach(
-            track=>track.stop()
+            t=>t.stop()
         );
 
 
     }
-
 
 
 
