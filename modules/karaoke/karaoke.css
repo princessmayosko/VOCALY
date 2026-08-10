@@ -15,12 +15,11 @@ font-family:Arial,sans-serif;
 /* ANA YAPI */
 
 .layout{
-
-display:flex;
-
-min-height:100vh;
-
+    display:flex;
+    width:100%;
+    align-items:stretch;
 }
+
 
 
 
