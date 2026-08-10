@@ -43,7 +43,7 @@ async function startPitch(){
     audioContext.createAnalyser();
 
 
-    analyser.fftSize = 2048;
+    analyser.fftSize = 4096;
 
 
 
