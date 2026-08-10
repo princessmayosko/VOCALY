@@ -92,6 +92,18 @@ function detectPitch(){
 
         let note =
         frequencyToNote(frequency);
+        if(typeof checkPitch==="function"){
+
+    let result = checkPitch(note);
+
+    console.log(
+        "Nota:",
+        note,
+        "Doğru:",
+        result
+    );
+
+}
 
 
 
