@@ -252,20 +252,21 @@ function renderWords(){
 
 function playSong(){
 
-
     if(!current) return;
+
+
+    // mikrofonu aç
+    if(typeof startPitch === "function"){
+        startPitch();
+    }
 
 
     audio.play();
 
 
-
     if(timer){
-
         clearInterval(timer);
-
     }
-
 
 
     timer=setInterval(()=>{
