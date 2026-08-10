@@ -7,6 +7,7 @@ body{
 
 
 /* LOGO */
+
 .logo{
     font-size:30px;
     font-weight:bold;
@@ -18,48 +19,79 @@ body{
 }
 
 
+.subtitle{
+    margin-top:8px;
+    color:#facc15;
+}
+
+
 
 /* KART */
+
 .card{
+
     background:#15233d;
+
     padding:18px;
+
     margin:12px 0;
+
     border-radius:15px;
+
     cursor:pointer;
+
     border:1px solid #24395e;
+
 }
 
 
 .card:hover{
+
     background:#1d3155;
+
 }
 
 
 
 /* BUTON */
+
 button{
+
     padding:10px 16px;
+
     border-radius:10px;
+
     background:#263858;
+
     color:white;
+
     border:0;
+
     cursor:pointer;
+
 }
 
 
 button:hover{
+
     background:#3b5278;
+
 }
 
 
 
 .hidden{
-    display:none;
+
+    display:none!important;
+
 }
 
 
 
+
+
 /* SÖZ ALANI */
+
 #words{
 
     background:#101c34;
@@ -77,13 +109,17 @@ button:hover{
 
 
 .lyric-line{
+
     margin-bottom:18px;
+
 }
 
 
 
 
+
 /* KELİME KUTUSU */
+
 .word{
 
     position:relative;
@@ -106,7 +142,8 @@ button:hover{
 
 
 
-/* DOLAN YEŞİL ALAN */
+/* DOLAN ALAN */
+
 .word .fill{
 
     position:absolute;
@@ -129,7 +166,8 @@ button:hover{
 
 
 
-/* YAZI ÜSTTE KALSIN */
+/* YAZI ÜSTTE */
+
 .word span{
 
     position:relative;
@@ -141,6 +179,7 @@ button:hover{
 
 
 /* AKTİF KELİME */
+
 .word.active{
 
     transform:scale(1.05);
@@ -151,11 +190,189 @@ button:hover{
 
 
 
-/* TAMAMLANAN KELİME */
+/* TAMAMLANAN */
+
 .word.done .fill{
 
     width:100%;
 
     background:#16a34a;
+
+}
+
+
+
+
+
+/* ========================= */
+/* VOCALY CETVEL */
+/* ========================= */
+
+
+#cetvel{
+
+    position:fixed;
+
+    left:-120px;
+
+    top:0;
+
+    width:120px;
+
+    height:100vh;
+
+    background:#101b31;
+
+    border-right:1px solid #263858;
+
+    transition:.3s;
+
+    z-index:100;
+
+}
+
+
+
+#cetvel.open{
+
+    left:0;
+
+}
+
+
+
+
+#cetvel-tab{
+
+    position:absolute;
+
+    right:-35px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    background:#263858;
+
+    color:white;
+
+    padding:12px 6px;
+
+    border-radius:0 10px 10px 0;
+
+    writing-mode:vertical-rl;
+
+    cursor:pointer;
+
+    font-size:12px;
+
+}
+
+
+
+
+#pitch-panel{
+
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    gap:5px;
+
+    padding:10px;
+
+    position:relative;
+
+}
+
+
+
+
+
+.pitch-note{
+
+    text-align:center;
+
+    border-radius:10px;
+
+    padding:6px 2px;
+
+}
+
+
+
+.pitch-note.main{
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    color:white;
+
+    background:#182b50;
+
+}
+
+
+
+.pitch-note.small{
+
+    font-size:9px;
+
+    color:#9fb0cc;
+
+}
+
+
+
+
+
+/* Hareket eden nota noktası */
+
+#pitch-marker{
+
+    position:absolute;
+
+    right:-10px;
+
+    width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+    box-shadow:
+
+    0 0 15px #22c55e;
+
+    transition:.15s linear;
+
+}
+
+
+
+/* Algılanan nota */
+
+#pitch-result{
+
+    position:absolute;
+
+    bottom:40px;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    color:#facc15;
 
 }
