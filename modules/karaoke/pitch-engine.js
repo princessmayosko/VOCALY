@@ -1,4 +1,4 @@
-console.log("PITCH ENGINE ÇALIŞTI - CETVEL BAĞLI");
+console.log("PITCH ENGINE ÇALIŞTI");
 
 
 let audioContext;
@@ -7,111 +7,73 @@ let microphone;
 let dataArray;
 let micStream;
 
-
 let pitchRunning = false;
-
-
 let smoothFrequency = 0;
 
-
-
-// ==========================
-// BAŞLAT
-// ==========================
 
 
 async function startPitch(){
 
 
-    if(pitchRunning)
-        return;
+    if(pitchRunning) return;
 
 
     pitchRunning=true;
 
 
+    micStream =
+    await navigator.mediaDevices.getUserMedia({
 
-    try{
+        audio:true
 
-
-        micStream =
-        await navigator.mediaDevices.getUserMedia({
-
-            audio:true
-
-        });
+    });
 
 
 
-        audioContext =
-        new AudioContext();
+    audioContext =
+    new AudioContext();
 
 
 
-        microphone =
-        audioContext.createMediaStreamSource(
-            micStream
-        );
+    microphone =
+    audioContext.createMediaStreamSource(
+        micStream
+    );
 
 
 
-        analyser =
-        audioContext.createAnalyser();
+    analyser =
+    audioContext.createAnalyser();
 
 
 
-        analyser.fftSize = 4096;
+    analyser.fftSize=4096;
 
 
 
-        dataArray =
-        new Float32Array(
-            analyser.fftSize
-        );
+    dataArray =
+    new Float32Array(
+        analyser.fftSize
+    );
 
 
 
-        microphone.connect(analyser);
+    microphone.connect(analyser);
 
 
 
-        detectPitch();
-
-
-
-    }
-
-
-    catch(e){
-
-        console.error(
-            "Mikrofon hatası",
-            e
-        );
-
-    }
-
+    detectPitch();
 
 }
 
 
 
 
-
-
-
-// ==========================
-// PITCH OKUMA
-// ==========================
-
-
 function detectPitch(){
 
 
-
     if(!pitchRunning)
-        return;
-
+    return;
 
 
 
@@ -129,10 +91,7 @@ function detectPitch(){
 
 
 
-
-
-    if(frequency !== -1){
-
+    if(frequency!==-1){
 
 
         if(smoothFrequency===0){
@@ -140,15 +99,13 @@ function detectPitch(){
             smoothFrequency=frequency;
 
         }
-
         else{
 
             smoothFrequency =
-            smoothFrequency * 0.85 +
-            frequency * 0.15;
+            smoothFrequency*0.85 +
+            frequency*0.15;
 
         }
-
 
 
 
@@ -159,23 +116,6 @@ function detectPitch(){
 
 
 
-
-        // CETVEL
-
-        if(typeof updateCetvel==="function"){
-
-
-            updateCetvel(note);
-
-
-        }
-
-
-
-
-
-        // SONUÇ
-
         let result =
         document.getElementById(
             "pitch-result"
@@ -185,12 +125,26 @@ function detectPitch(){
 
         if(result){
 
-            result.innerHTML =
-            note.toUpperCase();
+            result.innerHTML=note;
 
         }
 
 
+
+        // CETVEL
+
+        if(typeof updateCetvel==="function"){
+
+            updateCetvel(note);
+
+        }
+
+
+
+        console.log(
+            "Nota:",
+            note
+        );
 
     }
 
@@ -208,25 +162,19 @@ function detectPitch(){
 
 
 
-
-// ==========================
-// FREKANS NOTA
-// ==========================
-
+// FREKANS -> NOTA
 
 function frequencyToNote(freq){
 
 
-
     let midi =
-
     Math.round(
 
         69 +
-
         12 *
-
-        Math.log2(freq/440)
+        Math.log2(
+            freq/440
+        )
 
     );
 
@@ -234,40 +182,25 @@ function frequencyToNote(freq){
 
     let notes=[
 
-
         "do",
-
         "do#",
-
         "re",
-
         "re#",
-
         "mi",
-
         "fa",
-
         "fa#",
-
         "sol",
-
         "sol#",
-
         "la",
-
         "la#",
-
         "si"
-
 
     ];
 
 
 
     return notes[
-
         ((midi%12)+12)%12
-
     ];
 
 }
@@ -276,18 +209,9 @@ function frequencyToNote(freq){
 
 
 
+// PITCH BULMA
 
-
-// ==========================
-// AUTOCORRELATION
-// ==========================
-
-
-function autoCorrelate(
-buffer,
-sampleRate
-){
-
+function autoCorrelate(buffer,sampleRate){
 
 
     let SIZE =
@@ -301,13 +225,9 @@ sampleRate
 
     for(let i=0;i<SIZE;i++){
 
-
-        let val =
-        buffer[i];
-
+        let val=buffer[i];
 
         rms += val*val;
-
 
     }
 
@@ -320,15 +240,11 @@ sampleRate
 
 
 
-    // sessizlik
-
-    if(rms < 0.015){
+    if(rms<0.015){
 
         return -1;
 
     }
-
-
 
 
 
@@ -339,8 +255,6 @@ sampleRate
 
 
 
-
-
     for(
         let offset=20;
         offset<SIZE/2;
@@ -348,9 +262,7 @@ sampleRate
     ){
 
 
-
         let correlation=0;
-
 
 
 
@@ -360,27 +272,16 @@ sampleRate
             i++
         ){
 
-
-
             correlation +=
-
             buffer[i] *
-
             buffer[i+offset];
-
-
 
         }
 
 
 
-
-
         correlation /=
-
-        (SIZE-offset);
-
-
+        SIZE-offset;
 
 
 
@@ -389,14 +290,11 @@ sampleRate
             bestCorrelation
         ){
 
-
             bestCorrelation =
             correlation;
 
-
             bestOffset =
             offset;
-
 
         }
 
@@ -406,20 +304,12 @@ sampleRate
 
 
 
-
-    if(
-        bestCorrelation > 0.25 &&
-        bestOffset>0
-    ){
-
+    if(bestCorrelation>0.01){
 
 
         let frequency =
-
         sampleRate /
-
         bestOffset;
-
 
 
 
@@ -428,9 +318,7 @@ sampleRate
             frequency<1000
         ){
 
-
             return frequency;
-
 
         }
 
@@ -442,7 +330,6 @@ sampleRate
     return -1;
 
 
-
 }
 
 
@@ -450,25 +337,14 @@ sampleRate
 
 
 
-
-// ==========================
-// DURDUR
-// ==========================
-
-
 function stopPitch(){
-
 
 
     pitchRunning=false;
 
 
-    smoothFrequency=0;
-
-
 
     if(micStream){
-
 
         micStream
         .getTracks()
@@ -476,16 +352,13 @@ function stopPitch(){
             t=>t.stop()
         );
 
-
     }
 
 
 
     if(audioContext){
 
-
         audioContext.close();
-
 
     }
 
