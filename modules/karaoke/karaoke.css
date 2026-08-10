@@ -406,3 +406,14 @@ button{
     display:none;
 
 }
+.pitch-note.active{
+
+    background:#22c55e !important;
+
+    color:white;
+
+    transform:scale(1.08);
+
+    box-shadow:0 0 15px #22c55e;
+
+}
