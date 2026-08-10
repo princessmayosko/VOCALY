@@ -1,16 +1,160 @@
 body{
 
+margin:0;
+
 background:#08111f;
 
 color:white;
 
 font-family:Arial,sans-serif;
 
-padding:20px;
+}
+
+
+
+/* ANA YAPI */
+
+.layout{
+
+display:flex;
+
+min-height:100vh;
 
 }
 
 
+
+/* CETVEL */
+
+#cetvel{
+
+width:0;
+
+background:#101b31;
+
+border-right:1px solid #263858;
+
+overflow:hidden;
+
+transition:0.3s ease;
+
+flex-shrink:0;
+
+position:relative;
+
+}
+
+
+
+#cetvel.open{
+
+width:130px;
+
+}
+
+
+
+/* CETVEL İÇİ */
+
+#pitch-panel{
+
+height:100%;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+gap:6px;
+
+padding:8px;
+
+}
+
+
+
+.pitch-note{
+
+width:100px;
+
+padding:8px 0;
+
+text-align:center;
+
+border-radius:10px;
+
+background:#18294d;
+
+font-weight:bold;
+
+font-size:14px;
+
+}
+
+
+
+.pitch-note.small{
+
+font-size:9px;
+
+font-weight:normal;
+
+color:#aaa;
+
+}
+
+
+
+/* CETVEL AÇMA SEKME */
+
+#cetvel-tab{
+
+position:fixed;
+
+left:0;
+
+top:50%;
+
+transform:translateY(-50%);
+
+background:#263858;
+
+color:white;
+
+padding:10px 5px;
+
+border-radius:0 10px 10px 0;
+
+writing-mode:vertical-rl;
+
+cursor:pointer;
+
+z-index:20;
+
+font-size:12px;
+
+}
+
+
+
+/* ANA ALAN */
+
+main{
+
+flex:1;
+
+padding:30px;
+
+overflow:hidden;
+
+}
+
+
+
+/* LOGO */
 
 .logo{
 
@@ -34,179 +178,15 @@ display:inline-block;
 
 .subtitle{
 
-color:#facc15;
-
 margin-top:8px;
 
-}
-
-
-
-.layout{
-
-display:flex;
-
-}
-
-
-
-main{
-
-flex:1;
-
-padding:30px;
-
-}
-
-
-
-
-
-/* CETVEL */
-
-#cetvel{
-
-width:0;
-
-height:100vh;
-
-background:#101b31;
-
-border-right:1px solid #263858;
-
-overflow:hidden;
-
-transition:.3s;
-
-flex-shrink:0;
-
-}
-
-
-#cetvel.open{
-
-width:130px;
-
-}
-
-
-
-
-#cetvel-tab{
-
-position:absolute;
-
-left:0;
-
-top:50%;
-
-background:#263858;
-
-padding:10px 5px;
-
-border-radius:0 10px 10px 0;
-
-writing-mode:vertical-rl;
-
-cursor:pointer;
-
-font-size:12px;
-
-}
-
-
-
-#pitch-panel{
-
-height:100%;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-gap:5px;
-
-padding:10px;
-
-position:relative;
-
-}
-
-
-
-
-.pitch-note{
-
-text-align:center;
-
-padding:7px;
-
-border-radius:10px;
-
-background:#182b50;
-
-}
-
-
-
-
-
-.pitch-note.main{
-
-font-size:15px;
-
-font-weight:bold;
-
-}
-
-
-
-.pitch-note.small{
-
-font-size:9px;
-
-color:#aaa;
-
-}
-
-
-
-
-
-#pitch-result{
-
-text-align:center;
-
-margin-top:10px;
-
 color:#facc15;
 
 }
 
 
 
-#pitch-marker{
-
-width:15px;
-
-height:15px;
-
-border-radius:50%;
-
-background:#22c55e;
-
-margin:auto;
-
-}
-
-
-
-
-
-/* KARAOKE */
-
+/* PANEL */
 
 .panel{
 
@@ -222,27 +202,7 @@ padding:25px;
 
 
 
-.hidden{
-
-display:none!important;
-
-}
-
-
-
-.card{
-
-background:#15233d;
-
-padding:18px;
-
-border-radius:15px;
-
-margin:12px 0;
-
-}
-
-
+/* BUTON */
 
 button{
 
@@ -262,18 +222,27 @@ cursor:pointer;
 
 
 
+/* KARAOKE */
 
 .words{
 
 height:500px;
 
-overflow:auto;
+overflow-y:auto;
 
 background:#101c34;
 
 padding:20px;
 
 border-radius:15px;
+
+}
+
+
+
+.lyric-line{
+
+margin-bottom:18px;
 
 }
 
@@ -295,6 +264,8 @@ border-radius:10px;
 
 overflow:hidden;
 
+border:1px solid #294577;
+
 }
 
 
@@ -313,7 +284,7 @@ width:var(--progress,0%);
 
 background:#22c55e;
 
-opacity:.6;
+opacity:.65;
 
 }
 
@@ -324,5 +295,21 @@ opacity:.6;
 position:relative;
 
 z-index:2;
+
+}
+
+
+
+/* PITCH */
+
+#pitch-result{
+
+text-align:center;
+
+margin:10px;
+
+font-size:18px;
+
+color:#facc15;
 
 }
