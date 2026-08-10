@@ -21,69 +21,45 @@ body{
 
 /* KART */
 .card{
-
     background:#15233d;
-
     padding:18px;
-
     margin:12px 0;
-
     border-radius:15px;
-
     cursor:pointer;
-
     border:1px solid #24395e;
-
 }
 
 
 .card:hover{
-
     background:#1d3155;
-
 }
 
 
 
 /* BUTON */
-
 button{
-
     padding:10px 16px;
-
     border-radius:10px;
-
     background:#263858;
-
     color:white;
-
     border:0;
-
     cursor:pointer;
-
 }
 
 
 button:hover{
-
     background:#3b5278;
-
 }
-
 
 
 
 .hidden{
-
     display:none;
-
 }
 
 
 
-
 /* SÖZ ALANI */
-
 #words{
 
     background:#101c34;
@@ -100,22 +76,14 @@ button:hover{
 
 
 
-
-
 .lyric-line{
-
     margin-bottom:18px;
-
 }
 
 
 
 
-
-
-
-/* KELİME */
-
+/* KELİME KUTUSU */
 .word{
 
     position:relative;
@@ -138,10 +106,7 @@ button:hover{
 
 
 
-
-
-/* DOLAN ALAN */
-
+/* DOLAN YEŞİL ALAN */
 .word .fill{
 
     position:absolute;
@@ -154,11 +119,9 @@ button:hover{
 
     width:var(--progress,0%);
 
-
     background:#22c55e;
 
     opacity:.65;
-
 
     z-index:0;
 
@@ -166,11 +129,7 @@ button:hover{
 
 
 
-
-
-
-/* YAZI ÜSTTE */
-
+/* YAZI ÜSTTE KALSIN */
 .word span{
 
     position:relative;
@@ -181,11 +140,7 @@ button:hover{
 
 
 
-
-
-
-/* AKTİF */
-
+/* AKTİF KELİME */
 .word.active{
 
     transform:scale(1.05);
@@ -196,11 +151,7 @@ button:hover{
 
 
 
-
-
-
-/* TAMAMLANAN */
-
+/* TAMAMLANAN KELİME */
 .word.done .fill{
 
     width:100%;
