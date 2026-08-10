@@ -111,29 +111,29 @@ color:#aaa;
 
 #cetvel-tab{
 
-position:fixed;
+    position:absolute;
 
-left:0;
+    right:-35px;
 
-top:50%;
+    top:50%;
 
-transform:translateY(-50%);
+    transform:translateY(-50%);
 
-background:#263858;
+    background:#263858;
 
-color:white;
+    color:white;
 
-padding:10px 5px;
+    padding:10px 5px;
 
-border-radius:0 10px 10px 0;
+    border-radius:0 10px 10px 0;
 
-writing-mode:vertical-rl;
+    writing-mode:vertical-rl;
 
-cursor:pointer;
+    cursor:pointer;
 
-z-index:20;
+    z-index:20;
 
-font-size:12px;
+    font-size:12px;
 
 }
 
