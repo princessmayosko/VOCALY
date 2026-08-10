@@ -11,32 +11,149 @@ font-family:Arial,sans-serif;
 }
 
 
-/* ANA */
 
-.app{
+/* ANA YAPI */
 
-min-height:100vh;
+.layout{
+    display:flex;
+    width:100%;
+    align-items:stretch;
+}
+
+
+
+
+/* CETVEL */
+
+#cetvel{
+
+width:0;
+
+background:#101b31;
+
+border-right:1px solid #263858;
+
+overflow:hidden;
+
+transition:0.3s ease;
+
+flex-shrink:0;
+
+position:relative;
 
 }
 
 
-.top{
 
-height:90px;
+#cetvel.open{
+
+width:130px;
+
+}
+
+
+
+/* CETVEL İÇİ */
+
+#pitch-panel{
+
+height:100%;
 
 display:flex;
 
 flex-direction:column;
 
-align-items:flex-start;
-
 justify-content:center;
 
-padding-left:30px;
+align-items:center;
+
+gap:6px;
+
+padding:8px;
 
 }
 
 
+
+.pitch-note{
+
+width:100px;
+
+padding:8px 0;
+
+text-align:center;
+
+border-radius:10px;
+
+background:#18294d;
+
+font-weight:bold;
+
+font-size:14px;
+
+}
+
+
+
+.pitch-note.small{
+
+font-size:9px;
+
+font-weight:normal;
+
+color:#aaa;
+
+}
+
+
+
+/* CETVEL AÇMA SEKME */
+
+#cetvel-tab{
+
+position:fixed;
+
+left:0;
+
+top:50%;
+
+transform:translateY(-50%);
+
+background:#263858;
+
+color:white;
+
+padding:10px 5px;
+
+border-radius:0 10px 10px 0;
+
+writing-mode:vertical-rl;
+
+cursor:pointer;
+
+z-index:20;
+
+font-size:12px;
+
+}
+
+
+
+/* ANA ALAN */
+
+main{
+
+flex:1;
+
+padding:30px;
+
+overflow:hidden;
+
+}
+
+
+
+/* LOGO */
 
 .logo{
 
@@ -68,184 +185,6 @@ color:#facc15;
 
 
 
-
-/* LAYOUT */
-
-.layout{
-
-display:flex;
-
-width:100%;
-
-}
-
-
-
-
-/* CETVEL */
-
-#cetvel{
-
-width:0;
-
-height:calc(100vh - 90px);
-
-background:#101b31;
-
-border-right:1px solid #263858;
-
-overflow:hidden;
-
-transition:.3s ease;
-
-flex-shrink:0;
-
-position:relative;
-
-}
-
-
-
-#cetvel.open{
-
-width:130px;
-
-}
-
-
-
-/* CETVEL SEKME */
-
-#cetvel-tab{
-
-position:absolute;
-
-right:-35px;
-
-top:50%;
-
-transform:translateY(-50%);
-
-background:#263858;
-
-color:white;
-
-padding:10px 5px;
-
-border-radius:0 10px 10px 0;
-
-writing-mode:vertical-rl;
-
-cursor:pointer;
-
-z-index:20;
-
-font-size:12px;
-
-}
-
-
-
-/* NOTALAR */
-
-#pitch-panel{
-
-height:100%;
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-gap:6px;
-
-padding:8px;
-
-}
-
-
-
-.pitch-note{
-
-width:100px;
-
-padding:7px 0;
-
-background:#18294d;
-
-border-radius:10px;
-
-text-align:center;
-
-font-size:14px;
-
-font-weight:bold;
-
-}
-
-
-
-.pitch-note.small{
-
-font-size:9px;
-
-color:#aaa;
-
-font-weight:normal;
-
-}
-
-
-
-
-#pitch-result{
-
-text-align:center;
-
-margin-top:10px;
-
-color:#facc15;
-
-}
-
-
-
-
-#pitch-marker{
-
-width:15px;
-
-height:15px;
-
-border-radius:50%;
-
-background:#22c55e;
-
-}
-
-
-
-
-
-/* ANA İÇERİK */
-
-main{
-
-flex:1;
-
-min-width:0;
-
-padding:30px;
-
-}
-
-
-
-
-
 /* PANEL */
 
 .panel{
@@ -262,48 +201,11 @@ padding:25px;
 
 
 
-
-
-/* GİZLEME */
-
-.hidden{
-
-display:none!important;
-
-}
-
-
-
-
-/* KART */
-
-.card{
-
-background:#15233d;
-
-padding:18px;
-
-margin:12px 0;
-
-border-radius:15px;
-
-border:1px solid #24395e;
-
-cursor:pointer;
-
-}
-
-
-
-
-
 /* BUTON */
 
 button{
 
 padding:10px 16px;
-
-border-radius:10px;
 
 background:#263858;
 
@@ -311,22 +213,11 @@ color:white;
 
 border:0;
 
+border-radius:10px;
+
 cursor:pointer;
 
 }
-
-
-
-
-
-.controls{
-
-display:flex;
-
-gap:8px;
-
-}
-
 
 
 
@@ -353,7 +244,6 @@ border-radius:15px;
 margin-bottom:18px;
 
 }
-
 
 
 
@@ -409,19 +299,16 @@ z-index:2;
 
 
 
-.word.active{
+/* PITCH */
 
-transform:scale(1.05);
+#pitch-result{
 
-}
+text-align:center;
 
+margin:10px;
 
+font-size:18px;
 
-
-.word.done .fill{
-
-width:100%;
-
-background:#16a34a;
+color:#facc15;
 
 }
