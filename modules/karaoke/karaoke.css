@@ -1,23 +1,26 @@
 body{
 
-margin:0;
+    margin:0;
 
-background:#08111f;
+    background:#08111f;
 
-color:white;
+    color:white;
 
-font-family:Arial,sans-serif;
+    font-family:Arial,sans-serif;
 
 }
-
 
 
 /* ANA YAPI */
 
 .layout{
+
     display:flex;
+
     width:100%;
+
     align-items:stretch;
+
 }
 
 
@@ -41,7 +44,10 @@ font-family:Arial,sans-serif;
 
     flex-shrink:0;
 
+    position:relative;
+
 }
+
 
 
 #cetvel.open{
@@ -53,61 +59,69 @@ font-family:Arial,sans-serif;
 
 
 
+
 /* CETVEL İÇİ */
 
 #pitch-panel{
 
-height:100%;
+    height:100%;
 
-display:flex;
+    display:flex;
 
-flex-direction:column;
+    flex-direction:column;
 
-justify-content:center;
+    justify-content:center;
 
-align-items:center;
+    align-items:center;
 
-gap:6px;
+    gap:6px;
 
-padding:8px;
+    padding:8px;
 
 }
+
+
 
 
 
 .pitch-note{
 
-width:100px;
+    width:100px;
 
-padding:8px 0;
+    padding:8px 0;
 
-text-align:center;
+    text-align:center;
 
-border-radius:10px;
+    border-radius:10px;
 
-background:#18294d;
+    background:#18294d;
 
-font-weight:bold;
+    font-weight:bold;
 
-font-size:14px;
+    font-size:14px;
 
 }
+
+
 
 
 
 .pitch-note.small{
 
-font-size:9px;
+    font-size:9px;
 
-font-weight:normal;
+    font-weight:normal;
 
-color:#aaa;
+    color:#aaa;
 
 }
 
 
 
-/* CETVEL AÇMA SEKME */
+
+
+
+/* CETVEL SEKME */
 
 #cetvel-tab{
 
@@ -139,17 +153,22 @@ color:#aaa;
 
 
 
+
+
+
 /* ANA ALAN */
 
 main{
 
-flex:1;
+    flex:1;
 
-padding:30px;
+    min-width:0;
 
-overflow:hidden;
+    padding:30px;
 
 }
+
+
 
 
 
@@ -157,19 +176,19 @@ overflow:hidden;
 
 .logo{
 
-font-size:30px;
+    font-size:30px;
 
-font-weight:bold;
+    font-weight:bold;
 
-background:#facc15;
+    background:#facc15;
 
-color:#111;
+    color:#111;
 
-padding:15px 25px;
+    padding:15px 25px;
 
-border-radius:15px;
+    border-radius:15px;
 
-display:inline-block;
+    display:inline-block;
 
 }
 
@@ -177,11 +196,13 @@ display:inline-block;
 
 .subtitle{
 
-margin-top:8px;
+    margin-top:8px;
 
-color:#facc15;
+    color:#facc15;
 
 }
+
+
 
 
 
@@ -189,15 +210,17 @@ color:#facc15;
 
 .panel{
 
-background:#101b31;
+    background:#101b31;
 
-border:1px solid #263858;
+    border:1px solid #263858;
 
-border-radius:20px;
+    border-radius:20px;
 
-padding:25px;
+    padding:25px;
 
 }
+
+
 
 
 
@@ -205,19 +228,21 @@ padding:25px;
 
 button{
 
-padding:10px 16px;
+    padding:10px 16px;
 
-background:#263858;
+    background:#263858;
 
-color:white;
+    color:white;
 
-border:0;
+    border:0;
 
-border-radius:10px;
+    border-radius:10px;
 
-cursor:pointer;
+    cursor:pointer;
 
 }
+
+
 
 
 
@@ -225,15 +250,15 @@ cursor:pointer;
 
 .words{
 
-height:500px;
+    height:500px;
 
-overflow-y:auto;
+    overflow-y:auto;
 
-background:#101c34;
+    background:#101c34;
 
-padding:20px;
+    padding:20px;
 
-border-radius:15px;
+    border-radius:15px;
 
 }
 
@@ -241,29 +266,31 @@ border-radius:15px;
 
 .lyric-line{
 
-margin-bottom:18px;
+    margin-bottom:18px;
 
 }
 
 
 
+
+
 .word{
 
-position:relative;
+    position:relative;
 
-display:inline-block;
+    display:inline-block;
 
-padding:10px 14px;
+    padding:10px 14px;
 
-margin:5px;
+    margin:5px;
 
-background:#19294d;
+    background:#19294d;
 
-border-radius:10px;
+    border-radius:10px;
 
-overflow:hidden;
+    overflow:hidden;
 
-border:1px solid #294577;
+    border:1px solid #294577;
 
 }
 
@@ -271,19 +298,19 @@ border:1px solid #294577;
 
 .word .fill{
 
-position:absolute;
+    position:absolute;
 
-left:0;
+    left:0;
 
-top:0;
+    top:0;
 
-height:100%;
+    height:100%;
 
-width:var(--progress,0%);
+    width:var(--progress,0%);
 
-background:#22c55e;
+    background:#22c55e;
 
-opacity:.65;
+    opacity:.65;
 
 }
 
@@ -291,11 +318,14 @@ opacity:.65;
 
 .word span{
 
-position:relative;
+    position:relative;
 
-z-index:2;
+    z-index:2;
 
 }
+
+
+
 
 
 
@@ -303,12 +333,12 @@ z-index:2;
 
 #pitch-result{
 
-text-align:center;
+    text-align:center;
 
-margin:10px;
+    margin:10px;
 
-font-size:18px;
+    font-size:18px;
 
-color:#facc15;
+    color:#facc15;
 
 }
