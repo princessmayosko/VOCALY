@@ -1,4 +1,4 @@
-console.log("PITCH ENGINE ÇALIŞTI");
+console.log("PITCH ENGINE YENİ SÜRÜM - HZ YOK");
 
 
 let audioContext;
