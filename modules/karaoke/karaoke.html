@@ -1,232 +1,113 @@
-<!DOCTYPE html>
-<html lang="tr">
+<!-- LOGO -->
 
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>VOCALY Karaoke</title>
-
-<link rel="stylesheet" href="karaoke.css?v=11">
-
-</head>
+<div class="logo">
+    VOCALY
+</div>
 
 
-<body>
-
-
-<div class="app">
-
-
-
-<header class="top">
-
-
-    <div class="logo">
-        VOCALY
-    </div>
-
-
-    <div class="subtitle">
-        Karaoke / Ölçme
-    </div>
-
-
-</header>
+<div class="subtitle">
+    Karaoke / Ölçme
+</div>
 
 
 
 
 
-<div class="layout">
-
-
-
-<!-- SOL CETVEL -->
+<!-- CETVEL -->
 
 <aside id="cetvel">
 
 
-    <div class="cetvel-title">
-        VOCALY CETVEL
+    <div id="cetvel-tab">
+        ‹ VOCALY CETVEL
     </div>
 
 
-    
+
+    <div id="pitch-panel">
 
 
-    <div id="pitch-result">
-        --
+        <div class="pitch-note main">
+            DO
+        </div>
+
+
+        <div class="pitch-note small">
+            si
+        </div>
+
+
+        <div class="pitch-note small">
+            LA♯ / sib
+        </div>
+
+
+        <div class="pitch-note main">
+            LA
+        </div>
+
+
+        <div class="pitch-note small">
+            sol♯ / lab
+        </div>
+
+
+        <div class="pitch-note main">
+            SOL
+        </div>
+
+
+        <div class="pitch-note small">
+            fa♯ / solb
+        </div>
+
+
+        <div class="pitch-note main">
+            FA
+        </div>
+
+
+        <div class="pitch-note main">
+            Mİ
+        </div>
+
+
+        <div class="pitch-note small">
+            re♯ / mib
+        </div>
+
+
+        <div class="pitch-note main">
+            RE
+        </div>
+
+
+        <div class="pitch-note small">
+            do♯ / reb
+        </div>
+
+
+        <div class="pitch-note main">
+            DO
+        </div>
+
+
+
+        <!-- Mikrofon notasını gösterir -->
+
+        <div id="pitch-result">
+            --
+        </div>
+
+
+
+        <!-- Hareket eden nokta -->
+
+        <div id="pitch-marker"></div>
+
+
+
     </div>
 
 
 </aside>
-
-
-
-
-
-
-
-<main>
-
-
-
-
-
-<!-- KÜTÜPHANE -->
-
-<section id="library">
-
-
-<div class="panel">
-
-
-<h2>
-Şarkı Kütüphanesi
-</h2>
-
-
-<div id="songs"></div>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-<!-- KARAOKE EKRANI -->
-
-<section id="karaoke" class="hidden">
-
-
-<div class="panel">
-
-
-
-
-
-<div class="karaoke-head">
-
-
-
-<button onclick="backLibrary()">
-←
-</button>
-
-
-
-
-<h2 id="title">
-Karaoke / Ölçme
-</h2>
-
-
-
-
-
-
-<div class="controls">
-
-
-<button onclick="playSong()">
-▶
-</button>
-
-
-<button onclick="stopSong()">
-■
-</button>
-
-
-<button onclick="resetSong()">
-↺
-</button>
-
-
-<button>
-☰
-</button>
-
-
-<button>
-±20
-</button>
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-<audio id="audio"></audio>
-
-
-
-
-
-
-
-<div id="words" class="words">
-
-</div>
-
-
-
-
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-</main>
-
-
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-<script src="pitch-engine.js?v=3"></script>
-
-<script src="pitch-checker.js?v=1"></script>
-
-<script src="karaoke.js?v=13"></script>
-
-
-
-</body>
-
-
-</html>
