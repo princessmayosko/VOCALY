@@ -1,3 +1,13 @@
+/* =========================
+   VOCALY KARAOKE CSS
+========================= */
+
+
+*{
+    box-sizing:border-box;
+}
+
+
 body{
 
     margin:0;
@@ -11,6 +21,65 @@ body{
 }
 
 
+
+.app{
+
+    min-height:100vh;
+
+}
+
+
+
+/* HEADER */
+
+.top{
+
+    height:90px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    justify-content:center;
+
+    padding-left:30px;
+
+}
+
+
+
+.logo{
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    background:#facc15;
+
+    color:#111;
+
+    padding:12px 30px;
+
+    border-radius:15px;
+
+}
+
+
+
+.subtitle{
+
+    margin-top:8px;
+
+    color:#facc15;
+
+}
+
+
+
+
+
 /* ANA YAPI */
 
 .layout{
@@ -19,20 +88,22 @@ body{
 
     width:100%;
 
-    align-items:stretch;
+    min-height:calc(100vh - 90px);
 
 }
 
 
 
 
-/* CETVEL */
+
+/* =========================
+   CETVEL
+========================= */
+
 
 #cetvel{
 
     width:0;
-
-    height:calc(100vh - 90px);
 
     background:#101b31;
 
@@ -40,7 +111,7 @@ body{
 
     overflow:hidden;
 
-    transition:0.3s ease;
+    transition:.3s ease;
 
     flex-shrink:0;
 
@@ -60,7 +131,36 @@ body{
 
 
 
-/* CETVEL İÇİ */
+#cetvel-tab{
+
+    position:absolute;
+
+    right:-35px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    background:#263858;
+
+    color:white;
+
+    padding:10px 6px;
+
+    border-radius:0 10px 10px 0;
+
+    writing-mode:vertical-rl;
+
+    cursor:pointer;
+
+    z-index:20;
+
+    font-size:12px;
+
+}
+
+
+
 
 #pitch-panel{
 
@@ -82,19 +182,17 @@ body{
 
 
 
-
-
 .pitch-note{
 
     width:100px;
 
-    padding:8px 0;
+    padding:7px 0;
 
-    text-align:center;
+    background:#18294d;
 
     border-radius:10px;
 
-    background:#18294d;
+    text-align:center;
 
     font-weight:bold;
 
@@ -104,50 +202,25 @@ body{
 
 
 
-
-
 .pitch-note.small{
 
     font-size:9px;
 
-    font-weight:normal;
-
     color:#aaa;
 
+    font-weight:normal;
+
 }
 
 
 
+#pitch-result{
 
+    margin-top:10px;
 
+    color:#facc15;
 
-/* CETVEL SEKME */
-
-#cetvel-tab{
-
-    position:absolute;
-
-    right:-35px;
-
-    top:50%;
-
-    transform:translateY(-50%);
-
-    background:#263858;
-
-    color:white;
-
-    padding:10px 5px;
-
-    border-radius:0 10px 10px 0;
-
-    writing-mode:vertical-rl;
-
-    cursor:pointer;
-
-    z-index:20;
-
-    font-size:12px;
+    text-align:center;
 
 }
 
@@ -155,8 +228,23 @@ body{
 
 
 
+#pitch-marker{
 
-/* ANA ALAN */
+    width:14px;
+
+    height:14px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+}
+
+
+
+
+
+/* ANA */
 
 main{
 
@@ -172,40 +260,6 @@ main{
 
 
 
-/* LOGO */
-
-.logo{
-
-    font-size:30px;
-
-    font-weight:bold;
-
-    background:#facc15;
-
-    color:#111;
-
-    padding:15px 25px;
-
-    border-radius:15px;
-
-    display:inline-block;
-
-}
-
-
-
-.subtitle{
-
-    margin-top:8px;
-
-    color:#facc15;
-
-}
-
-
-
-
-
 /* PANEL */
 
 .panel{
@@ -214,9 +268,43 @@ main{
 
     border:1px solid #263858;
 
-    border-radius:20px;
+    border-radius:22px;
 
     padding:25px;
+
+}
+
+
+
+
+
+/* GİZLE */
+
+.hidden{
+
+    display:none!important;
+
+}
+
+
+
+
+
+/* KART */
+
+.card{
+
+    background:#17243d;
+
+    border:1px solid #33476b;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    margin:12px 0;
+
+    cursor:pointer;
 
 }
 
@@ -228,13 +316,13 @@ main{
 
 button{
 
-    padding:10px 16px;
-
     background:#263858;
 
     color:white;
 
     border:0;
+
+    padding:10px 15px;
 
     border-radius:10px;
 
@@ -246,7 +334,34 @@ button{
 
 
 
-/* KARAOKE */
+.controls{
+
+    display:flex;
+
+    gap:8px;
+
+}
+
+
+
+.karaoke-head{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+}
+
+
+
+
+
+/* KELİME ALANI */
+
 
 .words{
 
@@ -254,13 +369,17 @@ button{
 
     overflow-y:auto;
 
-    background:#101c34;
+    margin-top:25px;
 
     padding:20px;
+
+    background:#111d33;
 
     border-radius:15px;
 
 }
+
+
 
 
 
@@ -296,6 +415,8 @@ button{
 
 
 
+
+
 .word .fill{
 
     position:absolute;
@@ -312,7 +433,11 @@ button{
 
     opacity:.65;
 
+    z-index:0;
+
 }
+
+
 
 
 
@@ -328,17 +453,18 @@ button{
 
 
 
+.word.active{
 
-/* PITCH */
+    transform:scale(1.05);
 
-#pitch-result{
+}
 
-    text-align:center;
 
-    margin:10px;
 
-    font-size:18px;
+.word.done .fill{
 
-    color:#facc15;
+    width:100%;
+
+    background:#16a34a;
 
 }
