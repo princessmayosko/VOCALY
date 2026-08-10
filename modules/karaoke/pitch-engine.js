@@ -138,11 +138,7 @@ function detectPitch(){
 
 
             element.innerHTML =
-            note +
-            "<br>" +
-            Math.round(frequency)
-            +
-            " Hz";
+            note
 
 
         }
