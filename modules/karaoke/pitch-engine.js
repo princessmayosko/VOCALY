@@ -1,3 +1,4 @@
+console.log("PITCH ENGINE ÇALIŞTI");
 let audioContext;
 let analyser;
 let microphone;
