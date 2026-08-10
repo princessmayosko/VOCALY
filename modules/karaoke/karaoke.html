@@ -9,7 +9,7 @@
 
 <title>VOCALY Karaoke</title>
 
-<link rel="stylesheet" href="karaoke.css">
+<link rel="stylesheet" href="karaoke.css?v=11">
 
 </head>
 
@@ -20,15 +20,19 @@
 <div class="app">
 
 
+
 <header class="top">
+
 
     <div class="logo">
         VOCALY
     </div>
 
+
     <div class="subtitle">
         Karaoke / Ölçme
     </div>
+
 
 </header>
 
@@ -40,13 +44,25 @@
 
 
 
-<!-- CETVEL ALANI -->
+<!-- SOL CETVEL -->
 
 <aside id="cetvel">
+
 
     <div class="cetvel-title">
         VOCALY CETVEL
     </div>
+
+
+    <button onclick="startPitch()">
+        🎤
+    </button>
+
+
+    <div id="pitch-result">
+        --
+    </div>
+
 
 </aside>
 
@@ -60,7 +76,9 @@
 
 
 
-<!-- ŞARKI LİSTESİ -->
+
+
+<!-- KÜTÜPHANE -->
 
 <section id="library">
 
@@ -87,12 +105,14 @@
 
 
 
-<!-- KARAOKE -->
+<!-- KARAOKE EKRANI -->
 
 <section id="karaoke" class="hidden">
 
 
 <div class="panel">
+
+
 
 
 
@@ -110,6 +130,7 @@
 <h2 id="title">
 Karaoke / Ölçme
 </h2>
+
 
 
 
@@ -143,8 +164,8 @@ Karaoke / Ölçme
 </button>
 
 
-
 </div>
+
 
 
 </div>
@@ -186,35 +207,25 @@ Karaoke / Ölçme
 
 
 
-</div>
-
-
 
 </div>
 
 
-<aside id="cetvel">
-
-<div class="cetvel-title">
-VOCALY CETVEL
 </div>
 
-<button onclick="startPitch()">
-🎤 Mikrofon
-</button>
 
-<div id="pitch-result">
---
-</div>
 
-</aside>
+
 
 
 
 
 <script src="karaoke.js?v=11"></script>
-<script src="cetvel.js"></script>
-<script src="pitch-engine.js"></script>
+
+<script src="cetvel.js?v=1"></script>
+
+<script src="pitch-engine.js?v=1"></script>
+
 
 
 </body>
