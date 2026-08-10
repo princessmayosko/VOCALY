@@ -84,11 +84,35 @@ function detectPitch(){
 
 
 
-    let frequency =
-    autoCorrelate(
-        dataArray,
-        audioContext.sampleRate
-    );
+ let frequency =
+autoCorrelate(
+dataArray,
+audioContext.sampleRate
+);
+
+
+
+if(frequency !== -1){
+
+
+    if(!smoothFrequency){
+
+        smoothFrequency = frequency;
+
+    }
+    else{
+
+        smoothFrequency =
+        smoothFrequency * 0.8 +
+        frequency * 0.2;
+
+    }
+
+
+    frequency = smoothFrequency;
+
+
+}
 
 
 
