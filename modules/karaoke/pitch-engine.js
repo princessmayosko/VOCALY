@@ -1,32 +1,47 @@
 console.log("PITCH ENGINE ÇALIŞTI");
+
+
 let audioContext;
 let analyser;
 let microphone;
 let dataArray;
 
+let pitchRunning = false;
+
+
+
 async function startPitch(){
 
-    const stream = await navigator.mediaDevices.getUserMedia({
+
+    if(pitchRunning) return;
+
+
+    pitchRunning = true;
+
+
+    const stream =
+    await navigator.mediaDevices.getUserMedia({
         audio:true
     });
+
 
 
     audioContext =
     new AudioContext();
 
 
+
     microphone =
     audioContext.createMediaStreamSource(stream);
+
 
 
     analyser =
     audioContext.createAnalyser();
 
 
-    analyser.fftSize=2048;
+    analyser.fftSize = 2048;
 
-
-    microphone.connect(analyser);
 
 
     dataArray =
@@ -35,9 +50,17 @@ async function startPitch(){
     );
 
 
+
+    microphone.connect(analyser);
+
+
+
     detectPitch();
 
+
 }
+
+
 
 
 
@@ -45,7 +68,15 @@ async function startPitch(){
 function detectPitch(){
 
 
-    analyser.getFloatTimeDomainData(dataArray);
+    if(!pitchRunning)
+        return;
+
+
+
+    analyser.getFloatTimeDomainData(
+        dataArray
+    );
+
 
 
     let frequency =
@@ -55,15 +86,33 @@ function detectPitch(){
     );
 
 
+
     if(frequency !== -1){
+
 
         let note =
         frequencyToNote(frequency);
 
 
+
+        let element =
         document.getElementById(
             "pitch-result"
-        ).innerHTML=note;
+        );
+
+
+        if(element){
+
+            element.innerHTML =
+            note +
+            "<br>" +
+            Math.round(frequency)
+            +
+            " Hz";
+
+        }
+
+
 
     }
 
@@ -73,138 +122,270 @@ function detectPitch(){
         detectPitch
     );
 
+
 }
 
 
 
 
 
-function frequencyToNote(freq){
 
-    let notes=[
-    "do",
-    "do#",
-    "re",
-    "re#",
-    "mi",
-    "fa",
-    "fa#",
-    "sol",
-    "sol#",
-    "la",
-    "la#",
-    "si"
-    ];
+
+
+// FREKANS -> NOTA
+
+function frequencyToNote(freq){
 
 
     let midi =
     Math.round(
-        69+
-        12*Math.log2(freq/440)
+        69 +
+        12 *
+        Math.log2(freq / 440)
     );
 
 
-    return notes[midi%12];
+
+    let notes = [
+
+        "do",
+        "do#",
+        "re",
+        "re#",
+        "mi",
+        "fa",
+        "fa#",
+        "sol",
+        "sol#",
+        "la",
+        "la#",
+        "si"
+
+    ];
+
+
+
+    let note =
+    notes[
+        ((midi % 12)+12)%12
+    ];
+
+
+
+    let octave =
+    Math.floor(midi / 12)-1;
+
+
+
+    return note + octave;
+
 
 }
 
 
 
 
+
+
+
+
+// AUTOCORRELATION PITCH BULMA
+
 function autoCorrelate(buffer,sampleRate){
 
-    let rms=0;
 
 
-    for(let i=0;i<buffer.length;i++){
+    let SIZE =
+    buffer.length;
 
-        rms+=buffer[i]*buffer[i];
+
+
+    let rms = 0;
+
+
+
+    for(let i=0;i<SIZE;i++){
+
+        let val =
+        buffer[i];
+
+        rms += val*val;
 
     }
 
 
-    rms=Math.sqrt(
-        rms/buffer.length
+
+    rms =
+    Math.sqrt(
+        rms/SIZE
     );
 
 
-    if(rms<0.01)
+
+    // sessizlik
+
+    if(rms < 0.01){
+
         return -1;
+
+    }
+
+
 
 
 
     let r1=0;
-    let r2=buffer.length-1;
+    let r2=SIZE-1;
+
 
 
     while(
-        buffer[r1]===0
+        Math.abs(buffer[r1])
+        <0.02
         &&
-        r1<buffer.length/2
-    )
+        r1<SIZE/2
+    ){
+
         r1++;
 
+    }
+
+
 
     while(
-        buffer[r2]===0
+        Math.abs(buffer[r2])
+        <0.02
         &&
-        r2>buffer.length/2
-    )
+        r2>SIZE/2
+    ){
+
         r2--;
+
+    }
+
 
 
 
     buffer =
-    buffer.slice(r1,r2);
+    buffer.slice(
+        r1,
+        r2
+    );
 
 
 
-    let size=buffer.length;
+    SIZE =
+    buffer.length;
+
 
 
     let bestOffset=-1;
+
     let bestCorrelation=0;
 
 
-    for(let offset=0;offset<size;offset++){
+
+    for(
+        let offset=20;
+        offset<SIZE;
+        offset++
+    ){
+
 
         let correlation=0;
 
 
-        for(let i=0;i<size-offset;i++){
 
-            correlation+=
-            buffer[i]*
+        for(
+            let i=0;
+            i<SIZE-offset;
+            i++
+        ){
+
+
+            correlation +=
+            buffer[i] *
             buffer[i+offset];
+
 
         }
 
 
-        correlation/=
-        size-offset;
+
+        correlation /=
+        SIZE-offset;
 
 
-        if(correlation>bestCorrelation){
 
-            bestCorrelation=
+        if(
+            correlation >
+            bestCorrelation
+        ){
+
+            bestCorrelation =
             correlation;
 
-            bestOffset=
+            bestOffset =
             offset;
 
         }
 
+
+
     }
 
 
 
-    if(bestCorrelation>0.01){
 
-        return sampleRate/bestOffset;
+    if(
+        bestCorrelation > 0.01
+    ){
+
+
+        let frequency =
+        sampleRate /
+        bestOffset;
+
+
+
+        // insan sesi aralığı
+
+        if(
+            frequency > 50 &&
+            frequency < 1200
+        ){
+
+            return frequency;
+
+        }
+
 
     }
+
 
 
     return -1;
+
+
+}
+
+
+
+
+
+
+
+function stopPitch(){
+
+
+    pitchRunning=false;
+
+
+    if(audioContext){
+
+        audioContext.close();
+
+    }
+
 
 }
