@@ -1034,5 +1034,6 @@ resetAnalysisUI();
     document.addEventListener('keydown',e=>{ const tag=document.activeElement ? document.activeElement.tagName.toLowerCase() : ''; const inInput=tag==='input'||tag==='textarea'||tag==='select'; if(inInput) return; if(e.code==='Space'){ e.preventDefault(); if(hasAudioLoaded()) ws.playPause(); return; } if(e.code==='Escape'){ loadedIndex=-1; selectedSegmentIndexes=[]; renderAll(); updateActiveSegmentLabel(-1); return; } if(e.code==='ArrowRight'){ e.preventDefault(); if(hasAudioLoaded()) seekToTime(ws.getCurrentTime()+0.2); return; } if(e.code==='ArrowLeft'){ e.preventDefault(); if(hasAudioLoaded()) seekToTime(ws.getCurrentTime()-0.2); return; } });
     window.addEventListener('resize',()=> setTimeout(renderAll,50));
   </script>
+  <script src="storage.js"></script>
 </body>
 </html>
