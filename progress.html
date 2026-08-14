@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VOCALY Gelişimim</title>
+
+
+<style>
+
+body{
+
+background:#07101f;
+color:white;
+font-family:Arial,sans-serif;
+padding:30px;
+
+}
+
+
+.logo{
+
+background:#facc15;
+color:#111;
+display:inline-block;
+padding:12px 30px;
+border-radius:15px;
+font-size:30px;
+font-weight:bold;
+
+}
+
+
+.card{
+
+background:#111b2d;
+border:1px solid #26344d;
+border-radius:15px;
+padding:20px;
+margin:15px 0;
+
+}
+
+
+.score{
+
+color:#facc15;
+font-size:22px;
+
+}
+
+
+.back{
+
+color:#facc15;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="logo">
+VOCALY
+</div>
+
+
+<h2>
+📊 Gelişimim
+</h2>
+
+
+<div id="list">
+
+</div>
+
+
+<a class="back" href="student.html">
+← Geri
+</a>
+
+
+
+<script>
+
+
+let data =
+JSON.parse(
+localStorage.getItem("vocalyProgress")
+)
+||
+[];
+
+
+
+let box =
+document.getElementById("list");
+
+
+
+if(data.length===0){
+
+
+box.innerHTML=
+
+`
+<div class="card">
+Henüz çalışma kaydı bulunmuyor.
+</div>
+`
+
+}
+
+
+
+data.reverse().forEach(x=>{
+
+
+box.innerHTML +=
+
+`
+
+<div class="card">
+
+<h3>
+🎵 ${x.song}
+</h3>
+
+
+<div class="score">
+⭐ ${x.score} puan
+</div>
+
+
+<p>
+📅 ${x.date}
+</p>
+
+
+<p>
+⏰ ${x.time}
+</p>
+
+
+</div>
+
+`;
+
+
+});
+
+
+
+</script>
+
+
+</body>
+
+</html>
