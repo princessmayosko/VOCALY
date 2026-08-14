@@ -903,16 +903,6 @@
       stopAnalysisAnimation();
       finalizeAnalysis();
       const score = analysisData?.score?.total ?? getMeasureScore().score;
-
-      // ⭐ Öğrenci ilerleme kaydı
-      if(typeof saveProgress === "function"){
-        saveProgress({
-          song: measureTitle.textContent || titleInput.value || "VOCALY",
-          score: score,
-          date: new Date().toISOString()
-        });
-      }
-
       let badge = '🏅', title = 'Güzel!', text = analysisData?.summary || 'Performans tamamlandı.';
       if(score >= 90){ badge='🌟'; title='Harika!'; }
       else if(score >= 75){ badge='🥇'; title='Çok iyi!'; }
@@ -972,13 +962,18 @@
     function bindWaveformDrag(){ const wrapper=getWaveWrapper(); if(!wrapper) return; wrapper.addEventListener('pointerdown',e=>{ if(e.target.closest('.handle') || e.target.closest('.strip-block')) return; wrapper._drag={startX:e.clientX,startScroll:wrapper.scrollLeft}; }); wrapper.addEventListener('pointermove',e=>{ if(!wrapper._drag) return; const dx=e.clientX-wrapper._drag.startX; wrapper.scrollLeft=wrapper._drag.startScroll-dx; syncOverlayPosition(); }); const end=()=> wrapper._drag=null; wrapper.addEventListener('pointerup',end); wrapper.addEventListener('pointercancel',end); wrapper.addEventListener('scroll',syncOverlayPosition,{passive:true}); }
     function bindWrapperEvents(){ if(wrapperBound) return; const wrapper=getWaveWrapper(); if(!wrapper) return; bindWaveformDrag(); wrapperBound=true; }
 
-    initWave(); renderAll(); setCursorTime(0); loadLibrary(); loadProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); showSection('home'); const urlParams = new URLSearchParams(window.location.search);
+    initWave(); renderAll(); setCursorTime(0); loadLibrary(); loadProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary();
 
-if(urlParams.get("open") === "library"){
-    setTimeout(()=>{
-        showSection("library");
-    },100);
-} toleranceSelect.value = String(CENT_TOLERANCE); resetAnalysisUI();
+const urlParams = new URLSearchParams(window.location.search);
+if(urlParams.get('open') === 'library'){
+  showSection('library');
+}else if(urlParams.get('open') === 'editor'){
+  showSection('editor');
+}else{
+  showSection('home');
+}
+
+toleranceSelect.value = String(CENT_TOLERANCE); resetAnalysisUI();
 
     homeLibraryBtn.addEventListener('click',()=> showSection('library'));
     homeEditorBtn.addEventListener('click',()=> showSection('editor'));
