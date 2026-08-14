@@ -962,7 +962,27 @@
     function bindWaveformDrag(){ const wrapper=getWaveWrapper(); if(!wrapper) return; wrapper.addEventListener('pointerdown',e=>{ if(e.target.closest('.handle') || e.target.closest('.strip-block')) return; wrapper._drag={startX:e.clientX,startScroll:wrapper.scrollLeft}; }); wrapper.addEventListener('pointermove',e=>{ if(!wrapper._drag) return; const dx=e.clientX-wrapper._drag.startX; wrapper.scrollLeft=wrapper._drag.startScroll-dx; syncOverlayPosition(); }); const end=()=> wrapper._drag=null; wrapper.addEventListener('pointerup',end); wrapper.addEventListener('pointercancel',end); wrapper.addEventListener('scroll',syncOverlayPosition,{passive:true}); }
     function bindWrapperEvents(){ if(wrapperBound) return; const wrapper=getWaveWrapper(); if(!wrapper) return; bindWaveformDrag(); wrapperBound=true; }
 
-    initWave(); renderAll(); setCursorTime(0); loadLibrary(); loadProject(); syncCurrentSongToLibrary(); saveLibrary(); renderLibrary(); showSection('home'); toleranceSelect.value = String(CENT_TOLERANCE); resetAnalysisUI();
+    initWave(); 
+renderAll(); 
+setCursorTime(0); 
+loadLibrary(); 
+loadProject(); 
+syncCurrentSongToLibrary(); 
+saveLibrary(); 
+renderLibrary();
+
+
+const params = new URLSearchParams(window.location.search);
+
+if(params.get("open") === "library"){
+    showSection("library");
+}else{
+    showSection("home");
+}
+
+
+toleranceSelect.value = String(CENT_TOLERANCE); 
+resetAnalysisUI();
 
     homeLibraryBtn.addEventListener('click',()=> showSection('library'));
     homeEditorBtn.addEventListener('click',()=> showSection('editor'));
