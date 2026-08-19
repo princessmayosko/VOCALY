@@ -136,7 +136,7 @@ let lastPitchProcessTime = 0;
 
 const REQUIRED_HOLD_MS = 300;
 
-const CENT_TOLERANCE = 35;
+const CENT_TOLERANCE = 30;
 
 /*
    Pitch işlemini her frame değil,
@@ -276,7 +276,7 @@ function setTarget(index){
 
 
     pitchStatus.textContent =
-        `SÖYLE: ${note.display}`;
+        `HEDEF: ${note.display}  •  DUYULAN: —`;
 
     pitchStatus.className =
         "pitch-status";
@@ -678,225 +678,109 @@ document
    ve sadece insan sesi aralığını tarıyor.
 */
 
-function autoCorrelate(
-    buffer,
-    sampleRate
-){
+function autoCorrelate(buf, sampleRate){
 
-    const size =
-        buffer.length;
-
-
-    /*
-       RMS / ses seviyesi
-    */
+    let SIZE = buf.length;
 
     let rms = 0;
 
-
-    for(
-        let i = 0;
-        i < size;
-        i++
-    ){
-
-        rms +=
-            buffer[i] *
-            buffer[i];
-
+    for(let i = 0; i < SIZE; i++){
+        const val = buf[i];
+        rms += val * val;
     }
 
+    rms = Math.sqrt(rms / SIZE);
 
-    rms =
-        Math.sqrt(
-            rms / size
-        );
-
-
-    if(rms < 0.012){
-
+    if(rms < 0.01){
         return -1;
-
     }
 
+    let r1 = 0;
+    let r2 = SIZE - 1;
+    const threshold = 0.2;
 
-    /*
-       Ortalama çıkar.
-    */
-
-    let mean = 0;
-
-
-    for(
-        let i = 0;
-        i < size;
-        i++
-    ){
-
-        mean +=
-            buffer[i];
-
+    for(let i = 0; i < SIZE / 2; i++){
+        if(Math.abs(buf[i]) < threshold){
+            r1 = i;
+            break;
+        }
     }
 
-
-    mean /=
-        size;
-
-
-    /*
-       İnsan sesi için
-       90–700 Hz aralığı.
-    */
-
-    const minFreq = 90;
-    const maxFreq = 700;
-
-
-    const minLag =
-        Math.floor(
-            sampleRate / maxFreq
-        );
-
-
-    const maxLag =
-        Math.min(
-            Math.floor(
-                sampleRate / minFreq
-            ),
-            size - 2
-        );
-
-
-    let bestLag = -1;
-
-    let bestCorrelation = 0;
-
-
-    /*
-       Normalize autocorrelation.
-    */
-
-    for(
-        let lag = minLag;
-        lag <= maxLag;
-        lag++
-    ){
-
-        let sum = 0;
-        let energyA = 0;
-        let energyB = 0;
-
-
-        const limit =
-            size - lag;
-
-
-        for(
-            let i = 0;
-            i < limit;
-            i++
-        ){
-
-            const a =
-                buffer[i] -
-                mean;
-
-
-            const b =
-                buffer[i + lag] -
-                mean;
-
-
-            sum +=
-                a * b;
-
-
-            energyA +=
-                a * a;
-
-
-            energyB +=
-                b * b;
-
+    for(let i = 1; i < SIZE / 2; i++){
+        if(Math.abs(buf[SIZE - i]) < threshold){
+            r2 = SIZE - i;
+            break;
         }
-
-
-        if(
-            energyA === 0 ||
-            energyB === 0
-        ){
-
-            continue;
-
-        }
-
-
-        const correlation =
-            sum /
-            Math.sqrt(
-                energyA * energyB
-            );
-
-
-        if(
-            correlation >
-            bestCorrelation
-        ){
-
-            bestCorrelation =
-                correlation;
-
-
-            bestLag =
-                lag;
-
-        }
-
     }
 
+    buf = buf.slice(r1, r2);
+    SIZE = buf.length;
 
-    /*
-       Güvenilir pitch yok.
-    */
+    const c = new Array(SIZE).fill(0);
 
-    if(
-        bestLag === -1 ||
-        bestCorrelation < 0.60
-    ){
+    for(let i = 0; i < SIZE; i++){
+        for(let j = 0; j < SIZE - i; j++){
+            c[i] += buf[j] * buf[j + i];
+        }
+    }
 
+    let d = 0;
+    while(d + 1 < SIZE && c[d] > c[d + 1]){
+        d++;
+    }
+
+    let maxval = -1;
+    let maxpos = -1;
+
+    for(let i = d; i < SIZE; i++){
+        if(c[i] > maxval){
+            maxval = c[i];
+            maxpos = i;
+        }
+    }
+
+    const T0 = maxpos;
+
+    if(T0 <= 0){
         return -1;
-
     }
 
+    return sampleRate / T0;
 
-    /*
-       Daha hassas frekans için
-       komşu lag interpolasyonu.
-    */
-
-    let refinedLag =
-        bestLag;
+}
 
 
-    if(
-        bestLag > minLag &&
-        bestLag < maxLag
-    ){
+/* =========================================================
+   FREKANS → NOTA
+========================================================= */
+function frequencyToNoteInfo(frequency){
 
-        /*
-           Yaklaşık parabolik düzeltme.
-        */
-
-        refinedLag =
-            bestLag;
-
+    if(!frequency || frequency <= 0){
+        return null;
     }
 
+    const names = [
+        "DO", "DO#", "RE", "RE#", "Mİ", "FA",
+        "FA#", "SOL", "SOL#", "LA", "LA#", "Sİ"
+    ];
 
-    return (
-        sampleRate /
-        refinedLag
-    );
+    const midiFloat =
+        69 + 12 * Math.log2(frequency / 440);
+
+    const midiNearest = Math.round(midiFloat);
+
+    const cents =
+        Math.round((midiFloat - midiNearest) * 100);
+
+    const noteIndex =
+        ((midiNearest % 12) + 12) % 12;
+
+    return {
+        note: names[noteIndex],
+        cents: cents,
+        midi: midiNearest,
+        frequency: frequency
+    };
 
 }
 
@@ -954,18 +838,13 @@ function updatePitchMeter(cents){
    PITCH İŞLE
 ========================================================= */
 
-function processPitch(
-    frequency
-){
+function processPitch(frequency){
 
     if(!gameStarted){
         return;
     }
 
-
-    const target =
-        NOTES[currentStep];
-
+    const target = NOTES[currentStep];
 
     const cents =
         centsFromFrequency(
@@ -973,85 +852,68 @@ function processPitch(
             target.freq
         );
 
-
     updatePitchMeter(cents);
 
-
-    if(pitchHz){
-
-        pitchHz.textContent =
-            `${Math.round(frequency)} Hz`;
-
-    }
-
+    const detected =
+        frequencyToNoteInfo(frequency);
 
     /*
-       DOĞRU NOTA
+       Artık Hz göstermiyoruz.
+       Öğrencinin göreceği şey doğrudan nota adı:
+       HEDEF NOTA: DO
+       DUYULAN NOTA: RE
     */
+    if(pitchHz){
+        pitchHz.textContent =
+            detected ? detected.note : "—";
+    }
+
+    const detectedText =
+        detected ? detected.note : "—";
 
     if(
-        Math.abs(cents) <=
-        CENT_TOLERANCE
+        pitchStatus
     ){
-
         pitchStatus.textContent =
-            `✓ ${target.display}`;
-
-        pitchStatus.className =
-            "pitch-status correct";
-
-
-        if(!correctSince){
-
-            correctSince =
-                performance.now();
-
-        }
-
-
-        /*
-           300 ms boyunca doğruysa
-           coin alınır.
-        */
-
-        if(
-            performance.now() -
-            correctSince >=
-            REQUIRED_HOLD_MS
-        ){
-
-            collectCurrentCoin();
-
-        }
-
-
-        return;
-
+            `HEDEF: ${target.display}  •  DUYULAN: ${detectedText}`;
     }
 
-
     /*
-       Yanlış nota.
+       Doğru hedef perde.
+       30 cent tolerans içinde ve 300 ms tutulursa
+       coin alınır.
     */
+    if(
+        Math.abs(cents) <= CENT_TOLERANCE
+    ){
+
+        if(pitchStatus){
+            pitchStatus.textContent =
+                `HEDEF: ${target.display}  •  DUYULAN: ${detectedText} ✓`;
+            pitchStatus.className =
+                "pitch-status correct";
+        }
+
+        if(!correctSince){
+            correctSince = performance.now();
+        }
+
+        if(
+            performance.now() - correctSince >=
+            REQUIRED_HOLD_MS
+        ){
+            collectCurrentCoin();
+        }
+
+        return;
+    }
 
     correctSince = 0;
 
-
-    if(cents > 0){
-
-        pitchStatus.textContent =
-            "Biraz pes söyle";
-
-    }else{
-
-        pitchStatus.textContent =
-            "Biraz tiz söyle";
-
+    if(pitchStatus){
+        pitchStatus.className =
+            "pitch-status wrong";
     }
-
-
-    pitchStatus.className =
-        "pitch-status wrong";
 
 }
 
@@ -1062,119 +924,69 @@ function processPitch(
 
 function detectPitch(){
 
-    if(
-        !analyser ||
-        !audioContext
-    ){
-
+    if(!analyser || !audioContext){
         return;
-
     }
 
-
-    const now =
-        performance.now();
-
-
-    /*
-       CPU'yu boğmamak için
-       pitch hesaplamasını 50 ms'de
-       bir yap.
-    */
+    const now = performance.now();
 
     if(
-        now -
-        lastPitchProcessTime <
+        now - lastPitchProcessTime <
         PITCH_INTERVAL_MS
     ){
-
         pitchAnimation =
-            requestAnimationFrame(
-                detectPitch
-            );
-
+            requestAnimationFrame(detectPitch);
         return;
-
     }
 
-
-    lastPitchProcessTime =
-        now;
-
+    lastPitchProcessTime = now;
 
     /*
-       2048 örnek pencere.
+       VOCALY Cetvel ile aynı 2048 örnek pencere.
+       1024'e kırpmıyoruz.
     */
-
     const buffer =
         new Float32Array(
-            2048
+            analyser.fftSize
         );
 
-
-    analyser.getFloatTimeDomainData(
-        buffer
-    );
-
-
-    /*
-       Pitch için sadece ilk
-       1024 örneği kullan.
-    */
-
-    const pitchBuffer =
-        buffer.slice(
-            0,
-            1024
-        );
-
+    analyser.getFloatTimeDomainData(buffer);
 
     const frequency =
         autoCorrelate(
-            pitchBuffer,
+            buffer,
             audioContext.sampleRate
         );
 
+    if(frequency === -1){
 
-    /*
-       Sessizlik.
-    */
+        if(pitchStatus){
+            pitchStatus.textContent =
+                `HEDEF: ${NOTES[currentStep].display}  •  DUYULAN: —`;
+            pitchStatus.className =
+                "pitch-status";
+        }
 
-    if(
-        frequency === -1
-    ){
+        if(pitchHz){
+            pitchHz.textContent = "—";
+        }
 
-        pitchStatus.textContent =
-            "SES BEKLENİYOR";
-
-        pitchStatus.className =
-            "pitch-status";
-
-        pitchHz.textContent =
-            "—";
+        if(pitchFill){
+            pitchFill.style.bottom = "50%";
+        }
 
         correctSince = 0;
 
-
         pitchAnimation =
-            requestAnimationFrame(
-                detectPitch
-            );
+            requestAnimationFrame(detectPitch);
 
         return;
-
     }
 
-
-    processPitch(
-        frequency
-    );
-
+    processPitch(frequency);
 
     pitchAnimation =
-        requestAnimationFrame(
-            detectPitch
-        );
+        requestAnimationFrame(detectPitch);
 
 }
 
@@ -1512,7 +1324,7 @@ async function startMicrophone(){
 
 
         pitchStatus.textContent =
-            "SES BEKLENİYOR";
+            `HEDEF: ${NOTES[currentStep].display}  •  DUYULAN: —`;
 
 
         pitchStatus.className =
@@ -1757,7 +1569,7 @@ function resetGame(){
     if(pitchStatus){
 
         pitchStatus.textContent =
-            "HAZIR";
+            "HEDEF: DO  •  DUYULAN: —";
 
         pitchStatus.className =
             "pitch-status";
@@ -1790,7 +1602,7 @@ function resetGame(){
     if(instruction){
 
         instruction.textContent =
-            "Do sesini söyle.";
+            "Hedef notayı söyle. Kedi doğru perdeyi duyduğunda coin’i alır.";
 
     }
 
