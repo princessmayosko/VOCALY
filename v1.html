@@ -714,7 +714,7 @@
       analysisCoveragePill.textContent = 'Kapsama: ' + score.coverage;
       analysisSummary.innerHTML = analysisData.summary;
       drawAnalysisLive(true);
-      saveProgressRecord();
+
     }
 
     function buildProjectPayload(){ return { version:1, title:titleInput.value.trim(), intro:getIntroValue(), lyrics:lyricsInput.value, audioName:currentAudioName, audioUrl:objectUrlRef||'', selectedSegmentIndexes:selectedSegmentIndexes, heceler:heceler.map(h=>({text:h.text||'',note:h.note||'',start:h.start??null,end:h.end??null,line:h.line??0,isIntro:!!h.isIntro})), cursorTime:cursorTime }; }
