@@ -414,12 +414,23 @@
       if(analysisData) analysisData.audioMimeType = mediaRecorder.mimeType || '';
       mediaRecorder.ondataavailable = e=>{ if(e.data && e.data.size) recordedChunks.push(e.data); };
       mediaRecorder.onstop = ()=>{
-        if(!recordedChunks.length) return;
-        recordingBlob = new Blob(recordedChunks, {type: mediaRecorder.mimeType || 'audio/webm'});
-        recordingUrl = URL.createObjectURL(recordingBlob);
-        recordingAudio.src = recordingUrl;
-        recordingAudio.classList.remove('hidden');
-      };
+  if(!recordedChunks.length) return;
+
+  recordingBlob = new Blob(recordedChunks,{
+    type: mediaRecorder.mimeType || 'audio/webm'
+  });
+
+  recordingUrl = URL.createObjectURL(recordingBlob);
+
+  recordingAudio.src = recordingUrl;
+  recordingAudio.classList.remove('hidden');
+
+
+  // kayıt hazır olduktan sonra progress kaydet
+  if(typeof saveProgressRecord === "function"){
+      saveProgressRecord();
+  }
+};
       mediaRecorder.start();
     }
     function stopRecording(){
