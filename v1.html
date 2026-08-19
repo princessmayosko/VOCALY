@@ -655,15 +655,109 @@
       ctx.strokeRect(plotLeft, plotTop, plotW, plotH);
     }
 
-    function saveProgressRecord(){
-      try{
-        const student = JSON.parse(
+function saveProgressRecord(){
+
+try{
+
+const student = JSON.parse(
     localStorage.getItem("studentInfo") ||
     JSON.stringify({
         name:"Admin Demo",
         id:"admin"
     })
 );
+
+
+const records = JSON.parse(
+    localStorage.getItem("vocalyProgress") || "[]"
+);
+
+
+const record = {
+
+id: Date.now(),
+
+student: student,
+
+song:
+analysisData?.title ||
+measureTitle.textContent ||
+"VOCALY",
+
+score:
+analysisData?.score?.total ?? 0,
+
+pitch:
+analysisData?.score?.pitch ?? 0,
+
+timing:
+analysisData?.score?.timing ?? 0,
+
+coverage:
+analysisData?.score?.coverage ?? 0,
+
+
+date:
+new Date().toLocaleString("tr-TR"),
+
+createdAt:
+new Date().toISOString(),
+
+
+recording:null
+
+};
+
+
+
+function save(){
+
+records.push(record);
+
+localStorage.setItem(
+"vocalyProgress",
+JSON.stringify(records)
+);
+
+}
+
+
+
+if(recordingBlob){
+
+const reader = new FileReader();
+
+
+reader.onloadend = function(){
+
+record.recording = reader.result;
+
+save();
+
+};
+
+
+reader.readAsDataURL(recordingBlob);
+
+
+}else{
+
+save();
+
+}
+
+
+
+}catch(e){
+
+console.log(
+"Progress kayıt hatası:",
+e
+);
+
+}
+
+}
 
         const records = JSON.parse(localStorage.getItem("vocalyProgress") || "[]");
 
