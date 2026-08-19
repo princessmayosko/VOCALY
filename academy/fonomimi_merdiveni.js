@@ -1178,7 +1178,7 @@ function finishGame(){
    MİKROFON BAŞLAT
 ========================================================= */
 
-async async function startMicrophone(){
+async function startMicrophone(){
 
     try{
 
