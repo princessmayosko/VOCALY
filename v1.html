@@ -423,26 +423,9 @@
       mediaRecorder.start();
     }
     function stopRecording(){
-      return new Promise(resolve=>{
-        if(!mediaRecorder || mediaRecorder.state === 'inactive'){
-          resolve();
-          return;
-        }
-
-        const oldStop = mediaRecorder.onstop;
-
-        mediaRecorder.onstop = ()=>{
-          if(oldStop) oldStop();
-          setTimeout(resolve, 50);
-        };
-
-        try{
-          mediaRecorder.stop();
-        }catch(err){
-          console.log(err);
-          resolve();
-        }
-      });
+      if(mediaRecorder && mediaRecorder.state !== 'inactive'){
+        try{ mediaRecorder.stop(); }catch(err){ console.log(err); }
+      }
     }
     function downloadBlob(blob, filename){
       if(!blob) return;
@@ -655,109 +638,15 @@
       ctx.strokeRect(plotLeft, plotTop, plotW, plotH);
     }
 
-function saveProgressRecord(){
-
-try{
-
-const student = JSON.parse(
+    function saveProgressRecord(){
+      try{
+        const student = JSON.parse(
     localStorage.getItem("studentInfo") ||
     JSON.stringify({
         name:"Admin Demo",
         id:"admin"
     })
 );
-
-
-const records = JSON.parse(
-    localStorage.getItem("vocalyProgress") || "[]"
-);
-
-
-const record = {
-
-id: Date.now(),
-
-student: student,
-
-song:
-analysisData?.title ||
-measureTitle.textContent ||
-"VOCALY",
-
-score:
-analysisData?.score?.total ?? 0,
-
-pitch:
-analysisData?.score?.pitch ?? 0,
-
-timing:
-analysisData?.score?.timing ?? 0,
-
-coverage:
-analysisData?.score?.coverage ?? 0,
-
-
-date:
-new Date().toLocaleString("tr-TR"),
-
-createdAt:
-new Date().toISOString(),
-
-
-recording:null
-
-};
-
-
-
-function save(){
-
-records.push(record);
-
-localStorage.setItem(
-"vocalyProgress",
-JSON.stringify(records)
-);
-
-}
-
-
-
-if(recordingBlob){
-
-const reader = new FileReader();
-
-
-reader.onloadend = function(){
-
-record.recording = reader.result;
-
-save();
-
-};
-
-
-reader.readAsDataURL(recordingBlob);
-
-
-}else{
-
-save();
-
-}
-
-
-
-}catch(e){
-
-console.log(
-"Progress kayıt hatası:",
-e
-);
-
-}
-
-}
 
         const records = JSON.parse(localStorage.getItem("vocalyProgress") || "[]");
 
@@ -1054,10 +943,9 @@ e
     async function playSelectedMeasureSegments(){ const indexes = [...measureSelected].sort((a,b)=>(heceler[a]?.start||0)-(heceler[b]?.start||0)); if(!indexes.length) return; stopLiveCetvelListening(); for(const idx of indexes){ await playAndMeasureSegment(idx,true); } }
 
     function getMeasureScore(){ const boxes = [...document.querySelectorAll('#measureBoxes .measureBox:not(.intro)')]; const validBoxes = boxes.filter(b => !b.classList.contains('neutral')); const total = validBoxes.length; const ok = validBoxes.filter(b => b.classList.contains('ok')).length; const score = total ? Math.round((ok / total) * 100) : 0; return { total, ok, score }; }
-    async function showResultModal(){
+    function showResultModal(){
       isMeasureRunning = false;
       stopAnalysisAnimation();
-      await stopRecording();
       finalizeAnalysis();
       const score = analysisData?.score?.total ?? getMeasureScore().score;
       let badge = '🏅', title = 'Güzel!', text = analysisData?.summary || 'Performans tamamlandı.';
@@ -1071,6 +959,7 @@ e
       resultScore.textContent = score;
       resultText.innerHTML = text;
       resultModal.classList.remove('hidden');
+      stopRecording();
     }
 
     async function startMeasure(){
