@@ -156,11 +156,17 @@ function isArpeggioNote(index){
 }
 
 function updateCoinsForMethod(){
-  const showCoins=isArpeggioMethod();
+  const isArp=isArpeggioMethod();
+
   document.querySelectorAll(".coin").forEach(c=>{
     const i=Number(c.dataset.index);
-    c.style.display=showCoins && isArpeggioNote(i) ? "" : "none";
-    c.style.pointerEvents=showCoins && isArpeggioNote(i) ? "auto" : "none";
+
+    // Gam: EVERY note has a coin.
+    // Arpeggio: coins only on DO-MI-SOL-DO' positions.
+    const show = isArp ? isArpeggioNote(i) : true;
+
+    c.style.display = show ? "" : "none";
+    c.style.pointerEvents = show ? "auto" : "none";
     c.classList.remove("collected");
   });
 }
@@ -183,12 +189,17 @@ function catToStep(i){
 }
 function startPosition(){
   requestAnimationFrame(()=>{
-    if(typeof playSequence!=="undefined" && playSequence.length){
-      catToStep(playSequence[0]);
+    const startPoint=document.querySelector(".start-point");
+    if(startPoint){
+      const x=startPoint.offsetLeft+(startPoint.offsetWidth-cat.offsetWidth)/2;
+      const bottom=ladder.clientHeight-startPoint.offsetTop-startPoint.offsetHeight;
+      cat.style.left=Math.round(x)+"px";
+      cat.style.bottom=Math.round(bottom)+"px";
       cat.classList.remove("jump");
     }else{
-      cat.style.left="-105px";
+      cat.style.left="40px";
       cat.style.bottom="0px";
+      cat.classList.remove("jump");
     }
   });
 }
