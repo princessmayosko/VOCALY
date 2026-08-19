@@ -136,15 +136,18 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
 
   /* Keep the entire 8-step staircase inside a portrait screen. */
   .ladder{
-    left:4px;
+    left:12px;
     right:auto;
     bottom:92px;
     width:850px;
     height:470px;
-    transform:scale(.67);
+    transform:scale(.58);
     transform-origin:left bottom;
   }
 
+  /* Start alanı ve kedi de ekranın içinde kalsın. */
+  .start-point{left:-4px;}
+  .start-flag{left:0;}
   .cat{width:92px;height:123px}
 
   .bottom-panel{
@@ -180,7 +183,8 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
   #methodSelect{max-width:125px;min-width:95px;font-size:9px}
   .stats{font-size:10px;gap:4px}
   .game-world{height:calc(100svh - 112px)}
-  .ladder{left:4px;transform:scale(.67)}
+  .ladder{left:10px;transform:scale(.40)}
+  .start-point{left:-2px;}
   .pitch-panel{width:78px;right:5px;top:58px}
   .level-info{width:105px}
   .bottom-panel{left:5px;right:5px}
