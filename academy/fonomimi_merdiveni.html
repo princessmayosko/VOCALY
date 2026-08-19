@@ -1,1 +1,197 @@
 
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOCALY – Fonomimi Merdiveni</title>
+<link rel="stylesheet" href="fonomimi_merdiveni.css">
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="game-title">
+        <span>🎵</span>
+        <strong>FONOMİMİ MERDİVENİ</strong>
+    </div>
+
+    <div class="character-select">
+        <button id="lokiBtn" class="character-btn active">
+            🐱 <span>Loki</span>
+        </button>
+
+        <button id="mayaBtn" class="character-btn">
+            🐈‍⬛ <span>Maya</span>
+        </button>
+    </div>
+
+    <div class="stats">
+        <div>🪙 <span id="coinCount">0</span></div>
+        <div>❤️ <span id="lifeCount">3</span></div>
+    </div>
+
+</header>
+
+
+<main class="game">
+
+    <section class="game-world">
+
+        <div class="level-info">
+            <strong>SEVİYE 1</strong>
+            <span>Do – Do'</span>
+
+            <div class="score">
+                Skor
+                <b id="score">0</b>
+            </div>
+
+            <div class="combo">
+                Zincir 🔥
+                <b id="combo">0</b>
+            </div>
+        </div>
+
+
+        <!-- MERDİVEN -->
+
+        <div id="ladder" class="ladder">
+
+            <div class="step step-do">
+                <div class="step-note">DO</div>
+                <div class="hand-sign" data-note="DO"></div>
+                <div class="coin" data-note="DO">♪</div>
+            </div>
+
+            <div class="step step-re">
+                <div class="step-note">RE</div>
+                <div class="hand-sign" data-note="RE"></div>
+                <div class="coin" data-note="RE">♪</div>
+            </div>
+
+            <div class="step step-mi">
+                <div class="step-note">Mİ</div>
+                <div class="hand-sign" data-note="MI"></div>
+                <div class="coin" data-note="MI">♪</div>
+            </div>
+
+            <div class="step step-fa">
+                <div class="step-note">FA</div>
+                <div class="hand-sign" data-note="FA"></div>
+                <div class="coin" data-note="FA">♪</div>
+            </div>
+
+            <div class="step step-sol">
+                <div class="step-note">SOL</div>
+                <div class="hand-sign" data-note="SOL"></div>
+                <div class="coin" data-note="SOL">♪</div>
+            </div>
+
+            <div class="step step-la">
+                <div class="step-note">LA</div>
+                <div class="hand-sign" data-note="LA"></div>
+                <div class="coin" data-note="LA">♪</div>
+            </div>
+
+            <div class="step step-si">
+                <div class="step-note">Sİ</div>
+                <div class="hand-sign" data-note="SI"></div>
+                <div class="coin" data-note="SI">♪</div>
+            </div>
+
+            <div class="step step-do2">
+                <div class="step-note">DO'</div>
+                <div class="hand-sign" data-note="DO2"></div>
+                <div class="coin" data-note="DO2">♪</div>
+            </div>
+
+            <div id="cat" class="cat loki">
+                🐱
+            </div>
+
+        </div>
+
+
+        <!-- PITCH PANEL -->
+
+        <aside class="pitch-panel">
+
+            <div class="pitch-title">
+                PITCH
+            </div>
+
+            <div class="pitch-meter">
+
+                <div id="pitchFill"></div>
+
+                <div class="pitch-center"></div>
+
+            </div>
+
+            <div id="pitchStatus" class="pitch-status">
+                HAZIR
+            </div>
+
+            <div id="pitchHz" class="pitch-hz">
+                —
+            </div>
+
+        </aside>
+
+
+        <!-- ALT PANEL -->
+
+        <section class="bottom-panel">
+
+            <div class="microphone">
+                🎙️
+            </div>
+
+            <div class="target">
+
+                <small>HEDEF NOTA</small>
+
+                <div id="targetNote">
+                    DO
+                </div>
+
+                <div id="targetHand" class="target-hand"></div>
+
+            </div>
+
+            <button id="micBtn" class="mic-button">
+                🎤 MİKROFONU BAŞLAT
+            </button>
+
+            <div id="instruction" class="instruction">
+                Hedef notayı doğru söyle.
+                <br>
+                Kedi doğru basamağa zıplayıp coin'i alacak!
+            </div>
+
+        </section>
+
+    </section>
+
+
+    <section class="controls">
+
+        <button id="startBtn">
+            ▶ BAŞLA
+        </button>
+
+        <button id="resetBtn">
+            ↻ YENİDEN
+        </button>
+
+    </section>
+
+</main>
+
+
+<script src="fonomimi_merdiveni.js"></script>
+
+</body>
+</html>
