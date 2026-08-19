@@ -128,6 +128,8 @@ let correctSince = 0;
 let lastMoveTime = 0;
 
 let lastPitchProcessTime = 0;
+    targetLocked = false;
+let targetLocked = false;
 
 
 /* =========================================================
@@ -218,6 +220,8 @@ document
 ========================================================= */
 
 function setTarget(index){
+
+    targetLocked = false;
 
     if(index < 0){
         index = 0;
@@ -830,7 +834,7 @@ function updatePitchMeter(cents){
 
 function processPitch(frequency){
 
-    if(!gameStarted){
+    if(!gameStarted || targetLocked){
         return;
     }
 
@@ -847,35 +851,24 @@ function processPitch(frequency){
     const detected =
         frequencyToNoteInfo(frequency);
 
-    /*
-       Artık Hz göstermiyoruz.
-       Öğrencinin göreceği şey doğrudan nota adı:
-       HEDEF NOTA: DO
-       DUYULAN NOTA: RE
-    */
-    if(pitchHz){
-        pitchHz.textContent =
-            detected ? detected.note : "—";
-    }
-
     const detectedText =
         detected ? detected.note : "—";
 
-    if(
-        pitchStatus
-    ){
-        pitchStatus.textContent =
-            `HEDEF: ${target.display}  •  DUYULAN: ${detectedText}`;
+    if(pitchHz){
+        pitchHz.textContent = detectedText;
     }
 
+    const correctPitch =
+        Math.abs(cents) <= CENT_TOLERANCE;
+
     /*
-       Doğru hedef perde.
-       30 cent tolerans içinde ve 300 ms tutulursa
-       coin alınır.
+       Üst DO için de algılanan nota DO'dur.
+       Asıl karar frekansın hedefe olan cent
+       uzaklığıyla veriliyor.
     */
-    if(
-        Math.abs(cents) <= CENT_TOLERANCE
-    ){
+    if(correctPitch){
+
+        targetLocked = true;
 
         if(pitchStatus){
             pitchStatus.textContent =
@@ -884,21 +877,19 @@ function processPitch(frequency){
                 "pitch-status correct";
         }
 
-        /*
-           Hedef perde 30 cent içinde algılandığı
-           anda coin alınır. Ekstra bekleme yok.
-        */
+        /* DOĞRU PERDE = ANINDA COIN + ZIPLAMA */
         collectCurrentCoin();
-
         return;
     }
 
-    correctSince = 0;
-
     if(pitchStatus){
+        pitchStatus.textContent =
+            `HEDEF: ${target.display}  •  DUYULAN: ${detectedText}`;
         pitchStatus.className =
             "pitch-status wrong";
     }
+
+    correctSince = 0;
 
 }
 
@@ -982,7 +973,7 @@ function detectPitch(){
 
 function collectCurrentCoin(){
 
-    if(!gameStarted){
+    if(!gameStarted || !targetLocked){
         return;
     }
 
@@ -1473,6 +1464,7 @@ function resetGame(){
     correctSince = 0;
     lastMoveTime = 0;
     lastPitchProcessTime = 0;
+    targetLocked = false;
 
 
     /*
