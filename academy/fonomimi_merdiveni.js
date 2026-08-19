@@ -1,63 +1,74 @@
-
 /* =========================================================
    VOCALY – FONOMİMİ MERDİVENİ
-   Pitch + Nota Merdiveni + Coin + Loki/Maya
    ========================================================= */
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    NOTALAR
---------------------------------------------------------- */
+========================================================= */
 
 const NOTES = [
+
     {
         name:"DO",
         display:"DO",
         freq:261.63
     },
+
     {
         name:"RE",
         display:"RE",
         freq:293.66
     },
+
     {
         name:"MI",
         display:"Mİ",
         freq:329.63
     },
+
     {
         name:"FA",
         display:"FA",
         freq:349.23
     },
+
     {
         name:"SOL",
         display:"SOL",
         freq:392.00
     },
+
     {
         name:"LA",
         display:"LA",
         freq:440.00
     },
+
     {
         name:"SI",
         display:"Sİ",
         freq:493.88
     },
+
     {
         name:"DO2",
         display:"DO'",
         freq:523.25
     }
+
 ];
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    DOM
---------------------------------------------------------- */
+========================================================= */
 
-const cat = document.getElementById("cat");
+const cat =
+    document.getElementById("cat");
+
+const ladder =
+    document.getElementById("ladder");
 
 const targetNote =
     document.getElementById("targetNote");
@@ -83,9 +94,6 @@ const scoreElement =
 const comboElement =
     document.getElementById("combo");
 
-const lifeElement =
-    document.getElementById("lifeCount");
-
 const micBtn =
     document.getElementById("micBtn");
 
@@ -102,36 +110,57 @@ const mayaBtn =
     document.getElementById("mayaBtn");
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    OYUN DURUMU
---------------------------------------------------------- */
+========================================================= */
 
 let currentStep = 0;
 
+let direction = 1;
+
 let coins = 0;
+
 let score = 0;
+
 let combo = 0;
-let lives = 3;
 
 let gameStarted = false;
 
 let selectedCharacter = "loki";
 
-let audioContext = null;
-let analyser = null;
-let microphone = null;
-let animationFrame = null;
-
 let stream = null;
 
-let lastCorrectTime = 0;
+let audioContext = null;
+
+let analyser = null;
+
+let microphone = null;
+
+let pitchAnimation = null;
+
+let correctSince = 0;
+
+let lastMoveTime = 0;
 
 
-/* ---------------------------------------------------------
-   CURWEN / KODÁLY EL İŞARETLERİ
+/*
+   Öğrenci hedef sesi bu süre boyunca
+   doğru söylemeli.
+*/
 
-   Basit, özgün SVG çizimleri.
---------------------------------------------------------- */
+const REQUIRED_HOLD_MS = 300;
+
+
+/*
+   Pitch toleransı.
+*/
+
+const CENT_TOLERANCE = 35;
+
+
+/* =========================================================
+   FONOMİMİ İŞARETLERİ
+========================================================= */
 
 function handSVG(note){
 
@@ -144,7 +173,8 @@ function handSVG(note){
     `;
 
 
-    /* DO
+    /*
+       DO
        Kapalı yumruk
     */
 
@@ -152,77 +182,110 @@ function handSVG(note){
 
         return `
         <svg viewBox="0 0 70 70">
+
             <path ${common}
                 d="
-                M18 38
-                C16 25 22 17 32 17
-                C43 17 51 25 51 37
-                L48 51
-                C46 58 39 61 32 59
-                L22 55
-                C19 51 18 45 18 38
-                Z"/>
+                M22 24
+                C18 30 18 44 22 50
+                C26 57 38 60 47 56
+                C54 53 56 44 53 36
+                L50 26
+                C48 21 43 19 39 22
+                L34 26
+                L30 21
+                C27 18 24 20 22 24
+                Z"
+            />
+
             <path ${common}
-                d="M25 29 C31 33 38 34 44 30"/>
+                d="M29 27
+                   C35 32 43 33 49 29"
+            />
+
         </svg>
         `;
     }
 
 
-    /* RE
-       Parmaklar birleşik, el yukarı eğimli
+    /*
+       RE
+       Düz el, yukarı eğimli
     */
 
     if(note === "RE"){
 
         return `
         <svg viewBox="0 0 70 70">
+
             <path ${common}
                 d="
-                M17 47
-                C20 41 23 34 27 28
-                L35 16
-                C37 13 41 14 41 18
-                L36 31
-                L48 17
-                C50 14 54 16 53 20
-                L45 34
-                L55 22
-                C57 19 61 21 59 25
-                L49 40
-                C45 47 38 51 29 52
-                Z"/>
+                M15 50
+                L24 31
+                L35 14
+                C37 11 42 13 40 17
+                L34 31
+                L46 17
+                C49 14 53 17 51 20
+                L42 34
+                L54 22
+                C57 19 61 22 58 26
+                L47 42
+                C41 50 31 53 20 53
+                Z"
+            />
+
         </svg>
         `;
     }
 
 
-    /* MI
-       Yatay açık el
+    /*
+       MI
+       Yatay düz el
     */
 
     if(note === "MI"){
 
         return `
         <svg viewBox="0 0 70 70">
+
             <path ${common}
                 d="
-                M12 35
-                L58 35
-                C60 35 61 38 59 40
-                L51 46
-                C45 50 37 51 30 48
-                L13 42
-                Z"/>
-            <line ${common} x1="21" y1="34" x2="21" y2="43"/>
-            <line ${common} x1="29" y1="34" x2="29" y2="46"/>
-            <line ${common} x1="37" y1="34" x2="37" y2="47"/>
+                M10 36
+                C20 31 35 31 58 34
+                L59 41
+                C45 44 29 45 12 42
+                Z"
+            />
+
+            <line ${common}
+                x1="23"
+                y1="34"
+                x2="23"
+                y2="42"
+            />
+
+            <line ${common}
+                x1="31"
+                y1="33"
+                x2="31"
+                y2="43"
+            />
+
+            <line ${common}
+                x1="39"
+                y1="33"
+                x2="39"
+                y2="43"
+            />
+
         </svg>
         `;
     }
 
 
-    /* FA
+    /*
+       FA
        Başparmak aşağı
     */
 
@@ -230,82 +293,96 @@ function handSVG(note){
 
         return `
         <svg viewBox="0 0 70 70">
+
             <path ${common}
                 d="
-                M18 20
-                C24 15 33 16 39 21
-                L50 31
-                C54 35 53 40 49 43
-                L42 48
-                L35 57
-                C33 60 28 59 28 55
-                L29 43
-                L20 36
-                C15 32 14 25 18 20
-                Z"/>
+                M18 23
+                C24 18 35 19 41 25
+                L52 35
+                C55 38 54 42 50 45
+                L42 49
+                L35 58
+                C32 61 28 59 29 55
+                L31 44
+                L20 37
+                C15 33 14 27 18 23
+                Z"
+            />
+
             <path ${common}
-                d="M39 22 L48 16"/>
+                d="
+                M40 25
+                L48 17"
+            />
+
         </svg>
         `;
     }
 
 
-    /* SOL
-       Avuç göğse dönük / parmaklar yukarı
+    /*
+       SOL
+       Açık el / avuç içi
     */
 
     if(note === "SOL"){
 
         return `
         <svg viewBox="0 0 70 70">
+
             <path ${common}
                 d="
                 M18 52
-                C18 43 18 33 19 24
-                C19 20 23 19 25 22
-                L26 37
-                L28 16
-                C28 12 32 12 34 16
-                L35 37
-                L38 15
-                C38 11 42 12 43 16
-                L43 38
-                L47 21
-                C48 17 52 18 52 22
+                L18 26
+                C18 22 22 21 24 25
+                L26 39
+                L28 17
+                C28 13 32 13 34 17
+                L35 39
+                L38 17
+                C38 13 42 13 43 17
+                L43 39
+                L47 22
+                C48 18 52 19 52 23
                 L50 44
-                C49 51 43 56 36 57
-                L26 57
-                Z"/>
+                C49 51 43 55 36 57
+                L25 57
+                Z"
+            />
+
         </svg>
         `;
     }
 
 
-    /* LA
-       Gevşek, avuç aşağı
+    /*
+       LA
+       Gevşek kavisli el
     */
 
     if(note === "LA"){
 
         return `
         <svg viewBox="0 0 70 70">
+
             <path ${common}
                 d="
-                M14 31
-                C21 24 30 23 38 26
-                C47 29 54 35 56 42
-                C57 47 53 51 48 50
-                C40 49 35 44 30 41
-                C25 38 20 38 15 40
-                Z"/>
-            <path ${common}
-                d="M26 28 C32 34 39 37 48 38"/>
+                M13 34
+                C21 26 30 24 39 27
+                C48 30 55 35 57 41
+                C59 46 55 51 50 50
+                C41 49 35 44 29 41
+                C24 39 19 40 14 42
+                Z"
+            />
+
         </svg>
         `;
     }
 
 
-    /* SI
+    /*
+       SI
        İşaret parmağı yukarı
     */
 
@@ -313,19 +390,22 @@ function handSVG(note){
 
         return `
         <svg viewBox="0 0 70 70">
+
             <path ${common}
                 d="
-                M20 50
-                C18 43 20 37 25 34
-                L35 28
-                L35 13
-                C35 9 40 9 41 13
-                L41 34
-                L48 28
-                C51 26 54 29 52 32
-                L45 42
-                C40 49 31 53 20 50
-                Z"/>
+                M19 51
+                C17 45 20 38 26 34
+                L34 29
+                L34 13
+                C34 9 40 9 41 13
+                L41 35
+                L48 29
+                C51 26 55 29 52 33
+                L45 43
+                C40 50 30 54 19 51
+                Z"
+            />
+
         </svg>
         `;
     }
@@ -334,28 +414,30 @@ function handSVG(note){
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    İŞARETLERİ YERLEŞTİR
---------------------------------------------------------- */
+========================================================= */
 
-document.querySelectorAll(".hand-sign").forEach(el => {
+document
+    .querySelectorAll(".hand-sign")
+    .forEach(el => {
 
-    const note = el.dataset.note;
+        el.innerHTML =
+            handSVG(el.dataset.note);
 
-    el.innerHTML = handSVG(note);
-
-});
+    });
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    HEDEF NOTA
---------------------------------------------------------- */
+========================================================= */
 
 function setTarget(index){
 
     currentStep = index;
 
-    const note = NOTES[index];
+    const note =
+        NOTES[index];
 
     targetNote.textContent =
         note.display;
@@ -363,58 +445,110 @@ function setTarget(index){
     targetHand.innerHTML =
         handSVG(note.name);
 
-    document.querySelectorAll(".coin")
+
+    /*
+       Coinleri pasifleştir.
+    */
+
+    document
+        .querySelectorAll(".coin")
         .forEach((coin,i)=>{
 
-            coin.classList.remove("inactive");
-
-            if(i !== index){
-                coin.classList.add("inactive");
-            }
+            coin.classList.toggle(
+                "inactive",
+                i !== index
+            );
 
         });
 
+
+    /*
+       Hedef basamağı vurgula.
+    */
+
+    document
+        .querySelectorAll(".step")
+        .forEach((step,i)=>{
+
+            step.classList.toggle(
+                "active-target",
+                i === index
+            );
+
+        });
+
+
     pitchStatus.textContent =
-        "SÖYLE";
+        `SÖYLE: ${note.display}`;
 
     pitchStatus.className =
         "pitch-status";
+
+    correctSince = 0;
 }
 
 
-/* ---------------------------------------------------------
-   KEDİ
---------------------------------------------------------- */
+/* =========================================================
+   KEDİ POZİSYONU
+========================================================= */
 
-function updateCat(){
+function positionCatAtStart(){
 
-    const steps =
-        document.querySelectorAll(".step");
+    cat.style.left =
+        "-88px";
+
+    cat.style.bottom =
+        "0px";
+
+}
+
+
+/* =========================================================
+   KEDİYİ BASAMAĞA KOY
+========================================================= */
+
+function positionCatOnStep(index){
 
     const step =
-        steps[currentStep];
+        document.querySelector(
+            `.step[data-index="${index}"]`
+        );
 
-    if(!step) return;
+    if(!step){
+        return;
+    }
 
-    const stepRect =
-        step.getBoundingClientRect();
 
-    const ladderRect =
-        document
-        .getElementById("ladder")
-        .getBoundingClientRect();
+    /*
+       Basamak koordinatlarını
+       doğrudan CSS'ten alıyoruz.
+    */
+
+    const stepLeft =
+        step.offsetLeft;
+
+    const stepBottom =
+        parseFloat(
+            getComputedStyle(step)
+            .bottom
+        );
+
 
     const x =
-        stepRect.left -
-        ladderRect.left +
-        stepRect.width / 2 -
+        stepLeft +
+        step.offsetWidth / 2 -
         35;
 
+
+    /*
+       Kedi basamağın üstünde.
+    */
+
     const y =
-        ladderRect.bottom -
-        stepRect.bottom -
-        stepRect.height -
+        stepBottom +
+        step.offsetHeight -
         5;
+
 
     cat.style.left =
         `${x}px`;
@@ -425,82 +559,23 @@ function updateCat(){
 }
 
 
-/* ---------------------------------------------------------
-   KARAKTER SEÇİMİ
---------------------------------------------------------- */
+/* =========================================================
+   KEDİ HAREKETİ
+========================================================= */
 
-lokiBtn.onclick = () => {
+function moveCatToStep(index){
 
-    selectedCharacter = "loki";
+    const now =
+        performance.now();
 
-    lokiBtn.classList.add("active");
-    mayaBtn.classList.remove("active");
-
-    cat.textContent = "🐱";
-};
-
-
-mayaBtn.onclick = () => {
-
-    selectedCharacter = "maya";
-
-    mayaBtn.classList.add("active");
-    lokiBtn.classList.remove("active");
-
-    cat.textContent = "🐈‍⬛";
-};
-
-
-/* ---------------------------------------------------------
-   DOĞRU NOTA
---------------------------------------------------------- */
-
-function correctNote(){
-
-    const now = performance.now();
-
-    if(now - lastCorrectTime < 900){
+    if(now - lastMoveTime < 650){
         return;
     }
 
-    lastCorrectTime = now;
-
-    const coin =
-        document.querySelectorAll(".coin")[currentStep];
-
-    if(coin){
-
-        coin.classList.remove("inactive");
-        coin.classList.add("collected");
-
-        setTimeout(()=>{
-            coin.classList.remove("collected");
-        },500);
-    }
+    lastMoveTime = now;
 
 
-    score += 100 + combo * 10;
-
-    coins += 1;
-
-    combo += 1;
-
-
-    scoreElement.textContent =
-        score;
-
-    coinCount.textContent =
-        coins;
-
-    comboElement.textContent =
-        combo;
-
-
-    pitchStatus.textContent =
-        "DOĞRU! ✓";
-
-    pitchStatus.className =
-        "pitch-status correct";
+    positionCatOnStep(index);
 
 
     cat.classList.remove("jump");
@@ -510,132 +585,247 @@ function correctNote(){
     cat.classList.add("jump");
 
 
-    if(currentStep < NOTES.length - 1){
+    setTimeout(()=>{
+
+        cat.classList.remove("jump");
+
+    },600);
+
+}
+
+
+/* =========================================================
+   KARAKTER SEÇİMİ
+========================================================= */
+
+lokiBtn.addEventListener(
+    "click",
+    ()=>{
+
+        selectedCharacter =
+            "loki";
+
+        lokiBtn.classList.add("active");
+
+        mayaBtn.classList.remove("active");
+
+        cat.classList.remove("maya");
+
+        cat.classList.add("loki");
+
+    }
+);
+
+
+mayaBtn.addEventListener(
+    "click",
+    ()=>{
+
+        selectedCharacter =
+            "maya";
+
+        mayaBtn.classList.add("active");
+
+        lokiBtn.classList.remove("active");
+
+        cat.classList.remove("loki");
+
+        cat.classList.add("maya");
+
+    }
+);
+
+
+/* =========================================================
+   REFERANS SES
+========================================================= */
+
+let referenceAudioContext = null;
+
+
+function playReferenceNote(index){
+
+    const note =
+        NOTES[index];
+
+    if(!referenceAudioContext){
+
+        referenceAudioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+
+    if(
+        referenceAudioContext.state ===
+        "suspended"
+    ){
+
+        referenceAudioContext.resume();
+
+    }
+
+
+    const ctx =
+        referenceAudioContext;
+
+    const oscillator =
+        ctx.createOscillator();
+
+    const gain =
+        ctx.createGain();
+
+
+    oscillator.type =
+        "sine";
+
+    oscillator.frequency.value =
+        note.freq;
+
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        ctx.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.20,
+        ctx.currentTime + 0.03
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        ctx.currentTime + 0.9
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(ctx.destination);
+
+
+    oscillator.start();
+
+    oscillator.stop(
+        ctx.currentTime + 0.95
+    );
+
+
+    /*
+       Basamağı kısa süre vurgula.
+    */
+
+    const step =
+        document.querySelector(
+            `.step[data-index="${index}"]`
+        );
+
+    if(step){
+
+        step.classList.add(
+            "active-target"
+        );
 
         setTimeout(()=>{
 
-            setTarget(currentStep + 1);
+            if(index !== currentStep){
 
-            updateCat();
+                step.classList.remove(
+                    "active-target"
+                );
 
-        },500);
+            }
 
-    }else{
-
-        setTimeout(()=>{
-
-            finishLevel();
-
-        },600);
+        },700);
 
     }
 
 }
 
 
-/* ---------------------------------------------------------
-   YANLIŞ NOTA
---------------------------------------------------------- */
+/* =========================================================
+   BASAMAKLARA TIKLAMA
+========================================================= */
 
-function wrongPitch(){
+document
+    .querySelectorAll(".step")
+    .forEach(step => {
 
-    pitchStatus.textContent =
-        "HEDEFE YAKLAŞ";
+        step.addEventListener(
+            "click",
+            event => {
 
-    pitchStatus.className =
-        "pitch-status wrong";
-}
+                /*
+                   Coin'e tıklanmışsa
+                   ikinci kez çalıştırma.
+                */
 
-
-/* ---------------------------------------------------------
-   SEVİYE BİTİŞ
---------------------------------------------------------- */
-
-function finishLevel(){
-
-    pitchStatus.textContent =
-        "🎉 TAMAMLANDI!";
-
-    pitchStatus.className =
-        "pitch-status correct";
-
-    gameStarted = false;
-
-    micBtn.disabled = true;
-
-    document.getElementById("instruction")
-        .innerHTML =
-        "Harika! Do–Do' merdivenini tamamladın. 🎵";
-}
+                if(
+                    event.target.closest(".coin")
+                ){
+                    return;
+                }
 
 
-/* ---------------------------------------------------------
-   FREKANS → MIDI
---------------------------------------------------------- */
+                const index =
+                    Number(
+                        step.dataset.index
+                    );
 
-function frequencyToMidi(freq){
+                playReferenceNote(index);
 
-    return 69 +
-        12 * Math.log2(freq / 440);
-}
-
-
-/* ---------------------------------------------------------
-   EN YAKIN NOTA
---------------------------------------------------------- */
-
-function getNearestNote(freq){
-
-    let best = null;
-
-    let smallest = Infinity;
-
-    NOTES.forEach(note=>{
-
-        const cents =
-            1200 *
-            Math.log2(freq / note.freq);
-
-        const distance =
-            Math.abs(cents);
-
-        if(distance < smallest){
-
-            smallest = distance;
-
-            best = {
-                note,
-                cents
-            };
-        }
+            }
+        );
 
     });
 
-    return best;
-}
 
+/*
+   Coin'e tıklayınca da referans sesi.
+*/
 
-/* ---------------------------------------------------------
-   PITCH ANALİZİ
---------------------------------------------------------- */
+document
+    .querySelectorAll(".coin")
+    .forEach(coin => {
 
-function detectPitch(){
+        coin.addEventListener(
+            "click",
+            event => {
 
-    if(!analyser){
-        return;
-    }
+                event.stopPropagation();
 
-    const buffer =
-        new Float32Array(
-            analyser.fftSize
+                const index =
+                    Number(
+                        coin.dataset.index
+                    );
+
+                playReferenceNote(index);
+
+            }
         );
 
-    analyser.getFloatTimeDomainData(buffer);
+    });
+
+
+/* =========================================================
+   PITCH – FREKANS OKUMA
+========================================================= */
+
+function autoCorrelate(
+    buffer,
+    sampleRate
+){
+
+    const size =
+        buffer.length;
 
 
     let rms = 0;
 
-    for(let i=0;i<buffer.length;i++){
+    for(let i=0;i<size;i++){
 
         rms +=
             buffer[i] *
@@ -645,20 +835,358 @@ function detectPitch(){
 
     rms =
         Math.sqrt(
-            rms / buffer.length
+            rms / size
         );
 
 
-    /* Çok düşük ses */
+    /*
+       Sessizlik.
+    */
+
+    if(rms < 0.008){
+
+        return -1;
+
+    }
+
+
+    /*
+       Aradığımız insan sesi aralığı.
+       80–900 Hz.
+    */
+
+    const minFreq = 80;
+
+    const maxFreq = 900;
+
+    const minLag =
+        Math.floor(
+            sampleRate / maxFreq
+        );
+
+    const maxLag =
+        Math.floor(
+            sampleRate / minFreq
+        );
+
+
+    let bestLag = -1;
+
+    let bestCorrelation = 0;
+
+
+    /*
+       Ortalama çıkar.
+    */
+
+    let mean = 0;
+
+    for(let i=0;i<size;i++){
+
+        mean += buffer[i];
+
+    }
+
+    mean /= size;
+
+
+    /*
+       Normalize edilmiş
+       autocorrelation.
+    */
+
+    for(
+        let lag=minLag;
+        lag<=maxLag;
+        lag++
+    ){
+
+        let sum = 0;
+
+        let energyA = 0;
+
+        let energyB = 0;
+
+
+        for(
+            let i=0;
+            i<size-lag;
+            i++
+        ){
+
+            const a =
+                buffer[i] - mean;
+
+            const b =
+                buffer[i+lag] - mean;
+
+
+            sum += a*b;
+
+            energyA += a*a;
+
+            energyB += b*b;
+
+        }
+
+
+        if(
+            energyA === 0 ||
+            energyB === 0
+        ){
+
+            continue;
+
+        }
+
+
+        const correlation =
+            sum /
+            Math.sqrt(
+                energyA * energyB
+            );
+
+
+        if(
+            correlation >
+            bestCorrelation
+        ){
+
+            bestCorrelation =
+                correlation;
+
+            bestLag =
+                lag;
+
+        }
+
+    }
+
+
+    /*
+       Zayıf pitch.
+    */
+
+    if(
+        bestLag === -1 ||
+        bestCorrelation < 0.55
+    ){
+
+        return -1;
+
+    }
+
+
+    return sampleRate / bestLag;
+
+}
+
+
+/* =========================================================
+   CENT HESABI
+========================================================= */
+
+function centsFromFrequency(
+    frequency,
+    targetFrequency
+){
+
+    return 1200 *
+        Math.log2(
+            frequency /
+            targetFrequency
+        );
+
+}
+
+
+/* =========================================================
+   PITCH GÖSTERGESİ
+========================================================= */
+
+function updatePitchMeter(cents){
+
+    const limited =
+        Math.max(
+            -100,
+            Math.min(
+                100,
+                cents
+            )
+        );
+
+
+    const percent =
+        50 +
+        limited / 2;
+
+
+    pitchFill.style.bottom =
+        `${percent}%`;
+
+}
+
+
+/* =========================================================
+   DOĞRU NOTA KONTROLÜ
+========================================================= */
+
+function processPitch(
+    frequency
+){
+
+    if(!gameStarted){
+        return;
+    }
+
+
+    const target =
+        NOTES[currentStep];
+
+
+    const cents =
+        centsFromFrequency(
+            frequency,
+            target.freq
+        );
+
+
+    updatePitchMeter(cents);
+
+
+    pitchHz.textContent =
+        `${Math.round(frequency)} Hz`;
+
+
+    /*
+       Doğru nota.
+    */
+
+    if(
+        Math.abs(cents) <=
+        CENT_TOLERANCE
+    ){
+
+        pitchStatus.textContent =
+            `✓ ${target.display}`;
+
+        pitchStatus.className =
+            "pitch-status correct";
+
+
+        if(!correctSince){
+
+            correctSince =
+                performance.now();
+
+        }
+
+
+        /*
+           300 ms doğru tutuldu.
+        */
+
+        if(
+            performance.now() -
+            correctSince >=
+            REQUIRED_HOLD_MS
+        ){
+
+            collectCurrentCoin();
+
+        }
+
+    }else{
+
+        correctSince = 0;
+
+
+        if(cents > 0){
+
+            pitchStatus.textContent =
+                "Biraz pes söyle";
+
+        }else{
+
+            pitchStatus.textContent =
+                "Biraz tiz söyle";
+
+        }
+
+        pitchStatus.className =
+            "pitch-status wrong";
+
+    }
+
+}
+
+
+/* =========================================================
+   PITCH DÖNGÜSÜ
+========================================================= */
+
+function detectPitch(){
+
+    if(
+        !analyser ||
+        !audioContext
+    ){
+
+        return;
+
+    }
+
+
+    const buffer =
+        new Float32Array(
+            analyser.fftSize
+        );
+
+
+    analyser.getFloatTimeDomainData(
+        buffer
+    );
+
+
+    let rms = 0;
+
+    for(
+        let i=0;
+        i<buffer.length;
+        i++
+    ){
+
+        rms +=
+            buffer[i] *
+            buffer[i];
+
+    }
+
+
+    rms =
+        Math.sqrt(
+            rms /
+            buffer.length
+        );
+
 
     if(rms < 0.008){
 
         pitchStatus.textContent =
             "SES BEKLENİYOR";
 
-        requestAnimationFrame(detectPitch);
+        pitchStatus.className =
+            "pitch-status";
+
+        correctSince = 0;
+
+        pitchAnimation =
+            requestAnimationFrame(
+                detectPitch
+            );
 
         return;
+
     }
 
 
@@ -669,260 +1197,250 @@ function detectPitch(){
         );
 
 
-    if(frequency === -1){
+    if(
+        frequency === -1
+    ){
 
-        requestAnimationFrame(detectPitch);
+        pitchStatus.textContent =
+            "PERDE ARANIYOR";
 
+        correctSince = 0;
+
+        pitchAnimation =
+            requestAnimationFrame(
+                detectPitch
+            );
+
+        return;
+
+    }
+
+
+    processPitch(
+        frequency
+    );
+
+
+    pitchAnimation =
+        requestAnimationFrame(
+            detectPitch
+        );
+
+}
+
+
+/* =========================================================
+   COIN TOPLAMA
+========================================================= */
+
+function collectCurrentCoin(){
+
+    if(!gameStarted){
         return;
     }
 
 
-    pitchHz.textContent =
-        Math.round(frequency) + " Hz";
+    /*
+       Aynı notayı iki kez
+       toplamasını engelle.
+    */
+
+    if(
+        performance.now() -
+        lastMoveTime <
+        650
+    ){
+
+        return;
+
+    }
 
 
-    const nearest =
-        getNearestNote(frequency);
+    const coin =
+        document.querySelector(
+            `.coin[data-index="${currentStep}"]`
+        );
 
 
-    if(!nearest){
-
-        requestAnimationFrame(detectPitch);
-
+    if(!coin){
         return;
     }
 
 
-    /* Pitch göstergesi */
-
-    const normalized =
-        Math.max(
-            -100,
-            Math.min(
-                100,
-                nearest.cents
-            )
-        );
-
-    const percent =
-        50 + normalized / 2;
-
-    pitchFill.style.bottom =
-        `${percent}%`;
-
-
-    /* ±35 cent tolerans */
+    /*
+       Coin zaten alınmışsa çık.
+    */
 
     if(
-        Math.abs(nearest.cents) <= 35 &&
-        nearest.note.name === NOTES[currentStep].name
+        coin.classList.contains(
+            "collected"
+        )
     ){
 
-        correctNote();
-
-    }else{
-
-        wrongPitch();
+        return;
 
     }
 
 
-    requestAnimationFrame(detectPitch);
+    coin.classList.add(
+        "collected"
+    );
+
+
+    coins++;
+
+    combo++;
+
+    score +=
+        100 +
+        combo * 10;
+
+
+    coinCount.textContent =
+        coins;
+
+    scoreElement.textContent =
+        score;
+
+    comboElement.textContent =
+        combo;
+
+
+    moveCatToStep(
+        currentStep
+    );
+
+
+    /*
+       Yeni hedefe geç.
+    */
+
+    setTimeout(()=>{
+
+        advanceTarget();
+
+    },650);
+
 }
 
 
-/* ---------------------------------------------------------
-   AUTOCORRELATION
---------------------------------------------------------- */
+/* =========================================================
+   SONRAKİ HEDEF
+========================================================= */
 
-function autoCorrelate(buffer, sampleRate){
+function advanceTarget(){
 
-    let SIZE =
-        buffer.length;
+    correctSince = 0;
 
-    let rms = 0;
 
-    for(let i=0;i<SIZE;i++){
+    /*
+       Yukarı çıkış.
+    */
 
-        rms +=
-            buffer[i] *
-            buffer[i];
+    if(direction === 1){
 
-    }
+        if(
+            currentStep <
+            NOTES.length - 1
+        ){
 
-    rms =
-        Math.sqrt(
-            rms / SIZE
+            setTarget(
+                currentStep + 1
+            );
+
+            return;
+
+        }
+
+
+        /*
+           Üst Do'ya ulaştık.
+           Şimdi aşağı.
+        */
+
+        direction = -1;
+
+
+        setTarget(
+            currentStep - 1
         );
 
-    if(rms < 0.01){
-        return -1;
+        return;
+
     }
 
 
-    let r1 = 0;
-    let r2 = SIZE - 1;
+    /*
+       Aşağı iniş.
+    */
 
-    const threshold = 0.2;
-
-
-    for(let i=0;i<SIZE/2;i++){
+    if(direction === -1){
 
         if(
-            Math.abs(buffer[i])
-            < threshold
+            currentStep > 0
         ){
 
-            r1 = i;
-            break;
-        }
-    }
+            setTarget(
+                currentStep - 1
+            );
 
-
-    for(
-        let i=1;
-        i<SIZE/2;
-        i++
-    ){
-
-        if(
-            Math.abs(buffer[SIZE-i])
-            < threshold
-        ){
-
-            r2 = SIZE-i;
-            break;
-        }
-    }
-
-
-    buffer =
-        buffer.slice(r1,r2);
-
-    SIZE =
-        buffer.length;
-
-
-    const correlations =
-        new Array(SIZE).fill(0);
-
-
-    for(
-        let lag=0;
-        lag<SIZE;
-        lag++
-    ){
-
-        for(
-            let i=0;
-            i<SIZE-lag;
-            i++
-        ){
-
-            correlations[lag] +=
-                buffer[i] *
-                buffer[i+lag];
+            return;
 
         }
 
-    }
 
-
-    let d = 0;
-
-    while(
-        d < SIZE-1 &&
-        correlations[d] >
-        correlations[d+1]
-    ){
-
-        d++;
+        finishGame();
 
     }
 
-
-    let maxval = -1;
-    let maxpos = -1;
-
-    for(
-        let i=d;
-        i<SIZE;
-        i++
-    ){
-
-        if(
-            correlations[i]
-            > maxval
-        ){
-
-            maxval =
-                correlations[i];
-
-            maxpos =
-                i;
-        }
-
-    }
-
-
-    let T0 =
-        maxpos;
-
-
-    if(
-        maxpos > 0 &&
-        maxpos < SIZE-1
-    ){
-
-        const x1 =
-            correlations[maxpos-1];
-
-        const x2 =
-            correlations[maxpos];
-
-        const x3 =
-            correlations[maxpos+1];
-
-        const a =
-            (x1+x3-2*x2)/2;
-
-        const b =
-            (x3-x1)/2;
-
-        if(a){
-            T0 =
-                maxpos -
-                b/(2*a);
-        }
-
-    }
-
-
-    if(!T0){
-        return -1;
-    }
-
-
-    return sampleRate / T0;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
+   OYUN BİTİŞ
+========================================================= */
+
+function finishGame(){
+
+    gameStarted = false;
+
+    stopMicrophone();
+
+
+    pitchStatus.textContent =
+        "🎉 TAMAMLANDI!";
+
+    pitchStatus.className =
+        "pitch-status correct";
+
+
+    document.getElementById(
+        "instruction"
+    ).textContent =
+        "Harika! Merdiveni tamamladın.";
+
+}
+
+
+/* =========================================================
    MİKROFON
---------------------------------------------------------- */
+========================================================= */
 
 async function startMicrophone(){
 
     try{
 
         stream =
-            await navigator.mediaDevices
+            await navigator
+            .mediaDevices
             .getUserMedia({
+
                 audio:{
                     echoCancellation:true,
                     noiseSuppression:true,
                     autoGainControl:false
                 }
+
             });
 
 
@@ -934,13 +1452,20 @@ async function startMicrophone(){
 
 
         analyser =
-            audioContext.createAnalyser();
+            audioContext
+            .createAnalyser();
+
+
+        /*
+           Pitch için yeterli çözünürlük.
+        */
 
         analyser.fftSize =
-            2048;
+            4096;
+
 
         analyser.smoothingTimeConstant =
-            0.15;
+            0.05;
 
 
         microphone =
@@ -956,16 +1481,23 @@ async function startMicrophone(){
 
 
         micBtn.textContent =
-            "🎤 MİKROFON AÇIK";
+            "🎤 Mikrofon Açık";
 
-        micBtn.classList.add("active");
+        micBtn.classList.add(
+            "active"
+        );
 
 
         detectPitch();
 
+
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "Mikrofon hatası:",
+            error
+        );
+
 
         alert(
             "Mikrofon açılamadı. Tarayıcı mikrofon iznini kontrol et."
@@ -976,113 +1508,177 @@ async function startMicrophone(){
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    MİKROFONU DURDUR
---------------------------------------------------------- */
+========================================================= */
 
 function stopMicrophone(){
+
+    if(
+        pitchAnimation
+    ){
+
+        cancelAnimationFrame(
+            pitchAnimation
+        );
+
+        pitchAnimation =
+            null;
+
+    }
+
 
     if(stream){
 
         stream
-        .getTracks()
-        .forEach(track=>{
-            track.stop();
-        });
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
 
         stream = null;
+
     }
 
 
     if(audioContext){
 
-        audioContext.close();
+        audioContext
+            .close()
+            .catch(()=>{});
 
-        audioContext = null;
+        audioContext =
+            null;
+
     }
 
 
-    analyser = null;
+    analyser =
+        null;
+
+    microphone =
+        null;
 
 
     micBtn.textContent =
-        "🎤 MİKROFONU BAŞLAT";
+        "🎤 Mikrofon";
 
-    micBtn.classList.remove("active");
+    micBtn.classList.remove(
+        "active"
+    );
+
 }
 
 
-/* ---------------------------------------------------------
-   BUTONLAR
---------------------------------------------------------- */
+/* =========================================================
+   BAŞLAT
+========================================================= */
 
-micBtn.onclick = async ()=>{
+startBtn.addEventListener(
+    "click",
+    async ()=>{
 
-    if(stream){
+        resetGame();
 
-        stopMicrophone();
+        gameStarted = true;
 
-    }else{
+        startBtn.disabled = true;
+
 
         await startMicrophone();
 
     }
-
-};
-
-
-startBtn.onclick = async ()=>{
-
-    resetGame();
-
-    gameStarted = true;
-
-    micBtn.disabled = false;
-
-    await startMicrophone();
-
-};
+);
 
 
-resetBtn.onclick = ()=>{
+/* =========================================================
+   MİKROFON BUTONU
+========================================================= */
 
-    resetGame();
+micBtn.addEventListener(
+    "click",
+    async ()=>{
 
-};
+        if(stream){
+
+            stopMicrophone();
+
+            return;
+
+        }
 
 
-/* ---------------------------------------------------------
+        await startMicrophone();
+
+    }
+);
+
+
+/* =========================================================
    RESET
---------------------------------------------------------- */
+========================================================= */
 
 function resetGame(){
 
     stopMicrophone();
 
+
     currentStep = 0;
 
+    direction = 1;
+
     coins = 0;
+
     score = 0;
+
     combo = 0;
-    lives = 3;
 
     gameStarted = false;
 
-    scoreElement.textContent =
-        "0";
+    correctSince = 0;
+
+    lastMoveTime = 0;
+
+
+    /*
+       Coinleri sıfırla.
+    */
+
+    document
+        .querySelectorAll(".coin")
+        .forEach(coin=>{
+
+            coin.classList.remove(
+                "collected"
+            );
+
+        });
+
 
     coinCount.textContent =
+        "0";
+
+    scoreElement.textContent =
         "0";
 
     comboElement.textContent =
         "0";
 
-    lifeElement.textContent =
-        "3";
+
+    startBtn.disabled =
+        false;
+
+
+    /*
+       Kedi start point'e dönsün.
+    */
+
+    positionCatAtStart();
+
 
     setTarget(0);
 
-    updateCat();
 
     pitchStatus.textContent =
         "HAZIR";
@@ -1093,29 +1689,72 @@ function resetGame(){
     pitchHz.textContent =
         "—";
 
-    document.getElementById("instruction")
-        .innerHTML =
-        "Hedef notayı doğru söyle.<br>Kedi doğru basamağa zıplayıp coin'i alacak!";
+
+    pitchFill.style.bottom =
+        "50%";
+
+
+    document.getElementById(
+        "instruction"
+    ).textContent =
+        "Do sesini söyle.";
 
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    BAŞLANGIÇ
---------------------------------------------------------- */
-
-window.addEventListener(
-    "resize",
-    updateCat
-);
+========================================================= */
 
 window.addEventListener(
     "load",
     ()=>{
 
+        /*
+           İlk hedef Do.
+        */
+
         setTarget(0);
 
-        updateCat();
+
+        /*
+           Kedi başlangıç noktasında.
+        */
+
+        positionCatAtStart();
+
+
+        /*
+           Loki başlangıçta.
+        */
+
+        cat.classList.add(
+            "loki"
+        );
+
+    }
+);
+
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        /*
+           Responsive durumda
+           mevcut basamağı yeniden hesapla.
+        */
+
+        if(
+            gameStarted &&
+            currentStep > 0
+        ){
+
+            positionCatOnStep(
+                currentStep
+            );
+
+        }
 
     }
 );
