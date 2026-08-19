@@ -640,8 +640,13 @@
 
     function saveProgressRecord(){
       try{
-        const student = JSON.parse(localStorage.getItem("studentInfo") || "null");
-        if(!student) return;
+        const student = JSON.parse(
+    localStorage.getItem("studentInfo") ||
+    JSON.stringify({
+        name:"Admin Demo",
+        id:"admin"
+    })
+);
 
         const records = JSON.parse(localStorage.getItem("vocalyProgress") || "[]");
 
