@@ -122,9 +122,9 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
   .combo b{font-size:15px}
 
   .pitch-panel{
-    right:8px;
-    top:72px;
-    width:88px;
+    right:7px;
+    top:58px;
+    width:82px;
     padding:8px;
     border-radius:13px;
     transform:none;
@@ -141,7 +141,7 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
     bottom:92px;
     width:850px;
     height:470px;
-    transform:scale(.42);
+    transform:scale(.67);
     transform-origin:left bottom;
   }
 
@@ -180,8 +180,8 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
   #methodSelect{max-width:125px;min-width:95px;font-size:9px}
   .stats{font-size:10px;gap:4px}
   .game-world{height:calc(100svh - 112px)}
-  .ladder{left:4px;transform:scale(.40)}
-  .pitch-panel{width:82px;right:6px}
+  .ladder{left:4px;transform:scale(.67)}
+  .pitch-panel{width:78px;right:5px;top:58px}
   .level-info{width:105px}
   .bottom-panel{left:5px;right:5px}
 }
@@ -463,17 +463,19 @@ updateCoinsForMethod();
     const world=document.querySelector(".game-world");
     if(!ladder || !world || window.innerWidth>900) return;
 
-    // 850px is the designed ladder width. Leave a small side margin.
-    const usable=Math.max(300, world.clientWidth-10);
+    // On portrait phones the pitch panel occupies the right side.
+    // Reserve that area so the last step (DO′) never goes underneath it.
+    const usable=Math.max(300, world.clientWidth-105);
     let scale=usable/850;
 
-    // Never let the ladder become unnecessarily huge on tablets.
-    scale=Math.min(scale,0.62);
+    // Keep a little breathing room on narrow screens.
+    scale=Math.min(scale,0.70);
+    scale=Math.max(scale,0.34);
 
     ladder.style.transform="scale("+scale.toFixed(4)+")";
     ladder.style.transformOrigin="left bottom";
     ladder.style.left="4px";
-    ladder.style.bottom="92px";
+    ladder.style.bottom="100px";
   }
 
   window.addEventListener("load",fitMobileLadder);
