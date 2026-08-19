@@ -1,1 +1,626 @@
 
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#07101f;
+    color:white;
+    font-family:Arial,sans-serif;
+    overflow-x:hidden;
+}
+
+
+/* TOP */
+
+.topbar{
+    height:90px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 30px;
+    background:#091426;
+    border-bottom:1px solid #26344d;
+}
+
+.game-title{
+    font-size:24px;
+    font-weight:bold;
+    color:#facc15;
+}
+
+.game-title span{
+    margin-right:8px;
+}
+
+
+.character-select{
+    display:flex;
+    gap:10px;
+}
+
+.character-btn{
+    border:none;
+    border-radius:18px;
+    padding:10px 22px;
+    background:#1b2942;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+.character-btn.active{
+    background:#2563eb;
+    box-shadow:0 0 15px rgba(37,99,235,.5);
+}
+
+
+.stats{
+    display:flex;
+    gap:25px;
+    font-size:20px;
+    font-weight:bold;
+}
+
+
+/* GAME */
+
+.game{
+    width:100%;
+    max-width:1500px;
+    margin:auto;
+    padding:20px;
+}
+
+.game-world{
+    position:relative;
+    min-height:700px;
+    overflow:hidden;
+    border-radius:25px;
+
+    background:
+        radial-gradient(circle at 20% 20%,#243b68 0,transparent 30%),
+        radial-gradient(circle at 80% 30%,#293e70 0,transparent 25%),
+        linear-gradient(#102a52,#07101f);
+
+    border:1px solid #304362;
+}
+
+
+/* LEVEL INFO */
+
+.level-info{
+    position:absolute;
+    left:20px;
+    top:20px;
+    z-index:30;
+
+    width:160px;
+    padding:18px;
+
+    border-radius:18px;
+    background:rgba(7,16,31,.88);
+    border:1px solid #405274;
+}
+
+.level-info strong{
+    display:block;
+    color:#4ade80;
+    font-size:20px;
+    margin-bottom:6px;
+}
+
+.level-info span{
+    color:#ddd;
+}
+
+.score,
+.combo{
+    margin-top:20px;
+    color:#aaa;
+}
+
+.score b,
+.combo b{
+    display:block;
+    color:#facc15;
+    font-size:25px;
+    margin-top:4px;
+}
+
+
+/* LADDER */
+
+.ladder{
+    position:absolute;
+
+    left:220px;
+    right:230px;
+    bottom:125px;
+
+    height:480px;
+}
+
+
+/* BASAMAKLAR */
+
+.step{
+    position:absolute;
+
+    width:125px;
+    height:75px;
+
+    border-radius:10px 10px 4px 4px;
+
+    border:3px solid rgba(255,255,255,.55);
+
+    box-shadow:
+        0 10px 0 rgba(0,0,0,.3),
+        inset 0 2px 0 rgba(255,255,255,.35);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    transition:.2s;
+}
+
+.step:hover{
+    transform:translateY(-4px);
+}
+
+
+.step-note{
+    font-size:25px;
+    font-weight:900;
+    text-shadow:0 2px 3px rgba(0,0,0,.4);
+}
+
+
+/* MERDİVEN GEOMETRİSİ */
+
+.step-do{
+    left:0;
+    bottom:0;
+    background:#ef4444;
+}
+
+.step-re{
+    left:120px;
+    bottom:55px;
+    background:#f97316;
+}
+
+.step-mi{
+    left:240px;
+    bottom:110px;
+    background:#eab308;
+}
+
+.step-fa{
+    left:360px;
+    bottom:165px;
+    background:#22c55e;
+}
+
+.step-sol{
+    left:480px;
+    bottom:220px;
+    background:#0ea5e9;
+}
+
+.step-la{
+    left:600px;
+    bottom:275px;
+    background:#6366f1;
+}
+
+.step-si{
+    left:720px;
+    bottom:330px;
+    background:#d946ef;
+}
+
+.step-do2{
+    left:840px;
+    bottom:385px;
+    background:#ef4444;
+}
+
+
+/* FONOMİMİ */
+
+.hand-sign{
+    position:absolute;
+
+    left:50%;
+    transform:translateX(-50%);
+
+    top:82px;
+
+    width:55px;
+    height:55px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+}
+
+
+/*
+   SVG içindeki çizimler:
+   Curwen / Kodály temel el şekilleri
+*/
+
+.hand-sign svg{
+    width:52px;
+    height:52px;
+    overflow:visible;
+}
+
+.hand-sign path,
+.hand-sign line,
+.hand-sign circle,
+.hand-sign rect{
+    stroke:white;
+    stroke-width:3;
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+
+/* COIN */
+
+.coin{
+    position:absolute;
+
+    top:-55px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+
+    background:linear-gradient(#ffe66b,#f59e0b);
+
+    border:3px solid #fff2a8;
+
+    color:#fff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:24px;
+    font-weight:bold;
+
+    box-shadow:
+        0 0 15px #facc15,
+        0 0 30px rgba(250,204,21,.6);
+
+    animation:coinFloat 1.2s infinite ease-in-out;
+}
+
+.coin.collected{
+    animation:coinCollect .45s forwards;
+}
+
+.coin.inactive{
+    opacity:.18;
+    filter:grayscale(1);
+}
+
+@keyframes coinFloat{
+    0%,100%{
+        transform:translateX(-50%) translateY(0);
+    }
+
+    50%{
+        transform:translateX(-50%) translateY(-8px);
+    }
+}
+
+@keyframes coinCollect{
+
+    100%{
+        transform:translateX(-50%) translateY(-100px) scale(1.5);
+        opacity:0;
+    }
+}
+
+
+/* CAT */
+
+.cat{
+    position:absolute;
+
+    z-index:20;
+
+    width:70px;
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:58px;
+
+    transition:
+        left .35s ease,
+        bottom .35s ease;
+
+    filter:drop-shadow(0 8px 4px rgba(0,0,0,.4));
+}
+
+.cat.jump{
+    animation:jump .5s ease;
+}
+
+@keyframes jump{
+
+    0%{
+        transform:translateY(0) scale(1);
+    }
+
+    45%{
+        transform:translateY(-65px) scale(1.1);
+    }
+
+    100%{
+        transform:translateY(0) scale(1);
+    }
+}
+
+
+/* PITCH */
+
+.pitch-panel{
+    position:absolute;
+
+    right:20px;
+    top:130px;
+
+    width:145px;
+
+    padding:18px;
+
+    border-radius:20px;
+
+    background:rgba(7,16,31,.92);
+    border:1px solid #405274;
+
+    text-align:center;
+}
+
+.pitch-title{
+    font-weight:bold;
+    color:#a5b4fc;
+    margin-bottom:15px;
+}
+
+.pitch-meter{
+    position:relative;
+
+    width:35px;
+    height:220px;
+
+    margin:auto;
+
+    border-radius:20px;
+
+    background:#111827;
+
+    border:2px solid #475569;
+
+    overflow:hidden;
+}
+
+#pitchFill{
+    position:absolute;
+
+    left:0;
+    bottom:50%;
+
+    width:100%;
+    height:5px;
+
+    background:#22c55e;
+
+    box-shadow:0 0 10px #22c55e;
+
+    transition:.1s;
+}
+
+.pitch-center{
+    position:absolute;
+
+    left:0;
+    right:0;
+    top:50%;
+
+    height:3px;
+
+    background:white;
+}
+
+.pitch-status{
+    margin-top:15px;
+
+    font-weight:bold;
+    color:#facc15;
+}
+
+.pitch-status.correct{
+    color:#4ade80;
+}
+
+.pitch-status.wrong{
+    color:#f87171;
+}
+
+.pitch-hz{
+    margin-top:8px;
+    color:#94a3b8;
+    font-size:14px;
+}
+
+
+/* ALT PANEL */
+
+.bottom-panel{
+    position:absolute;
+
+    left:20px;
+    right:20px;
+    bottom:20px;
+
+    min-height:105px;
+
+    display:flex;
+    align-items:center;
+
+    gap:20px;
+
+    padding:15px 20px;
+
+    border-radius:20px;
+
+    background:rgba(7,16,31,.94);
+    border:1px solid #405274;
+}
+
+.microphone{
+    font-size:50px;
+}
+
+
+.target{
+    text-align:center;
+    min-width:180px;
+}
+
+.target small{
+    color:#94a3b8;
+    font-weight:bold;
+}
+
+#targetNote{
+    color:#facc15;
+    font-size:40px;
+    font-weight:900;
+}
+
+.target-hand svg{
+    width:40px;
+    height:40px;
+}
+
+
+.mic-button{
+    border:none;
+
+    padding:16px 22px;
+
+    border-radius:15px;
+
+    background:#7c3aed;
+    color:white;
+
+    font-size:16px;
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.mic-button.active{
+    background:#dc2626;
+}
+
+
+.instruction{
+    color:#cbd5e1;
+    line-height:1.5;
+}
+
+
+/* CONTROLS */
+
+.controls{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:15px;
+}
+
+.controls button{
+    border:none;
+    padding:14px 25px;
+    border-radius:12px;
+
+    background:#facc15;
+    color:#111;
+
+    font-size:17px;
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.controls button:hover{
+    transform:translateY(-2px);
+}
+
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .topbar{
+        height:auto;
+        flex-wrap:wrap;
+        gap:10px;
+    }
+
+    .game-title{
+        width:100%;
+        text-align:center;
+    }
+
+    .game-world{
+        min-height:650px;
+    }
+
+    .level-info{
+        transform:scale(.8);
+        transform-origin:top left;
+    }
+
+    .pitch-panel{
+        transform:scale(.75);
+        transform-origin:top right;
+    }
+
+    .ladder{
+        left:70px;
+        right:10px;
+        transform:scale(.72);
+        transform-origin:left bottom;
+    }
+
+    .bottom-panel{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .instruction{
+        display:none;
+    }
+
+}
