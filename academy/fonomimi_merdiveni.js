@@ -56,50 +56,35 @@ const NOTES = [
    DOM
 ========================================================= */
 
-const cat =
-    document.getElementById("cat");
+let cat = null;
 
-const ladder =
-    document.getElementById("ladder");
+let ladder = null;
 
-const targetNote =
-    document.getElementById("targetNote");
+let targetNote = null;
 
-const targetHand =
-    document.getElementById("targetHand");
+let targetHand = null;
 
-const pitchFill =
-    document.getElementById("pitchFill");
+let pitchFill = null;
 
-const pitchStatus =
-    document.getElementById("pitchStatus");
+let pitchStatus = null;
 
-const pitchHz =
-    document.getElementById("pitchHz");
+let pitchHz = null;
 
-const coinCount =
-    document.getElementById("coinCount");
+let coinCount = null;
 
-const scoreElement =
-    document.getElementById("score");
+let scoreElement = null;
 
-const comboElement =
-    document.getElementById("combo");
+let comboElement = null;
 
-const micBtn =
-    document.getElementById("micBtn");
+let micBtn = null;
 
-const startBtn =
-    document.getElementById("startBtn");
+let startBtn = null;
 
-const resetBtn =
-    document.getElementById("resetBtn");
+let resetBtn = null;
 
-const lokiBtn =
-    document.getElementById("lokiBtn");
+let lokiBtn = null;
 
-const mayaBtn =
-    document.getElementById("mayaBtn");
+let mayaBtn = null;
 
 
 /* =========================================================
@@ -128,7 +113,7 @@ let correctSince = 0;
 let lastMoveTime = 0;
 
 let lastPitchProcessTime = 0;
-let targetLocked = false;
+let noteLocked = false;
 
 
 /* =========================================================
@@ -198,29 +183,12 @@ function handSVG(note){
 
 
 /* =========================================================
-   MEVCUT İŞARETLERİ YERLEŞTİR
-========================================================= */
-
-document
-    .querySelectorAll(".hand-sign")
-    .forEach(el => {
-
-        const note =
-            el.dataset.note;
-
-        el.innerHTML =
-            handSVG(note);
-
-    });
-
-
-/* =========================================================
    HEDEF NOTA
 ========================================================= */
 
 function setTarget(index){
 
-    targetLocked = false;
+    noteLocked = false;
 
     if(index < 0){
         index = 0;
@@ -411,72 +379,6 @@ function moveCatToStep(index){
 
 
 /* =========================================================
-   KARAKTER SEÇİMİ
-========================================================= */
-
-if(lokiBtn){
-
-    lokiBtn.addEventListener(
-        "click",
-        () => {
-
-            selectedCharacter =
-                "loki";
-
-            lokiBtn.classList.add(
-                "active"
-            );
-
-            mayaBtn.classList.remove(
-                "active"
-            );
-
-            cat.classList.remove(
-                "maya"
-            );
-
-            cat.classList.add(
-                "loki"
-            );
-
-        }
-    );
-
-}
-
-
-if(mayaBtn){
-
-    mayaBtn.addEventListener(
-        "click",
-        () => {
-
-            selectedCharacter =
-                "maya";
-
-            mayaBtn.classList.add(
-                "active"
-            );
-
-            lokiBtn.classList.remove(
-                "active"
-            );
-
-            cat.classList.remove(
-                "loki"
-            );
-
-            cat.classList.add(
-                "maya"
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
    REFERANS SES
 ========================================================= */
 
@@ -593,68 +495,6 @@ function playReferenceNote(index){
     }
 
 }
-
-
-/* =========================================================
-   BASAMAK TIKLAMA
-========================================================= */
-
-document
-    .querySelectorAll(".step")
-    .forEach(step => {
-
-        step.addEventListener(
-            "click",
-            event => {
-
-                if(
-                    event.target.closest(".coin")
-                ){
-                    return;
-                }
-
-
-                const index =
-                    Number(
-                        step.dataset.index
-                    );
-
-
-                playReferenceNote(index);
-
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   COIN TIKLAMA
-========================================================= */
-
-document
-    .querySelectorAll(".coin")
-    .forEach(coin => {
-
-        coin.addEventListener(
-            "click",
-            event => {
-
-                event.stopPropagation();
-
-
-                const index =
-                    Number(
-                        coin.dataset.index
-                    );
-
-
-                playReferenceNote(index);
-
-            }
-        );
-
-    });
 
 
 /* =========================================================
@@ -833,7 +673,7 @@ function updatePitchMeter(cents){
 
 function processPitch(frequency){
 
-    if(!gameStarted || targetLocked){
+    if(!gameStarted || noteLocked){
         return;
     }
 
@@ -867,7 +707,7 @@ function processPitch(frequency){
     */
     if(correctPitch){
 
-        targetLocked = true;
+        noteLocked = true;
 
         if(pitchStatus){
             pitchStatus.textContent =
@@ -972,7 +812,7 @@ function detectPitch(){
 
 function collectCurrentCoin(){
 
-    if(!gameStarted || !targetLocked){
+    if(!gameStarted || !noteLocked){
         return;
     }
 
@@ -1388,61 +1228,6 @@ function stopMicrophone(){
 
 
 /* =========================================================
-   BAŞLAT
-========================================================= */
-
-if(startBtn){
-
-    startBtn.addEventListener(
-        "click",
-        async () => {
-
-            resetGame();
-
-
-            gameStarted = true;
-
-
-            startBtn.disabled =
-                true;
-
-
-            await startMicrophone();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   MİKROFON BUTONU
-========================================================= */
-
-if(micBtn){
-
-    micBtn.addEventListener(
-        "click",
-        async () => {
-
-            if(stream){
-
-                stopMicrophone();
-
-                return;
-
-            }
-
-
-            await startMicrophone();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
    RESET
 ========================================================= */
 
@@ -1463,7 +1248,7 @@ function resetGame(){
     correctSince = 0;
     lastMoveTime = 0;
     lastPitchProcessTime = 0;
-    targetLocked = false;
+    noteLocked = false;
 
 
     /*
@@ -1570,73 +1355,142 @@ function resetGame(){
 }
 
 
-/* =========================================================
-   BAŞLANGIÇ
-========================================================= */
-
-window.addEventListener(
-    "load",
-    () => {
-
-        setTarget(0);
-
-
-        positionCatAtStart();
-
-
-        /*
-           Loki varsayılan.
-        */
-
-        if(cat){
-
-            cat.classList.remove(
-                "maya"
-            );
-
-            cat.classList.add(
-                "loki"
-            );
-
-        }
-
-
-        if(lokiBtn){
-
-            lokiBtn.classList.add(
-                "active"
-            );
-
-        }
-
-    }
-);
-
 
 /* =========================================================
-   RESIZE
+   UI / EVENT BAĞLANTILARI
+   DOM hazır olduktan sonra bağlanır.
+   Böylece script <head> içinde olsa bile butonlar çalışır.
 ========================================================= */
 
-window.addEventListener(
-    "resize",
-    () => {
+function initUI(){
 
-        /*
-           Oyun sırasında kedi
-           mevcut basamağa yeniden
-           oturtulsun.
-        */
+    /* DOM referanslarını burada al */
+    cat = document.getElementById("cat");
+    ladder = document.getElementById("ladder");
+    targetNote = document.getElementById("targetNote");
+    targetHand = document.getElementById("targetHand");
+    pitchFill = document.getElementById("pitchFill");
+    pitchStatus = document.getElementById("pitchStatus");
+    pitchHz = document.getElementById("pitchHz");
+    coinCount = document.getElementById("coinCount");
+    scoreElement = document.getElementById("score");
+    comboElement = document.getElementById("combo");
+    micBtn = document.getElementById("micBtn");
+    startBtn = document.getElementById("startBtn");
+    resetBtn = document.getElementById("resetBtn");
+    lokiBtn = document.getElementById("lokiBtn");
+    mayaBtn = document.getElementById("mayaBtn");
 
-        if(
-            gameStarted &&
-            currentStep >= 0
-        ){
+    /* Fonomimi işaretleri */
+    document.querySelectorAll(".hand-sign").forEach(el => {
+        const note = el.dataset.note;
+        el.innerHTML = handSVG(note);
+    });
 
-            positionCatOnStep(
-                currentStep
-            );
-
-        }
-
+    /* Karakterler */
+    if(lokiBtn){
+        lokiBtn.addEventListener("click", () => {
+            selectedCharacter = "loki";
+            lokiBtn.classList.add("active");
+            if(mayaBtn) mayaBtn.classList.remove("active");
+            if(cat){
+                cat.classList.remove("maya");
+                cat.classList.add("loki");
+            }
+        });
     }
-);
+
+    if(mayaBtn){
+        mayaBtn.addEventListener("click", () => {
+            selectedCharacter = "maya";
+            mayaBtn.classList.add("active");
+            if(lokiBtn) lokiBtn.classList.remove("active");
+            if(cat){
+                cat.classList.remove("loki");
+                cat.classList.add("maya");
+            }
+        });
+    }
+
+    /* Basamak referans sesleri */
+    document.querySelectorAll(".step").forEach(step => {
+        step.addEventListener("click", event => {
+            if(event.target.closest(".coin")) return;
+            const index = Number(step.dataset.index);
+            if(Number.isInteger(index) && NOTES[index]){
+                playReferenceNote(index);
+            }
+        });
+    });
+
+    /* Coin referans sesleri */
+    document.querySelectorAll(".coin").forEach(coin => {
+        coin.addEventListener("click", event => {
+            event.stopPropagation();
+            const index = Number(coin.dataset.index);
+            if(Number.isInteger(index) && NOTES[index]){
+                playReferenceNote(index);
+            }
+        });
+    });
+
+    /* BAŞLA */
+    if(startBtn){
+        startBtn.addEventListener("click", async () => {
+            resetGame();
+            gameStarted = true;
+            startBtn.disabled = true;
+            await startMicrophone();
+        });
+    }
+
+    /* MİKROFON */
+    if(micBtn){
+        micBtn.addEventListener("click", async () => {
+            if(stream){
+                stopMicrophone();
+                return;
+            }
+
+            if(!gameStarted){
+                gameStarted = true;
+            }
+
+            await startMicrophone();
+        });
+    }
+
+    /* YENİDEN */
+    if(resetBtn){
+        resetBtn.addEventListener("click", () => {
+            resetGame();
+        });
+    }
+
+    /* İlk durum */
+    setTarget(0);
+    positionCatAtStart();
+
+    if(cat){
+        cat.classList.remove("maya");
+        cat.classList.add("loki");
+    }
+
+    if(lokiBtn){
+        lokiBtn.classList.add("active");
+    }
+
+    /* Resize */
+    window.addEventListener("resize", () => {
+        if(gameStarted && currentStep >= 0){
+            positionCatOnStep(currentStep);
+        }
+    });
+}
+
+/* DOM hazır değilse bekle */
+if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", initUI, {once:true});
+}else{
+    initUI();
+}
