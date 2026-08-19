@@ -134,8 +134,6 @@ let lastPitchProcessTime = 0;
    AYARLAR
 ========================================================= */
 
-const REQUIRED_HOLD_MS = 300;
-
 const CENT_TOLERANCE = 30;
 
 /*
@@ -378,14 +376,6 @@ function moveCatToStep(index){
 
     const now =
         performance.now();
-
-
-    if(
-        now - lastMoveTime <
-        650
-    ){
-        return;
-    }
 
 
     lastMoveTime =
@@ -894,16 +884,11 @@ function processPitch(frequency){
                 "pitch-status correct";
         }
 
-        if(!correctSince){
-            correctSince = performance.now();
-        }
-
-        if(
-            performance.now() - correctSince >=
-            REQUIRED_HOLD_MS
-        ){
-            collectCurrentCoin();
-        }
+        /*
+           Hedef perde 30 cent içinde algılandığı
+           anda coin alınır. Ekstra bekleme yok.
+        */
+        collectCurrentCoin();
 
         return;
     }
@@ -1001,21 +986,6 @@ function collectCurrentCoin(){
         return;
     }
 
-
-    /*
-       Hareket devam ederken
-       ikinci kez toplama.
-    */
-
-    if(
-        performance.now() -
-        lastMoveTime <
-        650
-    ){
-
-        return;
-
-    }
 
 
     const coin =
