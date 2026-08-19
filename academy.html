@@ -3,36 +3,74 @@
 
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>VOCALY Academy</title>
 
 <style>
+*{
+    box-sizing:border-box;
+}
+
 body{
-background:#07101f;
-color:white;
-font-family:Arial;
-padding:30px;
-}
-
-.card{
-background:#111b2d;
-border-radius:15px;
-padding:20px;
-margin:15px 0;
-cursor:pointer;
-}
-
-.card:hover{
-background:#1b2942;
+    margin:0;
+    background:#07101f;
+    color:white;
+    font-family:Arial,sans-serif;
+    padding:40px;
 }
 
 .logo{
-background:#facc15;
-color:#111;
-padding:15px 30px;
-display:inline-block;
-border-radius:15px;
-font-size:30px;
-font-weight:bold;
+    background:#facc15;
+    color:#111;
+    padding:15px 30px;
+    display:inline-block;
+    border-radius:15px;
+    font-size:30px;
+    font-weight:bold;
+}
+
+h2{
+    margin-top:30px;
+    font-size:28px;
+}
+
+.card{
+    background:#111b2d;
+    border-radius:15px;
+    padding:25px;
+    margin:18px 0;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:.2s;
+}
+
+.card:hover{
+    background:#1b2942;
+    border-color:#334766;
+    transform:translateY(-2px);
+}
+
+.card-title{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.card-description{
+    color:#cbd5e1;
+    font-size:16px;
+}
+
+.card.disabled{
+    cursor:default;
+    opacity:.75;
+}
+
+.card.disabled:hover{
+    background:#111b2d;
+    border-color:transparent;
+    transform:none;
 }
 </style>
 
@@ -40,7 +78,6 @@ font-weight:bold;
 
 
 <body>
-
 
 <div class="logo">
 VOCALY
@@ -52,49 +89,112 @@ VOCALY
 </h2>
 
 
+<!-- FONOMİMİ MERDİVENİ -->
 
-<div class="card" onclick="location.href='academy/high_low.html'">
+<div
+    class="card"
+    onclick="location.href='academy/fonomimi_merdiveni.html'"
+>
 
-<h3>
-🎵 İnce – Kalın Ses Avı
-</h3>
+    <div class="card-title">
+        🎯 Fonomimi Merdiveni
+    </div>
 
-<p>
-Ses yüksekliğini keşfet
-</p>
-
-</div>
-
-
-
-
-<div class="card">
-
-<h3>
-🥁 Ritim Avı
-</h3>
-
-<p>
-Yakında
-</p>
+    <div class="card-description">
+        Sesini kullanarak notalar arasında ilerle,
+        karakterini zıplat ve doğru notalardaki coinleri topla.
+    </div>
 
 </div>
 
 
+<!-- İNCE KALIN SES AVI -->
 
+<div
+    class="card"
+    onclick="location.href='academy/high_low.html'"
+>
 
-<div class="card">
+    <div class="card-title">
+        🎵 İnce – Kalın Ses Avı
+    </div>
 
-<h3>
-🎯 Fononimi Egzersizleri
-</h3>
-
-<p>
-Yakında
-</p>
+    <div class="card-description">
+        Sesleri dinle ve sesin ince mi kalın mı olduğunu keşfet.
+    </div>
 
 </div>
 
+
+<!-- RİTİM AVI -->
+
+<div class="card disabled">
+
+    <div class="card-title">
+        🥁 Ritim Avı
+    </div>
+
+    <div class="card-description">
+        Yakında
+    </div>
+
+</div>
+
+
+<!-- GELECEK FONOMİMİ EGZERSİZLERİ -->
+
+<div class="card disabled">
+
+    <div class="card-title">
+        🎼 Sıralı Fonomimi Egzersizi
+    </div>
+
+    <div class="card-description">
+        Pitch motoruyla sesleri sırayla söyleme egzersizi — Yakında
+    </div>
+
+</div>
+
+
+<div class="card disabled">
+
+    <div class="card-title">
+        🎼 Atlama Fonomimi Egzersizi
+    </div>
+
+    <div class="card-description">
+        Ses atlamalarını çalıştıran pitch tabanlı egzersiz — Yakında
+    </div>
+
+</div>
+
+
+<!-- OYUNLAR -->
+
+<div class="card disabled">
+
+    <div class="card-title">
+        🐱 Sesle Yönlendirilen Macera
+    </div>
+
+    <div class="card-description">
+        Sesinle karakterini yönlendir — Yakında
+    </div>
+
+</div>
+
+
+<div class="card disabled">
+
+    <div class="card-title">
+        📷 Kamera ile Nota Oyunu
+    </div>
+
+    <div class="card-description">
+        Kamera tabanlı etkileşimli müzik oyunu — Yakında
+    </div>
+
+</div>
 
 
 </body>
