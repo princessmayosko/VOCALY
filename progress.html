@@ -50,14 +50,26 @@ color:#aaa;
 }
 
 
-button{
+.audioBox{
+margin-top:20px;
+padding:15px;
+background:#0b1528;
+border-radius:12px;
+}
 
-background:#22c55e;
-color:white;
-border:none;
-padding:10px 15px;
-border-radius:10px;
-cursor:pointer;
+
+audio{
+width:100%;
+margin-top:10px;
+}
+
+
+.download{
+
+display:inline-block;
+margin-top:12px;
+color:#facc15;
+text-decoration:none;
 
 }
 
@@ -117,15 +129,13 @@ box.innerHTML=
 <div class="card">
 Henüz çalışma kaydı bulunmuyor.
 </div>
-`
+`;
 
 }
 
 
 
-data
-.reverse()
-.forEach((x)=>{
+data.reverse().forEach((x)=>{
 
 
 let audioHTML="";
@@ -133,10 +143,17 @@ let audioHTML="";
 
 if(x.recording){
 
+
 audioHTML=
+
 `
 
-<br>
+<div class="audioBox">
+
+<h4>
+🎤 Öğrenci Ses Kaydı
+</h4>
+
 
 <audio controls>
 
@@ -144,16 +161,34 @@ audioHTML=
 
 </audio>
 
+
+<a class="download"
+href="${x.recording}"
+download="${x.song}_kayit.webm">
+
+⬇️ Kaydı indir
+
+</a>
+
+
+</div>
+
 `;
 
+
 }
+
 else{
 
+
 audioHTML=
+
 `
+
 <p>
 🎤 Ses kaydı bulunmuyor
 </p>
+
 `;
 
 }
@@ -205,10 +240,13 @@ box.innerHTML +=
 </p>
 
 
+
 ${audioHTML}
 
 
+
 </div>
+
 
 `;
 
