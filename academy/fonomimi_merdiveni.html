@@ -102,9 +102,10 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
   .game{width:100%;max-width:none;margin:0;padding:4px}
   .game-world{
     width:100%;
-    height:calc(100svh - 118px);
-    min-height:500px;
+    height:calc(100svh - 112px);
+    min-height:0;
     border-radius:16px;
+    overflow:hidden;
   }
 
   .level-info{
@@ -135,23 +136,23 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
 
   /* Keep the entire 8-step staircase inside a portrait screen. */
   .ladder{
-    left:10px;
+    left:4px;
     right:auto;
-    bottom:82px;
+    bottom:92px;
     width:850px;
     height:470px;
-    transform:scale(.54);
+    transform:scale(.42);
     transform-origin:left bottom;
   }
 
   .cat{width:92px;height:123px}
 
   .bottom-panel{
-    left:7px;
-    right:7px;
-    bottom:7px;
-    min-height:55px;
-    height:55px;
+    left:6px;
+    right:6px;
+    bottom:6px;
+    min-height:50px;
+    height:50px;
     padding:4px 7px;
     gap:8px;
     border-radius:12px;
@@ -179,7 +180,7 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
   #methodSelect{max-width:125px;min-width:95px;font-size:9px}
   .stats{font-size:10px;gap:4px}
   .game-world{height:calc(100svh - 112px)}
-  .ladder{left:5px;transform:scale(.48)}
+  .ladder{left:4px;transform:scale(.40)}
   .pitch-panel{width:82px;right:6px}
   .level-info{width:105px}
   .bottom-panel{left:5px;right:5px}
@@ -454,5 +455,32 @@ setTarget(playSequence[0]);
 updateCoinsForMethod();
 })();
 </script>
+
+<script>
+(function(){
+  function fitMobileLadder(){
+    const ladder=document.getElementById("ladder");
+    const world=document.querySelector(".game-world");
+    if(!ladder || !world || window.innerWidth>900) return;
+
+    // 850px is the designed ladder width. Leave a small side margin.
+    const usable=Math.max(300, world.clientWidth-10);
+    let scale=usable/850;
+
+    // Never let the ladder become unnecessarily huge on tablets.
+    scale=Math.min(scale,0.62);
+
+    ladder.style.transform="scale("+scale.toFixed(4)+")";
+    ladder.style.transformOrigin="left bottom";
+    ladder.style.left="4px";
+    ladder.style.bottom="92px";
+  }
+
+  window.addEventListener("load",fitMobileLadder);
+  window.addEventListener("resize",fitMobileLadder);
+  window.addEventListener("orientationchange",()=>setTimeout(fitMobileLadder,120));
+})();
+</script>
+
 </body>
 </html>
