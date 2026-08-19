@@ -128,7 +128,6 @@ let correctSince = 0;
 let lastMoveTime = 0;
 
 let lastPitchProcessTime = 0;
-    targetLocked = false;
 let targetLocked = false;
 
 
@@ -1179,7 +1178,7 @@ function finishGame(){
    MİKROFON BAŞLAT
 ========================================================= */
 
-async function startMicrophone(){
+async async function startMicrophone(){
 
     try{
 
