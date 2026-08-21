@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+<title>Vocaly Academy — Cüce Deve</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#071323;--panel:#0d1829;--line:#23344d;--yellow:#f5c20b;--yellow2:#d99b00;--green:#45d483;--red:#f05252;--cream:#f5f1e7}
+body{margin:0;background:#071323;color:#f5f1e7;font-family:Georgia,"Times New Roman",serif}
+.app{min-height:100vh;display:flex;flex-direction:column}
+.top{height:92px;display:flex;align-items:center;padding:10px 24px;border-bottom:1px solid #1d2b40;background:#071323;gap:24px;position:relative}
+.logo{flex:0 0 auto;color:#111;font-weight:900;letter-spacing:1px;font-size:24px;background:linear-gradient(135deg,#ffd62b,#e4a900);padding:10px 22px;border-radius:14px;box-shadow:0 0 24px #e9b40033}.logo small{display:block;color:#111;font-size:8px;letter-spacing:3px;text-align:center;margin-top:2px}
+.title{font-size:27px;font-weight:900;flex:1;text-align:center;opacity:.98}.stats{flex:0 0 auto;display:flex;gap:15px;font-size:14px}
+.stage{position:relative;flex:1;min-height:calc(100vh - 150px);overflow:hidden;background:#0b1626;border:1px solid #1e3048;margin:18px 22px;border-radius:24px}
+#video,#pose{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#video{transform:scaleX(-1)}#pose{pointer-events:none}
+.cam{position:absolute;top:18px;left:18px;z-index:3;padding:8px 13px;border-radius:20px;background:#071323dd;border:1px solid #52657d;font-size:13px}
+.card{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:165px;padding:18px 10px;text-align:center;border-radius:22px;background:#0b1626ee;border:2px solid #344963}.left{left:20px;border-color:#6d7f95}.right{right:20px;border-color:var(--yellow)}
+.char{font-size:62px}.card b{display:block;font-size:24px}.card small{color:#aaa0b8}
+.card.game-hidden{display:none}.feedback{position:absolute;left:50%;bottom:25px;transform:translateX(-50%);z-index:7;font-size:34px;font-weight:900;padding:8px 22px;border-radius:18px;background:#101014e8;opacity:0;transition:.15s}.feedback.show{opacity:1}
+.feedback.ok{color:var(--green);border:2px solid var(--green)}.feedback.bad{color:var(--red);border:2px solid var(--red)}
+.overlay{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:#07050bd9}.hidden{display:none}
+.modal{width:min(600px,90vw);padding:32px;border:1px solid #2a3d56;border-radius:20px;background:#0d1829f7;text-align:center;box-shadow:0 20px 70px #0009}.modal h1{margin:0 0 8px;font-size:38px;color:var(--cream)}.modal p{color:#c5cbd4}.rules{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:22px 0}.rule{background:#111f32;border:1px solid #2a3d56;border-radius:14px;padding:18px}.rule span{font-size:48px;display:block}.rule b{font-size:21px;display:block;margin-top:5px}.rule small{color:#aaa0b8}
+button{border:0;border-radius:12px;padding:14px 30px;font-size:16px;font-weight:900;cursor:pointer;background:linear-gradient(135deg,#ffd62b,#e4a900);color:#111;box-shadow:0 5px 18px #e4a90033;font-family:Georgia,"Times New Roman",serif}
+.resultscore{font-size:65px;color:var(--yellow);font-weight:900}
+footer{height:58px;background:#071323;border-top:1px solid #1d2b40;display:flex;align-items:center;gap:18px;padding:10px 22px;color:#aeb7c4}.bar{height:7px;flex:1;background:#18263a;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--yellow);transition:.2s}
+@media(max-width:800px){.top{padding:0 10px;gap:8px}.logo{font-size:15px;padding:8px 12px}.title{font-size:18px}.stats{gap:7px;font-size:11px}.card{width:105px;top:15px;transform:none;padding:8px}.char{font-size:38px}.card b{font-size:16px}.card small{display:none}.left{left:8px}.right{right:8px}}
+</style>
+
+<style id="calibration-ux">
+#calibration{
+  background:transparent !important;
+  display:block !important;
+  pointer-events:none;
+}
+#calibration.hidden{display:none !important}
+#calibration .modal{
+  position:absolute;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(620px,calc(100% - 40px));
+  padding:14px 22px;
+  border-radius:16px;
+  background:rgba(7,19,35,.72);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  box-shadow:0 8px 30px rgba(0,0,0,.22);
+}
+#calibration .modal h1{font-size:24px;margin:0 0 3px}
+#calibration .modal p{margin:4px 0;font-size:13px}
+#calibration .resultscore{font-size:28px;line-height:1}
+#calibration .modal > p:has(#calAction){margin:3px 0}
+#calibration .modal > div[style*="height:10px"]{margin:7px 0 5px !important;height:7px !important}
+#calibration #calHint{font-size:12px !important}
+@media(max-width:700px){
+  #calibration .modal{top:8px;width:calc(100% - 18px);padding:10px 14px}
+  #calibration .modal h1{font-size:19px}
+  #calibration .modal p{font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="logo">VOCALY<small>ACADEMY</small></div>
+  
+  <div class="stats">
+    <span>⭐ <b id="score">0</b></span>
+    <span>✓ <b id="correct">0</b></span>
+    <span>✕ <b id="wrong">0</b></span>
+    <span>⏱ <b id="time">—</b></span>
+  </div>
+</header>
+
+<section class="stage"><div id="gameLine" style="position:absolute;left:0;right:0;top:50%;height:4px;background:#f5c20b;box-shadow:0 0 12px #f5c20b;z-index:2;pointer-events:none"></div>
+<div style="position:absolute;right:18px;top:calc(50% - 32px);z-index:3;background:#071323dd;color:#f5c20b;padding:5px 9px;border-radius:8px;font:bold 12px Arial">ORTA ÇİZGİ</div>
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="pose"></canvas>
+  <div class="cam" id="cam">● Kamera bekleniyor</div>
+<div id="debugPanel" style="position:absolute;top:55px;left:18px;z-index:6;padding:12px 15px;border-radius:12px;background:#071323ee;border:1px solid #f5c20b;color:#fff;font-family:Arial,sans-serif;font-size:13px;line-height:1.55;min-width:230px">
+<b style="color:#f5c20b">KAMERA TESTİ</b><br>
+KURAL: ÇİZGİNİN ÜSTÜ = DEVE · ÇİZGİNİN ALTI = CÜCE<br>
+Yüz merkezi: <span id="dbgFace">—</span><br>
+Çizgi: <span id="dbgLine">0.500</span><br>
+Durum: <b id="dbgState">—</b><br>
+Yüz noktası: <span id="dbgCount">—</span>
+</div>
+  <div id="debug" style="position:absolute;top:18px;left:170px;z-index:3;padding:8px 12px;border-radius:12px;background:#071323dd;color:#aeb7c4;font-size:12px">Sistem hazır</div>
+
+  <div class="card left" id="cueLeft"><div class="char">🧙</div><b>CÜCE</b><small>İnce ses</small></div>
+  <div class="card right" id="cueRight"><div class="char">🐪</div><b>DEVE</b><small>Kalın ses</small></div>
+
+  <div id="feedback" class="feedback"></div>
+<div id="calGuide" style="position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:8;padding:7px 14px;border-radius:18px;background:rgba(7,19,35,.72);border:1px solid #52657d;color:#fff;font-size:13px;display:none;pointer-events:none">
+  Yüz merkezini sarı çizgiye hizala
+</div>
+
+  <div id="calibration" class="overlay hidden"><div id="calLine" style="position:absolute;left:0;right:0;top:50%;height:4px;background:#f5c20b;box-shadow:0 0 14px #f5c20b;z-index:6"></div>
+    <div class="modal">
+      <h1>KAMERA KALİBRASYONU</h1>
+      <p id="calText">Kameranın seni öğrenmesi için iki pozisyonu ayrı ayrı kaydedeceğiz.</p>
+      <div class="resultscore" id="calCount">—</div>
+      <p><b id="calAction">Hazır ol…</b></p>
+      <div style="height:10px;background:#18263a;border-radius:10px;overflow:hidden;margin:18px 0 10px">
+        <div id="calBar" style="height:100%;width:0;background:#f5c20b;transition:width .1s"></div>
+      </div>
+      <p id="calHint" style="font-size:14px;color:#aeb7c4;margin:0">
+        Kamerada başın ve gövden mümkün olduğunca görünsün. Hareket etmeden sabit kal.
+      </p>
+    </div>
+  </div>
+
+  <div id="intro" class="overlay">
+    <div class="modal">
+      <h1>CÜCE – DEVE</h1>
+      <p>Sesleri dikkatle dinle.</p>
+      <div class="rules">
+        <div class="rule"><span>🧙</span><b>CÜCE</b><small>İnce ses → OTUR</small></div>
+        <div class="rule"><span>🐪</span><b>DEVE</b><small>Kalın ses → AYAĞA KALK</small></div>
+      </div>
+      <p>Oyun başladığında cevapla ilgili hiçbir ipucu gösterilmeyecek.</p>
+      <button id="start" type="button" onclick="startGame()">OYUNA BAŞLA</button>
+    </div>
+  </div>
+
+  <div id="result" class="overlay hidden">
+    <div class="modal">
+      <h1>OYUN BİTTİ</h1>
+      <div class="resultscore" id="finalScore">0</div>
+      <p><b id="finalCorrect">0</b> doğru · <b id="finalWrong">0</b> yanlış</p>
+      <button id="again" type="button" onclick="startGame()">TEKRAR OYNA</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span id="round">Hazır</span>
+  <div class="bar"><i id="progress"></i></div>
+</footer>
+</div>
+
+<script>
+let pose=null, lastPose=null, posture="unknown", running=false, detectionStarted=false, processing=false;
+let round=0,score=0,correct=0,wrong=0,target=null,roundStart=0,timer=null;
+let calibration={standing:[],sitting:[],ready:false};
+let stablePosture="unknown", postureSince=0;
+let postureHistory=[];
+let roundAnswers=[];
+let faceSamples=[];
+const TOTAL=12, RESPONSE=3200, LOW=261.63, HIGH=523.25;
+let audioCtx=null;
+
+const $=id=>document.getElementById(id);
+const video=$("video"), canvas=$("pose"), ctx=canvas.getContext("2d");
+const cam=$("cam"), feedback=$("feedback"), intro=$("intro"), result=$("result");
+
+function status(t){$("debug").textContent=t}
+
+async function initCamera(){
+  if(!navigator.mediaDevices?.getUserMedia)
+    throw new Error("Kamera API kullanılamıyor.");
+  status("Kamera izni bekleniyor…");
+  const stream=await navigator.mediaDevices.getUserMedia({
+    video:{facingMode:"user",width:{ideal:1280},height:{ideal:720}},
+    audio:false
+  });
+  video.srcObject=stream;
+  await video.play();
+  cam.textContent="● Kamera hazır";
+}
+
+function angle(a,b,c){
+  const ab={x:a.x-b.x,y:a.y-b.y},cb={x:c.x-b.x,y:c.y-b.y};
+  const dot=ab.x*cb.x+ab.y*cb.y,mag=Math.hypot(ab.x,ab.y)*Math.hypot(cb.x,cb.y);
+  return mag?Math.acos(Math.max(-1,Math.min(1,dot/mag)))*180/Math.PI:180;
+}
+
+function rawPoseMetrics(p){
+  // MediaPipe Pose yüz bölgesi: 0-10 = 11 yüz landmark'ı.
+  // Hepsinin Y ortalamasını "yüz merkezi" kabul ediyoruz.
+  const face=p.slice(0,11);
+  const visible=face.filter(x=>x && (x.visibility??1)>=.35);
+  if(visible.length<6)return null;
+
+  const faceY=visible.reduce((sum,x)=>sum+x.y,0)/visible.length;
+  return {faceY, count:visible.length};
+}
+
+function classify(p){
+  const m=rawPoseMetrics(p);
+  if(m){
+    const line=calibration.lineY;
+    $("dbgFace").textContent=m.faceY.toFixed(3);
+    $("dbgLine").textContent=line.toFixed(3);
+    $("dbgCount").textContent=m.count+"/11";
+    $("dbgState").textContent =
+      m.faceY < 0.5 ? "DEVE" : m.faceY > 0.5 ? "CÜCE" : "ÇİZGİ";
+  }
+  if(!m || !calibration.ready)return posture;
+
+  const lineY=calibration.lineY;
+
+  // Çizgiyi çok az bile aşmak yeterli.
+  // Y küçük = ekranın üstü = DEVE
+  // Y büyük = ekranın altı = CÜCE
+  if(m.faceY < lineY){
+    $("dbgState").textContent="DEVE";
+    $("dbgState").style.color="#f5c20b";
+    return "standing";
+  }
+  if(m.faceY > lineY){
+    $("dbgState").textContent="CÜCE";
+    $("dbgState").style.color="#62d8ff";
+    return "sitting";
+  }
+
+  return posture;
+}
+function median(a){
+  if(!a.length)return 0;
+  const b=[...a].sort((x,y)=>x-y);
+  const m=Math.floor(b.length/2);
+  return b.length%2?b[m]:(b[m-1]+b[m])/2;
+}
+
+function draw(p){
+  if(!video.videoWidth)return;
+  canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.save();
+  ctx.scale(-1,1);ctx.translate(-canvas.width,0);
+  ctx.strokeStyle="#27e0bf";ctx.lineWidth=Math.max(4,canvas.width/260);ctx.lineCap="round";
+  if(window.POSE_CONNECTIONS){
+    drawConnectors(ctx,p,POSE_CONNECTIONS,{color:"#27e0bf",lineWidth:4});
+    drawLandmarks(ctx,p,{color:"#f3c94f",lineWidth:2});
+  }else{
+    const links=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
+    for(const[a,b]of links){
+      ctx.beginPath();ctx.moveTo(p[a].x*canvas.width,p[a].y*canvas.height);
+      ctx.lineTo(p[b].x*canvas.width,p[b].y*canvas.height);ctx.stroke();
+    }
+  }
+  ctx.restore();
+
+  // Debug: yüz merkezini ekranda işaretle.
+  const fm=rawPoseMetrics(p);
+  if(fm){
+    const x=canvas.width*0.5;
+    const y=canvas.height*fm.faceY;
+    ctx.beginPath();
+    ctx.arc(canvas.width-x,y,10,0,Math.PI*2);
+    ctx.fillStyle="#ff3b81";
+    ctx.fill();
+    ctx.strokeStyle="#fff";
+    ctx.lineWidth=2;
+    ctx.stroke();
+  }
+}
+
+function onPoseResults(r){
+  if(!r.poseLandmarks){
+    posture="unknown";
+    return;
+  }
+  lastPose=r.poseLandmarks;
+  const detected=classify(lastPose);
+  if(detected!=="unknown"){
+    posture=detected;
+    postureHistory.push({t:performance.now(),p:detected});
+    const cutoff=performance.now()-1800;
+    postureHistory=postureHistory.filter(x=>x.t>=cutoff);
+  }
+
+  // Game scoring uses the raw face center directly, not the posture classifier.
+  if(running && target){
+    const fm=rawPoseMetrics(lastPose);
+    if(fm){
+      faceSamples.push({t:performance.now(),y:fm.faceY});
+      const cutoff=roundStart-50;
+      faceSamples=faceSamples.filter(x=>x.t>=cutoff);
+    }
+  }
+  draw(lastPose);
+  if(calibration.ready){
+    const sy=median(calibration.standing.map(x=>x.shoulderY)).toFixed(3);
+    const si=median(calibration.sitting.map(x=>x.shoulderY)).toFixed(3);
+    const cy=rawPoseMetrics(lastPose)?.shoulderY;
+    status("Omuz: "+(posture==="standing"?"AYAKTA":"OTURUYOR")+" | A:"+sy+" O:"+si+(cy!=null?" Ş:"+cy.toFixed(3):""));
+  }else{
+    status("Omuz hizası: "+(posture==="standing"?"AYAKTA":posture==="sitting"?"OTURUYOR":"—"));
+  }
+}
+
+async function initPose(){
+  if(!window.Pose) throw new Error("MediaPipe Pose yüklenemedi.");
+  status("Pose sistemi hazırlanıyor…");
+  pose=new Pose({locateFile:(file)=>`https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`});
+  pose.setOptions({
+    modelComplexity:1,
+    smoothLandmarks:true,
+    enableSegmentation:false,
+    minDetectionConfidence:.5,
+    minTrackingConfidence:.5
+  });
+  pose.onResults(onPoseResults);
+  status("Pose sistemi hazır");
+}
+
+async function detectLoop(){
+  if(!detectionStarted||!pose||video.readyState<2){
+    requestAnimationFrame(detectLoop);
+    return;
+  }
+  if(!processing){
+    processing=true;
+    try{await pose.send({image:video});}
+    catch(e){console.error(e);status("Pose hatası: "+e.message)}
+    processing=false;
+  }
+  requestAnimationFrame(detectLoop);
+}
+
+function tone(freq){
+  audioCtx??=new(window.AudioContext||window.webkitAudioContext)();
+  const now=audioCtx.currentTime, master=audioCtx.createGain();
+  master.gain.setValueAtTime(.0001,now);
+  master.gain.exponentialRampToValueAtTime(.65,now+.025);
+  master.gain.exponentialRampToValueAtTime(.0001,now+.9);
+  master.connect(audioCtx.destination);
+  [1,2,3,4].forEach((mult,i)=>{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=i===0?"triangle":"sine"; o.frequency.value=freq*mult;
+    g.gain.value=[1,.28,.10,.035][i];
+    o.connect(g).connect(master); o.start(now); o.stop(now+.92);
+  });
+}
+
+function ui(){
+  $("score").textContent=score;
+  $("correct").textContent=correct;
+  $("wrong").textContent=wrong;
+  $("round").textContent=`Tur ${round} / ${TOTAL}`;
+  $("progress").style.width=(round/TOTAL*100)+"%";
+}
+
+function show(ok){
+  feedback.textContent=ok?"✓":"✕";
+  feedback.className="feedback show "+(ok?"ok":"bad");
+  setTimeout(()=>feedback.className="feedback",450);
+}
+
+function getFaceAnswer(){
+  if(!lastPose)return "unknown";
+  const m=rawPoseMetrics(lastPose);
+  if(!m)return "unknown";
+
+  // FINAL GAME RULE:
+  // face center above 0.500 = DEVE
+  // face center below 0.500 = CÜCE
+  if(m.faceY < 0.500) return "standing";
+  if(m.faceY > 0.500) return "sitting";
+  return "unknown";
+}
+
+function next(){
+  if(!running)return;
+  if(round>=TOTAL){finish();return}
+
+  round++;
+  ui();
+
+  target=Math.random()<.5 ? "cuce" : "deve";
+  roundStart=performance.now();
+  faceSamples=[];
+
+  // Keep the current position as the initial state. No movement is required.
+  const initialFace=rawPoseMetrics(lastPose);
+  if(initialFace){
+    faceSamples.push({t:roundStart,y:initialFace.faceY});
+  }
+
+  // KALIN DO (LOW) = CÜCE, İNCE DO (HIGH) = DEVE.
+  tone(target==="cuce" ? LOW : HIGH);
+
+  clearTimeout(timer);
+
+  timer=setTimeout(()=>{
+    const line=calibration.lineY;
+    const recent=faceSamples.filter(x=>x.t>=roundStart);
+
+    // IMPORTANT:
+    // This is a state game, not a movement game.
+    // At the scoring moment, whichever side of the line the face is on
+    // determines the answer. Staying still is therefore fully valid.
+    const last=recent.length ? recent[recent.length-1].y : null;
+
+    let correctDetected=false;
+    let answer="unknown";
+
+    if(last!==null){
+      if(last < line){
+        answer="deve";
+      }else if(last > line){
+        answer="cuce";
+      }
+
+      correctDetected = answer===target;
+    }
+
+    if(correctDetected){
+      correct++;
+      score+=100;
+    }else{
+      wrong++;
+    }
+
+    $("dbgState").textContent =
+      "SES: "+(target==="deve"?"KALIN DO":"İNCE DO")+
+      " | HEDEF: "+(target==="deve"?"DEVE":"CÜCE")+
+      " | ÇİZGİ: "+line.toFixed(3)+
+      " | SON: "+(last===null?"—":last.toFixed(3))+
+      " | CEVAP: "+(answer==="deve"?"DEVE":answer==="cuce"?"CÜCE":"ÇİZGİ")+
+      " | "+(correctDetected?"DOĞRU":"YANLIŞ");
+
+    show(correctDetected);
+    ui();
+    setTimeout(next,500);
+  },RESPONSE);
+}
+async function calibrate(){
+  const box=$("calibration");
+  box.classList.remove("hidden");
+  $("calGuide").style.display="block";
+
+  calibration={standing:[],sitting:[],ready:false,lineY:.5};
+
+  $("calAction").textContent="YÜZÜNÜ ÇİZGİYE GETİR";
+  $("calText").textContent="Pembe nokta yüzünün merkezi. Onu sarı çizginin tam üzerine getir.";
+  $("calHint").textContent="Hazırlık 5 saniye. Sonra 8 saniye boyunca ölçüm yapılacak. Bu sırada mümkün olduğunca sabit kal.";
+  $("calBar").style.width="0%";
+  $("calCount").textContent="5";
+
+  // 5-second preparation countdown.
+  let n=5;
+  await new Promise(resolve=>{
+    const t=setInterval(()=>{
+      n--;
+      $("calCount").textContent=n;
+      if(n<=0){clearInterval(t);resolve();}
+    },1000);
+  });
+
+  $("calAction").textContent="KALİBRE EDİLİYOR";
+  $("calText").textContent="Pembe yüz noktasını sarı çizginin üzerinde tut.";
+  const samples=[];
+  const duration=8000;
+  const begin=performance.now();
+
+  await new Promise(resolve=>{
+    const collect=()=>{
+      const elapsed=performance.now()-begin;
+      $("calBar").style.width=Math.min(100,elapsed/duration*100)+"%";
+      $("calCount").textContent=Math.max(0,Math.ceil((duration-elapsed)/1000))+" sn";
+
+      if(lastPose){
+        const m=rawPoseMetrics(lastPose);
+        if(m) samples.push(m.faceY);
+      }
+
+      if(elapsed<duration) requestAnimationFrame(collect);
+      else resolve();
+    };
+    requestAnimationFrame(collect);
+  });
+
+  if(samples.length<30){
+    box.classList.add("hidden");
+    throw new Error("Yüz yeterince algılanamadı. Kameraya biraz daha yaklaş.");
+  }
+
+  // The line is calibrated to what THIS camera/model sees.
+  calibration.lineY=median(samples);
+  calibration.ready=true;
+
+  $("calBar").style.width="100%";
+  $("calCount").textContent="✓";
+  $("calAction").textContent="KALİBRASYON TAMAM";
+  $("calText").textContent="Referans çizgisi kaydedildi.";
+  $("calHint").textContent="Oyun başlıyor. Çizginin üstü DEVE, altı CÜCE.";
+  await new Promise(r=>setTimeout(r,1500));
+  box.classList.add("hidden");
+  $("calGuide").style.display="none";
+}
+async function start(){
+  intro.classList.add("hidden");
+  result.classList.add("hidden");
+  $("cueLeft").classList.add("game-hidden");
+  $("cueRight").classList.add("game-hidden");
+  round=score=correct=wrong=0;
+  postureHistory=[];
+  roundAnswers=[];
+  faceSamples=[];
+  running=false;
+  detectionStarted=true;
+  ui();
+  if(!window._detectStarted){window._detectStarted=true;requestAnimationFrame(detectLoop)}
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  await audioCtx.resume();
+
+  try{
+    await calibrate();
+  }catch(e){
+    $("calibration").classList.add("hidden");
+    $("cueLeft").classList.remove("game-hidden");
+    $("cueRight").classList.remove("game-hidden");
+    intro.classList.remove("hidden");
+    status("Kalibrasyon başarısız");
+    alert(e.message);
+    return;
+  }
+
+  running=true;
+  status("Kalibrasyon tamamlandı — oyun başlıyor");
+  setTimeout(next,700);
+}
+
+function finish(){
+  running=false;
+  clearTimeout(timer);
+  $("cueLeft").classList.remove("game-hidden");
+  $("cueRight").classList.remove("game-hidden");
+  $("finalScore").textContent=score;
+  $("finalCorrect").textContent=correct;
+  $("finalWrong").textContent=wrong;
+  result.classList.remove("hidden");
+}
+
+window.startGame=async function(){
+  const btn=$("start");
+  btn.disabled=true;
+  try{
+    status("Kamera açılıyor…");
+    await initCamera();
+    await initPose();
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    await audioCtx.resume();
+    await start();
+  }catch(e){
+    console.error(e);
+    cam.textContent="● Başlatma hatası";
+    status("HATA: "+(e?.message||e));
+    alert("Oyun başlatılamadı.\n\n"+(e?.message||e));
+  }finally{
+    btn.disabled=false;
+  }
+};
+
+window.addEventListener("load",()=>status("Hazır — OYUNA BAŞLA'ya bas"));
+</script>
+</body>
+</html>
