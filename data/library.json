@@ -1,5 +1,10 @@
 [
   {
+    "title": "İstiklâl Marşı",
+    "audio": "media/istiklal_marsi.mp3",
+    "json": "data/istiklal_marsi.json"
+  },
+  {
     "title": "Gündüz Gece",
     "audio": "media/gunduzgece.mp3",
     "json": "data/Gündüz_Gece.json"
