@@ -148,7 +148,7 @@
       <button class="smallBtn primary" id="previewPlayBtn">Önizleme</button>
       <button class="smallBtn" id="previewStopBtn">Durdur</button>
       <button class="smallBtn" id="clearSelectionBtn">Seçimi Temizle</button>
-      <button class="smallBtn primary" id="mergeSegmentsBtn">🔗 Segmentleri Birleştir</button>
+      <button class="smallBtn primary" id="mergeSegmentsBtn">🔗 Sonrakiyle Birleştir</button>
       <button class="smallBtn" id="playLineBtn">Satırı Çal</button>
     </div>
     <div id="karaoke"></div>
@@ -347,61 +347,59 @@
     function karaokePlaybackUpdate(time){ const sorted=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.start!==null && x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); document.querySelectorAll('.karaokeBox').forEach(el=>{ el.classList.remove('active'); const fill=el.querySelector('.fill'); if(fill) fill.style.width='0%'; }); const intro=heceler.find(h=>h.isIntro); if(intro && intro.end!==null && intro.end>0){ const introEl=document.getElementById('karaoke-intro'); if(introEl){ const fill=introEl.querySelector('.fill'); if(time<=intro.end){ introEl.classList.add('active'); fill.style.width=Math.max(0,Math.min(100,(time/intro.end)*100))+'%'; } else fill.style.width='100%'; } } sorted.forEach((item,i)=>{ const el=document.getElementById('karaoke-box-'+i); if(!el) return; const fill=el.querySelector('.fill'); const h=item.seg; if(time>=h.start && time<=h.end){ el.classList.add('active'); fill.style.width=Math.max(0,Math.min(100,((time-h.start)/(h.end-h.start))*100))+'%'; } else if(time>h.end){ fill.style.width='100%'; } if(selectedSegmentIndexes.includes(item.idx)) el.classList.add('selected'); }); }
     function playSingleKaraokeSegment(index){ const seg=heceler[index]; if(!seg||seg.start===null||seg.end===null||!hasAudioLoaded()) return; selectedSegmentIndexes=[index]; renderKaraoke(); seekToSegment(index,true); }
     function mergeSelectedSegments(){
-      const indexes = [...new Set(selectedSegmentIndexes)]
-        .filter(i => Number.isInteger(i) && heceler[i] && !heceler[i].isIntro)
-        .sort((a,b) => {
-          const sa = heceler[a].start ?? Infinity;
-          const sb = heceler[b].start ?? Infinity;
-          return sa - sb || a - b;
-        });
-
-      if(indexes.length < 2){
-        return alert('Birleştirmek için en az iki segment seç.');
+      if(loadedIndex===-1 || !heceler[loadedIndex] || heceler[loadedIndex].isIntro){
+        return alert('Önce bir segment seç.');
       }
 
-      const segments = indexes.map(i => heceler[i]);
-      const timed = segments.filter(s => s.start !== null && s.end !== null);
+      const currentIndex = loadedIndex;
+      const current = heceler[currentIndex];
 
-      if(timed.length < 2){
-        return alert('Birleştirmek için seçilen segmentlerin zamanları belirlenmiş olmalı.');
+      // Find the next non-intro segment in chronological/order sequence.
+      let nextIndex = -1;
+      for(let i=currentIndex+1;i<heceler.length;i++){
+        if(heceler[i] && !heceler[i].isIntro){
+          nextIndex=i;
+          break;
+        }
       }
 
-      const start = Math.min(...timed.map(s => Number(s.start)));
-      const end = Math.max(...timed.map(s => Number(s.end)));
+      if(nextIndex===-1){
+        return alert('Birleştirilecek sonraki segment yok.');
+      }
 
-      const text = segments
-        .map(s => String(s.text || '').trim())
-        .filter(Boolean)
-        .join(' ');
+      const next = heceler[nextIndex];
+
+      if(current.start===null || current.end===null || next.start===null || next.end===null){
+        return alert('Birleştirmek için her iki segmentin zamanları belirlenmiş olmalı.');
+      }
+
+      const currentText = String(current.text||'').trim();
+      const nextText = String(next.text||'').trim();
+      const text = [currentText,nextText].filter(Boolean).join(' ');
 
       const notes = [];
-      segments.forEach(s => {
+      [current,next].forEach(s=>{
         const raw = normalizeNotes(s.note);
         if(!raw) return;
-        raw.split(/\s+/).filter(Boolean).forEach(n => {
+        raw.split(/\s+/).filter(Boolean).forEach(n=>{
           if(!notes.includes(n)) notes.push(n);
         });
       });
 
-      const merged = {
-        text,
-        note: notes.join(' '),
-        start: round2(start),
-        end: round2(end),
-        line: segments[0].line ?? 1,
-        isIntro: false
-      };
+      // Keep the current segment's start and extend its measurement window
+      // through the next segment's end.
+      current.text = text;
+      current.note = notes.join(' ');
+      current.end = round2(Math.max(Number(current.end), Number(next.end)));
 
-      const firstIndex = indexes[0];
-      const selectedSet = new Set(indexes);
-      heceler = heceler.filter((_, i) => !selectedSet.has(i));
-      heceler.splice(firstIndex, 0, merged);
+      // Preserve the current segment's line. Remove only the next segment.
+      heceler.splice(nextIndex,1);
 
-      loadedIndex = firstIndex;
-      selectedSegmentIndexes = [firstIndex];
+      loadedIndex = currentIndex;
+      selectedSegmentIndexes = [currentIndex];
 
       renderAll();
-      seekToSegment(firstIndex, false);
+      seekToSegment(currentIndex,false);
       autoSaveProject();
     }
     function clearSelection(){ selectedSegmentIndexes=[]; renderKaraoke(); }
