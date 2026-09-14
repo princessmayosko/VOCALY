@@ -350,7 +350,7 @@
     function selectWholeLine(lineNo){ selectedSegmentIndexes=heceler.map((seg,idx)=>({seg:seg,idx:idx})).filter(x=>!x.seg.isIntro && x.seg.line===lineNo && x.seg.start!==null && x.seg.end!==null).map(x=>x.idx); renderKaraoke(); }
     async function playSegmentsSequentially(indexes){ if(!hasAudioLoaded() || !indexes.length) return; sequenceStopRequested=false; const ordered=indexes.map(i=>({i:i,seg:heceler[i]})).filter(x=>x.seg&&x.seg.start!==null&&x.seg.end!==null).sort((a,b)=>a.seg.start-b.seg.start); for(const item of ordered){ if(sequenceStopRequested) break; selectedSegmentIndexes=[item.i]; renderKaraoke(); seekToSegment(item.i,false); ws.play(item.seg.start,item.seg.end); await new Promise(resolve=>setTimeout(resolve, Math.max(40, ((item.seg.end-item.seg.start)*1000)+60))); } }
     function playSelectedLine(){ if(!selectedSegmentIndexes.length){ alert('Önce bir kelime seç.'); return; } const first=heceler[selectedSegmentIndexes[0]]; if(!first) return; selectWholeLine(first.line); playSegmentsSequentially(selectedSegmentIndexes); }
-    function ensureVisible(el, container){
+    function ensureVisible(el, container, instant=false){
       if(!el || !container) return;
 
       const cRect = container.getBoundingClientRect();
@@ -364,7 +364,7 @@
       const targetScroll = el.offsetTop - (container.clientHeight * 0.30);
       container.scrollTo({
         top: Math.max(0, targetScroll),
-        behavior:'smooth'
+        behavior: instant ? 'auto' : 'smooth'
       });
     }
 
@@ -973,7 +973,207 @@
       stopRecording();
     }
 
-    async function startMeasure(){
+    async function runContinuousMeasurement(items){
+      if(!items.length || !hasAudioLoaded()) return;
+
+      const states = new Map();
+      items.forEach(({seg,idx})=>{
+        states.set(idx,{
+          index:idx, seg,
+          boxEl:document.getElementById('measure-box-'+idx),
+          started:false, finalized:false, matched:false,
+          detectedFrames:0, correctFrames:0,
+          firstVoiceMs:null, firstCorrectMs:null,
+          correctDurationMs:0, longestCorrectMs:0,
+          currentCorrectStreakMs:0, centsSum:0, centsCount:0
+        });
+      });
+
+      try{ await initPitch(); }catch(err){ console.log(err); return; }
+
+      setCetvelDetected(null);
+      runContinuousMeasurement._lastPitchSample = 0;
+
+      await new Promise(resolve=>{
+        let rafId=0;
+        let lastPerf=performance.now();
+
+        function finalizeState(state){
+          if(!state || state.finalized) return;
+          const seg=state.seg;
+          const durationMs=Math.max(180,(seg.end-seg.start)*1000);
+          const noteText=String(seg.note||'').trim();
+          const targetMidi=getSegmentTargetMidi(seg);
+
+          if(state.boxEl){
+            state.boxEl.classList.remove('active','ok','bad','neutral');
+            state.boxEl.classList.add(noteText ? (state.matched?'ok':'bad') : 'neutral');
+          }
+
+          const coverageRatio=durationMs ? Math.min(1,(state.correctDurationMs||0)/durationMs):0;
+          const pitchRatio=state.detectedFrames ? state.correctFrames/state.detectedFrames:0;
+          let timingScore=0;
+          if(state.firstCorrectMs!=null){
+            const ratio=state.firstCorrectMs/durationMs;
+            timingScore=ratio<=0.2?100:ratio<=0.4?80:ratio<=0.6?55:20;
+          }
+
+          state.finalized=true;
+          if(analysisData) analysisData.segments.push({
+            index:state.index,text:seg.text,start:seg.start,end:seg.end,
+            target:noteText,targetMidi,durationMs,
+            status:noteText?(state.matched?'ok':'bad'):'neutral',
+            neutral:!noteText,
+            pitchScore:Math.round(pitchRatio*100),
+            timingScore,
+            coverageScore:Math.round(coverageRatio*100),
+            firstVoiceMs:state.firstVoiceMs,
+            firstCorrectMs:state.firstCorrectMs,
+            longestCorrectMs:state.longestCorrectMs,
+            avgCents:state.centsCount ? state.centsSum/state.centsCount:null,
+            totalScore:state.matched?100:0
+          });
+        }
+
+        function finish(){
+          items.forEach(({idx})=>finalizeState(states.get(idx)));
+          setCetvelDetected(null);
+          stopPitchLoop();
+          if(rafId) cancelAnimationFrame(rafId);
+          resolve();
+        }
+
+        function frame(){
+          if(!isMeasureRunning || !hasAudioLoaded()){ finish(); return; }
+
+          const nowPerf=performance.now();
+          const dt=Math.max(0,nowPerf-lastPerf);
+          lastPerf=nowPerf;
+
+          // TEK SAAT: görsel takip ve ölçme doğrudan WaveSurfer'ın gerçek
+          // playback saatini kullanır. setTimeout ile tahmini zaman tutulmaz.
+          const songTime=ws.getCurrentTime();
+
+          const activeStates=[];
+          let activeChanged=false;
+
+          items.forEach(({idx})=>{
+            const state=states.get(idx);
+            const seg=state.seg;
+            const box=state.boxEl;
+
+            if(!state.started && songTime>=seg.start){
+              state.started=true;
+              activeChanged=true;
+              if(box){
+                box.classList.remove('ok','bad','neutral');
+                box.classList.add('active');
+                const fill=box.querySelector('.fill');
+                if(fill){
+                  fill.style.transition='none';
+                  fill.style.width='0%';
+                }
+                // Ölçme sırasında yumuşak scroll yerine anlık takip.
+                ensureVisible(box,measureBoxes,true);
+              }
+            }
+
+            if(!state.finalized && songTime>=seg.start && songTime<=seg.end){
+              activeStates.push(state);
+              if(box){
+                const fill=box.querySelector('.fill');
+                if(fill){
+                  const ratio=(songTime-seg.start)/Math.max(0.001,seg.end-seg.start);
+                  fill.style.transition='none';
+                  fill.style.width=(Math.max(0,Math.min(1,ratio))*100)+'%';
+                }
+              }
+            }
+
+            if(!state.finalized && songTime>seg.end){
+              finalizeState(state);
+            }
+          });
+
+          if(activeStates.length){
+            const displayState=activeStates[activeStates.length-1];
+            setCetvelTarget(String(displayState.seg.note||'').trim());
+          }else{
+            setCetvelTarget('');
+            setCetvelDetected(null);
+          }
+
+          // Pitch örnekleme ayrı ve seyrek; görsel saat bundan bağımsızdır.
+          if(activeStates.length){
+            const shouldSamplePitch=(nowPerf-(runContinuousMeasurement._lastPitchSample||0))>=40;
+            let pitchInfo=null;
+
+            if(shouldSamplePitch){
+              runContinuousMeasurement._lastPitchSample=nowPerf;
+              analyser.getFloatTimeDomainData(dataArray);
+              pitchInfo=freqToPitchInfo(autoCorrelate(dataArray,audioCtx.sampleRate));
+              setCetvelDetected(pitchInfo||null);
+
+              activeStates.forEach(state=>{
+                const noteText=String(state.seg.note||'').trim();
+
+                if(pitchInfo){
+                  state.detectedFrames++;
+                  state.centsSum+=pitchInfo.cents;
+                  state.centsCount++;
+
+                  const relativeMs=Math.max(0,(songTime-state.seg.start)*1000);
+                  if(state.firstVoiceMs===null) state.firstVoiceMs=relativeMs;
+
+                  if(noteText && noteMatches(noteText,pitchInfo)){
+                    state.matched=true;
+                    state.correctFrames++;
+                    if(state.firstCorrectMs===null) state.firstCorrectMs=relativeMs;
+                    state.correctDurationMs+=40;
+                    state.currentCorrectStreakMs+=40;
+                    state.longestCorrectMs=Math.max(state.longestCorrectMs,state.currentCorrectStreakMs);
+                    if(state.boxEl){
+                      state.boxEl.classList.remove('bad');
+                      state.boxEl.classList.add('ok');
+                    }
+                  }else{
+                    state.currentCorrectStreakMs=0;
+                  }
+
+                  if(analysisData) analysisData.frames.push({
+                    t:songTime,midi:pitchInfo.midi,note:pitchInfo.note,
+                    cents:pitchInfo.cents,segmentIndex:state.index
+                  });
+                }else{
+                  state.currentCorrectStreakMs=0;
+                  if(analysisData) analysisData.frames.push({
+                    t:songTime,midi:null,note:null,cents:null,segmentIndex:state.index
+                  });
+                }
+              });
+            }
+          }
+
+          if(analysisData){
+            analysisData.currentTime=songTime;
+            drawAnalysisLive();
+          }
+
+          const finalEnd=Math.max(...items.map(item=>Number(item.seg.end)||0));
+          if(songTime>=finalEnd){
+            finish();
+            return;
+          }
+
+          rafId=requestAnimationFrame(frame);
+        }
+
+        isPitchRunning=true;
+        rafId=requestAnimationFrame(frame);
+      });
+    }
+
+async function startMeasure(){
       if(!hasAudioLoaded()) return;
       stopLiveCetvelListening();
       clearMeasureTimers();
@@ -1000,14 +1200,16 @@
         },0));
       }
 
-      const items=heceler.map((seg,idx)=>({seg,idx})).filter(x=>!x.seg.isIntro&&x.seg.start!==null&&x.seg.end!==null);
-      items.forEach(({seg,idx})=>{
-        const startMs=Math.max(0,(seg.start||0)*1000);
-        measureTimerRefs.push(setTimeout(()=>{ playAndMeasureSegment(idx); },startMs));
-      });
+      const items=heceler.map((seg,idx)=>({seg,idx}))
+        .filter(x=>!x.seg.isIntro&&x.seg.start!==null&&x.seg.end!==null)
+        .sort((a,b)=>a.seg.start-b.seg.start);
+
+      // ÖLÇME: Ses baştan sona yalnızca bir kez çalar.
+      // Segmentler sesi yeniden seek/play yapmaz; yalnızca ölçüm penceresi
+      // olarak takip edilir. Bu, özellikle düşük güçlü/Pardus tahtalarda
+      // oluşan mikro takılmaları önler.
       if(items.length){
-        // Sonuç popup'ını dizideki son elemana değil,
-        // zaman açısından gerçekten en son biten segmente göre aç.
+        runContinuousMeasurement(items);
         const finalEnd = Math.max(...items.map(item => Number(item.seg.end) || 0));
         resultTimer = setTimeout(showResultModal, (finalEnd * 1000) + 900);
       }
