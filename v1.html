@@ -1006,8 +1006,10 @@
         measureTimerRefs.push(setTimeout(()=>{ playAndMeasureSegment(idx); },startMs));
       });
       if(items.length){
-        const last = items[items.length-1].seg;
-        resultTimer = setTimeout(showResultModal, ((last.end||0)*1000)+900);
+        // Sonuç popup'ını dizideki son elemana değil,
+        // zaman açısından gerçekten en son biten segmente göre aç.
+        const finalEnd = Math.max(...items.map(item => Number(item.seg.end) || 0));
+        resultTimer = setTimeout(showResultModal, (finalEnd * 1000) + 900);
       }
     }
 
