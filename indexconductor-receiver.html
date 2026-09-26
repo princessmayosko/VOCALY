@@ -37,6 +37,7 @@ const calBtn=document.getElementById('cal');
 
 let baseX=0,baseY=0,baseZ=0;
 let calSamples=[], calibrated=false;
+let lastSensor=performance.now();
 let px=0,py=0,vx=0,vy=0,lastFrame=performance.now();
 let targetX=0,targetY=0;
 let lastData=0;
@@ -76,23 +77,35 @@ peer.on('connection',conn=>{
       setStatus('<span class="ok">● SERBEST HAREKET AKTİF</span><br>Telefonu fiziksel olarak hareket ettir.');
     }
 
-    // DeviceMotion: yönelim değil, doğrusal ivme.
-    // Böylece telefonu kendi ekseninde çevirmek tek başına eli yürütmez.
+    // v4'ün çalışan ham acceleration yaklaşımını koruyoruz.
+    // v5'teki gravity compensation kaldırıldı; o yöntem Y'ye sabit bias ekliyordu.
     let x=ax-baseX;
     let y=ay-baseY;
 
-    // Küçük sensör gürültüsünü kes. Y davranışı korunuyor.
-    const deadX=.13;
-    const deadY=.16;
-    if(Math.abs(x)<deadX)x=0;
-    if(Math.abs(y)<deadY)y=0;
+    // Küçük sensör biasını hareket yokken yavaşça sıfırla.
+    const settle=.012;
+    if(Math.abs(x)<.55) baseX += (ax-baseX)*settle;
+    if(Math.abs(y)<.55) baseY += (ay-baseY)*settle;
+    x=ax-baseX;
+    y=ay-baseY;
 
-    // X: yalnızca yatay doğrusal hareket.
-    // Y: önceki çalışan sürümdeki yön mantığı korunuyor.
-    const gainX=1200;
-    const gainY=1100;
-    targetX=clamp(targetX + x*gainX/60, -430, 430);
-    targetY=clamp(targetY - y*gainY/60, -300, 300);
+    const dead=.20;
+    if(Math.abs(x)<dead)x=0;
+    if(Math.abs(y)<dead)y=0;
+
+    // İvmeyi sönümlü hıza çeviriyoruz. Böylece küçük kalıntılar
+    // eli sürekli tek yöne sürüklemiyor.
+    const nowSensor=performance.now();
+    const dt=Math.min(.05,Math.max(.001,(nowSensor-lastSensor)/1000));
+    lastSensor=nowSensor;
+    const accelGain=18;
+    const friction=.82;
+    vx=vx*friction + x*accelGain*dt;
+    vy=vy*friction - y*accelGain*dt;
+    vx=clamp(vx,-900,900);
+    vy=clamp(vy,-900,900);
+    targetX=clamp(targetX + vx*dt*55, -430, 430);
+    targetY=clamp(targetY + vy*dt*55, -300, 300);
 
     const now=performance.now();
     dataEl.textContent=`acc ${x.toFixed(2)} / ${y.toFixed(2)} / ${az-baseZ.toFixed?.(2) ?? 0}`;
