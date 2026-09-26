@@ -57,43 +57,21 @@ peer.on('connection',conn=>{
   setStatus('<span class="wait">● TELEFON BAĞLANIYOR…</span>');
   conn.on('open',()=>setStatus('<span class="ok">● TELEFON BAĞLANDI</span><br>Serbest hareket verisi bekleniyor.'));
   conn.on('data',d=>{
-    if(!d || d.type!=='motion') return;
-    const ax=Number(d.ax)||0, ay=Number(d.ay)||0, az=Number(d.az)||0;
+    if(!d) return;
 
-    if(d.calibrating){
-      calSamples.push([ax,ay,az]);
-      return;
+    // Telefon artık doğrudan küçük hareket deltaları gönderiyor.
+    // Orientation/gyro açısı kullanılmıyor.
+    if(Number.isFinite(Number(d.dx)) && Number.isFinite(Number(d.dy))){
+      const dx=Number(d.dx);
+      const dy=Number(d.dy);
+
+      targetX=clamp(targetX + dx, -430, 430);
+      targetY=clamp(targetY + dy, -300, 300);
+
+      lastData=performance.now();
+      if(dataEl) dataEl.textContent=`move ${dx.toFixed(2)} / ${dy.toFixed(2)}`;
+      setStatus('<span class="ok">● HAREKET VERİSİ GELİYOR</span><br>Telefon hareketi alınıyor.');
     }
-
-    if(!calibrated) {
-      // İlk stabil verileri bias olarak kabul et.
-      calSamples.push([ax,ay,az]);
-      if(calSamples.length<18) return;
-      const avg=calSamples.reduce((s,a)=>[s[0]+a[0],s[1]+a[1],s[2]+a[2]],[0,0,0]).map(v=>v/calSamples.length);
-      baseX=avg[0];baseY=avg[1];baseZ=avg[2];
-      calibrated=true;
-      calSamples=[];
-      setStatus('<span class="ok">● SERBEST HAREKET AKTİF</span><br>Telefonu fiziksel olarak hareket ettir.');
-    }
-
-    // DeviceMotion: yönelim değil, doğrusal ivme.
-    // Böylece telefonu kendi ekseninde çevirmek tek başına eli yürütmez.
-    let x=ax-baseX;
-    let y=ay-baseY;
-
-    // Sensör gürültüsü için ölü bölge.
-    const dead=.16;
-    if(Math.abs(x)<dead)x=0;
-    if(Math.abs(y)<dead)y=0;
-
-    // Telefonun Y ekseni yukarı yönlü; ekran Y'si aşağı yönlü.
-    const gain=1100;
-    targetX=clamp(targetX + x*gain/60, -430, 430);
-    targetY=clamp(targetY - y*gain/60, -300, 300);
-
-    const now=performance.now();
-    dataEl.textContent=`acc ${x.toFixed(2)} / ${y.toFixed(2)} / ${az-baseZ.toFixed?.(2) ?? 0}`;
-    lastData=now;
   });
   conn.on('close',()=>setStatus('<span class="wait">● TELEFON BAĞLANTISI KAPANDI</span>'));
   conn.on('error',e=>setStatus('<span class="bad">● BAĞLANTI HATASI</span><br>'+e.message));
