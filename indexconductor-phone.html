@@ -97,7 +97,7 @@ function onMotion(e){
  // Telefonun fiziksel ivmesi -> ekrandaki imleç hareketi.
  // Y ekseni ekran yönüyle ters olduğu için burada -y kullanıyoruz.
  const gain=8.5;
- conn.send({dx:x*gain,dy:-y*gain,t:Date.now()});
+ conn.send({dx:-x*gain,dy:-y*gain,t:Date.now()});
 }
 </script>
 </body>
