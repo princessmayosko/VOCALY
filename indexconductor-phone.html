@@ -2,110 +2,64 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Vocaly Camera Mouse</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Vocaly — Telefon Kumanda</title>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <style>
-body{margin:0;background:#080808;color:#fff;font-family:Arial,sans-serif;padding:16px}
-h1{font-size:22px;margin:0 0 6px}.sub{color:#aaa;line-height:1.4;margin-bottom:14px}
-input,button{width:100%;font-size:17px;padding:12px;margin-bottom:9px;border-radius:10px;border:1px solid #555;background:#171717;color:#fff}
-#status{padding:10px;background:#151515;border-radius:10px;margin-bottom:12px}
-#cam{width:100%;max-height:42vh;object-fit:cover;border-radius:12px;background:#111;transform:scaleX(-1)}
-.card{background:#111;border:1px solid #333;border-radius:12px;padding:12px;margin-top:12px}
-.big{font:30px monospace}.muted{color:#999;font-size:14px;line-height:1.4}
+*{box-sizing:border-box}body{margin:0;background:#050708;color:#eef2f1;font-family:Arial,sans-serif}
+main{width:min(560px,100%);padding:26px 20px 40px;margin:auto}h1{letter-spacing:6px}.sub{color:#789092;font-size:10px;letter-spacing:2px}
+.card{margin-top:18px;padding:18px;border:1px solid #334042;border-radius:16px;background:#101617}
+input{width:100%;height:50px;background:#080b0c;color:white;border:1px solid #384447;border-radius:10px;padding:0 14px;font-size:15px}
+button{width:100%;height:50px;border:0;border-radius:10px;background:#e5c88e;color:#111;font-weight:700;margin-top:10px}
+.status{margin-top:13px;padding:13px;border-radius:10px;background:#171d1e;font-size:12px;line-height:1.6}
+.ok{color:#8ee6b1}.wait{color:#e5c88e}.bad{color:#ff9b9b}
 </style>
 </head>
-<body>
-<h1>Vocaly — Camera Mouse</h1>
-<div class="sub">Bu testte telefonun eğimi kullanılmıyor. Kamera görüntüsündeki gerçek hareketten X/Y delta çıkarılacak.</div>
-<input id="peerId" placeholder="Bilgisayar bağlantı kodu">
+<body><main>
+<h1>VOCALY</h1><div class="sub">KONDUKTÖR • SERBEST HAREKET KUMANDA</div>
+<div class="card">
+<input id="target" placeholder="Bilgisayar kodunu gir">
 <button id="connect">BİLGİSAYARA BAĞLAN</button>
-<button id="camera">KAMERAYI BAŞLAT</button>
-<button id="cal">HAREKETİ SIFIRLA</button>
-<div id="status">● Hazır</div>
-<video id="cam" autoplay playsinline muted></video>
-<div class="card"><div class="muted">Anlık hareket</div><div class="big" id="move">X 0.00 &nbsp; Y 0.00</div></div>
-<div class="card muted">
-Telefonu sabit bir yüzeye/ortama bakacak şekilde tut. Telefonu sağa götür → X hareketi. Sola → X ters. Yukarı/aşağı → Y. Telefonu sadece eğmek ve çevirmek hareket sayılmamalıdır.
+<button id="sensor" disabled>SENSÖRÜ BAŞLAT</button>
+<div id="status" class="status"><span class="wait">● HAZIRLANIYOR…</span></div>
 </div>
-<canvas id="cv" width="160" height="120" style="display:none"></canvas>
-
-<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+</main>
 <script>
-let peer=null,conn=null,stream=null,video=$("cam"),ctx=$("cv").getContext("2d",{willReadFrequently:true});
-let prev=null,running=false,raf=0;
-const W=80,H=60; // düşük çözünürlük: telefon CPU'sunu yormamak için
-$("cv").width=W;$("cv").height=H;
-function $(id){return document.getElementById(id)}
-function st(t){$("status").textContent=t}
+let peer=new Peer(),conn=null,last=0;
+const target=document.getElementById('target'),statusEl=document.getElementById('status'),sensor=document.getElementById('sensor');
+peer.on('open',()=>statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bilgisayar kodunu gir.');
+peer.on('error',e=>statusEl.innerHTML='<span class="bad">● PeerJS hatası: '+e.type+'</span>');
 
-$("connect").onclick=()=>{
- const id=$("peerId").value.trim();if(!id)return st("● Bağlantı kodunu gir.");
- peer=new Peer();
- peer.on("open",()=>{conn=peer.connect(id,{reliable:true});
-   conn.on("open",()=>st("● BİLGİSAYARA BAĞLI"));
-   conn.on("close",()=>st("● Bağlantı kapandı"));
-   conn.on("error",()=>st("● Bağlantı hatası"));
- });
- peer.on("error",e=>st("● Peer hatası: "+e.type));
+document.getElementById('connect').onclick=()=>{
+ const id=target.value.trim(); if(!id)return;
+ conn=peer.connect(id,{reliable:false});
+ statusEl.innerHTML='<span class="wait">● BAĞLANIYOR…</span>';
+ conn.on('open',()=>{statusEl.innerHTML='<span class="ok">● BİLGİSAYAR BAĞLANDI</span><br>Şimdi sensörü başlat.';sensor.disabled=false});
+ conn.on('error',e=>statusEl.innerHTML='<span class="bad">● Bağlantı hatası</span><br>'+e.message);
 };
 
-$("camera").onclick=async()=>{
+sensor.onclick=async()=>{
+ if(!window.isSecureContext){statusEl.innerHTML='<span class="bad">● HTTPS gerekli.</span>';return}
+ if(typeof DeviceMotionEvent==='undefined'){statusEl.innerHTML='<span class="bad">● DeviceMotion desteklenmiyor.</span>';return}
  try{
-  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:640},height:{ideal:480}},audio:false});
-  video.srcObject=stream;
-  await video.play();
-  running=true;prev=null;
-  st("● KAMERA AKTİF — telefonu yavaşça hareket ettir.");
-  loop();
- }catch(e){st("● Kamera hatası: "+e.message)}
-};
-
-$("cal").onclick=()=>{prev=null;st("● Kamera hareket referansı sıfırlandı.");};
-
-function loop(){
- if(!running)return;
- ctx.drawImage(video,0,0,W,H);
- const img=ctx.getImageData(0,0,W,H).data;
- if(prev){
-   // Basit blok tabanlı optical-flow:
-   // 10x8 bölgede mevcut görüntüyü önceki görüntünün küçük komşuluğunda arıyoruz.
-   let totalX=0,totalY=0,totalW=0;
-   const bw=8,bh=8,search=5;
-   for(let by=0;by<H;by+=bh){
-    for(let bx=0;bx<W;bx+=bw){
-     let bestErr=1e18,bestDx=0,bestDy=0;
-     for(let dy=-search;dy<=search;dy++){
-      for(let dx=-search;dx<=search;dx++){
-       let err=0,n=0;
-       for(let yy=1;yy<bh-1;yy+=2){
-        for(let xx=1;xx<bw-1;xx+=2){
-         const x=bx+xx,y=by+yy,px=x+dx,py=y+dy;
-         if(x>=W||y>=H||px<0||py<0||px>=W||py>=H)continue;
-         const a=(y*W+x)*4,b=(py*W+px)*4;
-         const ca=.299*img[a]+.587*img[a+1]+.114*img[a+2];
-         const cb=.299*prev[b]+.587*prev[b+1]+.114*prev[b+2];
-         err+=Math.abs(ca-cb);n++;
-        }
-       }
-       if(n&&err/n<bestErr){bestErr=err/n;bestDx=dx;bestDy=dy;}
-      }
-     }
-     if(bestErr<32){
-       const weight=Math.max(.1,1-bestErr/32);
-       totalX+=bestDx*weight;totalY+=bestDy*weight;totalW+=weight;
-     }
+  if(typeof DeviceMotionEvent.requestPermission==='function'){
+   const p=await DeviceMotionEvent.requestPermission();
+   if(p!=='granted')throw new Error('Sensör izni verilmedi');
+  }
+  window.addEventListener('devicemotion',e=>{
+    const a=e.acceleration;
+    if(!a || a.x===null || a.y===null){
+      statusEl.innerHTML='<span class="bad">● Telefon doğrusal ivme verisi vermiyor.</span><br>Bu cihazda hareket verisi sınırlı olabilir.';
+      return;
     }
-   }
-   let dx=totalW?totalX/totalW:0,dy=totalW?totalY/totalW:0;
-   // Görüntünün hareketi tersine, imlecin/elin hareketi aynı yönde.
-   dx*=1.6;dy*=1.6;
-   if(Math.abs(dx)<.12)dx=0;if(Math.abs(dy)<.12)dy=0;
-   $("move").textContent=`X ${dx.toFixed(2)}   Y ${(-dy).toFixed(2)}`;
-   if(conn&&conn.open&&(dx||dy))conn.send({type:"camera-mouse",dx,dy:-dy,t:Date.now()});
- }
- prev=img;
- raf=requestAnimationFrame(loop);
-}
+    const now=performance.now();
+    if(conn?.open && now-last>=33){
+      last=now;
+      conn.send({type:'motion',ax:a.x,ay:a.y,az:a.z,t:Date.now()});
+    }
+  },true);
+  statusEl.innerHTML='<span class="ok">● SERBEST HAREKET SENSÖRÜ AKTİF</span><br>Telefonu sağa-sola / yukarı-aşağı fiziksel olarak hareket ettir.';
+ }catch(e){statusEl.innerHTML='<span class="bad">● '+e.message+'</span>'}
+};
 </script>
-</body>
-</html>
+</body></html>
