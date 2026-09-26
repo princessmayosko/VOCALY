@@ -1,130 +1,82 @@
-<!doctype html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Vocaly — Air Mouse Kumanda</title>
-<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<!doctype html><html lang="tr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vocaly Sensör Teşhis</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#050708;color:#eef2f1;font-family:Arial,sans-serif}
-main{width:min(560px,100%);padding:26px 20px 40px;margin:auto}h1{letter-spacing:6px}.sub{color:#789092;font-size:10px;letter-spacing:2px}
-.card{margin-top:18px;padding:18px;border:1px solid #334042;border-radius:16px;background:#101617}
-input{width:100%;height:50px;background:#080b0c;color:white;border:1px solid #384447;border-radius:10px;padding:0 14px;font-size:15px}
-button{width:100%;height:50px;border:0;border-radius:10px;background:#e5c88e;color:#111;font-weight:700;margin-top:10px}
-.status{margin-top:13px;padding:13px;border-radius:10px;background:#171d1e;font-size:12px;line-height:1.6}
-.ok{color:#8ee6b1}.wait{color:#e5c88e}.bad{color:#ff9b9b}
-.help{margin-top:14px;color:#78888a;font-size:11px;line-height:1.7}
-</style>
-</head>
-<body><main>
-<h1>VOCALY</h1><div class="sub">KONDUKTÖR • TELEFON AIR MOUSE</div>
-<div class="card">
-<input id="target" placeholder="Bilgisayarın kodunu gir">
+*{box-sizing:border-box}body{margin:0;background:#080808;color:#fff;font-family:Arial,sans-serif;padding:18px}
+h1{font-size:22px;margin:0 0 7px}.sub{color:#aaa;margin-bottom:16px}
+input,button{font-size:18px;border-radius:10px;padding:12px;border:1px solid #555;background:#171717;color:#fff}
+input{width:100%;margin-bottom:10px}button{width:100%;margin-bottom:10px}
+#status{padding:10px;border-radius:10px;background:#161616;margin:8px 0 14px}
+.axis{background:#111;border:1px solid #333;border-radius:14px;padding:14px;margin:10px 0}
+.label{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:8px}
+.bar{height:28px;background:#222;border-radius:14px;overflow:hidden;position:relative}.zero{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#777}
+.dot{position:absolute;top:4px;width:20px;height:20px;border-radius:50%;background:#fff;transform:translateX(-50%);left:50%}
+.value{font-family:monospace;font-size:18px;margin-top:8px}
+pre{white-space:pre-wrap;background:#111;border:1px solid #333;border-radius:10px;padding:10px;color:#bbb}
+</style></head><body>
+<h1>Vocaly — Telefon Sensör Teşhisi</h1>
+<div class="sub">Telefonu ekranı yukarı bakacak şekilde düz tut. Bu sürüm sadece sensörü teşhis eder.</div>
+<input id="peerId" placeholder="Bilgisayar bağlantı kodu">
 <button id="connect">BİLGİSAYARA BAĞLAN</button>
-<button id="sensor" disabled>SENSÖRÜ BAŞLAT</button>
-<button id="cal" disabled>NÖTRÜ KALİBRE ET</button>
-<div id="status" class="status"><span class="wait">● HAZIRLANIYOR…</span></div>
-<div class="help">
-Kalibrasyondan sonra telefonu <b>fiziksel olarak</b> sağa-sola ve yukarı-aşağı hareket ettir.
-Telefonu kendi ekseninde döndürmek hedeflenmez.
-<br><br>
-İlk testte hareketi küçük ve kısa yap. Amaç serbest “mouse benzeri” kontrolü oturtmak.
-</div>
-</div>
-</main>
+<button id="calibrate">NÖTR POZİSYONU KAYDET</button>
+<button id="sensor">SENSÖRÜ BAŞLAT</button>
+<div id="status">● Hazır</div>
+<div class="axis"><div class="label"><span>X — SOL / SAĞ</span><span id="xval">0.00°</span></div>
+<div class="bar"><div class="zero"></div><div class="dot" id="xdot"></div></div></div>
+<div class="axis"><div class="label"><span>Y — YUKARI / AŞAĞI</span><span id="yval">0.00°</span></div>
+<div class="bar"><div class="zero"></div><div class="dot" id="ydot"></div></div></div>
+<pre id="raw">Sensör verisi bekleniyor…</pre>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <script>
-let peer=new Peer(),conn=null,last=0,calibrating=false;
-let neutralBeta=0,neutralGamma=0,haveNeutral=false;
-const target=document.getElementById('target'),statusEl=document.getElementById('status'),sensor=document.getElementById('sensor'),cal=document.getElementById('cal');
-
-peer.on('open',()=>{statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bilgisayar kodunu gir.'});
-peer.on('error',e=>statusEl.innerHTML='<span class="bad">● PeerJS: '+e.type+'</span>');
-
-document.getElementById('connect').onclick=()=>{
- const id=target.value.trim(); if(!id)return;
- conn=peer.connect(id,{reliable:false});
- statusEl.innerHTML='<span class="wait">● BAĞLANIYOR…</span>';
- conn.on('open',()=>{
-   statusEl.innerHTML='<span class="ok">● BİLGİSAYAR BAĞLANDI</span><br>Şimdi sensörü başlat.';
-   sensor.disabled=false;
- });
- conn.on('error',e=>statusEl.innerHTML='<span class="bad">● Bağlantı hatası</span><br>'+e.message);
+let peer=null,conn=null,running=false,neutral=null;
+const $=id=>document.getElementById(id);
+function status(t){$("status").textContent=t}
+$("connect").onclick=()=>{
+ const id=$("peerId").value.trim(); if(!id)return status("● Bağlantı kodunu gir.");
+ peer=new Peer();
+ peer.on("open",()=>{status("● Bağlanıyor…");conn=peer.connect(id,{reliable:true});
+   conn.on("open",()=>status("● BİLGİSAYARA BAĞLI"));
+   conn.on("close",()=>status("● Bağlantı kapandı"));
+   conn.on("error",()=>status("● Bağlantı hatası"));});
+ peer.on("error",e=>status("● Peer hatası: "+e.type));
 };
-
-sensor.onclick=async()=>{
- if(!window.isSecureContext){statusEl.innerHTML='<span class="bad">● HTTPS gerekli.</span>';return}
+$("sensor").onclick=async()=>{
  try{
-  if(typeof DeviceOrientationEvent==='undefined')throw new Error('Telefon yön sensörü desteklenmiyor');
-  if(typeof DeviceOrientationEvent.requestPermission==='function'){
-   const p=await DeviceOrientationEvent.requestPermission();
-   if(p!=='granted')throw new Error('Sensör izni verilmedi');
+  if(typeof DeviceOrientationEvent==="undefined")throw Error("DeviceOrientation desteklenmiyor.");
+  if(typeof DeviceOrientationEvent.requestPermission==="function"){
+   const p=await DeviceOrientationEvent.requestPermission(); if(p!=="granted")throw Error("Sensör izni verilmedi.");
   }
-  window.addEventListener('deviceorientation',onOrientation,true);
-  cal.disabled=false;
-  statusEl.innerHTML='<span class="ok">● SENSÖR AKTİF</span><br>Telefonu ekranı yukarı bakacak şekilde tut. Önce NÖTRÜ KALİBRE ET.';
- }catch(e){statusEl.innerHTML='<span class="bad">● '+e.message+'</span>'}
+  running=true; window.addEventListener("deviceorientation",onOrientation,true);
+  status("● SENSÖR AKTİF — telefonu sabit tut.");
+ }catch(e){status("● "+e.message)}
 };
-
-cal.onclick=()=>{
- neutralBeta=null; neutralGamma=null; haveNeutral=false; calibrating=true;
- statusEl.innerHTML='<span class="wait">● NÖTR KALİBRASYON…</span><br>Telefonu normal tut ve 1 saniye hiç oynatma.';
- setTimeout(()=>{
-   if(neutralBeta!==null && neutralGamma!==null){
-     haveNeutral=true;
-     statusEl.innerHTML='<span class="ok">● KALİBRE EDİLDİ</span><br>Artık telefonu küçük açılarla yatır. Düzleştirince el durur.';
-   } else {
-     statusEl.innerHTML='<span class="bad">● Kalibrasyon verisi alınamadı.</span><br>Telefonu düz tutup tekrar dene.';
-   }
-   calibrating=false;
- },1000);
+$("calibrate").onclick=()=>{
+ if(!last){status("● Önce sensörü başlat.");return}
+ neutral={beta:last.beta,gamma:last.gamma,alpha:last.alpha};
+ status("● Nötr kaydedildi.");
 };
-
-function angleDiff(a,b){
- let d=a-b;
- while(d>180)d-=360;
- while(d<-180)d+=360;
- return d;
-}
-
-function mouseVelocity(offset,maxAngle=22,maxSpeed=16){
- const dead=2.0;
- const sign=Math.sign(offset);
- const mag=Math.abs(offset);
- if(mag<=dead)return 0;
- const n=Math.min(1,(mag-dead)/(maxAngle-dead));
- // Daha küçük eğimlerde hassas, daha büyük eğimlerde hızlı: analog mouse hissi.
- const curved=n*n*0.75+n*0.25;
- return sign*curved*maxSpeed;
-}
-
+let last=null;
 function onOrientation(e){
- if(e.beta==null || e.gamma==null)return;
- const beta=Number(e.beta), gamma=Number(e.gamma);
- if(!Number.isFinite(beta)||!Number.isFinite(gamma))return;
+ last={beta:Number(e.beta)||0,gamma:Number(e.gamma)||0,alpha:Number(e.alpha)||0};
+ if(!neutral)neutral={beta:last.beta,gamma:last.gamma,alpha:last.alpha};
+ const x=last.gamma-neutral.gamma, y=last.beta-neutral.beta;
+ $("xval").textContent=x.toFixed(2)+"°"; $("yval").textContent=y.toFixed(2)+"°";
+ $("xdot").style.left=(50+Math.max(-45,Math.min(45,x)))+"%";
+ $("ydot").style.left=(50+Math.max(-45,Math.min(45,y)))+"%";
+ $("raw").textContent=`beta  (Y): ${last.beta.toFixed(2)}°
+gamma (X): ${last.gamma.toFixed(2)}°
+alpha (dönüş/Z): ${last.alpha.toFixed(2)}°
 
- if(calibrating){
-   // 1 saniyelik nötr ortalaması: drift birikmez çünkü mutlak açıdan hız üretiyoruz.
-   if(neutralBeta===null)neutralBeta=beta; else neutralBeta=neutralBeta*0.9+beta*0.1;
-   if(neutralGamma===null)neutralGamma=gamma; else neutralGamma=neutralGamma*0.9+gamma*0.1;
-   return;
- }
- if(!haveNeutral || !conn?.open)return;
- const now=performance.now();
- if(now-last<25)return;
- last=now;
+NÖTR
+beta: ${neutral.beta.toFixed(2)}°
+gamma: ${neutral.gamma.toFixed(2)}°
+alpha: ${neutral.alpha.toFixed(2)}°
 
- const dxAngle=angleDiff(gamma,neutralGamma);
- const dyAngle=angleDiff(beta,neutralBeta);
+FARK
+X / gamma: ${x.toFixed(2)}°
+Y / beta: ${y.toFixed(2)}°
 
- // Telefon ekranı yukarı bakarken:
- // gamma = sağ/sol eğim, beta = yukarı/aşağı eğim.
- // İleri-geri/alpha kullanılmıyor. Z ekseni tamamen yok sayılıyor.
- const dx=mouseVelocity(dxAngle,22,18);
- const dy=-mouseVelocity(dyAngle,22,18);
-
- conn.send({dx,dy,t:Date.now()});
+Z / alpha DÖNÜŞÜ KULLANILMIYOR.`;
+ if(conn&&conn.open)conn.send({type:"sensor-debug",x,y,beta:last.beta,gamma:last.gamma,alpha:last.alpha,t:Date.now()});
 }
-
-</script>
-</body>
-</html>
+</script></body></html>
