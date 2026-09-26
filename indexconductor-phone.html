@@ -33,7 +33,8 @@ Telefonu kendi ekseninde döndürmek hedeflenmez.
 </div>
 </main>
 <script>
-let peer=new Peer(),conn=null,last=0,calibrating=false,calSamples=[],biasX=0,biasY=0;
+let peer=new Peer(),conn=null,last=0,calibrating=false;
+let neutralBeta=0,neutralGamma=0,haveNeutral=false;
 const target=document.getElementById('target'),statusEl=document.getElementById('status'),sensor=document.getElementById('sensor'),cal=document.getElementById('cal');
 
 peer.on('open',()=>{statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bilgisayar kodunu gir.'});
@@ -53,52 +54,77 @@ document.getElementById('connect').onclick=()=>{
 sensor.onclick=async()=>{
  if(!window.isSecureContext){statusEl.innerHTML='<span class="bad">● HTTPS gerekli.</span>';return}
  try{
-  if(typeof DeviceMotionEvent==='undefined')throw new Error('DeviceMotion desteklenmiyor');
-  if(typeof DeviceMotionEvent.requestPermission==='function'){
-   const p=await DeviceMotionEvent.requestPermission();
+  if(typeof DeviceOrientationEvent==='undefined')throw new Error('Telefon yön sensörü desteklenmiyor');
+  if(typeof DeviceOrientationEvent.requestPermission==='function'){
+   const p=await DeviceOrientationEvent.requestPermission();
    if(p!=='granted')throw new Error('Sensör izni verilmedi');
   }
-  window.addEventListener('devicemotion',onMotion,true);
+  window.addEventListener('deviceorientation',onOrientation,true);
   cal.disabled=false;
-  statusEl.innerHTML='<span class="ok">● SENSÖR AKTİF</span><br>Önce NÖTRÜ KALİBRE ET.';
+  statusEl.innerHTML='<span class="ok">● SENSÖR AKTİF</span><br>Telefonu ekranı yukarı bakacak şekilde tut. Önce NÖTRÜ KALİBRE ET.';
  }catch(e){statusEl.innerHTML='<span class="bad">● '+e.message+'</span>'}
 };
 
 cal.onclick=()=>{
- calibrating=true;calSamples=[];
- statusEl.innerHTML='<span class="wait">● KALİBRASYON…</span><br>Telefonu 1 saniye hiç oynatma.';
+ neutralBeta=null; neutralGamma=null; haveNeutral=false; calibrating=true;
+ statusEl.innerHTML='<span class="wait">● NÖTR KALİBRASYON…</span><br>Telefonu normal tut ve 1 saniye hiç oynatma.';
  setTimeout(()=>{
-   if(calSamples.length){
-    biasX=calSamples.reduce((a,b)=>a+b.x,0)/calSamples.length;
-    biasY=calSamples.reduce((a,b)=>a+b.y,0)/calSamples.length;
+   if(neutralBeta!==null && neutralGamma!==null){
+     haveNeutral=true;
+     statusEl.innerHTML='<span class="ok">● KALİBRE EDİLDİ</span><br>Artık telefonu küçük açılarla yatır. Düzleştirince el durur.';
+   } else {
+     statusEl.innerHTML='<span class="bad">● Kalibrasyon verisi alınamadı.</span><br>Telefonu düz tutup tekrar dene.';
    }
    calibrating=false;
-   statusEl.innerHTML='<span class="ok">● KALİBRE EDİLDİ</span><br>Telefonu fiziksel olarak hareket ettir.';
  },1000);
 };
 
-function onMotion(e){
- const a=e.acceleration;
- if(!a)return;
- // Ekran koordinatları için yatay X ve dikey Y.
- // accelerationIncludingGravity kullanılmıyor; böylece yerçekimini hareket sinyali saymıyoruz.
- let x=Number(a.x)||0, y=Number(a.y)||0;
- if(calibrating){calSamples.push({x,y});return}
- x-=biasX; y-=biasY;
+function angleDiff(a,b){
+ let d=a-b;
+ while(d>180)d-=360;
+ while(d<-180)d+=360;
+ return d;
+}
+
+function mouseVelocity(offset,maxAngle=22,maxSpeed=16){
+ const dead=2.0;
+ const sign=Math.sign(offset);
+ const mag=Math.abs(offset);
+ if(mag<=dead)return 0;
+ const n=Math.min(1,(mag-dead)/(maxAngle-dead));
+ // Daha küçük eğimlerde hassas, daha büyük eğimlerde hızlı: analog mouse hissi.
+ const curved=n*n*0.75+n*0.25;
+ return sign*curved*maxSpeed;
+}
+
+function onOrientation(e){
+ if(e.beta==null || e.gamma==null)return;
+ const beta=Number(e.beta), gamma=Number(e.gamma);
+ if(!Number.isFinite(beta)||!Number.isFinite(gamma))return;
+
+ if(calibrating){
+   // 1 saniyelik nötr ortalaması: drift birikmez çünkü mutlak açıdan hız üretiyoruz.
+   if(neutralBeta===null)neutralBeta=beta; else neutralBeta=neutralBeta*0.9+beta*0.1;
+   if(neutralGamma===null)neutralGamma=gamma; else neutralGamma=neutralGamma*0.9+gamma*0.1;
+   return;
+ }
+ if(!haveNeutral || !conn?.open)return;
  const now=performance.now();
- if(!conn?.open || now-last<25)return;
+ if(now-last<25)return;
  last=now;
 
- // Küçük gürültüleri kes; kısa ivme darbelerini mouse hareketine dönüştür.
- const dead=.18;
- if(Math.abs(x)<dead)x=0; else x=Math.sign(x)*(Math.abs(x)-dead);
- if(Math.abs(y)<dead)y=0; else y=Math.sign(y)*(Math.abs(y)-dead);
+ const dxAngle=angleDiff(gamma,neutralGamma);
+ const dyAngle=angleDiff(beta,neutralBeta);
 
- // Telefonun fiziksel ivmesi -> ekrandaki imleç hareketi.
- // Y ekseni ekran yönüyle ters olduğu için burada -y kullanıyoruz.
- const gain=8.5;
- conn.send({dx:-x*gain,dy:-y*gain,t:Date.now()});
+ // Telefon ekranı yukarı bakarken:
+ // gamma = sağ/sol eğim, beta = yukarı/aşağı eğim.
+ // İleri-geri/alpha kullanılmıyor. Z ekseni tamamen yok sayılıyor.
+ const dx=mouseVelocity(dxAngle,22,18);
+ const dy=-mouseVelocity(dyAngle,22,18);
+
+ conn.send({dx,dy,t:Date.now()});
 }
+
 </script>
 </body>
 </html>

@@ -35,9 +35,7 @@ const hand=document.getElementById('hand');
 const dataEl=document.getElementById('data');
 const calBtn=document.getElementById('cal');
 
-let baseX=0,baseY=0,baseZ=0;
-let calSamples=[], calibrated=false;
-let px=0,py=0,vx=0,vy=0,lastFrame=performance.now();
+let px=0,py=0,lastFrame=performance.now();
 let targetX=0,targetY=0;
 let lastData=0;
 
@@ -65,8 +63,9 @@ peer.on('connection',conn=>{
       const dx=Number(d.dx);
       const dy=Number(d.dy);
 
-      targetX=clamp(targetX + dx, -430, 430);
-      targetY=clamp(targetY + dy, -300, 300);
+      const frameScale=0.55;
+      targetX=clamp(targetX + dx*frameScale, -430, 430);
+      targetY=clamp(targetY + dy*frameScale, -300, 300);
 
       lastData=performance.now();
       if(dataEl) dataEl.textContent=`move ${dx.toFixed(2)} / ${dy.toFixed(2)}`;
@@ -78,22 +77,17 @@ peer.on('connection',conn=>{
 });
 
 calBtn.onclick=()=>{
-  calibrated=false;calSamples=[];baseX=baseY=baseZ=0;
-  targetX=targetY=0;px=py=0;vx=vy=0;
+  targetX=targetY=0;px=py=0;
   setStatus('<span class="wait">● KALİBRE EDİLİYOR…</span><br>Telefonu sabit tut.');
 };
 
 function animate(){
   const now=performance.now(),dt=Math.min(.033,(now-lastFrame)/1000);lastFrame=now;
 
-  // Hedef konuma yay gibi yaklaş: serbest hareket, vektörle kilitli değil.
-  const stiffness=15;
-  const damping=8;
-  vx += (targetX-px)*stiffness*dt;
-  vy += (targetY-py)*stiffness*dt;
-  vx *= Math.exp(-damping*dt);
-  vy *= Math.exp(-damping*dt);
-  px += vx*dt;py += vy*dt;
+  // Mouse gibi: hedef konuma yumuşakça yaklaşır; yay/atalet yok, overshoot yapmaz.
+  const follow=Math.min(1,18*dt);
+  px += (targetX-px)*follow;
+  py += (targetY-py)*follow;
 
   // El/baton tek görsel; bağımsız baton dönüşü yok.
   hand.style.transform=`translate(calc(-50% + ${px}px), calc(-50% + ${py}px))`;

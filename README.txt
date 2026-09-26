@@ -1,17 +1,15 @@
-VOCALY KONDUKTÖR — SERBEST HAREKET TESTİ
+VOCALY KONDUKTÖR — 2B MOUSE v4
 
-GitHub VOCALY repo'suna 4 dosyayı yükle:
-- indexconductor-receiver.html
-- indexconductor-phone.html
-- scene.png
-- hand_baton.png
+Telefon: ekranı yukarı bakacak şekilde düz tut.
+1) Bilgisayar kodunu gir ve bağlan.
+2) Sensörü başlat.
+3) Telefonu normal tuttuğun pozisyonda NÖTRÜ KALİBRE ET.
+4) Küçük eğimlerle hareket et:
+   - uzun kenarı sağa yatır = el sağa
+   - uzun kenarı sola yatır = el sola
+   - kısa kenarı yukarı/aşağı yatır = el yukarı/aşağı
+   - nötre getir = hareket durur
 
-Bu sürüm DeviceOrientation yerine DeviceMotion kullanır.
-Telefonun kendi ekseninde döndürülmesi hedeflenmez; doğrusal ivme verisiyle
-eli serbestçe 2D alanda hareket ettirmeye çalışır.
-
-Bilgisayar:
-https://princessmayosko.github.io/VOCALY/indexconductor-receiver.html
-
-Telefon:
-https://princessmayosko.github.io/VOCALY/indexconductor-phone.html
+Sadece beta/gamma kullanılır. Alpha ve ileri/geri (Z) kullanılmaz.
+Hareket mutlak açıdan hız üretir; ivme entegrasyonu yapılmadığı için kalibrasyon sonrası aşağı doğru drift birikmez.
+Önce serbest mouse hissi test edilir; 4/4 paterni daha sonra eklenir.
