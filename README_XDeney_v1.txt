@@ -1,0 +1,1 @@
+v4 tabanı. Y aynen korunur. Yalnız X için yavaş drift/bias filtresi denenir. Telefonu eğmeden sağa-sola fiziksel hareket test edilir.
