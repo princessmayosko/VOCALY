@@ -1,39 +1,11 @@
-<!doctype html><html lang="tr"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vocaly Sensör Teşhis Alıcısı</title>
-<style>
-body{margin:0;background:#050505;color:#fff;font-family:Arial,sans-serif;padding:30px}
-.code{font:28px monospace;padding:14px;background:#151515;border-radius:12px;word-break:break-all}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:25px}
-.card{background:#111;border:1px solid #333;border-radius:15px;padding:20px}
-.big{font:52px monospace}.muted{color:#999}.bar{height:30px;background:#222;border-radius:15px;position:relative;overflow:hidden}.dot{position:absolute;top:5px;width:20px;height:20px;background:#fff;border-radius:50%;transform:translateX(-50%);left:50%}
-pre{white-space:pre-wrap;color:#aaa}
-</style></head><body>
-<h1>Vocaly — Sensör Teşhis Alıcısı</h1><p class="muted">Bu kodu telefona gir.</p>
-<div class="code" id="peerId">oluşturuluyor…</div><div id="status" style="margin-top:15px">● Telefon bekleniyor</div>
-<div class="grid">
-<div class="card"><h2>X — SOL / SAĞ</h2><div class="big" id="x">0.00°</div><div class="bar"><div class="dot" id="xdot"></div></div></div>
-<div class="card"><h2>Y — YUKARI / AŞAĞI</h2><div class="big" id="y">0.00°</div><div class="bar"><div class="dot" id="ydot"></div></div></div>
-</div>
-<div class="card" style="margin-top:20px"><pre id="raw">Veri bekleniyor…</pre></div>
-<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
-<script>
-const peer=new Peer();
-peer.on("open",id=>document.getElementById("peerId").textContent=id);
-peer.on("connection",conn=>{
- document.getElementById("status").textContent="● TELEFON BAĞLANDI";
- conn.on("data",d=>{
-  if(!d||d.type!=="sensor-debug")return;
-  const x=Number(d.x)||0,y=Number(d.y)||0;
-  document.getElementById("x").textContent=x.toFixed(2)+"°";
-  document.getElementById("y").textContent=y.toFixed(2)+"°";
-  document.getElementById("xdot").style.left=(50+Math.max(-45,Math.min(45,x)))+"%";
-  document.getElementById("ydot").style.left=(50+Math.max(-45,Math.min(45,y)))+"%";
-  document.getElementById("raw").textContent=`gamma / X farkı: ${x.toFixed(2)}°
-beta / Y farkı: ${y.toFixed(2)}°
-alpha / dönüş: ${Number(d.alpha).toFixed(2)}°
-
-Burada önce hangi fiziksel hareketin hangi ekseni değiştirdiğini tespit edeceğiz.`;
- });
-});
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vocaly Air Mouse</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050505;color:#fff;font-family:Arial}#top{position:fixed;left:18px;top:15px;z-index:5;background:#111;border:1px solid #333;border-radius:10px;padding:10px 14px}.code{font:20px monospace;margin-top:5px}.muted{color:#999}#hand{position:absolute;width:260px;transform:translate(-50%,-50%);pointer-events:none}</style></head><body>
+<div id="top"><div id="status">● Telefon bekleniyor</div><div class="muted">Bağlantı kodu:</div><div class="code" id="code">oluşturuluyor…</div></div>
+<img id="hand" src="hand_baton.png">
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script><script>
+const peer=new Peer();let x=innerWidth/2,y=innerHeight/2;
+const hand=document.getElementById("hand");
+peer.on("open",id=>document.getElementById("code").textContent=id);
+peer.on("connection",c=>{document.getElementById("status").textContent="● TELEFON BAĞLANDI";c.on("data",d=>{if(d.type!=="air-mouse")return;x=Math.max(130,Math.min(innerWidth-130,x+(Number(d.dx)||0)));y=Math.max(130,Math.min(innerHeight-130,y+(Number(d.dy)||0)));hand.style.left=x+"px";hand.style.top=y+"px";});c.on("close",()=>document.getElementById("status").textContent="● TELEFON BAĞLANTISI KOPTU");});
+hand.style.left=x+"px";hand.style.top=y+"px";
 </script></body></html>

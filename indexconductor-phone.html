@@ -1,82 +1,27 @@
-<!doctype html><html lang="tr"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Vocaly Sensör Teşhis</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#080808;color:#fff;font-family:Arial,sans-serif;padding:18px}
-h1{font-size:22px;margin:0 0 7px}.sub{color:#aaa;margin-bottom:16px}
-input,button{font-size:18px;border-radius:10px;padding:12px;border:1px solid #555;background:#171717;color:#fff}
-input{width:100%;margin-bottom:10px}button{width:100%;margin-bottom:10px}
-#status{padding:10px;border-radius:10px;background:#161616;margin:8px 0 14px}
-.axis{background:#111;border:1px solid #333;border-radius:14px;padding:14px;margin:10px 0}
-.label{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:8px}
-.bar{height:28px;background:#222;border-radius:14px;overflow:hidden;position:relative}.zero{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#777}
-.dot{position:absolute;top:4px;width:20px;height:20px;border-radius:50%;background:#fff;transform:translateX(-50%);left:50%}
-.value{font-family:monospace;font-size:18px;margin-top:8px}
-pre{white-space:pre-wrap;background:#111;border:1px solid #333;border-radius:10px;padding:10px;color:#bbb}
-</style></head><body>
-<h1>Vocaly — Telefon Sensör Teşhisi</h1>
-<div class="sub">Telefonu ekranı yukarı bakacak şekilde düz tut. Bu sürüm sadece sensörü teşhis eder.</div>
-<input id="peerId" placeholder="Bilgisayar bağlantı kodu">
-<button id="connect">BİLGİSAYARA BAĞLAN</button>
-<button id="calibrate">NÖTR POZİSYONU KAYDET</button>
-<button id="sensor">SENSÖRÜ BAŞLAT</button>
-<div id="status">● Hazır</div>
-<div class="axis"><div class="label"><span>X — SOL / SAĞ</span><span id="xval">0.00°</span></div>
-<div class="bar"><div class="zero"></div><div class="dot" id="xdot"></div></div></div>
-<div class="axis"><div class="label"><span>Y — YUKARI / AŞAĞI</span><span id="yval">0.00°</span></div>
-<div class="bar"><div class="zero"></div><div class="dot" id="ydot"></div></div></div>
-<pre id="raw">Sensör verisi bekleniyor…</pre>
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Vocaly Air Mouse</title>
+<style>body{margin:0;background:#080808;color:#fff;font-family:Arial;padding:18px}h1{font-size:23px;margin:0 0 6px}.sub{color:#aaa;margin-bottom:16px}input,button{width:100%;font-size:18px;padding:13px;margin:0 0 10px;border-radius:10px;border:1px solid #555;background:#171717;color:#fff}#status{padding:10px;background:#151515;border-radius:10px;margin-bottom:14px}.card{background:#111;border:1px solid #333;border-radius:14px;padding:15px;margin-bottom:12px}.big{font:34px monospace}.muted{color:#999;line-height:1.45}</style></head><body>
+<h1>Vocaly — Air Mouse</h1><div class="sub">Telefonu ekranı yukarı bakacak şekilde tut. Şimdi telefonu doğal olarak sağa/sola/yukarı/aşağı hareket ettir.</div>
+<input id="peerId" placeholder="Bilgisayar bağlantı kodu"><button id="connect">BİLGİSAYARA BAĞLAN</button><button id="sensor">SENSÖRÜ BAŞLAT</button><button id="cal">FİLTREYİ SIFIRLA</button><div id="status">● Hazır</div>
+<div class="card"><div class="muted">Anlık mouse hareketi</div><div class="big" id="move">X 0.00&nbsp;&nbsp;Y 0.00</div></div>
+<div class="card muted">Telefonun eğimi kullanılmıyor. İleri/geri Z ekseni kullanılmıyor. Sadece X/Y hareket ivmesi mouse deltasına çevriliyor.</div>
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <script>
-let peer=null,conn=null,running=false,neutral=null;
-const $=id=>document.getElementById(id);
-function status(t){$("status").textContent=t}
-$("connect").onclick=()=>{
- const id=$("peerId").value.trim(); if(!id)return status("● Bağlantı kodunu gir.");
- peer=new Peer();
- peer.on("open",()=>{status("● Bağlanıyor…");conn=peer.connect(id,{reliable:true});
-   conn.on("open",()=>status("● BİLGİSAYARA BAĞLI"));
-   conn.on("close",()=>status("● Bağlantı kapandı"));
-   conn.on("error",()=>status("● Bağlantı hatası"));});
- peer.on("error",e=>status("● Peer hatası: "+e.type));
-};
-$("sensor").onclick=async()=>{
- try{
-  if(typeof DeviceOrientationEvent==="undefined")throw Error("DeviceOrientation desteklenmiyor.");
-  if(typeof DeviceOrientationEvent.requestPermission==="function"){
-   const p=await DeviceOrientationEvent.requestPermission(); if(p!=="granted")throw Error("Sensör izni verilmedi.");
-  }
-  running=true; window.addEventListener("deviceorientation",onOrientation,true);
-  status("● SENSÖR AKTİF — telefonu sabit tut.");
- }catch(e){status("● "+e.message)}
-};
-$("calibrate").onclick=()=>{
- if(!last){status("● Önce sensörü başlat.");return}
- neutral={beta:last.beta,gamma:last.gamma,alpha:last.alpha};
- status("● Nötr kaydedildi.");
-};
-let last=null;
-function onOrientation(e){
- last={beta:Number(e.beta)||0,gamma:Number(e.gamma)||0,alpha:Number(e.alpha)||0};
- if(!neutral)neutral={beta:last.beta,gamma:last.gamma,alpha:last.alpha};
- const x=last.gamma-neutral.gamma, y=last.beta-neutral.beta;
- $("xval").textContent=x.toFixed(2)+"°"; $("yval").textContent=y.toFixed(2)+"°";
- $("xdot").style.left=(50+Math.max(-45,Math.min(45,x)))+"%";
- $("ydot").style.left=(50+Math.max(-45,Math.min(45,y)))+"%";
- $("raw").textContent=`beta  (Y): ${last.beta.toFixed(2)}°
-gamma (X): ${last.gamma.toFixed(2)}°
-alpha (dönüş/Z): ${last.alpha.toFixed(2)}°
-
-NÖTR
-beta: ${neutral.beta.toFixed(2)}°
-gamma: ${neutral.gamma.toFixed(2)}°
-alpha: ${neutral.alpha.toFixed(2)}°
-
-FARK
-X / gamma: ${x.toFixed(2)}°
-Y / beta: ${y.toFixed(2)}°
-
-Z / alpha DÖNÜŞÜ KULLANILMIYOR.`;
- if(conn&&conn.open)conn.send({type:"sensor-debug",x,y,beta:last.beta,gamma:last.gamma,alpha:last.alpha,t:Date.now()});
-}
+let peer=null,conn=null,active=false,lastT=0;
+let sx=0,sy=0,rx=[],ry=[];
+const $=id=>document.getElementById(id); const st=t=>$("status").textContent=t;
+$("connect").onclick=()=>{const id=$("peerId").value.trim();if(!id)return st("● Bağlantı kodunu gir.");peer=new Peer();peer.on("open",()=>{conn=peer.connect(id,{reliable:true});conn.on("open",()=>st("● BİLGİSAYARA BAĞLI"));conn.on("close",()=>st("● Bağlantı kapandı"));conn.on("error",()=>st("● Bağlantı hatası"));});peer.on("error",e=>st("● Peer hatası: "+e.type));};
+$("sensor").onclick=async()=>{try{if(typeof DeviceMotionEvent==="undefined")throw Error("DeviceMotion desteklenmiyor.");if(typeof DeviceMotionEvent.requestPermission==="function"){const p=await DeviceMotionEvent.requestPermission();if(p!=="granted")throw Error("Sensör izni verilmedi.");}active=true;lastT=performance.now();window.addEventListener("devicemotion",onMotion,true);st("● SENSÖR AKTİF");}catch(e){st("● "+e.message);}};
+$("cal").onclick=()=>{sx=sy=0;rx=[];ry=[];lastT=performance.now();st("● Filtre sıfırlandı.");};
+function avg(a,v){a.push(v);if(a.length>3)a.shift();return a.reduce((s,n)=>s+n,0)/a.length;}
+function onMotion(e){if(!active)return;const now=performance.now(),dt=Math.min(.05,Math.max(.008,(now-lastT)/1000));lastT=now;
+let ax=Number(e.acceleration&&e.acceleration.x),ay=Number(e.acceleration&&e.acceleration.y);
+if(!Number.isFinite(ax)||!Number.isFinite(ay)){const a=e.accelerationIncludingGravity;if(!a)return;ax=Number(a.x);ay=Number(a.y);}
+if(!Number.isFinite(ax)||!Number.isFinite(ay))return;
+ax=avg(rx,ax);ay=avg(ry,ay);
+const dead=.12;if(Math.abs(ax)<dead)ax=0;if(Math.abs(ay)<dead)ay=0;
+let dx=ax*.12*dt*1000,dy=-ay*.12*dt*1000;
+dx=Math.max(-10,Math.min(10,dx));dy=Math.max(-10,Math.min(10,dy));
+if(Math.abs(dx)<.15)dx=0;if(Math.abs(dy)<.15)dy=0;
+$("move").textContent=`X ${dx.toFixed(2)}   Y ${dy.toFixed(2)}`;
+if(conn&&conn.open&&(dx||dy))conn.send({type:"air-mouse",dx,dy,t:Date.now()});}
 </script></body></html>
