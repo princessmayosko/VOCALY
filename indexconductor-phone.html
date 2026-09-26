@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Vocaly — Konduktör Telefon</title>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#050708;color:#eef2f1;font-family:Arial,sans-serif}
+main{width:min(560px,100%);padding:26px 20px 40px;margin:auto}h1{letter-spacing:6px}.sub{color:#789092;font-size:10px;letter-spacing:2px}
+.card{margin-top:18px;padding:18px;border:1px solid #334042;border-radius:16px;background:#101617}
+input{width:100%;height:50px;background:#080b0c;color:white;border:1px solid #384447;border-radius:10px;padding:0 14px;font-size:15px}
+button{width:100%;height:50px;border:0;border-radius:10px;background:#e5c88e;color:#111;font-weight:700;margin-top:10px}
+.status{margin-top:13px;padding:13px;border-radius:10px;background:#171d1e;font-size:12px;line-height:1.6}
+.ok{color:#8ee6b1}.wait{color:#e5c88e}.bad{color:#ff9b9b}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.v{padding:14px 5px;background:#0b1011;border:1px solid #283234;border-radius:11px;text-align:center}.v span{font-size:9px;color:#7f8f91}.v b{display:block;font-size:22px;margin-top:4px}
+</style>
+</head>
+<body><main>
+<h1>VOCALY</h1><div class="sub">KONDUKTÖR • TELEFON KUMANDA</div>
+<div class="card">
+<input id="target" placeholder="Bilgisayarın bağlantı kodunu gir">
+<button id="connect">BİLGİSAYARA BAĞLAN</button>
+<button id="sensor" disabled>SENSÖRÜ BAŞLAT</button>
+<div id="status" class="status"><span class="wait">● PeerJS hazırlanıyor…</span></div>
+<div class="grid">
+<div class="v"><span>BETA</span><b id="beta">—</b></div>
+<div class="v"><span>GAMMA</span><b id="gamma">—</b></div>
+<div class="v"><span>ALPHA</span><b id="alpha">—</b></div>
+</div>
+</div>
+</main>
+<script>
+let peer=null,conn=null,lastSend=0;
+const target=document.getElementById('target'),connectBtn=document.getElementById('connect'),sensorBtn=document.getElementById('sensor'),statusEl=document.getElementById('status');
+const beta=document.getElementById('beta'),gamma=document.getElementById('gamma'),alpha=document.getElementById('alpha');
+function show(v){return Number.isFinite(v)?v.toFixed(1)+'°':'—'}
+peer=new Peer();
+peer.on('open',()=>{sensorBtn.disabled=false;statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Önce bilgisayar koduna bağlan.'});
+peer.on('error',e=>statusEl.innerHTML='<span class="bad">● PEERJS HATASI</span><br>'+e.type);
+
+connectBtn.onclick=()=>{
+  const id=target.value.trim();
+  if(!id){statusEl.innerHTML='<span class="bad">● Bilgisayar kodunu gir.</span>';return}
+  conn=peer.connect(id,{reliable:false});
+  statusEl.innerHTML='<span class="wait">● Bilgisayara bağlanıyor…</span>';
+  conn.on('open',()=>{
+    statusEl.innerHTML='<span class="ok">● BİLGİSAYAR BAĞLANDI</span><br>Şimdi sensörü başlat.';
+    sensorBtn.disabled=false;
+  });
+  conn.on('error',e=>statusEl.innerHTML='<span class="bad">● BAĞLANTI HATASI</span><br>'+e.message);
+};
+
+async function startSensor(){
+  if(!window.isSecureContext){statusEl.innerHTML='<span class="bad">● HTTPS gerekli.</span>';return}
+  if(typeof DeviceOrientationEvent==='undefined'){statusEl.innerHTML='<span class="bad">● Sensör desteklenmiyor.</span>';return}
+  try{
+    if(typeof DeviceOrientationEvent.requestPermission==='function'){
+      const p=await DeviceOrientationEvent.requestPermission();
+      if(p!=='granted'){statusEl.innerHTML='<span class="bad">● Sensör izni verilmedi.</span>';return}
+    }
+    window.addEventListener('deviceorientation',e=>{
+      beta.textContent=show(e.beta);gamma.textContent=show(e.gamma);alpha.textContent=show(e.alpha);
+      const now=performance.now();
+      if(conn && conn.open && now-lastSend>=33){
+        lastSend=now;
+        conn.send({beta:e.beta,gamma:e.gamma,alpha:e.alpha,t:Date.now()});
+      }
+    },true);
+    statusEl.innerHTML='<span class="ok">● SENSÖR + VERİ GÖNDERİMİ AKTİF</span><br>Telefonu hareket ettir.';
+  }catch(err){statusEl.innerHTML='<span class="bad">● Sensör başlatılamadı.</span><br>'+err}
+}
+sensorBtn.onclick=startSensor;
+</script>
+</body></html>

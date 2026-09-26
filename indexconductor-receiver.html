@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vocaly — Konduktör Alıcı</title>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#050708;color:#eef2f1;font-family:Arial,sans-serif}
+main{width:min(850px,94%);margin:40px auto}h1{letter-spacing:7px;margin:0}.sub{color:#789092;font-size:11px;letter-spacing:2px;margin-top:7px}
+.card{margin-top:22px;padding:22px;border:1px solid #334042;border-radius:18px;background:#101617}
+.status{padding:14px;border-radius:10px;background:#171d1e;margin-top:15px;font-size:13px}
+.id{font-size:22px;letter-spacing:2px;margin-top:10px;word-break:break-all}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.v{background:#0b1011;border:1px solid #283234;border-radius:14px;padding:22px;text-align:center}.v span{color:#7f8f91;font-size:11px}.v b{display:block;font-size:36px;margin-top:8px}
+.ok{color:#8ee6b1}.wait{color:#e5c88e}.bad{color:#ff9b9b}
+</style>
+</head>
+<body><main>
+<h1>VOCALY</h1><div class="sub">KONDUKTÖR • TELEFON ALICI TESTİ</div>
+<div class="card">
+<div>Bu bilgisayarın bağlantı kodu:</div>
+<div class="id" id="peerId">BAĞLANIYOR…</div>
+<div class="status" id="status"><span class="wait">● PeerJS bağlantısı kuruluyor…</span></div>
+<div class="grid">
+<div class="v"><span>BETA</span><b id="beta">—</b></div>
+<div class="v"><span>GAMMA</span><b id="gamma">—</b></div>
+<div class="v"><span>ALPHA</span><b id="alpha">—</b></div>
+</div>
+</div>
+</main>
+<script>
+const peer=new Peer();
+const peerIdEl=document.getElementById('peerId');
+const statusEl=document.getElementById('status');
+const beta=document.getElementById('beta'),gamma=document.getElementById('gamma'),alpha=document.getElementById('alpha');
+function show(v){return Number.isFinite(v)?v.toFixed(1)+'°':'—'}
+peer.on('open',id=>{
+  peerIdEl.textContent=id;
+  statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bu kodu telefondaki Konduktör sayfasına gir.';
+});
+peer.on('connection',conn=>{
+  statusEl.innerHTML='<span class="wait">● TELEFON BAĞLANIYOR…</span>';
+  conn.on('open',()=>{
+    statusEl.innerHTML='<span class="ok">● TELEFON BAĞLANDI</span><br>Hareket verisi bekleniyor.';
+  });
+  conn.on('data',d=>{
+    if(!d)return;
+    beta.textContent=show(Number(d.beta));
+    gamma.textContent=show(Number(d.gamma));
+    alpha.textContent=show(Number(d.alpha));
+  });
+  conn.on('close',()=>statusEl.innerHTML='<span class="wait">● TELEFON BAĞLANTISI KAPANDI</span>');
+  conn.on('error',e=>statusEl.innerHTML='<span class="bad">● BAĞLANTI HATASI</span><br>'+e.message);
+});
+peer.on('error',e=>statusEl.innerHTML='<span class="bad">● PEERJS HATASI</span><br>'+e.type);
+</script>
+</body></html>
