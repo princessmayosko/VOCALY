@@ -22,7 +22,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050607}
 <div id="stage">
 <img id="scene" src="scene.png">
 <img id="hand" src="hand_baton.png">
-<div id="status"><span class="wait">● HAZIRLANIYOR…</span></div>
+<div id="status"><span class="wait">● HAZIRLANIYOR…</span><div id="peerCode" style="margin-top:6px;font:10px monospace;color:#8d999b;word-break:break-all"></div></div>
 <button id="cal">NÖTR / HAREKETİ SIFIRLA</button>
 <div id="data">acc: —</div>
 </div>
@@ -30,6 +30,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050607}
 <script>
 const peer=new Peer();
 const statusEl=document.getElementById('status');
+const peerCodeEl=document.getElementById('peerCode');
 const hand=document.getElementById('hand');
 const dataEl=document.getElementById('data');
 const calBtn=document.getElementById('cal');
@@ -44,7 +45,8 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function setStatus(html){statusEl.innerHTML=html}
 
 peer.on('open',id=>{
-  setStatus('<span class="ok">● HAZIR</span><br>Telefon kodunu kumandaya gir.');
+  peerCodeEl.textContent='BAĞLANTI KODU: '+id;
+  setStatus('<span class="ok">● HAZIR</span><br>Bu kodu telefondaki kumandaya gir.');
 });
 peer.on('connection',conn=>{
   setStatus('<span class="wait">● TELEFON BAĞLANIYOR…</span>');
