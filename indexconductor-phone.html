@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Vocaly — Telefon Kumanda</title>
+<title>Vocaly — Air Mouse Kumanda</title>
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#050708;color:#eef2f1;font-family:Arial,sans-serif}
@@ -13,53 +13,92 @@ input{width:100%;height:50px;background:#080b0c;color:white;border:1px solid #38
 button{width:100%;height:50px;border:0;border-radius:10px;background:#e5c88e;color:#111;font-weight:700;margin-top:10px}
 .status{margin-top:13px;padding:13px;border-radius:10px;background:#171d1e;font-size:12px;line-height:1.6}
 .ok{color:#8ee6b1}.wait{color:#e5c88e}.bad{color:#ff9b9b}
+.help{margin-top:14px;color:#78888a;font-size:11px;line-height:1.7}
 </style>
 </head>
 <body><main>
-<h1>VOCALY</h1><div class="sub">KONDUKTÖR • SERBEST HAREKET KUMANDA</div>
+<h1>VOCALY</h1><div class="sub">KONDUKTÖR • TELEFON AIR MOUSE</div>
 <div class="card">
-<input id="target" placeholder="Bilgisayar kodunu gir">
+<input id="target" placeholder="Bilgisayarın kodunu gir">
 <button id="connect">BİLGİSAYARA BAĞLAN</button>
 <button id="sensor" disabled>SENSÖRÜ BAŞLAT</button>
+<button id="cal" disabled>NÖTRÜ KALİBRE ET</button>
 <div id="status" class="status"><span class="wait">● HAZIRLANIYOR…</span></div>
+<div class="help">
+Kalibrasyondan sonra telefonu <b>fiziksel olarak</b> sağa-sola ve yukarı-aşağı hareket ettir.
+Telefonu kendi ekseninde döndürmek hedeflenmez.
+<br><br>
+İlk testte hareketi küçük ve kısa yap. Amaç serbest “mouse benzeri” kontrolü oturtmak.
+</div>
 </div>
 </main>
 <script>
-let peer=new Peer(),conn=null,last=0;
-const target=document.getElementById('target'),statusEl=document.getElementById('status'),sensor=document.getElementById('sensor');
-peer.on('open',()=>statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bilgisayar kodunu gir.');
-peer.on('error',e=>statusEl.innerHTML='<span class="bad">● PeerJS hatası: '+e.type+'</span>');
+let peer=new Peer(),conn=null,last=0,calibrating=false,calSamples=[],biasX=0,biasY=0;
+const target=document.getElementById('target'),statusEl=document.getElementById('status'),sensor=document.getElementById('sensor'),cal=document.getElementById('cal');
+
+peer.on('open',()=>{statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bilgisayar kodunu gir.'});
+peer.on('error',e=>statusEl.innerHTML='<span class="bad">● PeerJS: '+e.type+'</span>');
 
 document.getElementById('connect').onclick=()=>{
  const id=target.value.trim(); if(!id)return;
  conn=peer.connect(id,{reliable:false});
  statusEl.innerHTML='<span class="wait">● BAĞLANIYOR…</span>';
- conn.on('open',()=>{statusEl.innerHTML='<span class="ok">● BİLGİSAYAR BAĞLANDI</span><br>Şimdi sensörü başlat.';sensor.disabled=false});
+ conn.on('open',()=>{
+   statusEl.innerHTML='<span class="ok">● BİLGİSAYAR BAĞLANDI</span><br>Şimdi sensörü başlat.';
+   sensor.disabled=false;
+ });
  conn.on('error',e=>statusEl.innerHTML='<span class="bad">● Bağlantı hatası</span><br>'+e.message);
 };
 
 sensor.onclick=async()=>{
  if(!window.isSecureContext){statusEl.innerHTML='<span class="bad">● HTTPS gerekli.</span>';return}
- if(typeof DeviceMotionEvent==='undefined'){statusEl.innerHTML='<span class="bad">● DeviceMotion desteklenmiyor.</span>';return}
  try{
+  if(typeof DeviceMotionEvent==='undefined')throw new Error('DeviceMotion desteklenmiyor');
   if(typeof DeviceMotionEvent.requestPermission==='function'){
    const p=await DeviceMotionEvent.requestPermission();
    if(p!=='granted')throw new Error('Sensör izni verilmedi');
   }
-  window.addEventListener('devicemotion',e=>{
-    const a=e.acceleration;
-    if(!a || a.x===null || a.y===null){
-      statusEl.innerHTML='<span class="bad">● Telefon doğrusal ivme verisi vermiyor.</span><br>Bu cihazda hareket verisi sınırlı olabilir.';
-      return;
-    }
-    const now=performance.now();
-    if(conn?.open && now-last>=33){
-      last=now;
-      conn.send({type:'motion',ax:a.x,ay:a.y,az:a.z,t:Date.now()});
-    }
-  },true);
-  statusEl.innerHTML='<span class="ok">● SERBEST HAREKET SENSÖRÜ AKTİF</span><br>Telefonu sağa-sola / yukarı-aşağı fiziksel olarak hareket ettir.';
+  window.addEventListener('devicemotion',onMotion,true);
+  cal.disabled=false;
+  statusEl.innerHTML='<span class="ok">● SENSÖR AKTİF</span><br>Önce NÖTRÜ KALİBRE ET.';
  }catch(e){statusEl.innerHTML='<span class="bad">● '+e.message+'</span>'}
 };
+
+cal.onclick=()=>{
+ calibrating=true;calSamples=[];
+ statusEl.innerHTML='<span class="wait">● KALİBRASYON…</span><br>Telefonu 1 saniye hiç oynatma.';
+ setTimeout(()=>{
+   if(calSamples.length){
+    biasX=calSamples.reduce((a,b)=>a+b.x,0)/calSamples.length;
+    biasY=calSamples.reduce((a,b)=>a+b.y,0)/calSamples.length;
+   }
+   calibrating=false;
+   statusEl.innerHTML='<span class="ok">● KALİBRE EDİLDİ</span><br>Telefonu fiziksel olarak hareket ettir.';
+ },1000);
+};
+
+function onMotion(e){
+ const a=e.acceleration;
+ if(!a)return;
+ // Ekran koordinatları için yatay X ve dikey Y.
+ // accelerationIncludingGravity kullanılmıyor; böylece yerçekimini hareket sinyali saymıyoruz.
+ let x=Number(a.x)||0, y=Number(a.y)||0;
+ if(calibrating){calSamples.push({x,y});return}
+ x-=biasX; y-=biasY;
+ const now=performance.now();
+ if(!conn?.open || now-last<25)return;
+ last=now;
+
+ // Küçük gürültüleri kes; kısa ivme darbelerini mouse hareketine dönüştür.
+ const dead=.18;
+ if(Math.abs(x)<dead)x=0; else x=Math.sign(x)*(Math.abs(x)-dead);
+ if(Math.abs(y)<dead)y=0; else y=Math.sign(y)*(Math.abs(y)-dead);
+
+ // Telefonun fiziksel ivmesi -> ekrandaki imleç hareketi.
+ // Y ekseni ekran yönüyle ters olduğu için burada -y kullanıyoruz.
+ const gain=8.5;
+ conn.send({dx:x*gain,dy:-y*gain,t:Date.now()});
+}
 </script>
-</body></html>
+</body>
+</html>
