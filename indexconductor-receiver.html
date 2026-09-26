@@ -81,15 +81,18 @@ peer.on('connection',conn=>{
     let x=ax-baseX;
     let y=ay-baseY;
 
-    // Sensör gürültüsü için ölü bölge.
-    const dead=.16;
-    if(Math.abs(x)<dead)x=0;
-    if(Math.abs(y)<dead)y=0;
+    // Küçük sensör gürültüsünü kes. Y davranışı korunuyor.
+    const deadX=.13;
+    const deadY=.16;
+    if(Math.abs(x)<deadX)x=0;
+    if(Math.abs(y)<deadY)y=0;
 
-    // Telefonun Y ekseni yukarı yönlü; ekran Y'si aşağı yönlü.
-    const gain=1100;
-    targetX=clamp(targetX + x*gain/60, -430, 430);
-    targetY=clamp(targetY - y*gain/60, -300, 300);
+    // X: yalnızca yatay doğrusal hareket.
+    // Y: önceki çalışan sürümdeki yön mantığı korunuyor.
+    const gainX=1200;
+    const gainY=1100;
+    targetX=clamp(targetX + x*gainX/60, -430, 430);
+    targetY=clamp(targetY - y*gainY/60, -300, 300);
 
     const now=performance.now();
     dataEl.textContent=`acc ${x.toFixed(2)} / ${y.toFixed(2)} / ${az-baseZ.toFixed?.(2) ?? 0}`;

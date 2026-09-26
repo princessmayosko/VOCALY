@@ -38,6 +38,11 @@ document.getElementById('connect').onclick=()=>{
  conn.on('error',e=>statusEl.innerHTML='<span class="bad">● Bağlantı hatası</span><br>'+e.message);
 };
 
+window.addEventListener('deviceorientation',e=>{
+  if(Number.isFinite(e.beta)) window._beta=e.beta;
+  if(Number.isFinite(e.gamma)) window._gamma=e.gamma;
+},true);
+
 sensor.onclick=async()=>{
  if(!window.isSecureContext){statusEl.innerHTML='<span class="bad">● HTTPS gerekli.</span>';return}
  if(typeof DeviceMotionEvent==='undefined'){statusEl.innerHTML='<span class="bad">● DeviceMotion desteklenmiyor.</span>';return}
@@ -47,15 +52,44 @@ sensor.onclick=async()=>{
    if(p!=='granted')throw new Error('Sensör izni verilmedi');
   }
   window.addEventListener('devicemotion',e=>{
+    /*
+      v5: X/Y'yi telefonun EĞİMİNDEN değil gerçek hareket ivmesinden üret.
+      Bazı Android tarayıcıları acceleration.x/y içine yerçekimi etkisini
+      yeterince temiz aktarmayabiliyor. Bu yüzden accelerationIncludingGravity
+      + beta/gamma ile yerçekimi bileşenini matematiksel olarak çıkarıyoruz.
+      Orientation burada KONTROL olarak kullanılmıyor; sadece gravity compensation.
+    */
     const a=e.acceleration;
-    if(!a || a.x===null || a.y===null){
-      statusEl.innerHTML='<span class="bad">● Telefon doğrusal ivme verisi vermiyor.</span><br>Bu cihazda hareket verisi sınırlı olabilir.';
-      return;
+    const ag=e.accelerationIncludingGravity;
+    const beta=Number(window._beta);
+    const gamma=Number(window._gamma);
+
+    let ax=Number(a && a.x), ay=Number(a && a.y), az=Number(a && a.z);
+
+    if(!Number.isFinite(ax)||!Number.isFinite(ay)){
+      if(!ag || !Number.isFinite(beta)||!Number.isFinite(gamma)){
+        statusEl.innerHTML='<span class="bad">● Hareket sensörü verisi eksik.</span><br>Telefonun ivme sensörü okunamadı.';
+        return;
+      }
+
+      const rad=Math.PI/180;
+      const b=beta*rad, g=gamma*rad;
+      const G=9.80665;
+
+      // Cihaz eksenlerindeki yerçekimi bileşenleri.
+      const gx=-G*Math.sin(g);
+      const gy= G*Math.sin(b);
+      const gz= G*Math.cos(b)*Math.cos(g);
+
+      ax=Number(ag.x)-gx;
+      ay=Number(ag.y)-gy;
+      az=Number(ag.z)-gz;
     }
+
     const now=performance.now();
     if(conn?.open && now-last>=33){
       last=now;
-      conn.send({type:'motion',ax:a.x,ay:a.y,az:a.z,t:Date.now()});
+      conn.send({type:'motion',ax,ay,az,t:Date.now()});
     }
   },true);
   statusEl.innerHTML='<span class="ok">● SERBEST HAREKET SENSÖRÜ AKTİF</span><br>Telefonu sağa-sola / yukarı-aşağı fiziksel olarak hareket ettir.';
