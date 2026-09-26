@@ -1,59 +1,120 @@
 <!doctype html>
-<html lang="tr"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vocaly — Konduktör</title>
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050607}
-#scene{position:fixed;inset:0;background:#050607 center/cover no-repeat url('scene_reference.png')}
-#handWrap{position:absolute;right:1.5vw;bottom:-2vh;width:min(42vw,650px);z-index:3;transform:translate3d(0,0,0);will-change:transform}
-#handWrap img{display:block;width:100%;height:auto;filter:drop-shadow(0 10px 22px rgba(0,0,0,.35))}
-#status{position:absolute;right:24px;bottom:22px;z-index:8;padding:12px 15px;border:1px solid #334042;border-radius:12px;background:rgba(5,8,9,.88);color:#dce2e2;font:12px Arial;min-width:245px}
-.ok{color:#8ee6b1}.wait{color:#e5c88e}.bad{color:#ff9b9b}
-#code{font-size:10px;color:#a9b3b4;margin-top:5px;word-break:break-all}
-#read{margin-top:7px;color:#b7c0c1;font-size:10px}
-</style></head>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050607}
+#stage{position:relative;width:100vw;height:100vh;overflow:hidden;background:#050607}
+#scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+#hand{position:absolute;z-index:4;width:min(46vw,720px);max-width:720px;min-width:420px;left:68%;top:62%;transform:translate(-50%,-50%);pointer-events:none;will-change:transform}
+#status{position:absolute;right:24px;top:22px;z-index:10;min-width:250px;padding:11px 14px;border:1px solid rgba(210,190,140,.25);border-radius:10px;background:rgba(4,7,8,.72);backdrop-filter:blur(6px);color:#aeb9bb;font:12px Arial;line-height:1.5}
+.ok{color:#8de5ae}.wait{color:#e5c88e}.bad{color:#ff9b9b}
+#cal{position:absolute;right:24px;bottom:22px;z-index:10;padding:10px 14px;background:rgba(8,11,12,.82);color:#eee;border:1px solid #394346;border-radius:9px;font-weight:700}
+#data{position:absolute;left:22px;bottom:18px;z-index:10;color:#6f7c7e;font:10px monospace;opacity:.8}
+@media(max-width:900px){#hand{width:58vw;min-width:280px;left:76%;top:68%}}
+</style>
+</head>
 <body>
-<div id="scene"></div>
-<div id="handWrap"><img src="hand_baton.png"></div>
-<div id="status"><span class="wait">● BAĞLANTI HAZIRLANIYOR…</span><div id="code"></div><div id="read"></div></div>
+<div id="stage">
+<img id="scene" src="scene.png">
+<img id="hand" src="hand_baton.png">
+<div id="status"><span class="wait">● HAZIRLANIYOR…</span></div>
+<button id="cal">NÖTR / HAREKETİ SIFIRLA</button>
+<div id="data">acc: —</div>
+</div>
+
 <script>
-const peer=new Peer(), hand=document.getElementById('handWrap');
-const status=document.getElementById('status'), code=document.getElementById('code'), read=document.getElementById('read');
-let baseB=null,baseG=null,x=0,y=0,tx=0,ty=0,last=performance.now();
+const peer=new Peer();
+const statusEl=document.getElementById('status');
+const hand=document.getElementById('hand');
+const dataEl=document.getElementById('data');
+const calBtn=document.getElementById('cal');
+
+let baseX=0,baseY=0,baseZ=0;
+let calSamples=[], calibrated=false;
+let px=0,py=0,vx=0,vy=0,lastFrame=performance.now();
+let targetX=0,targetY=0;
+let lastData=0;
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function setStatus(html){statusEl.innerHTML=html}
 
 peer.on('open',id=>{
- code.textContent='Telefon kodu: '+id;
- status.innerHTML='<span class="ok">● HAZIR</span><div id="code">Telefon kodu: '+id+'</div><div id="read"></div>';
+  setStatus('<span class="ok">● HAZIR</span><br>Telefon kodunu kumandaya gir.');
 });
 peer.on('connection',conn=>{
- status.innerHTML='<span class="wait">● TELEFON BAĞLANIYOR…</span>';
- conn.on('open',()=>{
-   status.innerHTML='<span class="ok">● TELEFON BAĞLANDI</span><div id="code">Nötr pozisyonu telefon sayfasından kalibre et.</div><div id="read"></div>';
- });
- conn.on('data',d=>{
-   if(!d)return;
-   const b=Number(d.beta),g=Number(d.gamma);
-   const r=document.getElementById('read');
-   if(r) r.textContent=`β ${b.toFixed(1)}°  γ ${g.toFixed(1)}°`;
-   if(!Number.isFinite(b)||!Number.isFinite(g))return;
-   if(d.calibrate){
-      baseB=b;baseG=g;tx=ty=x=y=0;return;
-   }
-   if(baseB===null){baseB=b;baseG=g}
-   const db=b-baseB, dg=g-baseG;
-   // Ayna mantığı: telefonda yukarı -> ekranda yukarı; sağ -> sağ.
-   // Önceki sürümde eksen işareti ters olduğu için burada iki ekseni de tersliyoruz.
-   tx=Math.max(-230,Math.min(230,-dg*7.0));
-   ty=Math.max(-180,Math.min(180,-db*6.0));
- });
+  setStatus('<span class="wait">● TELEFON BAĞLANIYOR…</span>');
+  conn.on('open',()=>setStatus('<span class="ok">● TELEFON BAĞLANDI</span><br>Serbest hareket verisi bekleniyor.'));
+  conn.on('data',d=>{
+    if(!d || d.type!=='motion') return;
+    const ax=Number(d.ax)||0, ay=Number(d.ay)||0, az=Number(d.az)||0;
+
+    if(d.calibrating){
+      calSamples.push([ax,ay,az]);
+      return;
+    }
+
+    if(!calibrated) {
+      // İlk stabil verileri bias olarak kabul et.
+      calSamples.push([ax,ay,az]);
+      if(calSamples.length<18) return;
+      const avg=calSamples.reduce((s,a)=>[s[0]+a[0],s[1]+a[1],s[2]+a[2]],[0,0,0]).map(v=>v/calSamples.length);
+      baseX=avg[0];baseY=avg[1];baseZ=avg[2];
+      calibrated=true;
+      calSamples=[];
+      setStatus('<span class="ok">● SERBEST HAREKET AKTİF</span><br>Telefonu fiziksel olarak hareket ettir.');
+    }
+
+    // DeviceMotion: yönelim değil, doğrusal ivme.
+    // Böylece telefonu kendi ekseninde çevirmek tek başına eli yürütmez.
+    let x=ax-baseX;
+    let y=ay-baseY;
+
+    // Sensör gürültüsü için ölü bölge.
+    const dead=.16;
+    if(Math.abs(x)<dead)x=0;
+    if(Math.abs(y)<dead)y=0;
+
+    // Telefonun Y ekseni yukarı yönlü; ekran Y'si aşağı yönlü.
+    const gain=1100;
+    targetX=clamp(targetX + x*gain/60, -430, 430);
+    targetY=clamp(targetY - y*gain/60, -300, 300);
+
+    const now=performance.now();
+    dataEl.textContent=`acc ${x.toFixed(2)} / ${y.toFixed(2)} / ${az-baseZ.toFixed?.(2) ?? 0}`;
+    lastData=now;
+  });
+  conn.on('close',()=>setStatus('<span class="wait">● TELEFON BAĞLANTISI KAPANDI</span>'));
+  conn.on('error',e=>setStatus('<span class="bad">● BAĞLANTI HATASI</span><br>'+e.message));
 });
-function loop(){
- const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
- const k=1-Math.exp(-dt*16);
- x+=(tx-x)*k;y+=(ty-y)*k;
- hand.style.transform=`translate3d(${x}px,${y}px,0)`;
- requestAnimationFrame(loop);
+
+calBtn.onclick=()=>{
+  calibrated=false;calSamples=[];baseX=baseY=baseZ=0;
+  targetX=targetY=0;px=py=0;vx=vy=0;
+  setStatus('<span class="wait">● KALİBRE EDİLİYOR…</span><br>Telefonu sabit tut.');
+};
+
+function animate(){
+  const now=performance.now(),dt=Math.min(.033,(now-lastFrame)/1000);lastFrame=now;
+
+  // Hedef konuma yay gibi yaklaş: serbest hareket, vektörle kilitli değil.
+  const stiffness=15;
+  const damping=8;
+  vx += (targetX-px)*stiffness*dt;
+  vy += (targetY-py)*stiffness*dt;
+  vx *= Math.exp(-damping*dt);
+  vy *= Math.exp(-damping*dt);
+  px += vx*dt;py += vy*dt;
+
+  // El/baton tek görsel; bağımsız baton dönüşü yok.
+  hand.style.transform=`translate(calc(-50% + ${px}px), calc(-50% + ${py}px))`;
+  requestAnimationFrame(animate);
 }
-loop();
-</script></body></html>
+animate();
+</script>
+</body>
+</html>

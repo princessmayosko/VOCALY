@@ -1,14 +1,17 @@
-VOCALY KONDUKTÖR — EL + BATON / AYNA HAREKET TESTİ
-GitHub VOCALY klasörüne 2 HTML + 2 PNG dosyasını birlikte yükle:
+VOCALY KONDUKTÖR — SERBEST HAREKET TESTİ
+
+GitHub VOCALY repo'suna 4 dosyayı yükle:
 - indexconductor-receiver.html
 - indexconductor-phone.html
-- scene_reference.png
+- scene.png
 - hand_baton.png
+
+Bu sürüm DeviceOrientation yerine DeviceMotion kullanır.
+Telefonun kendi ekseninde döndürülmesi hedeflenmez; doğrusal ivme verisiyle
+eli serbestçe 2D alanda hareket ettirmeye çalışır.
 
 Bilgisayar:
 https://princessmayosko.github.io/VOCALY/indexconductor-receiver.html
+
 Telefon:
 https://princessmayosko.github.io/VOCALY/indexconductor-phone.html
-
-Bağlan -> telefonda kalibrasyon -> sensörü başlat.
-Bu sürümde el+baston tek parça hareket eder ve iki eksen ayna yönünde aktarılır.
