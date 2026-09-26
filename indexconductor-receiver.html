@@ -3,55 +3,112 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vocaly — Konduktör Alıcı</title>
+<title>Vocaly — 4/4 Kontrol Testi</title>
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#050708;color:#eef2f1;font-family:Arial,sans-serif}
-main{width:min(850px,94%);margin:40px auto}h1{letter-spacing:7px;margin:0}.sub{color:#789092;font-size:11px;letter-spacing:2px;margin-top:7px}
-.card{margin-top:22px;padding:22px;border:1px solid #334042;border-radius:18px;background:#101617}
-.status{padding:14px;border-radius:10px;background:#171d1e;margin-top:15px;font-size:13px}
-.id{font-size:22px;letter-spacing:2px;margin-top:10px;word-break:break-all}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.v{background:#0b1011;border:1px solid #283234;border-radius:14px;padding:22px;text-align:center}.v span{color:#7f8f91;font-size:11px}.v b{display:block;font-size:36px;margin-top:8px}
-.ok{color:#8ee6b1}.wait{color:#e5c88e}.bad{color:#ff9b9b}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#030506;color:#eee;font-family:Arial,sans-serif}
+#app{height:100%;position:relative;background:
+radial-gradient(circle at 45% 42%,rgba(210,170,80,.07),transparent 30%),
+linear-gradient(110deg,#050708 0%,#090b0d 55%,#030405 100%)}
+header{position:absolute;left:34px;top:24px;z-index:5}header h1{margin:0;letter-spacing:8px;font-size:22px}header p{margin:8px 0;color:#718083;font-size:10px;letter-spacing:3px}
+#pattern{position:absolute;left:50%;top:50%;width:min(62vw,720px);height:min(62vw,720px);transform:translate(-50%,-50%)}
+.ring{position:absolute;inset:4%;border:1px dashed rgba(225,198,130,.25);border-radius:50%}
+.node{position:absolute;width:58px;height:58px;border:1px solid rgba(231,204,139,.6);border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:19px;color:#eee;background:#0b0d0e;box-shadow:0 0 0 0 rgba(235,203,126,0);transition:.08s}
+.node.active{background:#e7cb8c;color:#111;box-shadow:0 0 28px rgba(231,203,139,.8)}
+.n1{left:50%;bottom:2%;transform:translateX(-50%)}.n2{left:2%;top:50%;transform:translateY(-50%)}.n3{right:2%;top:50%;transform:translateY(-50%)}.n4{left:50%;top:2%;transform:translateX(-50%)}
+.arrow{position:absolute;height:3px;background:rgba(231,203,139,.5);transform-origin:left center;border-radius:3px}
+.a12{width:45%;left:50%;top:87%;transform:rotate(-90deg)}
+.a23{width:90%;left:8%;top:50%;transform:rotate(0deg)}
+.a34{width:64%;left:53%;top:45%;transform:rotate(-135deg)}
+.a41{width:85%;left:50%;top:8%;transform:rotate(90deg)}
+#tip{position:absolute;width:24px;height:24px;border-radius:50%;background:#fff2c8;box-shadow:0 0 25px 9px rgba(234,200,117,.65);left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;transition:box-shadow .08s}
+#baton{position:absolute;width:180px;height:5px;background:linear-gradient(90deg,#cfae67,#fff0ca,#cfae67);border-radius:5px;transform-origin:0 50%;z-index:3;left:50%;top:50%;box-shadow:0 0 12px rgba(255,220,145,.5)}
+#panel{position:absolute;right:28px;bottom:24px;width:290px;padding:17px;border:1px solid #30383a;border-radius:14px;background:rgba(10,13,14,.9);z-index:6}
+.status{font-size:12px;line-height:1.6}.ok{color:#8de5ae}.wait{color:#e5c88e}.bad{color:#ff9b9b}
+button{margin-top:10px;width:100%;height:42px;background:#151b1d;color:#eee;border:1px solid #394346;border-radius:9px;cursor:pointer}
+#code{font-size:11px;word-break:break-all;color:#b9c3c4;margin-top:7px}
+.read{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.read div{background:#080b0c;border:1px solid #273032;border-radius:8px;padding:8px;text-align:center}.read span{font-size:9px;color:#718083}.read b{display:block;margin-top:4px;font-size:15px}
+#score{margin-top:10px;color:#9da8aa;font-size:11px}
 </style>
 </head>
-<body><main>
-<h1>VOCALY</h1><div class="sub">KONDUKTÖR • TELEFON ALICI TESTİ</div>
-<div class="card">
-<div>Bu bilgisayarın bağlantı kodu:</div>
-<div class="id" id="peerId">BAĞLANIYOR…</div>
-<div class="status" id="status"><span class="wait">● PeerJS bağlantısı kuruluyor…</span></div>
-<div class="grid">
-<div class="v"><span>BETA</span><b id="beta">—</b></div>
-<div class="v"><span>GAMMA</span><b id="gamma">—</b></div>
-<div class="v"><span>ALPHA</span><b id="alpha">—</b></div>
+<body>
+<div id="app">
+<header><h1>VOCALY</h1><p>KONDUKTÖR • 4/4 HAREKET TESTİ</p></header>
+
+<div id="pattern">
+  <div class="ring"></div>
+  <div class="arrow a12"></div><div class="arrow a23"></div><div class="arrow a34"></div><div class="arrow a41"></div>
+  <div class="node n1" data-n="1">1</div><div class="node n2" data-n="2">2</div><div class="node n3" data-n="3">3</div><div class="node n4" data-n="4">4</div>
+  <div id="baton"></div><div id="tip"></div>
+</div>
+
+<div id="panel">
+  <div id="status"><span class="wait">● BAĞLANTI HAZIRLANIYOR…</span></div>
+  <div id="code"></div>
+  <button id="cal">NÖTR POZİSYONU KALİBRE ET</button>
+  <button id="reset">HAREKETİ SIFIRLA</button>
+  <div class="read"><div><span>BETA</span><b id="beta">—</b></div><div><span>GAMMA</span><b id="gamma">—</b></div><div><span>ALPHA</span><b id="alpha">—</b></div></div>
+  <div id="score">Patern: 1 ↓ → 2 ↖ → 3 → → 4 ↖</div>
 </div>
 </div>
-</main>
+
 <script>
 const peer=new Peer();
-const peerIdEl=document.getElementById('peerId');
-const statusEl=document.getElementById('status');
-const beta=document.getElementById('beta'),gamma=document.getElementById('gamma'),alpha=document.getElementById('alpha');
-function show(v){return Number.isFinite(v)?v.toFixed(1)+'°':'—'}
+const statusEl=document.getElementById('status'),codeEl=document.getElementById('code');
+const tip=document.getElementById('tip'),baton=document.getElementById('baton');
+const betaEl=document.getElementById('beta'),gammaEl=document.getElementById('gamma'),alphaEl=document.getElementById('alpha');
+const nodes=[...document.querySelectorAll('.node')];
+let baseB=0,baseG=0,baseA=0,calibrated=false;
+let sx=0,sy=0,tx=0,ty=0,lastT=performance.now();
+let targetIndex=0, lastHit=0;
+
 peer.on('open',id=>{
-  peerIdEl.textContent=id;
-  statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bu kodu telefondaki Konduktör sayfasına gir.';
+ codeEl.textContent='Telefon kodu: '+id;
+ statusEl.innerHTML='<span class="ok">● HAZIR</span><br>Bu kodu telefondaki kumandaya gir.';
 });
 peer.on('connection',conn=>{
-  statusEl.innerHTML='<span class="wait">● TELEFON BAĞLANIYOR…</span>';
-  conn.on('open',()=>{
-    statusEl.innerHTML='<span class="ok">● TELEFON BAĞLANDI</span><br>Hareket verisi bekleniyor.';
-  });
-  conn.on('data',d=>{
-    if(!d)return;
-    beta.textContent=show(Number(d.beta));
-    gamma.textContent=show(Number(d.gamma));
-    alpha.textContent=show(Number(d.alpha));
-  });
-  conn.on('close',()=>statusEl.innerHTML='<span class="wait">● TELEFON BAĞLANTISI KAPANDI</span>');
-  conn.on('error',e=>statusEl.innerHTML='<span class="bad">● BAĞLANTI HATASI</span><br>'+e.message);
+ statusEl.innerHTML='<span class="wait">● TELEFON BAĞLANIYOR…</span>';
+ conn.on('open',()=>{
+   statusEl.innerHTML='<span class="ok">● TELEFON BAĞLANDI</span><br>Nötr pozisyonu kalibre et ve telefonu hareket ettir.';
+ });
+ conn.on('data',d=>{
+   if(!d)return;
+   const b=Number(d.beta),g=Number(d.gamma),a=Number(d.alpha);
+   betaEl.textContent=Number.isFinite(b)?b.toFixed(1)+'°':'—';
+   gammaEl.textContent=Number.isFinite(g)?g.toFixed(1)+'°':'—';
+   alphaEl.textContent=Number.isFinite(a)?a.toFixed(1)+'°':'—';
+   if(!calibrated){baseB=b;baseG=g;baseA=a;calibrated=true}
+   const db=Math.max(-35,Math.min(35,b-baseB));
+   const dg=Math.max(-35,Math.min(35,g-baseG));
+   // gamma -> yatay, beta -> dikey
+   tx=dg*7.0; ty=db*6.0;
+   const now=performance.now();
+   const dt=Math.min(.08,(now-lastT)/1000); lastT=now;
+   const k=1-Math.exp(-dt*12);
+   sx += (tx-sx)*k; sy += (ty-sy)*k;
+ });
 });
-peer.on('error',e=>statusEl.innerHTML='<span class="bad">● PEERJS HATASI</span><br>'+e.type);
+
+document.getElementById('cal').onclick=()=>{
+  calibrated=false;
+  sx=sy=tx=ty=0;
+  statusEl.innerHTML='<span class="ok">● KALİBRASYON HAZIR</span><br>Telefonu rahat, nötr konumda sabit tut.';
+};
+document.getElementById('reset').onclick=()=>{sx=sy=tx=ty=0;targetIndex=0;lastHit=0;nodes.forEach(n=>n.classList.remove('active'));};
+
+function loop(){
+  // Tip merkezi etrafında kontrollü hareket
+  const p=document.getElementById('pattern');
+  const cx=p.clientWidth/2,cy=p.clientHeight/2;
+  const x=Math.max(45,Math.min(p.clientWidth-45,cx+sx));
+  const y=Math.max(45,Math.min(p.clientHeight-45,cy+sy));
+  tip.style.left=x+'px';tip.style.top=y+'px';
+  baton.style.left=x+'px';baton.style.top=y+'px';
+  const angle=Math.atan2(sy,sx)*180/Math.PI;
+  baton.style.transform='rotate('+(angle+180)+'deg)';
+  requestAnimationFrame(loop);
+}
+loop();
 </script>
-</body></html>
+</body>
+</html>
