@@ -89,86 +89,6 @@ header{
     border-radius:12px;
 }
 
-
-/* Ritim Atölyesi seçenek penceresi */
-.modal-backdrop{
-    position:fixed;
-    inset:0;
-    background:rgba(2,8,20,.78);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    z-index:1000;
-}
-.modal-backdrop.active{display:flex;}
-.modal{
-    width:100%;
-    max-width:620px;
-    background:#0d182b;
-    border:1px solid #354765;
-    border-radius:22px;
-    padding:28px;
-    box-shadow:0 22px 70px rgba(0,0,0,.45);
-}
-.modal-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    margin-bottom:10px;
-}
-.modal-header h2{color:#ffd54f;font-size:25px;}
-.modal-intro{color:#cbd5e1;line-height:1.5;margin-bottom:22px;}
-.modal-options{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-    gap:14px;
-}
-.modal-option{
-    display:block;
-    min-height:150px;
-    padding:22px;
-    text-align:left;
-    color:white;
-    text-decoration:none;
-    background:#111b2d;
-    border:1px solid #26344d;
-    border-radius:16px;
-    transition:.25s;
-}
-.modal-option:hover{
-    transform:translateY(-3px);
-    border-color:#ffd54f;
-    background:#15233a;
-}
-.modal-option .option-icon{font-size:28px;display:block;margin-bottom:12px;}
-.modal-option h3{color:#ffd54f;margin-bottom:8px;font-size:19px;}
-.modal-option p{color:#ddd;line-height:1.45;font-size:15px;}
-.modal-close{
-    border:1px solid #53627a;
-    background:#17243a;
-    color:white;
-    width:36px;
-    height:36px;
-    border-radius:10px;
-    font-size:22px;
-    cursor:pointer;
-}
-.modal-close:hover{border-color:#ffd54f;color:#ffd54f;}
-.card:focus-visible,.modal-option:focus-visible,.modal-close:focus-visible{
-    outline:2px solid #ffd54f;
-    outline-offset:4px;
-}
-@media(max-width:520px){
-    header{padding:24px 14px;}
-    .logo{font-size:29px;padding:13px 26px;}
-    .welcome{font-size:19px;}
-    .container{width:100%;padding:14px;gap:14px;}
-    .card{padding:24px 18px;}
-    .modal{padding:20px;}
-}
-
 </style>
 
 </head>
@@ -208,6 +128,21 @@ Etkinliklere katıl, kazanımlarını geliştir.
 </div>
 
 
+<div class="card" onclick="openPage('beden_perkusyonu.html')">
+<h2>🥁 Beden Perküsyonu</h2>
+<p>
+Ritim kalıplarını beden hareketleriyle uygula.
+</p>
+</div>
+
+<div class="card" onclick="openPage('Vocaly_Olcme_Modulu_Aralik_Puanlama.html')">
+<h2>🎯 Ritim Ölçme</h2>
+<p>
+Ritim kalıplarını alkışla ve ölçme sonuçlarını gör.
+</p>
+</div>
+
+
 
 <div class="card" onclick="openPage('defter.html')">
 <h2>📒 Müzik Defteri</h2>
@@ -226,41 +161,10 @@ Notasyon oluştur, çalışmalarını dinle.
 </div>
 
 
-<div class="card" role="button" tabindex="0" onclick="openRhythmWorkshop()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openRhythmWorkshop();}">
-<h2>🥁 Ritim Atölyesi</h2>
-<p>
-Beden perküsyonu ve ritim egzersizleriyle ritim becerilerini geliştir.
-</p>
-</div>
-
-
 
 </div>
 
 
-
-
-<div class="modal-backdrop" id="rhythmModal" role="dialog" aria-modal="true" aria-labelledby="rhythmModalTitle" onclick="if(event.target===this)closeRhythmWorkshop()">
-    <div class="modal">
-        <div class="modal-header">
-            <h2 id="rhythmModalTitle">🥁 Ritim Atölyesi</h2>
-            <button class="modal-close" type="button" aria-label="Kapat" onclick="closeRhythmWorkshop()">×</button>
-        </div>
-        <p class="modal-intro">Çalışmak istediğin etkinliği seç.</p>
-        <div class="modal-options">
-            <a class="modal-option" href="vocaly_beden_perkusyonu.html">
-                <span class="option-icon">👏</span>
-                <h3>Beden Perküsyonu</h3>
-                <p>Bedenini kullanarak ritim kalıplarını uygula.</p>
-            </a>
-            <a class="modal-option" href="ritim_egzersizi.html">
-                <span class="option-icon">🎵</span>
-                <h3>Ritim Egzersizi</h3>
-                <p>Ritim okuma ve uygulama egzersizlerine geç.</p>
-            </a>
-        </div>
-    </div>
-</div>
 
 <a class="logout" href="opening.html">
 Çıkış
@@ -282,24 +186,6 @@ document.getElementById("welcome").innerHTML =
 }
 
 
-
-function openRhythmWorkshop(){
-    const modal = document.getElementById("rhythmModal");
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
-    modal.querySelector(".modal-close").focus();
-}
-
-function closeRhythmWorkshop(){
-    document.getElementById("rhythmModal").classList.remove("active");
-    document.body.style.overflow = "";
-}
-
-document.addEventListener("keydown", function(event){
-    if(event.key === "Escape"){
-        closeRhythmWorkshop();
-    }
-});
 
 function openPage(page){
 
