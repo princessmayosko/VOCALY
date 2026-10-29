@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocaly | Ritim Ölçme</title>
+<style>
+:root{--bg:#101313;--panel:#191f1f;--panel2:#202929;--line:#344140;--text:#f3f6f4;--muted:#aab7b3;--teal:#2bb8a5;--purple:#9b8cff;--yellow:#f3cf63;--red:#ff8585}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top right,#1a2b29 0%,var(--bg) 52%);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:11px 17px;color:var(--text);background:var(--panel2);font:inherit;font-weight:750}button:hover{border-color:var(--teal)}button.primary{background:var(--teal);color:#062521;border-color:var(--teal)}button:disabled{opacity:.4;cursor:not-allowed}
+.app{max-width:1000px;margin:auto;padding:16px 18px 28px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:11px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(140deg,var(--teal),var(--purple));display:grid;place-items:center;color:#081b19;font-weight:950;font-size:22px}.eyebrow{color:var(--teal);text-transform:uppercase;letter-spacing:.13em;font-size:11px;font-weight:850}.top h1{margin:0;font-size:clamp(20px,3vw,28px);letter-spacing:-.04em}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:13px;white-space:nowrap}
+.panel{background:rgba(25,31,31,.95);border:1px solid var(--line);border-radius:18px;padding:clamp(14px,3vw,28px);min-width:0}.step-row{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--muted);font-size:14px;margin-bottom:10px}.step-row strong{color:var(--teal)}.progress{height:5px;background:#303c39;border-radius:9px;overflow:hidden;margin-bottom:22px}.progress>div{height:100%;width:0;background:var(--teal);transition:width .2s}
+.pattern-stage{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 0 22px}.pattern-label{color:var(--muted);font-size:14px;margin-bottom:10px}.notation{display:block;width:min(100%,590px);height:auto;max-height:250px;color:var(--text);overflow:visible}.notation svg{width:100%;height:auto;display:block}.syllables{display:flex;justify-content:center;align-items:center;gap:clamp(10px,3vw,26px);margin-top:12px;flex-wrap:wrap}.syllable{position:relative;display:inline-block;font-size:clamp(23px,5vw,40px);font-weight:850;color:var(--yellow);letter-spacing:.01em;padding:3px 7px;border-radius:8px;overflow:hidden;isolation:isolate}.syllable::before{content:"";position:absolute;inset:0;background:var(--teal);transform:scaleX(0);transform-origin:left;z-index:-1;border-radius:8px}.syllable.active{color:#071d19;box-shadow:0 0 18px #2bb8a580}.syllable.active::before{animation:syllableFill var(--fill-duration,.25s) linear forwards}.syllable.correct{background:#1f8f67;color:#fff;box-shadow:0 0 0 2px #49d6a2}.syllable.wrong{background:#8e2d35;color:#fff;box-shadow:0 0 0 2px #ff6b78}.syllable.correct::before,.syllable.wrong::before{display:none}@keyframes syllableFill{to{transform:scaleX(1)}}.multi-patterns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;width:100%;margin-top:20px}.mini-pattern{border:1px solid var(--line);background:#121817;border-radius:12px;padding:10px 5px;min-width:0}.mini-pattern .notation{width:100%;height:auto}.mini-pattern .syllables{gap:4px;margin-top:3px}.mini-pattern .syllable{font-size:clamp(12px,2.2vw,18px)}
+.state-line{display:flex;align-items:center;justify-content:center;gap:10px;min-height:38px;color:var(--muted);text-align:center;margin:3px 0 14px}.pulse{width:10px;height:10px;border-radius:50%;background:#44514e;flex:none}.pulse.active{background:var(--yellow);box-shadow:0 0 14px #f3cf6380}.pulse.listening{background:var(--red);box-shadow:0 0 14px #ff858580;animation:pulse 1s infinite}@keyframes pulse{50%{opacity:.35}}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:8px}.bottom-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}.feedback{display:none;text-align:center;margin:16px auto 0;padding:13px;border:1px solid var(--line);border-radius:12px;max-width:620px}.feedback.show{display:block}.score{font-size:26px;font-weight:900;color:var(--teal)}.detail{color:var(--muted);font-size:14px;margin-top:3px}.help{font-size:13px;color:var(--muted);text-align:center;margin:14px 0 0}.hidden{display:none!important}
+@media(max-width:600px){.app{padding:10px}.top{align-items:flex-start}.pill{font-size:11px}.multi-patterns{grid-template-columns:repeat(2,minmax(0,1fr))}.pattern-stage{min-height:250px}.notation{max-width:100%}.bottom-actions button{padding:10px 12px}.step-row{font-size:12px}}
+</style></head>
+<body><div class="app">
+<header class="top"><div class="brand"><div class="logo">V</div><div><div class="eyebrow">VOCALY ACADEMY</div><h1>Ritim Ölçme</h1></div></div><div class="pill">● Moderato</div></header>
+<section class="panel">
+ <div class="step-row"><span id="stageName">Tek kalıp ölçümü</span><span id="counter"><strong>1</strong> / 8</span></div>
+ <div class="progress"><div id="progressFill"></div></div>
+ <div class="pattern-stage" id="patternStage">
+  <div class="pattern-label" id="patternLabel">Kalıbı incele</div>
+  <div id="notationMount" class="notation"></div>
+  <div id="syllablesMount" class="syllables"></div>
+ </div>
+ <div class="state-line"><span class="pulse" id="pulse"></span><span id="status">Hazır olduğunda Başlat'a bas.</span></div>
+ <div class="actions"><button class="primary" id="startBtn">🎙 Başlat</button><button id="replayBtn">↻ Tekrar ölç</button></div>
+ <div class="feedback" id="feedback"><div class="score" id="score">—</div><div class="detail" id="feedbackDetail"></div></div>
+ <p class="help" id="helpText">Başlatınca 4 vuruşluk metronom sayımı gelir; ardından ritmi alkışla.</p>
+ <div class="bottom-actions"><button id="backBtn" disabled>← Geri</button><button class="primary" id="nextBtn">İlerle →</button></div>
+</section></div>
+<script>
+const patterns = [{"id": "van", "syllables": ["Van"], "notation": "quarter", "beats": 1}, {"id": "izmir", "syllables": ["İz", "mir"], "notation": "eighth-pair", "beats": 1}, {"id": "ucleme", "syllables": ["Üç", "le", "me"], "notation": "triplet", "beats": 1}, {"id": "gelibolu", "syllables": ["Ge", "li", "bo", "lu"], "notation": "four-sixteenths", "beats": 1}, {"id": "ankara", "syllables": ["An", "ka", "ra"], "notation": "eighth-two-sixteenths", "beats": 1}, {"id": "karaman", "syllables": ["Ka", "ra", "man"], "notation": "two-sixteenths-eighth", "beats": 1}, {"id": "mugla", "syllables": ["Muğ", "la"], "notation": "dotted-eighth-sixteenth", "beats": 1}, {"id": "malatya", "syllables": ["Ma", "lat", "ya"], "notation": "sixteenth-eighth-sixteenth", "beats": 1}];
+function notationSVG(kind){
+ const head=(x,y=30)=>`<ellipse cx="${x}" cy="${y}" rx="6.4" ry="4.5" transform="rotate(-25 ${x} ${y})" fill="currentColor" stroke="none"/>`;
+ const stem=(x,y=30)=>`<path d="M ${x+5} ${y-1} V 6" fill="none" stroke="currentColor" stroke-width="2"/>`;
+ const beam=(x1,x2,y=6,th=4)=>`<path d="M ${x1} ${y} L ${x2} ${y} L ${x2} ${y+th} L ${x1} ${y+th} Z" fill="currentColor"/>`;
+ const partial=(x1,x2,y=13,th=3.2)=>`<path d="M ${x1} ${y} L ${x2} ${y} L ${x2} ${y+th} L ${x1} ${y+th} Z" fill="currentColor"/>`;
+ let out=`<svg class="notation" viewBox="0 0 126 64" role="img" aria-label="Ritim notası"><g>`;
+ const xs=kind==="quarter"?[60]:kind==="eighth-pair"||kind==="dotted-eighth-sixteenth"?[43,78]:kind==="triplet"?[31,60,89]:kind==="four-sixteenths"?[22,49,76,103]:[31,63,95];
+ xs.forEach(x=>{out+=head(x)+stem(x)});
+ if(kind==="quarter"){}
+ if(kind==="eighth-pair")out+=beam(xs[0]+5,xs[1]+5);
+ if(kind==="triplet"){out+=beam(xs[0]+5,xs[2]+5);out+=`<text x="63" y="57" font-size="11" text-anchor="middle" font-family="system-ui,sans-serif" fill="currentColor">3</text>`;}
+ if(kind==="four-sixteenths"){out+=beam(xs[0]+5,xs[3]+5)+beam(xs[0]+5,xs[3]+5,12,3.2);}
+ if(kind==="eighth-two-sixteenths"){out+=beam(xs[0]+5,xs[2]+5)+beam(xs[1]+5,xs[2]+5,12,3.2);}
+ if(kind==="two-sixteenths-eighth"){out+=beam(xs[0]+5,xs[2]+5)+beam(xs[0]+5,xs[1]+5,12,3.2);}
+ if(kind==="dotted-eighth-sixteenth"){out+=`<circle cx="56" cy="29" r="2.3" fill="currentColor"/>`+beam(xs[0]+5,xs[1]+5)+`<path d="M ${xs[1]+5} 13 L ${xs[1]-7} 13 L ${xs[1]-7} 16 L ${xs[1]+5} 16 Z" fill="currentColor"/>`;}
+ if(kind==="sixteenth-eighth-sixteenth"){out+=beam(xs[0]+5,xs[2]+5)+partial(xs[0]+5,xs[0]+15,13)+partial(xs[2]-5,xs[2]+5,13);}
+ out+=`</g></svg>`;return out;
+}
+const $=id=>document.getElementById(id);
+let index=0, stage="single", busy=false, audioCtx=null, stream=null, raf=0, stopListening=false, lastScore=null;
+// Ritim Atölyesi ile aynı aralık: vuruş başına 1000 ms.
+const beatMs=1000;
+function notationFor(kind){return notationSVG(kind).replace('<svg class="notation"','<svg')}
+function draw(){
+ $('feedback').classList.remove('show');lastScore=null;clearSyllableLoading();clearSyllableResults();
+ $('progressFill').style.width=(stage==="single"?index/patterns.length*100:100)+"%";
+ $('stageName').textContent=stage==="single"?"Tek kalıp ölçümü":"Çoklu kalıp ölçümü";
+ $('counter').innerHTML=stage==="single"?`<strong>${index+1}</strong> / ${patterns.length}`:"4 kalıp dizisi";
+ if(stage==="single"){
+   const p=patterns[index];$('patternLabel').textContent="Ritmi alkışla";$('notationMount').innerHTML=notationFor(p.notation);
+   $('syllablesMount').innerHTML=p.syllables.map(s=>`<span class="syllable">${s}</span>`).join("");
+ }else{
+   const seq=[patterns[1],patterns[0],patterns[3],patterns[4]];
+   $('patternLabel').textContent="Sırayla duyduğun ritimleri alkışla";
+   $('notationMount').innerHTML="";$('syllablesMount').innerHTML="";
+   const grid=document.createElement("div");grid.className="multi-patterns";
+   seq.forEach((p,i)=>{const el=document.createElement("div");el.className="mini-pattern";el.innerHTML=`<div style="color:var(--muted);font-size:12px;margin-bottom:5px">Ölçü ${i+1}</div>${notationFor(p.notation)}<div class="syllables">${p.syllables.map(s=>`<span class="syllable">${s}</span>`).join("")}</div>`;grid.appendChild(el)});
+   $('notationMount').appendChild(grid);
+ }
+ $('startBtn').disabled=false;$('replayBtn').disabled=false;$('nextBtn').disabled=busy;$('backBtn').disabled=(stage==='single'&&index===0);
+ $('helpText').textContent=stage==="single"?"Başlatınca 4 vuruşluk metronom sayımı gelir; ardından ritmi alkışla.":"Dört vuruşluk sayımdan sonra 4 kalıbı art arda alkışla.";
+}
+function ensureContext(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error("Tarayıcı ses ölçümünü desteklemiyor.");if(!audioCtx)audioCtx=new AC();if(audioCtx.state==="suspended")return audioCtx.resume().then(()=>audioCtx);return Promise.resolve(audioCtx)}
+function clickAt(time,accent=false){const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type="sine";osc.frequency.value=accent?1150:820;gain.gain.setValueAtTime(.0001,time);gain.gain.exponentialRampToValueAtTime(accent?.18:.12,time+.008);gain.gain.exponentialRampToValueAtTime(.0001,time+.065);osc.connect(gain);gain.connect(audioCtx.destination);osc.start(time);osc.stop(time+.07)}
+const eventFractions=p=>p.id==="van"?[0]:p.id==="izmir"?[0,.5]:p.id==="ucleme"?[0,1/3,2/3]:p.id==="gelibolu"?[0,.25,.5,.75]:p.id==="ankara"?[0,.5,.75]:p.id==="karaman"?[0,.25,.5]:p.id==="mugla"?[0,.75]:[0,.25,.75];
+function expectedEvents(){
+ if(stage==="single")return eventFractions(patterns[index]).map(f=>f*beatMs);
+ const seq=[patterns[1],patterns[0],patterns[3],patterns[4]];
+ return seq.flatMap((p,i)=>eventFractions(p).map(f=>i*beatMs+f*beatMs));
+}
+function clearSyllableLoading(){document.querySelectorAll('.syllable.active').forEach(el=>el.classList.remove('active'));}
+function clearSyllableResults(){document.querySelectorAll('.syllable.correct,.syllable.wrong').forEach(el=>el.classList.remove('correct','wrong'));}
+function getSyllableSlots(){
+ const slots=[];
+ if(stage==='single'){
+  const p=patterns[index], els=[...$('syllablesMount').querySelectorAll('.syllable')], fr=eventFractions(p);
+  fr.forEach((f,i)=>slots.push({at:f*beatMs, end:(fr[i+1]??1)*beatMs, el:els[i]}));
+ }else{
+  const seq=[patterns[1],patterns[0],patterns[3],patterns[4]], els=[...document.querySelectorAll('.mini-pattern .syllable')];let cursor=0;
+  seq.forEach((p,pi)=>{const fr=eventFractions(p);fr.forEach((f,i)=>slots.push({at:(pi+f)*beatMs,end:(pi+(fr[i+1]??1))*beatMs,el:els[cursor++]}));});
+ }
+ return slots;
+}
+function animateSyllables(patternStart){
+ clearSyllableLoading();clearSyllableResults();
+ const slots=getSyllableSlots();
+ slots.forEach(({at,end,el})=>{if(el)setTimeout(()=>{if(busy){clearSyllableLoading();el.style.setProperty('--fill-duration',`${Math.max(80,end-at)}ms`);el.classList.add('active')}},Math.max(0,at));});
+ setTimeout(clearSyllableLoading,(stage==='single'?1:4)*beatMs+700);
+}
+async function startMeasurement(){
+ if(busy)return;
+ if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+  $('status').textContent='Bu tarayıcı bu sayfada mikrofon erişimini desteklemiyor. Sayfayı Chrome veya Edge ile açmayı dene.';
+  $('helpText').textContent='Mikrofon erişimi için sayfanın HTTPS üzerinden açılması gerekebilir; BAT dosyası kullanmana gerek yok.';
+  $('pulse').className='pulse';
+  return;
+ }
+ busy=true;$('startBtn').disabled=true;$('replayBtn').disabled=true;$('nextBtn').disabled=true;$('feedback').classList.remove('show');
+ try{
+  await ensureContext();
+  if(!stream)stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}});
+  const source=audioCtx.createMediaStreamSource(stream), analyser=audioCtx.createAnalyser();analyser.fftSize=2048;analyser.smoothingTimeConstant=0;
+  source.connect(analyser);
+  $('status').textContent="Metronom sayımı…";$('pulse').className="pulse active";
+  const startAt=audioCtx.currentTime+.18;
+  for(let i=0;i<4;i++)clickAt(startAt+i*beatMs/1000,i===0);
+  const patternStart=performance.now()+180+4*beatMs;
+  setTimeout(()=>listenAndScore(analyser,source,patternStart),180+4*beatMs);
+ }catch(err){
+  busy=false;$('startBtn').disabled=false;$('replayBtn').disabled=false;$('nextBtn').disabled=false;
+  $('status').textContent=err.name==="NotAllowedError"?"Mikrofon izni reddedildi. Adres çubuğundaki site izinlerinden Mikrofon → İzin ver seçeneğini aç.":(err.name==="NotFoundError"?"Mikrofon bulunamadı. Bağlı bir mikrofon seç.":(err.message||"Mikrofon açılamadı."));
+  $('pulse').className="pulse";
+ }
+}
+function listenAndScore(analyser,source,patternStart){
+ if(!busy)return;
+ $('status').textContent="Dinliyorum — şimdi alkışla!";$('pulse').className="pulse listening";animateSyllables(patternStart);
+ const data=new Float32Array(analyser.fftSize), detected=[];let lastHit=-1000, peak=0, base=0, sampleCount=0;
+ const duration=stage==="single"?beatMs*1.55:beatMs*4+beatMs*.35;
+ const endAt=performance.now()+duration;
+ function sample(){
+  if(!busy)return;
+  analyser.getFloatTimeDomainData(data);let sum=0;for(let i=0;i<data.length;i++)sum+=data[i]*data[i];
+  const rms=Math.sqrt(sum/data.length);peak=Math.max(peak,rms);
+  // Adaptive threshold helps reject quiet room noise; refractory window suppresses echo/double triggers.
+  base=sampleCount===0?rms:base*.985+rms*.015;sampleCount++;
+  const t=performance.now()-patternStart;
+  // Daha hassas alkış algılama: düşük ses düzeyi ve hızlı yükselen sinyal de yakalanır.
+  const threshold=Math.max(.010,base*1.9);
+  if(rms>threshold&&rms>lastRms*1.12&&t>=45&&t-lastHit>130){detected.push(t);lastHit=t}
+  lastRms=rms;
+  if(performance.now()<endAt){raf=requestAnimationFrame(sample)}else finishScore(detected,expectedEvents(),duration,source,peak);
+ }
+ let lastRms=0;
+ raf=requestAnimationFrame(sample);
+}
+function finishScore(detected,expected,duration,source,peak){
+ busy=false;try{source.disconnect()}catch(e){}
+ $('pulse').className="pulse";clearSyllableLoading();
+ const slots=getSyllableSlots();
+ // Alkış, hecenin dolduğu zaman aralığında gerçekleşmelidir; başlangıca göre ± tolerans kullanılmaz.
+ // Örn. Gelibolu: Ge 0–250 ms, li 250–500 ms, bo 500–750 ms, lu 750–1000 ms.
+ const used=new Set(), correctSlots=new Set(), wrongSlots=new Set();
+ const slotHits=slots.map((slot,index)=>({slot,index,hits:[]}));
+ detected.forEach((d,di)=>{
+  // Slot aralıkları [at, end); son sınırdaki ölçüm bir sonraki aralığa girer.
+  let hit=slotHits.find(x=>d>=x.slot.at && d<x.slot.end);
+  if(hit){hit.hits.push(di);used.add(di);}
+  else {
+   // Kalıbın zaman aralıkları dışındaki fazla alkış en yakın heceyi yanlış yapar.
+   let nearest=slotHits[0],dist=Infinity;
+   slotHits.forEach(x=>{const center=(x.slot.at+x.slot.end)/2,delta=Math.abs(d-center);if(delta<dist){dist=delta;nearest=x;}});
+   wrongSlots.add(nearest.index);
+  }
+ });
+ slotHits.forEach(x=>{
+  if(x.hits.length===1)correctSlots.add(x.index);
+  else {wrongSlots.add(x.index);correctSlots.delete(x.index);}
+ });
+ slots.forEach((slot,i)=>{if(!slot.el)return;slot.el.classList.remove('active','correct','wrong');slot.el.style.removeProperty('--fill-duration');slot.el.classList.add(correctSlots.has(i)&&!wrongSlots.has(i)?'correct':'wrong')});
+ const matched=slots.filter((_,i)=>correctSlots.has(i)&&!wrongSlots.has(i)).length;
+ const total=slots.length,score=total?Math.round(matched/total*100/25)*25:0;
+ $('score').textContent=`%${score}`;
+ $('feedbackDetail').textContent=`${matched}/${total} hece doğru zaman aralığında · ${detected.length} alkış algılandı · her hece kendi animasyon aralığında değerlendirilir`;
+ if(!detected.length){$('status').textContent="Alkış algılanmadı. Biraz daha belirgin alkışlayıp tekrar dene.";}
+ else if(score===100){$('status').textContent="Harika! Her alkış kendi zaman aralığında.";}
+ else{$('status').textContent="Kırmızı heceler: alkış eksik, aynı aralıkta birden fazla veya zaman aralığı dışında. Tekrar deneyebilirsin.";}
+ $('feedback').classList.add('show');$('startBtn').disabled=false;$('replayBtn').disabled=false;$('nextBtn').disabled=false;
+ $('progressFill').style.width=(stage==="single"?(index+1)/patterns.length*100:100)+"%";
+}
+async function goNext(){
+ if(busy)return;
+ if(stage==="single"&&index<patterns.length-1){index++;draw();$('status').textContent="Hazır olduğunda Başlat'a bas."}
+ else if(stage==="single"){stage="multi";draw();$('status').textContent="Tek kalıplar tamamlandı. Şimdi dizi ölçümü.";$('nextBtn').textContent="Ölçmeyi bitir"}
+ else {stage="single";index=0;draw();$('nextBtn').textContent="İlerle →";$('status').textContent="Ölçme tamamlandı. İstersen yeniden başlayabilirsin."}
+}
+$('startBtn').addEventListener('click',startMeasurement);$('replayBtn').addEventListener('click',startMeasurement);$('nextBtn').addEventListener('click',goNext);
+$('backBtn').addEventListener('click',()=>{if(busy)return;if(stage==="multi"){stage="single";index=patterns.length-1;$('nextBtn').textContent="İlerle →"}else if(index>0)index--;draw()});
+draw();
+</script></body></html>
