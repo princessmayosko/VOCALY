@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vocaly Konduktör — 4/4 Ray</title>
+
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050607;font-family:Arial,sans-serif}#stage{position:relative;width:100vw;height:100vh;overflow:hidden;background:#050607}#scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}#overlay{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}#dot{filter:drop-shadow(0 0 7px #ffe3a0) drop-shadow(0 0 18px #ffb83d)}#status{display:none}#peerCode{margin-top:8px;font:12px monospace;color:#e5c88e;word-break:break-all}.ok{color:#8de5ae}.wait{color:#e5c88e}.bad{color:#ff9b9b}.uiBtn{position:absolute;z-index:10;padding:10px 13px;background:rgba(8,11,12,.84);color:#eee;border:1px solid rgba(210,190,140,.38);border-radius:9px;font-weight:700;cursor:pointer;backdrop-filter:blur(6px)}#settings{display:none}#reset{right:18px;bottom:18px}#audioStart{left:18px;bottom:18px}#test{right:110px;bottom:18px}#connectionPanel{display:none}#data{display:none}@media(max-width:700px){#audioStart{left:10px;bottom:58px}#reset{right:10px;bottom:10px}#test{right:92px;bottom:10px}}
+</style></head><body><div id="stage">
+<img id="scene" src="scene.png" alt="Vocaly Konduktör 4/4 şeması">
+<svg id="overlay" viewBox="0 0 1664 1024" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><circle id="dotHalo" cx="823" cy="560" r="21" fill="#ffd27a" opacity=".18"/><circle id="dot" cx="823" cy="560" r="9" fill="#fff6d9" stroke="#ffc85e" stroke-width="3"/></svg>
+<div id="status"><span class="wait">● BAĞLANTI HAZIRLANIYOR…</span><div id="peerCode"></div></div><div id="data">Vuruş: 1 · Bekleniyor</div><div id="connectionPanel" style="display:none"></div><button class="uiBtn" id="audioStart" style="left:18px;bottom:18px">INTRO'YU BAŞLAT</button><button class="uiBtn" id="reset">SIFIRLA</button><button class="uiBtn" id="test">VURUŞU TEST ET</button>
+<audio id="anthem" preload="auto" src="istiklal_marsi.mp3"></audio></div>
+<script>
+const dot=document.getElementById('dot'), halo=document.getElementById('dotHalo');
+const dataEl=document.getElementById('data');
+// Koordinatlar görselin 1664x1024 viewBox'ına göre.
+const points=[{x:823,y:419},{x:823,y:700},{x:548,y:419},{x:1098,y:419},{x:823,y:133}];
+// 1 aşağı, 2 çapraz yukarı-sol, 3 sağa, 4 çapraz yukarı-sol.
+const segments=[[0,1],[1,2],[2,3],[3,4]];
+let beat=0, moving=false, moveStart=0, from=points[0], to=points[0], moveDuration=180;
+let lastEventAt=0;
+const EVENT_GAP_MS=70;
+const incomingEvents=[];
+const audio=document.getElementById('anthem');
+let audioArmed=false, introFinished=false, audioBusy=false;
+const INTRO_STOP=2.623;
+// Provisional original-recording boundaries. These are the user's markers;
+// 4.800s is a provisional KORK entry estimate and must be checked in Audacity.
+const markers=[2.623,3.500,4.300,4.800];
+let markerIndex=0;
+let audioCtx=null, gainNode=null, mediaSource=null;
+function setupAudio(){
+  if(!audioCtx){
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    gainNode=audioCtx.createGain();
+    gainNode.gain.value=1;
+    mediaSource=audioCtx.createMediaElementSource(audio);
+    mediaSource.connect(gainNode); gainNode.connect(audioCtx.destination);
+  }
+}
+function fadeAndPause(){
+  if(!audioCtx || audio.paused) { audioBusy=false; return; }
+  const now=audioCtx.currentTime;
+  gainNode.gain.cancelScheduledValues(now);
+  gainNode.gain.setValueAtTime(gainNode.gain.value,now);
+  gainNode.gain.linearRampToValueAtTime(0,now+0.018);
+  setTimeout(()=>{
+    audio.pause();
+    gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0,audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(1,audioCtx.currentTime+0.018);
+    audioBusy=false;
+  },22);
+}
+function playUntil(endTime){
+  if(!audioArmed) return;
+  if(endTime <= audio.currentTime+0.02){ audioBusy=false; return; }
+  audioBusy=true;
+  const check=()=>{
+    if(!audioBusy) return;
+    if(audio.currentTime >= endTime-0.035){fadeAndPause(); return;}
+    requestAnimationFrame(check);
+  };
+  audio.play().then(()=>requestAnimationFrame(check)).catch(()=>{audioBusy=false;});
+}
+document.getElementById('audioStart').addEventListener('click',async()=>{
+  try{
+    setupAudio(); await audioCtx.resume();
+    audioArmed=true; introFinished=false; markerIndex=0;
+    audio.currentTime=0; gainNode.gain.value=1;
+    document.getElementById('audioStart').textContent='INTRO ÇALIŞIYOR';
+    playUntil(INTRO_STOP);
+  }catch(e){alert('Ses başlatılamadı: '+e.message);}
+});
+function advanceAudioForGesture(){
+  if(!audioArmed || audioBusy) return;
+  // The intro plays automatically until the pause marker. The first gesture
+  // starts the three-beat silent count-in from the first marker.
+  if(!introFinished){
+    if(audio.currentTime >= INTRO_STOP-0.12 || audio.paused){
+      introFinished=true;
+      audio.pause();
+      audio.currentTime=markers[0];
+      markerIndex=0;
+    } else return;
+  }
+  let end;
+  if(markerIndex < markers.length-1){
+    const segmentStart=markers[markerIndex];
+    const target=markers[markerIndex+1];
+    // Snap only when we're not already at this marker (e.g. after manual reset).
+    if(Math.abs(audio.currentTime-segmentStart)>0.12) audio.currentTime=segmentStart;
+    end=target;
+    markerIndex++;
+  } else if(markerIndex === markers.length-1){
+    // Fourth gesture begins the anthem at KORK.
+    if(Math.abs(audio.currentTime-markers[markers.length-1])>0.12)
+      audio.currentTime=markers[markers.length-1];
+    end=Math.min(audio.duration||audio.currentTime+1.5,audio.currentTime+1.5);
+    markerIndex++;
+  } else {
+    // After KORK, continue from the actual paused playhead in longer chunks.
+    end=Math.min(audio.duration||audio.currentTime+1.2,audio.currentTime+1.2);
+  }
+  playUntil(end);
+}
+
+function updateText(){dataEl.textContent=`Vuruş: ${beat+1} / 4 · ${moving?'Ray üzerinde ilerliyor':'Arduino hareketi bekleniyor'}`;}
+function triggerBeat(){
+  // Yeni vuruş geldiğinde önceki animasyonun bitmesini bekleme.
+  // Işığın o anki konumundan sıradaki hedefe geç; böylece hareketler birikmez.
+  const currentX=Number(dot.getAttribute('cx'));
+  const currentY=Number(dot.getAttribute('cy'));
+  const seg=segments[beat];
+  from={x:currentX,y:currentY};
+  to=points[seg[1]];
+  moveStart=performance.now();
+  moving=true;
+  beat=(beat+1)%4;
+  advanceAudioForGesture();
+  updateText();
+  return true;
+}
+function reset(){
+  beat=0; moving=false; from=points[0]; to=points[0];
+  incomingEvents.length=0;
+  audioBusy=false; audioArmed=false; introFinished=false; markerIndex=0;
+  if(!audio.paused) audio.pause();
+  audio.currentTime=0;
+  if(gainNode && audioCtx) gainNode.gain.setValueAtTime(1,audioCtx.currentTime);
+  document.getElementById('audioStart').textContent='INTRO\'YU BAŞLAT';
+  dot.setAttribute('cx',from.x);dot.setAttribute('cy',from.y);
+  halo.setAttribute('cx',from.x);halo.setAttribute('cy',from.y);
+  updateText();
+}
+document.getElementById('reset').onclick=reset;
+document.getElementById('test').onclick=triggerBeat;
+
+// Arduino'dan gelen yön emirlerini vuruş sırasına göre hatta kanalize et.
+function handleArduinoEvent(eventName){
+  // Kuyruğun eski hareketlerle dolup ekranı geriden getirmesini önle.
+  // Çok hızlı seri hareketlerde en eski bekleyen olayları düşür.
+  if(incomingEvents.length >= 4) incomingEvents.shift();
+  incomingEvents.push(eventName);
+}
+function processQueuedEvent(){
+  if(incomingEvents.length===0) return;
+  const eventName=incomingEvents.shift();
+  const now=performance.now();
+  if(now-lastEventAt<EVENT_GAP_MS) { incomingEvents.unshift(eventName); return; }
+  // Sensor direction is used as a trigger, not as a strict gate.
+  // The visual conductor channels every recognized impulse onto the next
+  // segment of the fixed 4/4 path. This avoids dropping valid LEFT/RIGHT/UP/DOWN
+  // events just because the sensor orientation differs slightly.
+  if(['DOWN','UP','RIGHT','LEFT'].includes(eventName)){
+    if(triggerBeat()) lastEventAt=now;
+  }
+}
+async function pollArduino(){
+  try{
+    const response=await fetch('/next-event',{cache:'no-store'});
+    if(response.ok){
+      const result=await response.json();
+      if(result.event) handleArduinoEvent(result.event);
+    }
+  }catch(e){ /* Köprü henüz çalışmıyorsa manuel test kullanılabilir. */ }
+  setTimeout(pollArduino,20);
+}
+function animate(now){
+  if(moving){
+    const t=Math.min(1,(now-moveStart)/moveDuration);
+    const eased=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    const x=from.x+(to.x-from.x)*eased,y=from.y+(to.y-from.y)*eased;
+    dot.setAttribute('cx',x);dot.setAttribute('cy',y);halo.setAttribute('cx',x);halo.setAttribute('cy',y);
+    if(t>=1){moving=false;updateText();}
+  }
+  processQueuedEvent();
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate); updateText(); pollArduino();
+</script></div></body></html>
