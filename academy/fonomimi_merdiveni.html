@@ -207,6 +207,8 @@ linear-gradient(180deg,#38bdf8 0%,#7dd3fc 34%,#38bdf8 62%,#166534 100%);
 <option value="arp-up">🪜 Arpej — Çıkıcı</option>
 <option value="arp-down">🪜 Arpej — İnici</option>
 <option value="arp-both">🔄 Arpej — Çıkıcı + İnici</option>
+<option value="merdiven-izleme">👀 Merdiven İzleme</option>
+<option value="merdiven-olcme">🎤 Merdiven Ölçme</option>
 </select>
 </div>
 <div class="stats">🪙 <span id="coinCount">0</span>　⭐ <span id="score">0</span></div>
@@ -449,7 +451,19 @@ $("micBtn").addEventListener("click",async()=>{if(stream)stop();else{started=tru
 $("resetBtn").addEventListener("click",reset);
 window.addEventListener("resize",()=>{if(started&&current>=0&&locked===false){}});
 $("methodSelect").addEventListener("change",()=>{
- method=$("methodSelect").value;
+ const selectedMethod=$("methodSelect").value;
+
+ // Merdiven araçları aynı klasördeki bağımsız sayfalara açılır.
+ if(selectedMethod==="merdiven-izleme"){
+   window.location.href="merdiven_izleme_mod.html";
+   return;
+ }
+ if(selectedMethod==="merdiven-olcme"){
+   window.location.href="merdiven_olcme.html";
+   return;
+ }
+
+ method=selectedMethod;
  reset();
 });
 method=$("methodSelect").value;
